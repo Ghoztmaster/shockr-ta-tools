@@ -69,7 +69,7 @@ Output: `dist/shockr-ta-tools.user.js`
 ## Compatibility
 
 - Tested on game version 26.1 (Perforce 576232)
-- Works alongside MaelstromTools, MehrStrom scripts, CnCTAOpt, TAMap, and other common TA scripts
+- Works alongside MaelstromTools, MehrStrom, CnCTAOpt, TAMap, and other common TA scripts
 - Requires no server — all features run locally in the browser
 
 ## Credits

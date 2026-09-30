@@ -57,9 +57,6 @@ EA pushes Perforce updates that re-obfuscate property names (e.g. confirmed shif
 **Expected behavior**
 Self-healing fingerprint scan (try multiple patterns, or use real method names like `get_UnitGameData_Obj()` where they exist) instead of single-shot regex. At minimum, log a clear error when a patch fails to match.
 
-**Note**
-This is the same class of bug that broke the MehrStrom Combat Advisor at Perforce build 575847. The fix there was switching to real method names + fingerprint fallback.
-
 ---
 
 ## Issue #3 — `@match` pattern may not cover all game URLs

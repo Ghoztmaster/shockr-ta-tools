@@ -28,14 +28,12 @@ Zie `shockr-tools-issues.md` voor de volledige issue-lijst (10 issues).
 ### In scope
 - Userscript fixen voor huidige game-client
 - Debundlen van webpack → leesbare broncode
-- Alliance-verkenningsdatabase (zelfgehost, MehrStrom VPS)
+- Alliance-verkenningsdatabase (zelfgehost, eigen VPS)
 - Online base-layout viewer voor alliance members
 - Public GitHub repo met installatie-instructies
 
 ### Uit scope
-- MehrStrom optimizer-integratie (blijft apart, private repo)
-- Combat Advisor / CY-Optimizer features (blijven in MehrStrom)
-- NOD/Forgotten-specifieke aanpassingen (tenzij gevraagd)
+- NOD/Forgotten-specifieke aanpassingen (kan veranderen)
 
 ---
 
@@ -60,7 +58,7 @@ Zie `shockr-tools-issues.md` voor de volledige issue-lijst (10 issues).
                        │ HTTPS POST /api/alliance/scan
                        ▼
 ┌─────────────────────────────────────────────────────────┐
-│ Backend (packetlab.nl/mehrstrom/alliance/)               │
+│ Backend (packetlab.nl/alliance/)               │
 │                                                         │
 │  FastAPI                                                │
 │  ├── POST /api/alliance/scan     (ontvang base-data)    │
@@ -74,7 +72,7 @@ Zie `shockr-tools-issues.md` voor de volledige issue-lijst (10 issues).
                        │
                        ▼
 ┌─────────────────────────────────────────────────────────┐
-│ Frontend (packetlab.nl/mehrstrom/alliance/)              │
+│ Frontend (packetlab.nl/alliance/)              │
 │                                                         │
 │  Volledig achter login (Caddy basic_auth)               │
 │  ├── Base-lijst (gesorteerd op scan-tijd)               │
@@ -91,7 +89,7 @@ Zie `shockr-tools-issues.md` voor de volledige issue-lijst (10 issues).
 |-----|-----|-----|
 | Jij (Ghozt) | Dashboard + API | HTTP Basic Auth (bestaand) |
 | Alliance members | POST scans | API key (1 key per alliance, gedeeld via game-chat) |
-| Alliance members | Bekijk scans online | HTTP Basic Auth op `/mehrstrom/alliance/` (apart van optimizer) |
+| Alliance members | Bekijk scans online | HTTP Basic Auth op `/alliance/` |
 | Publiek | Niets | Geen toegang tot alliance-data |
 
 ---
@@ -108,7 +106,7 @@ Zie `shockr-tools-issues.md` voor de volledige issue-lijst (10 issues).
 ### Fase 1 — Clean-room herschrijving lokale features
 Doel: werkend script zonder server-dependency.
 
-- [ ] **ClientLib patching herschrijven** — weg van single-shot regex, naar fingerprint-scan met fallback (bewezen patroon uit MehrStrom Combat Advisor v2.6.0)
+- [ ] **ClientLib patching herschrijven** — weg van single-shot regex, naar fingerprint-scan met fallback (bewezen fingerprint-scan patroon)
   - `$CampType`, `$Id`, `$Level` voor NPCCamp en NPCBase
   - `$OffenseUnits`, `$DefenseUnits` voor CityUnits
   - `$PlayerId`, `$AllianceId`, `$Id` voor WorldObjectCity
@@ -136,7 +134,7 @@ Doel: werkend script zonder server-dependency.
 **Deliverable:** werkend .user.js dat alliance members direct kunnen installeren voor CampTracker + KillInfo + PlayerStatus. Geen server nodig.
 
 ### Fase 2 — Scanner-backend
-Doel: scans ontvangen en opslaan op de MehrStrom VPS.
+Doel: scans ontvangen en opslaan op de eigen VPS.
 
 - [ ] **API endpoint** `POST /api/alliance/scan`
   - Accepteert: base layout (tiles), units (type + level + positie), gebouwen, eigenaar, alliance, coördinaten, worldId, timestamp
@@ -186,7 +184,6 @@ class AllianceScan:
 ### Fase 3 — Alliance-website
 Doel: online base-layout viewer voor alliance members.
 
-- [ ] **Pagina** `/mehrstrom/alliance/` — volledig achter Caddy basic_auth
 - [ ] **Base-lijst**
   - Tabel: naam, level, type, coördinaten, laatste scan, gescand door
   - Sorteerbaar, filterbaar
@@ -200,14 +197,13 @@ Doel: online base-layout viewer voor alliance members.
 - [ ] **Alliance-overzicht**
   - Wie heeft het script actief (laatste scan-tijdstip per speler)
   - Totaal aantal gescande bases per worldId
-- [ ] **Stijl**: consistent met bestaand MehrStrom dashboard (grey UI)
 
 ### Fase 4 — Script scanner-integratie
 Doel: Tampermonkey script POST scans naar jouw server.
 
 - [ ] **LayoutScanner** — herschrijven, POST naar instelbare server URL
   - Standaard: geen server (scanner uit)
-  - Configureerbaar via `/st config set api.url https://packetlab.nl/mehrstrom`
+  - Configureerbaar via `/st config set api.url https://packetlab.nl/alliance`
   - API key via `/st config set api.key <key>`
 - [ ] **AllianceScanner** — zelfde patroon
 - [ ] **ScanButton** — "Bekijk online" knop, opent `{api.url}/alliance/base/{cityId}`
@@ -292,19 +288,6 @@ Zelfde formaat als units.
 | Shockr/NetquiK claimen copyright | Script is community-maintained, geen expliciete licentie; credits in README |
 | Alliance members configureren server verkeerd | Duidelijke installatie-instructies, `/st` diagnostiek-commando |
 | Scan-data lekt buiten alliance | Alles achter auth, API key per alliance |
-
----
-
-## Afhankelijkheden van MehrStrom
-
-| Component | Gedeeld? | Details |
-|-----------|----------|---------|
-| VPS (packetlab.nl) | Ja | Alliance-backend draait naast MehrStrom in dezelfde Docker Compose |
-| FastAPI | Ja | Alliance-endpoints in aparte router, zelfde app |
-| Caddy | Ja | Aparte basic_auth block voor `/mehrstrom/alliance/` |
-| JSONL store | Ja | Aparte directory `data/alliance/` |
-| Tampermonkey build | Nee | Apart repo, eigen esbuild, eigen dist/ |
-| ClientLib kennis | Ja | Fingerprint-scan patronen hergebruiken uit MehrStrom learnings |
 
 ---
 
