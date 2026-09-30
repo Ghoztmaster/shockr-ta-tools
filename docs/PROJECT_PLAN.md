@@ -1,6 +1,6 @@
 # Project Plan: Shockr TA Tools — Fix & Rebuild
 
-**Repo:** `wwigman/shockr-ta-tools` (public, GitHub)
+**Repo:** `Ghoztmaster/shockr-ta-tools` (public, GitHub)
 **Doel:** Shockr - Tiberium Alliances Tools herstellen, opschonen, en uitbreiden met een zelfgehoste alliance-verkenningsdatabase ter vervanging van het dode shockr.dev.
 
 ---
@@ -89,7 +89,7 @@ Zie `shockr-tools-issues.md` voor de volledige issue-lijst (10 issues).
 
 | Wie | Wat | Hoe |
 |-----|-----|-----|
-| Jij (Wilco) | Dashboard + API | HTTP Basic Auth (bestaand) |
+| Jij (Ghozt) | Dashboard + API | HTTP Basic Auth (bestaand) |
 | Alliance members | POST scans | API key (1 key per alliance, gedeeld via game-chat) |
 | Alliance members | Bekijk scans online | HTTP Basic Auth op `/mehrstrom/alliance/` (apart van optimizer) |
 | Publiek | Niets | Geen toegang tot alliance-data |
@@ -99,8 +99,8 @@ Zie `shockr-tools-issues.md` voor de volledige issue-lijst (10 issues).
 ## Fasering
 
 ### Fase 0 — Repo setup
-- [ ] `wwigman/shockr-ta-tools` aanmaken op GitHub (public)
-- [ ] README.md met: wat het doet, installatie, credits (Shockr, NetquiK, Wilco)
+- [ ] `Ghoztmaster/shockr-ta-tools` aanmaken op GitHub (public)
+- [ ] README.md met: wat het doet, installatie, credits (Shockr, NetquiK, Ghozt)
 - [ ] LICENSE — kies licentie (MIT of GPL, afhankelijk van origineel)
 - [ ] De huidige v4.5.3.6 bundel committen als `legacy/` (referentie, niet uitvoerbaar)
 - [ ] `.gitignore`, `package.json`, esbuild config
@@ -228,7 +228,7 @@ Doel: Tampermonkey script POST scans naar jouw server.
 ## Repo-structuur
 
 ```
-wwigman/shockr-ta-tools/
+Ghoztmaster/shockr-ta-tools/
 ├── README.md
 ├── LICENSE
 ├── CHANGELOG.md
@@ -312,7 +312,7 @@ Zelfde formaat als units.
 
 - **Shockr** (original author) — contact@shockr.dev
 - **NetquiK [SoO]** (fork maintainer) — github.com/netquik
-- **Wilco Wigman** (rebuild) — github.com/wwigman
+- **Ghoztmaster** (rebuild) — github.com/Ghoztmaster
 
 ---
 
