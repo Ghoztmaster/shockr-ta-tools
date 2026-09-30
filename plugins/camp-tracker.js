@@ -179,7 +179,10 @@ export class CampTracker {
                 if (!this._firstUpdate && alertEnabled && index === 0) {
                     const type = camp.campType === 2 ? 'Camp' : 'Outpost';
                     const time = new Date().toLocaleTimeString('de-DE', { hour12: false });
-                    chatMessage(`[ST] ${time}: New L${camp.level || '?'} ${type} spawned at ${camp.x}:${camp.y}`);
+                    const cx = Math.round(camp.x);
+                    const cy = Math.round(camp.y);
+                    const coord = `<a style="color:${webfrontend.gui.util.BBCode.clrLink};cursor:pointer;" onClick="webfrontend.gui.UtilView.centerCoordinatesOnRegionViewWindow(${cx},${cy});">${cx}:${cy}</a>`;
+                    chatMessage(`[ST] ${time}: New L${camp.level || '?'} ${type} spawned at ${coord}`);
                 }
             }
         });
