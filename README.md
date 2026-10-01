@@ -11,7 +11,7 @@
 A Tampermonkey userscript for [C&C Tiberium Alliances](https://www.tiberiumalliances.com/) that adds:
 
 - **CampTracker** — numbered markers on the world map for nearby camps, outposts and bases, with chat alerts and clickable coordinates
-- **KillInfo** — plunder value tooltip in battle view (tiberium + crystal per unit)
+- **KillInfo** — plunder panel for the selected Forgotten base (tiberium + crystal per unit and total), shown above the FG-def panel
 - **PlayerStatus** — alliance base colors by online status (green/yellow/red/grey, own bases cyan)
 - **LayoutScanner** — scan nearby FG base layouts and upload to a shared alliance server
 

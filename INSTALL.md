@@ -5,7 +5,7 @@
 ### Wat doet dit script?
 
 - **CampTracker** — genummerde markers bij nieuwe camps en outposts op de wereldkaart + chat-alert bij nieuwe spawns
-- **KillInfo** — plunder-waarde (Tib + Crystal) bij mouseover op defense units in battle view
+- **KillInfo** — plunder-paneel (Tib + Crystal per unit en totaal) bij het selecteren van een Forgotten base
 - **PlayerStatus** — alliance-bases gekleurd op online-status: groen = online, geel = away, grijs = offline, rood = vijand
 
 ### Stap 1: Tampermonkey installeren
@@ -34,7 +34,7 @@ Tampermonkey is een browser-extensie die userscripts beheert.
 ### Controleren of het werkt
 
 - **CampTracker**: groene/gele genummerde markers bij camps op de wereldkaart
-- **KillInfo**: hover over een defense unit in battle view → tooltip toont `Plunder: Tib: xxx | Crystal: xxx`
+- **KillInfo**: selecteer een Forgotten base → paneel `⚔ Plunder — <base>` verschijnt rechtsonder, boven het FG-def paneel
 - **PlayerStatus**: alliance-bases op de kaart zijn groen (online), geel (away) of grijs (offline)
 
 ### Problemen?
@@ -65,7 +65,7 @@ Type in de in-game chat (alleen zichtbaar voor jou):
 ### Was macht dieses Script?
 
 - **CampTracker** — nummerierte Markierungen bei neuen Camps und Außenposten auf der Weltkarte + Chat-Alarm bei neuen Spawns
-- **KillInfo** — Plünderwert (Tib + Crystal) beim Überfahren von Verteidigungseinheiten in der Kampfansicht
+- **KillInfo** — Plünder-Panel (Tib + Crystal pro Einheit und gesamt) beim Auswählen einer Forgotten-Basis
 - **PlayerStatus** — Allianz-Basen farblich nach Online-Status: grün = online, gelb = abwesend, grau = offline, rot = Feind
 
 ### Schritt 1: Tampermonkey installieren
@@ -94,7 +94,7 @@ Tampermonkey ist eine Browser-Erweiterung für Userscripts.
 ### Prüfen ob es funktioniert
 
 - **CampTracker**: grüne/gelbe nummerierte Markierungen bei Camps auf der Weltkarte
-- **KillInfo**: Maus über eine Verteidigungseinheit in der Kampfansicht → Tooltip zeigt `Plunder: Tib: xxx | Crystal: xxx`
+- **KillInfo**: Forgotten-Basis auswählen → Panel `⚔ Plunder — <Basis>` erscheint unten rechts, über dem FG-def-Panel
 - **PlayerStatus**: Allianz-Basen auf der Karte sind grün (online), gelb (abwesend) oder grau (offline)
 
 ### Probleme?
