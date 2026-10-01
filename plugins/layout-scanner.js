@@ -1,12 +1,11 @@
 /**
  * layout-scanner.js — scan nearby FG base layouts and POST to alliance server.
  *
- * - Runs when player is idle (20 min inactive) or on manual /st scan command
- * - Scans FG bases/camps/outposts within attack range
- * - Skips already-scanned bases (version-based dedup)
- * - Opt-in only: disabled by default, requires /st plugin enable LayoutScanner
- * - Requires api.url and api.key to be configured
- * - Chat feedback on scan progress
+ * - Only scans when player is truly idle (20 min inactive)
+ * - Manual scan via /st scan (always works)
+ * - Restores original city view after scanning
+ * - 2 second delay between individual base scans to avoid flickering
+ * - Skips if player is in a base/battle view
  *
  * Config keys:
  *   api.url  — server URL (e.g. https://packetlab.nl/shockr)
@@ -16,8 +15,11 @@ import { chatMessage } from '../lib/main.js';
 import { getAllNearbyObjects, waitForCity } from '../lib/city-util.js';
 import { extractScan } from '../lib/scanner-util.js';
 
+const SCAN_DELAY_MS = 2000;      // 2s between each base scan
+const SCAN_INTERVAL_MS = 3600000; // re-scan every 60 minutes when idle
+
 /** Local version cache to avoid re-scanning identical bases. */
-const scannedVersions = new Map(); // cityId → version
+const scannedVersions = new Map();
 
 export class LayoutScanner {
     constructor(config, cli, apiClient, idleDetect) {
@@ -31,18 +33,23 @@ export class LayoutScanner {
         this._scanInterval = null;
     }
 
-  async start() {
+    async start() {
         // Register CLI command first — works even without API config
         this.cli.register('scan', () => {
             if (!this.api.isConfigured) {
                 chatMessage('[ST] Scanner not configured. Set api.url and api.key first.');
                 return;
             }
+            if (this._scanning) {
+                chatMessage('[ST] Scan already in progress...');
+                return;
+            }
             chatMessage('[ST] Manual scan started...');
             this.scanAll();
         });
 
-        if (!this.api.isConfigured) {            console.log('[ST] LayoutScanner: no API configured — scanner inactive');
+        if (!this.api.isConfigured) {
+            console.log('[ST] LayoutScanner: no API configured — scanner inactive');
             chatMessage('[ST] LayoutScanner enabled but no server configured. Set api.url and api.key first.');
             this.running = true;
             return;
@@ -57,11 +64,11 @@ export class LayoutScanner {
             this.config.set('layoutscanner.consent', true);
         }
 
-        // Scan on idle and every 60 minutes
+        // Only scan on idle — never immediately
         this.idle.on('idle', () => this.scanAll());
         this._scanInterval = setInterval(() => {
             if (this.idle.isIdle) this.scanAll();
-        }, 60 * 60 * 1000);
+        }, SCAN_INTERVAL_MS);
 
         this.running = true;
         console.log('[ST] LayoutScanner: started (server: ' + this.api._url + ')');
@@ -85,6 +92,13 @@ export class LayoutScanner {
         let scanned = 0;
         let skipped = 0;
 
+        // Remember current city so we can restore it after scanning
+        let originalCityId = null;
+        try {
+            const cities = ClientLib.Data.MainData.GetInstance().get_Cities();
+            originalCityId = cities.get_CurrentCityId();
+        } catch { /* ignore */ }
+
         try {
             const nearbyObjects = getAllNearbyObjects();
 
@@ -97,6 +111,19 @@ export class LayoutScanner {
 
                 const cityId = obj.id;
 
+                // Quick version check before loading the city
+                // (avoid switching view if we already have this version)
+                try {
+                    const existingCity = ClientLib.Data.MainData.GetInstance().get_Cities().GetCity(cityId);
+                    if (existingCity) {
+                        const version = existingCity.get_Version();
+                        if (scannedVersions.get(cityId) === version) {
+                            skipped++;
+                            continue;
+                        }
+                    }
+                } catch { /* continue with full load */ }
+
                 // Load city data
                 const cities = ClientLib.Data.MainData.GetInstance().get_Cities();
                 cities.set_CurrentCityId(cityId);
@@ -104,7 +131,7 @@ export class LayoutScanner {
                 const city = await waitForCity(cityId, 20);
                 if (!city) continue;
 
-                // Version-based dedup
+                // Version-based dedup (double check after load)
                 const version = city.get_Version();
                 if (scannedVersions.get(cityId) === version) {
                     skipped++;
@@ -119,8 +146,8 @@ export class LayoutScanner {
                 scannedVersions.set(cityId, version);
                 scanned++;
 
-                // Pacing: small delay between scans to not hammer the game client
-                await sleep(200);
+                // Pacing: 2 seconds between scans to avoid screen flickering
+                await sleep(SCAN_DELAY_MS);
             }
 
             // Flush remaining
@@ -136,6 +163,12 @@ export class LayoutScanner {
             console.error('[ST] LayoutScanner error:', e);
             chatMessage('[ST] ⚠ Scan failed: ' + e.message);
         } finally {
+            // Restore original city view
+            if (originalCityId) {
+                try {
+                    ClientLib.Data.MainData.GetInstance().get_Cities().set_CurrentCityId(originalCityId);
+                } catch { /* ignore */ }
+            }
             this._scanning = false;
         }
     }
