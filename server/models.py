@@ -11,6 +11,7 @@ class ScanPayload(BaseModel):
     """Incoming scan from the Tampermonkey script."""
     city_id: int = Field(gt=0)
     world_id: int = Field(ge=1, le=999)
+    world_name: str = Field(max_length=50, default="")
     x: int = Field(ge=0, le=1600)
     y: int = Field(ge=0, le=1600)
     name: str = Field(max_length=50)
@@ -31,7 +32,7 @@ class ScanPayload(BaseModel):
     version: int = Field(gt=0)
     timestamp: int = Field(gt=0)
 
-    @field_validator('name', 'owner', 'alliance', 'scanned_by')
+    @field_validator('name', 'owner', 'alliance', 'scanned_by', 'world_name')
     @classmethod
     def strip_strings(cls, v: str) -> str:
         return v.strip()

@@ -217,10 +217,11 @@
 </div>
 
 <script>
-const API = '.';  // relative — nginx proxies /shockr/ to /
+const API = '.';  // relative to current path
 let allBases = [];
 let sortKey = 'scanned_at';
 let sortDir = -1;
+const worldNames = {};
 
 // ─── Base62 decoder ─────────────────────────────────────────
 const B62 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -314,6 +315,9 @@ async function loadBases() {
         const resp = await fetch(url);
         const data = await resp.json();
         allBases = data.bases || [];
+        for (const b of allBases) {
+            if (b.world_name) worldNames[b.world_id] = b.world_name;
+        }
         renderTable();
         updateStats();
         updateWorldFilter();
@@ -335,7 +339,10 @@ function updateWorldFilter() {
     const current = select.value;
     const worlds = [...new Set(allBases.map(b => b.world_id))].sort((a,b) => a-b);
     select.innerHTML = '<option value="">All</option>' +
-        worlds.map(w => `<option value="${w}" ${w==current?'selected':''}>${w}</option>`).join('');
+        worlds.map(w => {
+            const name = worldNames[w] || w;
+            return `<option value="${w}" ${w==current?'selected':''}>${name}</option>`;
+        }).join('');
 }
 
 // ─── Render table ───────────────────────────────────────────

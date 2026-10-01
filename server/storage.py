@@ -105,6 +105,7 @@ class ScanStorage:
             result.append({
                 "city_id": record["city_id"],
                 "world_id": record["world_id"],
+                "world_name": record.get("world_name", ""),
                 "x": record["x"],
                 "y": record["y"],
                 "name": record["name"],
@@ -153,6 +154,7 @@ class ScanStorage:
         return {
             "city_id": city_id,
             "world_id": latest["world_id"],
+            "world_name": latest.get("world_name", ""),
             "x": latest["x"],
             "y": latest["y"],
             "name": latest["name"],
