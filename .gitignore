@@ -9,3 +9,9 @@ config/keys.json
 data/
 __pycache__/
 *.pyc
+
+# Server
+config/keys.json
+data/
+__pycache__/
+*.pyc
