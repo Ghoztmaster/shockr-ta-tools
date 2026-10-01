@@ -2,7 +2,7 @@
 
 Status of the rebuild. Background, architecture and the data format are in [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md).
 
-Legend: ✅ done · 🟡 mostly done · ⬜ open
+Legend: ✅ done · 🟡 mostly done · ⬜ open · 🔲 not started
 
 ---
 
@@ -73,7 +73,7 @@ Alliance website live.
 
 - [x] `layout-scanner.js` — FG base scanning werkt
 - [ ] `alliance-scanner.js` — alliance-bases scannen (nog niet gebouwd)
-- [ ] `scan-button.js` — "Bekijk online" knop (nog niet gebouwd)
+- [ ] `plugins/scan-button.js` — "Bekijk online" knop op wereldkaart (toekomstig, als er behoefte aan is)
 - [x] Config — `api.url` / `api.key` via `/st config set`
 - [x] Consent — scanner pas actief na expliciete opt-in
 - [x] Chat-feedback bij scans
@@ -88,6 +88,34 @@ Alliance website live.
 - [x] ALLIANCE_GUIDE
 - [x] v5.1.0 release
 
+## Fase 6 — Nieuwe plugins 🔲
+
+### 6a — Repair Guard 🔲
+
+- [ ] `plugins/repair-guard.js` — schakelt alle "Repair All" knoppen en functies uit (DOM-manipulatie)
+- [ ] Toggle via `/st plugin enable/disable repair-guard`
+- Doel: voorkom per ongeluk volledig reppen van units (crystal besparen op FA-werelden)
+- Puur client-side, geen server nodig
+- Inspiratie: Leo's script (alliance-intern)
+
+### 6b — Upgrade Calculator 🔲
+
+- [ ] `plugins/upgrade-calc.js` — leest upgrade-kosten per gebouw/level uit GAMEDATA (client-side, zelfde aanpak als KillInfo)
+- [ ] Leest huidige productiesnelheid live uit ClientLib
+- [ ] Toont: "gebouw X naar level Y kost Z resources, duurt N uur sparen bij huidig tempo"
+- [ ] Paneel in-game, toggle via `/st upgradecalc`
+- Puur client-side, geen server nodig
+
+### 6c — Alliance War Dashboard 🔲
+
+Uitbreiding van de bestaande alliance-website (`packetlab.nl/shockr/`).
+
+- [ ] Combineert WatchList-watcher data (`get_AllianceWatchListWatcher()`) met scan-data en loot-logs
+- [ ] Toont wie naar welk target kijkt, voorkomt dubbele aanvallen, alliance-voortgang per sector
+- [ ] Nieuw snapshot-veld (`watchlist`) in het userscript
+- [ ] Backend-opslag voor watchlist-snapshots
+- Bouwt voort op de bestaande Fase 2/3/4 infrastructuur
+
 ---
 
 ## Samenvatting
@@ -100,3 +128,4 @@ Alliance website live.
 | 3 | Alliance-website | ✅ Live |
 | 4 | Script scanner-integratie | 🟡 Grotendeels klaar — alliance-scanner en scan-button open |
 | 5 | Documentatie & release | ✅ Klaar (v5.1.0) |
+| 6 | Nieuwe plugins (Repair Guard, Upgrade Calculator, Alliance War Dashboard) | 🔲 Nog niet gestart |

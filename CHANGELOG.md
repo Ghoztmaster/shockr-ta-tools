@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Planning
+- Roadmap: Fase 6 toegevoegd — Repair Guard, Upgrade Calculator, Alliance War Dashboard
+
 ## v5.1.0 — 2026-10-01
 
 ### Alliance Scanner
