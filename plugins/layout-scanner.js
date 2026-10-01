@@ -13,7 +13,7 @@
  */
 import { chatMessage } from '../lib/main.js';
 import { getAllNearbyObjects, waitForCity } from '../lib/city-util.js';
-import { extractScan } from '../lib/scanner-util.js';
+import { extractScan, acquireScanLock, releaseScanLock } from '../lib/scanner-util.js';
 
 const SCAN_DELAY_MS = 2000;      // 2s between each base scan
 const SCAN_INTERVAL_MS = 3600000; // re-scan every 60 minutes when idle
@@ -86,9 +86,10 @@ export class LayoutScanner {
     async scanAll() {
         if (this._scanning) return;
         if (!this.api.isConfigured) return;
+        if (!acquireScanLock(this.name)) return;
 
         this._scanning = true;
-        window.__stScannerActive = true;
+        /** window.__stScannerActive = true; */
         const startTime = Date.now();
         let scanned = 0;
         let skipped = 0;
@@ -170,8 +171,9 @@ export class LayoutScanner {
                     ClientLib.Data.MainData.GetInstance().get_Cities().set_CurrentCityId(originalCityId);
                 } catch { /* ignore */ }
             }
-            window.__stScannerActive = false;
+            // window.__stScannerActive = false;
             this._scanning = false;
+            releaseScanLock(this.name);
         }
     }
 }
