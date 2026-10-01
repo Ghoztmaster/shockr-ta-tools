@@ -1,140 +1,318 @@
 /**
- * kill-info.js — show plunder value (repair cost) tooltip on mouseover in battle view.
+ * kill-info.js — plunder value tooltip in battle view.
  *
- * When hovering a defense unit in Default mouse mode, the tooltip shows the
- * unit's repair requirements = what you plunder by destroying it.
+ * Shows tiberium + crystal loot per defense unit on hover.
+ * Uses GAMEDATA for unit data and discovers the repair-cost function
+ * via code-pattern matching (survives client obfuscation shifts).
  *
- * Approach: find the tooltip handler function via fingerprint, wrap it to
- * append plunder info after the original tooltip renders.
- *
- * Last verified: 2026-09-30
- *   $I.VOEYIO.OHZBHT — tooltip handler
- *   this.MZWKJT — tooltip widget
- *   MKSILI — show(name, desc, upgraded)
- *   PEODKX — setStatusText(text)
- *   n.VSZLQT() — get unit details
- *   get_UnitLevelRepairRequirements() — [{Type, Count}, ...]
+ * Discovery: searches $I for a function containing 'Type==8||i.Type==7'
+ * which is the get_UnitLevelRepairRequirements signature.
  */
+import { chatMessage } from '../lib/main.js';
 
-/** Resource type IDs from the game client */
-const RES_NAMES = {
-    1: 'Tib',
-    2: 'Crystal', // not typically in repair costs but just in case
-    3: 'Power',
-    4: 'Credits',
-    6: 'Crystal',
-    7: 'Research',
-};
+/** Discovered repair-cost function: $I.<cls>.prototype.<method> */
+let repairFn = null;
+
+/** Tooltip DOM element */
+let tooltip = null;
+
+/** Currently hovered unit element */
+let hoveredUnit = null;
 
 export class KillInfo {
     constructor() {
         this.name = 'KillInfo';
-        this.running = false;
-        this._proto = null;
-        this._funcName = null;
-        this._oldFunction = null;
     }
 
     async start() {
-        const found = this._findTooltipFunction();
-        if (!found) {
-            console.warn('[ST] KillInfo: tooltip function not found — feature disabled');
-            this.running = true; // mark running so stop() works
+        // Discover the repair-cost function
+        repairFn = discoverRepairFunction();
+        if (!repairFn) {
+            console.warn('[ST] KillInfo: repair function not found — plunder tooltips disabled');
+            chatMessage('[ST] ⚠ KillInfo: repair function not found in this client version');
             return;
         }
+        console.log('[ST] KillInfo: repair function found');
 
-        const { proto, funcName } = found;
-        this._proto = proto;
-        this._funcName = funcName;
-        this._oldFunction = proto[funcName];
+        // Create tooltip element
+        createTooltip();
 
-        const oldFn = this._oldFunction;
+        // Hook into battle view mouse events
+        hookBattleView();
+    }
+}
 
-        proto[funcName] = function(n) {
-            // Always call original first
-            oldFn.call(this, n);
+/**
+ * Discover the repair-cost function by scanning $I for the known pattern.
+ * The function contains 'Type==8||i.Type==7' and 'BGCBLL' in its source.
+ */
+function discoverRepairFunction() {
+    const patterns = ['Type==8', 'Type==7', '.push('];
 
-            // Only enhance in Default mouse mode
-            try {
-                if (ClientLib.Vis.VisMain.GetInstance().get_MouseMode() !== 0) return;
-            } catch { return; }
+    for (const cls of Object.keys($I)) {
+        try {
+            const proto = $I[cls] && $I[cls].prototype;
+            if (!proto) continue;
 
-            // Only for defense units (NGRTYA check — DefenseUnitType)
-            try {
-                if (typeof n.VSZLQT !== 'function') return;
-                const unit = n.VSZLQT();
-                if (!unit) return;
+            for (const key of Object.getOwnPropertyNames(proto)) {
+                if (typeof proto[key] !== 'function') continue;
+                const src = proto[key].toString();
+                if (src.length < 100 || src.length > 500) continue;
 
-                const repairReqs = unit.get_UnitLevelRepairRequirements();
-                if (!repairReqs || repairReqs.length === 0) return;
+                if (patterns.every(p => src.includes(p))) {
+                    console.log(`[ST] KillInfo: found repair fn at $I.${cls}.${key}`);
+                    return { cls, key, fn: proto[key] };
+                }
+            }
+        } catch {}
+    }
 
-                // Format plunder string
-                const parts = [];
-                for (let i = 0; i < repairReqs.length; i++) {
-                    const req = repairReqs[i];
-                    if (req && req.Count > 0) {
-                        const name = RES_NAMES[req.Type] || `Res${req.Type}`;
-                        parts.push(`${name}: ${req.Count.toLocaleString()}`);
+    return null;
+}
+
+/**
+ * Discover the AHVOTQ-equivalent function that computes repair costs
+ * from GAMEDATA. Pattern: contains '.Type' + '.Count' + 'push' + 'switch'.
+ */
+function discoverCalcFunction() {
+    for (const cls of Object.keys($I)) {
+        try {
+            const obj = $I[cls];
+            if (!obj || typeof obj !== 'object') continue;
+
+            // Check static methods
+            for (const key of Object.keys(obj)) {
+                if (typeof obj[key] !== 'function') continue;
+                const src = obj[key].toString();
+                if (src.includes('FoundBaseTiberium') && src.includes('.Type') && src.includes('.Count')) {
+                    return obj[key];
+                }
+            }
+        } catch {}
+    }
+    return null;
+}
+
+/**
+ * Get plunder for a unit using the discovered function or GAMEDATA fallback.
+ * @returns {{ tib: number, cry: number }} or null
+ */
+function getPlunder(unitId, level) {
+    const gd = (typeof GAMEDATA !== 'undefined') && GAMEDATA.units && GAMEDATA.units[unitId];
+    if (!gd) return null;
+
+    // Try the AHVOTQ-style static function (searches $I.UQLRSW or equivalent)
+    try {
+        const calcFn = findCalcFn();
+        if (calcFn) {
+            const result = calcFn(level, gd);
+            if (result && result.length > 0) {
+                let tib = 0, cry = 0;
+                for (const r of result) {
+                    if (r.Type === 1) tib = r.Count;
+                    if (r.Type === 6) cry = r.Count;
+                }
+                return { tib, cry };
+            }
+        }
+    } catch {}
+
+    // Fallback: try GAMEDATA.r directly
+    try {
+        if (gd.r) {
+            const maxKey = Math.min(level, Math.max(...Object.keys(gd.r).map(Number)));
+            const entry = gd.r[maxKey];
+            if (entry && entry.rr) {
+                let tib = 0, cry = 0;
+                for (const r of entry.rr) {
+                    if (r.t === 2) tib = r.c;
+                    if (r.t === 5) cry = r.c;
+                }
+                if (tib || cry) return { tib, cry };
+            }
+        }
+    } catch {}
+
+    return null;
+}
+
+/** Cached calc function reference */
+let _calcFn = undefined;
+function findCalcFn() {
+    if (_calcFn !== undefined) return _calcFn;
+
+    // Search for the static function that takes (level, gamedata) and returns [{Type, Count}]
+    for (const cls of Object.keys($I)) {
+        try {
+            const obj = $I[cls];
+            if (!obj || typeof obj !== 'function') continue;
+
+            for (const key of Object.keys(obj)) {
+                if (typeof obj[key] !== 'function') continue;
+                const src = obj[key].toString();
+                // AHVOTQ pattern: contains Type==8, Type==9, Type==10, push, length
+                if (src.includes('Type==8') && src.includes('Type==9') && src.includes('push') && src.length < 500) {
+                    _calcFn = obj[key];
+                    console.log(`[ST] KillInfo: calc fn at $I.${cls}.${key}`);
+                    return _calcFn;
+                }
+            }
+        } catch {}
+    }
+
+    _calcFn = null;
+    return null;
+}
+
+/** Create the tooltip DOM element. */
+function createTooltip() {
+    tooltip = document.createElement('div');
+    tooltip.id = 'st-killinfo-tooltip';
+    tooltip.style.cssText = `
+        display: none;
+        position: fixed;
+        z-index: 99999;
+        background: rgba(0, 0, 0, 0.9);
+        color: #ccc;
+        border: 1px solid #555;
+        border-radius: 3px;
+        padding: 6px 10px;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        font-size: 12px;
+        pointer-events: none;
+        white-space: nowrap;
+    `;
+    document.body.appendChild(tooltip);
+}
+
+/** Hook mouse events on the battle view canvas/units. */
+function hookBattleView() {
+    // Poll for battle view units — the game dynamically creates them
+    document.addEventListener('mouseover', onMouseOver, true);
+    document.addEventListener('mouseout', onMouseOut, true);
+    document.addEventListener('mousemove', onMouseMove, true);
+}
+
+function onMouseOver(e) {
+    // Look for a unit element in the battle view
+    const unitEl = findUnitElement(e.target);
+    if (!unitEl) return;
+
+    const unitData = getUnitFromElement(unitEl);
+    if (!unitData) return;
+
+    const plunder = getPlunder(unitData.id, unitData.level);
+    if (!plunder) return;
+
+    hoveredUnit = unitEl;
+    showTooltip(e, unitData.name, unitData.level, plunder);
+}
+
+function onMouseOut(e) {
+    if (hoveredUnit) {
+        hideTooltip();
+        hoveredUnit = null;
+    }
+}
+
+function onMouseMove(e) {
+    if (hoveredUnit && tooltip.style.display === 'block') {
+        tooltip.style.left = (e.clientX + 15) + 'px';
+        tooltip.style.top = (e.clientY + 10) + 'px';
+    }
+}
+
+/**
+ * Walk up from the event target to find a unit widget in battle view.
+ * Battle units have a data attribute or class that identifies them.
+ */
+function findUnitElement(el) {
+    // Walk up max 5 levels looking for a unit container
+    let current = el;
+    for (let i = 0; i < 5 && current; i++) {
+        // qooxdoo widgets with unit data
+        try {
+            const widget = qx.ui.core.Widget.getWidgetByElement(current);
+            if (widget && hasUnitData(widget)) return current;
+        } catch {}
+        current = current.parentElement;
+    }
+    return null;
+}
+
+/**
+ * Check if a qooxdoo widget represents a battle unit.
+ */
+function hasUnitData(widget) {
+    try {
+        // Try common patterns for unit widgets
+        if (widget.getUserData && widget.getUserData('unit')) return true;
+        if (widget.getUnit) return true;
+        // Check for MdbUnitId on the widget or its model
+        const proto = Object.getPrototypeOf(widget);
+        for (const key of Object.getOwnPropertyNames(proto)) {
+            if (typeof proto[key] === 'function' && key.includes('nit')) return true;
+        }
+    } catch {}
+    return false;
+}
+
+/**
+ * Extract unit ID and level from a unit element.
+ */
+function getUnitFromElement(el) {
+    try {
+        const widget = qx.ui.core.Widget.getWidgetByElement(el);
+        if (!widget) return null;
+
+        // Try getUserData pattern
+        let unit = widget.getUserData && widget.getUserData('unit');
+
+        // Try getUnit pattern
+        if (!unit && widget.getUnit) unit = widget.getUnit();
+
+        // Walk widget properties for anything with get_MdbUnitId
+        if (!unit) {
+            const proto = Object.getPrototypeOf(widget);
+            for (const key of Object.getOwnPropertyNames(proto)) {
+                if (typeof proto[key] !== 'function') continue;
+                try {
+                    const val = widget[key]();
+                    if (val && typeof val === 'object' && val.get_MdbUnitId) {
+                        unit = val;
+                        break;
                     }
-                }
-
-                if (parts.length === 0) return;
-
-                const plunderText = `Plunder: ${parts.join(' | ')}`;
-
-                // Find the tooltip widget and set status text
-                // Walk 'this' properties to find the tooltip object with PEODKX
-                const tooltipKeys = Object.keys(this).filter(k =>
-                    this[k] && typeof this[k] === 'object' &&
-                    typeof this[k].PEODKX === 'function'
-                );
-
-                for (const key of tooltipKeys) {
-                    this[key].PEODKX(plunderText);
-                }
-            } catch (e) {
-                // Silent — don't break the tooltip
-            }
-        };
-
-        this.running = true;
-        console.log('[ST] KillInfo: started');
-    }
-
-    stop() {
-        if (this._proto && this._funcName && this._oldFunction) {
-            this._proto[this._funcName] = this._oldFunction;
-            this._oldFunction = null;
-        }
-        this.running = false;
-    }
-
-    /**
-     * Find the tooltip handler function by fingerprint.
-     * Searches $I.*.prototype for a function containing both:
-     *   - '"tnf:full hp needed to upgrade"'
-     *   - 'DefenseTerrainFieldType'
-     */
-    _findTooltipFunction() {
-        const target = '"tnf:full hp needed to upgrade"';
-        const filter = 'DefenseTerrainFieldType';
-
-        for (const className of Object.keys($I)) {
-            const cls = $I[className];
-            if (!cls || !cls.prototype) continue;
-
-            for (const funcName of Object.keys(cls.prototype)) {
-                if (funcName.length !== 6) continue;
-                const func = cls.prototype[funcName];
-                if (typeof func !== 'function') continue;
-
-                const src = func.toString();
-                if (src.includes(target) && src.includes(filter)) {
-                    console.log(`[ST] KillInfo: found tooltip at $I.${className}.${funcName}`);
-                    return { proto: cls.prototype, funcName };
-                }
+                } catch {}
             }
         }
+
+        if (!unit || !unit.get_MdbUnitId) return null;
+
+        const id = unit.get_MdbUnitId();
+        const level = unit.get_CurrentLevel();
+        const gd = GAMEDATA.units[id];
+        const name = gd ? gd.dn : 'Unit ' + id;
+
+        return { id, level, name };
+    } catch {
         return null;
     }
+}
+
+function showTooltip(e, name, level, plunder) {
+    if (!tooltip) return;
+
+    let html = `<b>${name}</b> Lv${level}<br>`;
+    if (plunder.tib > 0) html += `<span style="color:#8bc34a">⬢</span> ${plunder.tib.toLocaleString()} Tib<br>`;
+    if (plunder.cry > 0) html += `<span style="color:#42a5f5">◆</span> ${plunder.cry.toLocaleString()} Crystal`;
+    if (plunder.tib === 0 && plunder.cry === 0) html += '<span style="color:#666">No plunder</span>';
+
+    tooltip.innerHTML = html;
+    tooltip.style.left = (e.clientX + 15) + 'px';
+    tooltip.style.top = (e.clientY + 10) + 'px';
+    tooltip.style.display = 'block';
+}
+
+function hideTooltip() {
+    if (tooltip) tooltip.style.display = 'none';
 }
