@@ -98,12 +98,12 @@ Alliance website live.
 - Puur client-side, geen server nodig
 - Inspiratie: Leo's script (alliance-intern)
 
-### 6b — Upgrade Calculator 🔲
+### 6b — Upgrade Calculator ✅
 
-- [ ] `plugins/upgrade-calc.js` — leest upgrade-kosten per gebouw/level uit GAMEDATA (client-side, zelfde aanpak als KillInfo)
-- [ ] Leest huidige productiesnelheid live uit ClientLib
-- [ ] Toont: "gebouw X naar level Y kost Z resources, duurt N uur sparen bij huidig tempo"
-- [ ] Paneel in-game, toggle via `/st upgradecalc`
+- [x] `plugins/upgrade-calc.js` — leest upgrade-kosten per gebouw/level via `GetTechLevelResourceRequirements_Obj` (client-side)
+- [x] Leest huidige productiesnelheid live uit ClientLib
+- [x] Toont: "gebouw X naar level Y kost Z resources, duurt N uur sparen bij huidig tempo"
+- [x] Paneel in-game, toggle via `/st upgradecalc`
 - Puur client-side, geen server nodig
 
 ### 6c — Alliance War Dashboard 🔲

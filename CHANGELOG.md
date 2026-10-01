@@ -5,6 +5,13 @@
 ### Planning
 - Roadmap: Fase 6 toegevoegd — Repair Guard, Upgrade Calculator, Alliance War Dashboard
 
+## [5.3.0] — 2026-10-01
+
+### Upgrade Calculator
+- **UpgradeCalc plugin** — panel (`/st upgradecalc`) listing every building of the current own city that is not max level, with the Tiberium + Power cost of the next level and the time to save up for it at the current production rate (incl. packages and POI), fastest first; "Gereed" when you already have enough
+- Recalculates when you switch city and refreshes every 30 s while open; closed by default
+- Pure client-side (`GetTechLevelResourceRequirements_Obj` + city resource getters) — no fetch, no document-wide listeners
+
 ## v5.2.0 — 2026-10-01
 
 ### Repair Guard
