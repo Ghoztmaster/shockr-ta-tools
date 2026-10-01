@@ -2,7 +2,7 @@
  * upgrade-calc.js — upgrade cost + saving time per building of the current own city.
  *
  * Off by default — `/st plugin enable upgradecalc`. While enabled, a floating
- * "UC" button sits on the right side of the screen whenever you view one of
+ * "UC" button sits top left (next to the game logo) whenever you view one of
  * your own bases (hidden on the world map and on enemy/Forgotten bases).
  * Clicking it toggles a panel with every building that is not max level, the
  * cost of its next level and how long it takes to save up for it at the
@@ -134,7 +134,9 @@ export class UpgradeCalc {
     _ensureButton() {
         if (this._button && document.body.contains(this._button)) return this._button;
 
-        const top = this.config.get('UpgradeCalc.buttonTop', 220);
+        const css = (v) => (typeof v === 'number' ? `${v}px` : v);
+        const left = this.config.get('UpgradeCalc.buttonLeft', 80);
+        const top = this.config.get('UpgradeCalc.buttonTop', 10);
         const btn = document.createElement('div');
         btn.id = BUTTON_ID;
         btn.textContent = 'UC';
@@ -142,8 +144,8 @@ export class UpgradeCalc {
         btn.style.cssText = `
             display: none;
             position: fixed;
-            right: 4px;
-            top: ${typeof top === 'number' ? top + 'px' : top};
+            left: ${css(left)};
+            top: ${css(top)};
             z-index: 9999;
             width: 32px;
             height: 32px;
