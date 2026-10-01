@@ -1,0 +1,21 @@
+services:
+  alliance-server:
+    build: .
+    container_name: shockr-alliance
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8920:8920"
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config:ro
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    networks:
+      - shockr-net
+
+networks:
+  shockr-net:
+    driver: bridge
