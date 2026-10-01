@@ -17,6 +17,7 @@ import bcrypt
 from fastapi import FastAPI, Request, Header, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse
 
 from server.models import ScanPayload, ScanResponse
 from server.storage import ScanStorage
@@ -191,3 +192,7 @@ async def get_base(city_id: int, world_id: int | None = None):
 @app.get("/api/health")
 async def health():
     return {"status": "ok", "keys_loaded": len(key_store.keys)}
+
+@app.get("/")
+async def index():
+    return FileResponse("/app/server/static/index.html")

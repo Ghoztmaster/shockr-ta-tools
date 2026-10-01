@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shockr Alliance Scanner</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        background: #1a1a1a;
+        color: #ccc;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        font-size: 14px;
+    }
+    a { color: #4fc3f7; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Header */
+    .header {
+        background: #252525;
+        border-bottom: 1px solid #333;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .header h1 { font-size: 18px; color: #e0e0e0; }
+    .header .stats { font-size: 12px; color: #888; }
+
+    /* Filters */
+    .filters {
+        background: #222;
+        padding: 10px 20px;
+        border-bottom: 1px solid #333;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .filters label { color: #999; font-size: 12px; }
+    .filters select, .filters input {
+        background: #333;
+        color: #ccc;
+        border: 1px solid #444;
+        padding: 4px 8px;
+        font-size: 13px;
+    }
+    .filters button {
+        background: #4fc3f7;
+        color: #111;
+        border: none;
+        padding: 5px 14px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+    .filters button:hover { background: #81d4fa; }
+
+    /* Table */
+    .content { padding: 10px 20px; }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+    th {
+        background: #2a2a2a;
+        color: #aaa;
+        text-align: left;
+        padding: 8px 10px;
+        border-bottom: 1px solid #444;
+        cursor: pointer;
+        user-select: none;
+    }
+    th:hover { color: #fff; }
+    td {
+        padding: 6px 10px;
+        border-bottom: 1px solid #2a2a2a;
+    }
+    tr:hover { background: #252525; }
+    tr.fresh td { border-left: 3px solid #4caf50; }
+    tr.recent td { border-left: 3px solid #ff9800; }
+    tr.old td { border-left: 3px solid #555; }
+
+    /* Detail panel */
+    .detail-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.8);
+        z-index: 100;
+        overflow-y: auto;
+    }
+    .detail-panel {
+        background: #1e1e1e;
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+        border: 1px solid #444;
+        border-radius: 4px;
+    }
+    .detail-panel h2 {
+        color: #e0e0e0;
+        margin-bottom: 10px;
+    }
+    .detail-close {
+        float: right;
+        background: #444;
+        color: #ccc;
+        border: none;
+        padding: 4px 12px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    .detail-close:hover { background: #666; }
+    .detail-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+    .detail-info div { color: #999; }
+    .detail-info span { color: #ccc; font-weight: bold; }
+
+    /* Grid */
+    .grid-container {
+        display: inline-block;
+        border: 1px solid #444;
+        margin: 10px 0;
+    }
+    .grid-row { display: flex; }
+    .grid-cell {
+        width: 28px;
+        height: 28px;
+        border: 1px solid #2a2a2a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        color: #666;
+    }
+    .grid-cell.empty { background: #1a1a1a; }
+    .grid-cell.crystal { background: #1a237e; }
+    .grid-cell.tiberium { background: #1b5e20; }
+    .grid-cell.unknown { background: #333; }
+
+    /* History */
+    .history { margin-top: 15px; }
+    .history h3 { color: #999; margin-bottom: 8px; font-size: 13px; }
+    .history-item {
+        font-size: 12px;
+        color: #777;
+        padding: 2px 0;
+    }
+
+    /* Faction colors */
+    .faction-gdi { color: #ffd600; }
+    .faction-nod { color: #f44336; }
+    .faction-for { color: #9e9e9e; }
+
+    /* Loading */
+    .loading { text-align: center; padding: 40px; color: #666; }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>⚔ Shockr Alliance Scanner</h1>
+    <div class="stats" id="stats">Loading...</div>
+</div>
+
+<div class="filters">
+    <div>
+        <label>World:</label>
+        <select id="filterWorld"><option value="">All</option></select>
+    </div>
+    <div>
+        <label>Min Level:</label>
+        <input type="number" id="filterLevel" min="1" max="65" value="" placeholder="any" style="width:60px">
+    </div>
+    <div>
+        <label>Age:</label>
+        <select id="filterAge">
+            <option value="1">< 1 hour</option>
+            <option value="6">< 6 hours</option>
+            <option value="24">< 24 hours</option>
+            <option value="168" selected>< 7 days</option>
+        </select>
+    </div>
+    <button onclick="loadBases()">🔍 Filter</button>
+    <button onclick="loadBases()" style="background:#66bb6a">↻ Refresh</button>
+</div>
+
+<div class="content">
+    <table id="baseTable">
+        <thead>
+            <tr>
+                <th data-sort="name">Name</th>
+                <th data-sort="owner">Owner</th>
+                <th data-sort="level_base">Base</th>
+                <th data-sort="level_off">Off</th>
+                <th data-sort="level_def">Def</th>
+                <th data-sort="faction">Faction</th>
+                <th data-sort="x">Coords</th>
+                <th data-sort="scanned_by">Scanner</th>
+                <th data-sort="scanned_at">Scanned</th>
+            </tr>
+        </thead>
+        <tbody id="baseBody">
+            <tr><td colspan="9" class="loading">Loading...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Detail overlay -->
+<div class="detail-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
+    <div class="detail-panel" id="detailPanel"></div>
+</div>
+
+<script>
+const API = '';  // relative — nginx proxies /shockr/ to /
+let allBases = [];
+let sortKey = 'scanned_at';
+let sortDir = -1;
+
+// ─── Base62 decoder ─────────────────────────────────────────
+const B62 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+const B62_SEP = '.';
+const B62_DEC = {};
+for (let i = 0; i < B62.length; i++) B62_DEC[B62.charCodeAt(i)] = i;
+
+function b62decode(str, offset = 0, max = 6) {
+    let mul = 1, val = 0, bytes = 0;
+    for (let i = 0; i < max; i++) {
+        bytes++;
+        const idx = offset + i;
+        if (idx >= str.length) break;
+        const code = str.charCodeAt(idx);
+        if (code === B62_SEP.charCodeAt(0)) break;
+        const cv = B62_DEC[code];
+        if (cv === undefined) break;
+        val += mul * cv;
+        mul *= 62;
+    }
+    return { value: val, bytes };
+}
+
+function b62unpack(str) {
+    const out = [];
+    let off = 0;
+    while (off < str.length) {
+        const { value, bytes } = b62decode(str, off);
+        out.push(value);
+        off += bytes;
+    }
+    return out;
+}
+
+// ─── Layout decoder ─────────────────────────────────────────
+function decodeTiles(tilesStr) {
+    if (!tilesStr || tilesStr === 'test') return null;
+    const rows = b62unpack(tilesStr);
+    const grid = [];
+    for (let y = 0; y < Math.min(rows.length, 16); y++) {
+        const row = [];
+        for (let x = 0; x < 9; x++) {
+            row.push((rows[y] >> (3 * x)) & 7);
+        }
+        grid.push(row);
+    }
+    return grid;
+}
+
+// ─── Faction names ──────────────────────────────────────────
+const FACTIONS = { 1: 'GDI', 2: 'NOD', 5: 'Forgotten' };
+function factionName(f) { return FACTIONS[f] || `F${f}`; }
+function factionClass(f) {
+    if (f === 1) return 'faction-gdi';
+    if (f === 2) return 'faction-nod';
+    return 'faction-for';
+}
+
+// ─── Resource type names ────────────────────────────────────
+const RES_TYPES = { 0: 'empty', 1: 'crystal', 2: 'tiberium' };
+function resClass(t) { return RES_TYPES[t] || 'unknown'; }
+
+// ─── Time formatting ────────────────────────────────────────
+function timeAgo(isoStr) {
+    const diff = Date.now() - new Date(isoStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+}
+
+function freshness(isoStr) {
+    const diff = Date.now() - new Date(isoStr).getTime();
+    if (diff < 3600000) return 'fresh';
+    if (diff < 21600000) return 'recent';
+    return 'old';
+}
+
+// ─── Load bases ─────────────────────────────────────────────
+async function loadBases() {
+    const world = document.getElementById('filterWorld').value;
+    const level = document.getElementById('filterLevel').value;
+    const age = document.getElementById('filterAge').value;
+
+    let url = `${API}/api/bases?max_age_hours=${age}`;
+    if (world) url += `&world_id=${world}`;
+    if (level) url += `&min_level=${level}`;
+
+    try {
+        const resp = await fetch(url);
+        const data = await resp.json();
+        allBases = data.bases || [];
+        renderTable();
+        updateStats();
+        updateWorldFilter();
+    } catch (e) {
+        document.getElementById('baseBody').innerHTML =
+            `<tr><td colspan="9" class="loading">Error: ${e.message}</td></tr>`;
+    }
+}
+
+function updateStats() {
+    const worlds = new Set(allBases.map(b => b.world_id));
+    const scanners = new Set(allBases.map(b => b.scanned_by));
+    document.getElementById('stats').textContent =
+        `${allBases.length} bases | ${worlds.size} world(s) | ${scanners.size} scanner(s)`;
+}
+
+function updateWorldFilter() {
+    const select = document.getElementById('filterWorld');
+    const current = select.value;
+    const worlds = [...new Set(allBases.map(b => b.world_id))].sort((a,b) => a-b);
+    select.innerHTML = '<option value="">All</option>' +
+        worlds.map(w => `<option value="${w}" ${w==current?'selected':''}>${w}</option>`).join('');
+}
+
+// ─── Render table ───────────────────────────────────────────
+function renderTable() {
+    const sorted = [...allBases].sort((a, b) => {
+        let av = a[sortKey], bv = b[sortKey];
+        if (typeof av === 'string') return sortDir * av.localeCompare(bv);
+        return sortDir * (av - bv);
+    });
+
+    const tbody = document.getElementById('baseBody');
+    if (sorted.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="loading">No bases found</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = sorted.map(b => `
+        <tr class="${freshness(b.scanned_at)}" onclick="openDetail(${b.city_id}, ${b.world_id})" style="cursor:pointer">
+            <td>${esc(b.name)}</td>
+            <td>${esc(b.owner)}</td>
+            <td>${b.level_base.toFixed(1)}</td>
+            <td>${b.level_off.toFixed(1)}</td>
+            <td>${b.level_def.toFixed(1)}</td>
+            <td class="${factionClass(b.faction)}">${factionName(b.faction)}</td>
+            <td>${b.x}:${b.y}</td>
+            <td>${esc(b.scanned_by)}</td>
+            <td title="${b.scanned_at}">${timeAgo(b.scanned_at)}</td>
+        </tr>
+    `).join('');
+}
+
+function esc(s) {
+    const d = document.createElement('div');
+    d.textContent = s || '';
+    return d.innerHTML;
+}
+
+// ─── Sorting ────────────────────────────────────────────────
+document.querySelectorAll('th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => {
+        const key = th.dataset.sort;
+        if (sortKey === key) sortDir *= -1;
+        else { sortKey = key; sortDir = key === 'scanned_at' ? -1 : 1; }
+        renderTable();
+    });
+});
+
+// ─── Detail view ────────────────────────────────────────────
+async function openDetail(cityId, worldId) {
+    const overlay = document.getElementById('detailOverlay');
+    const panel = document.getElementById('detailPanel');
+    panel.innerHTML = '<div class="loading">Loading...</div>';
+    overlay.style.display = 'block';
+
+    try {
+        const resp = await fetch(`${API}/api/base/${cityId}?world_id=${worldId}`);
+        const base = await resp.json();
+        renderDetail(base);
+    } catch (e) {
+        panel.innerHTML = `<p>Error: ${e.message}</p>`;
+    }
+}
+
+function closeDetail() {
+    document.getElementById('detailOverlay').style.display = 'none';
+}
+
+function renderDetail(b) {
+    const panel = document.getElementById('detailPanel');
+    const grid = decodeTiles(b.tiles);
+
+    let gridHtml = '';
+    if (grid) {
+        gridHtml = '<div class="grid-container">';
+        for (let y = 0; y < grid.length; y++) {
+            gridHtml += '<div class="grid-row">';
+            for (let x = 0; x < grid[y].length; x++) {
+                const t = grid[y][x];
+                gridHtml += `<div class="grid-cell ${resClass(t)}" title="(${x},${y}) type=${t}"></div>`;
+            }
+            gridHtml += '</div>';
+        }
+        gridHtml += '</div>';
+    } else {
+        gridHtml = '<p style="color:#666">No tile data available</p>';
+    }
+
+    let historyHtml = '';
+    if (b.history && b.history.length > 0) {
+        historyHtml = '<div class="history"><h3>Scan History (' + b.scan_count + ' scans)</h3>' +
+            b.history.map(h =>
+                `<div class="history-item">v${h.version} — ${esc(h.scanned_by)} — ${timeAgo(h.scanned_at)}</div>`
+            ).join('') + '</div>';
+    }
+
+    panel.innerHTML = `
+        <button class="detail-close" onclick="closeDetail()">✕</button>
+        <h2>${esc(b.name)}</h2>
+        <div class="detail-info">
+            <div>Owner: <span>${esc(b.owner)}</span></div>
+            <div>Alliance: <span>${esc(b.alliance) || '—'}</span></div>
+            <div>Faction: <span class="${factionClass(b.faction)}">${factionName(b.faction)}</span></div>
+            <div>Coords: <span>${b.x}:${b.y}</span></div>
+            <div>Base Level: <span>${b.level_base.toFixed(1)}</span></div>
+            <div>Offense: <span>${b.level_off.toFixed(1)}</span></div>
+            <div>Defense: <span>${b.level_def.toFixed(1)}</span></div>
+            <div>Version: <span>${b.version}</span></div>
+            <div>Scanned by: <span>${esc(b.scanned_by)}</span></div>
+            <div>Scanned: <span>${timeAgo(b.scanned_at)}</span></div>
+        </div>
+        <h3 style="color:#999;margin:10px 0 5px">Base Layout (9×16)</h3>
+        ${gridHtml}
+        ${historyHtml}
+    `;
+}
+
+// ─── Keyboard ───────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeDetail();
+});
+
+// ─── Init ───────────────────────────────────────────────────
+loadBases();
+</script>
+</body>
+</html>
