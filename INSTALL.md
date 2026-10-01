@@ -34,7 +34,7 @@ Tampermonkey is een browser-extensie die userscripts beheert.
 ### Controleren of het werkt
 
 - **CampTracker**: groene/gele genummerde markers bij camps op de wereldkaart
-- **KillInfo**: selecteer een Forgotten base → paneel `⚔ Plunder — <base>` verschijnt rechtsonder, boven het FG-def paneel
+- **KillInfo**: selecteer een Forgotten base en typ `/st plunder` → paneel `⚔ Plunder — <base>` verschijnt rechtsonder; nogmaals `/st plunder` of ✕ sluit het
 - **PlayerStatus**: alliance-bases op de kaart zijn groen (online), geel (away) of grijs (offline)
 
 ### Problemen?
@@ -94,7 +94,7 @@ Tampermonkey ist eine Browser-Erweiterung für Userscripts.
 ### Prüfen ob es funktioniert
 
 - **CampTracker**: grüne/gelbe nummerierte Markierungen bei Camps auf der Weltkarte
-- **KillInfo**: Forgotten-Basis auswählen → Panel `⚔ Plunder — <Basis>` erscheint unten rechts, über dem FG-def-Panel
+- **KillInfo**: Forgotten-Basis auswählen und `/st plunder` eingeben → Panel `⚔ Plunder — <Basis>` erscheint unten rechts; erneut `/st plunder` oder ✕ schließt es
 - **PlayerStatus**: Allianz-Basen auf der Karte sind grün (online), gelb (abwesend) oder grau (offline)
 
 ### Probleme?

@@ -9,7 +9,7 @@
 - **Security** — API key per alliance, Basic Auth on viewer, CORS restricted to game domain, container hardened (non-root, read-only fs, own network), timestamp validation
 
 ### Fixes
-- **KillInfo** rewritten as a plunder panel above the FG-def panel — pure GAMEDATA, no hover listeners or obfuscated-function discovery (fixes game crash from document-wide mouseover)
+- **KillInfo** rewritten as an on-demand plunder panel (`/st plunder`) — pure GAMEDATA, no polling, hover listeners or obfuscated-function discovery (fixes game crash from document-wide mouseover)
 - Validation: allow negative owner_id (FG bases) and faction values 3–8 (Forgotten variants)
 - CORS headers on scan endpoint for cross-origin POST from game client
 

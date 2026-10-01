@@ -88,6 +88,7 @@ export class LayoutScanner {
         if (!this.api.isConfigured) return;
 
         this._scanning = true;
+        window.__stScannerActive = true;
         const startTime = Date.now();
         let scanned = 0;
         let skipped = 0;
@@ -169,6 +170,7 @@ export class LayoutScanner {
                     ClientLib.Data.MainData.GetInstance().get_Cities().set_CurrentCityId(originalCityId);
                 } catch { /* ignore */ }
             }
+            window.__stScannerActive = false;
             this._scanning = false;
         }
     }

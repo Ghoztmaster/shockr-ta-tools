@@ -1,13 +1,12 @@
 /**
  * kill-info.js — plunder panel for the selected Forgotten base.
  *
- * Shows tiberium + crystal loot per defense unit in a fixed panel,
- * stacked directly above the FG-def panel (#mehrstrom-fgdef-panel).
- * The panel appears and disappears together with the FG-def panel.
+ * Toggled with `/st plunder`: shows tiberium + crystal loot per defense
+ * unit of the selected Forgotten base in a fixed panel (bottom right).
+ * The panel stays until closed via ✕ or another `/st plunder`.
  *
- * Pure GAMEDATA calculation — no obfuscated client functions, no
- * mouseover listeners, no MutationObservers. A single interval polls
- * the selection; output is only re-rendered when the base changes.
+ * Pure GAMEDATA calculation — no polling, no listeners on the game,
+ * no obfuscated client functions.
  *
  * Plunder per unit:
  *   gd     = GAMEDATA.units[unit.get_MdbUnitId()]
@@ -15,11 +14,9 @@
  *   costs  = gd.r[useLvl].rer (Forgotten) || gd.r[useLvl].rr (GDI/Nod)
  *   t:2 = Tiberium, t:6 = Crystal
  */
+import { chatMessage } from '../lib/main.js';
 
 const PANEL_ID = 'mehrstrom-killinfo-panel';
-const FGDEF_PANEL_ID = 'mehrstrom-fgdef-panel';
-const POLL_MS = 1000;
-const GAP_PX = 6;
 
 const RES_TIB = 2;
 const RES_CRY = 6;
@@ -31,62 +28,53 @@ const PLAYER_FACTIONS = [1, 2];
 const plunderCache = new Map();
 
 export class KillInfo {
-    constructor() {
+    constructor(config, cli) {
         this.name = 'KillInfo';
+        this.config = config;
+        this.cli = cli;
         this.running = false;
-        this._interval = null;
         this._panel = null;
-        this._lastKey = null;
+        this._content = null;
     }
 
     async start() {
         this.running = true;
-        this._interval = setInterval(() => this._tick(), POLL_MS);
+        this.cli.register('plunder', () => this.toggle());
     }
 
     stop() {
         this.running = false;
-        if (this._interval) {
-            clearInterval(this._interval);
-            this._interval = null;
-        }
         if (this._panel) {
             this._panel.remove();
             this._panel = null;
+            this._content = null;
         }
-        this._lastKey = null;
     }
 
-    /** One poll cycle: follow FG-def panel visibility and the selected base. */
-    _tick() {
-        try {
-            const fgdef = document.getElementById(FGDEF_PANEL_ID);
-            
-            const city = getSelectedForgottenCity();
-            if (!city) return this._hide();
-
-            const units = getDefenseUnits(city);
-            if (!units.length) return this._hide();
-
-            const panel = this._ensurePanel();
-            const key = `${city.get_Id()}:${city.get_Version()}:${units.length}`;
-            if (key !== this._lastKey) {
-                panel.innerHTML = renderPanel(city, units);
-                this._lastKey = key;
-            }
-
-            if (fgdef && isVisible(fgdef)) {
-                positionAbove(panel, fgdef);
-            } else {
-                 panel.style.right = '0px';
-                 panel.style.top = 'auto';
-                 panel.style.bottom = '40px';
-            }
-            panel.style.display = 'block';
-        } catch (e) {
-            console.warn('[ST] KillInfo: tick failed', e);
+    /** `/st plunder`: close the panel if open, otherwise show it for the selected FG base. */
+    toggle() {
+        if (this._isOpen()) {
             this._hide();
+            return;
         }
+
+        const city = getSelectedForgottenCity();
+        const units = city ? getDefenseUnits(city) : [];
+        if (!city || !units.length) {
+            chatMessage('[ST] Select a Forgotten base first');
+            return;
+        }
+
+        this._ensurePanel();
+        this._content.innerHTML = renderPanel(city, units);
+        this._panel.style.display = 'block';
+
+        const { tib, cry } = getTotals(city, units);
+        chatMessage(`[ST] Plunder: ${city.get_Name()} Lvl ${Math.floor(city.get_LvlBase())} — Tib ${fmt(tib)}, Crystal ${fmt(cry)}`);
+    }
+
+    _isOpen() {
+        return !!this._panel && this._panel.style.display !== 'none';
     }
 
     _hide() {
@@ -101,6 +89,8 @@ export class KillInfo {
         panel.style.cssText = `
             display: none;
             position: fixed;
+            right: 0px;
+            bottom: 40px;
             z-index: 9999;
             width: 360px;
             box-sizing: border-box;
@@ -111,10 +101,25 @@ export class KillInfo {
             padding: 8px 10px;
             font-family: 'Segoe UI', Tahoma, sans-serif;
             font-size: 12px;
-            pointer-events: none;
+            pointer-events: auto;
         `;
+
+        const close = document.createElement('div');
+        close.textContent = '✕';
+        close.title = 'Close';
+        close.style.cssText = 'position:absolute;top:4px;right:8px;cursor:pointer;color:#999;font-size:13px;line-height:1;';
+        close.addEventListener('click', () => this._hide());
+        close.addEventListener('mouseenter', () => { close.style.color = '#fff'; });
+        close.addEventListener('mouseleave', () => { close.style.color = '#999'; });
+
+        const content = document.createElement('div');
+        content.style.paddingRight = '14px';  // keep header clear of ✕
+
+        panel.appendChild(close);
+        panel.appendChild(content);
         document.body.appendChild(panel);
         this._panel = panel;
+        this._content = content;
         return panel;
     }
 }
@@ -226,17 +231,17 @@ function renderPanel(city, units) {
     return html;
 }
 
-/** Pin the panel directly above the FG-def panel, right-aligned with it. */
-function positionAbove(panel, anchor) {
-    const rect = anchor.getBoundingClientRect();
-    panel.style.right = Math.max(0, window.innerWidth - rect.right) + 'px';
-    panel.style.bottom = (window.innerHeight - rect.top + GAP_PX) + 'px';
-}
-
-function isVisible(el) {
-    if (!el) return false;
-    const style = getComputedStyle(el);
-    return style.display !== 'none' && style.visibility !== 'hidden' && el.getClientRects().length > 0;
+/** Total plunder over all defense units of a city. */
+function getTotals(city, units) {
+    const forgotten = !PLAYER_FACTIONS.includes(city.get_CityFaction());
+    let tib = 0, cry = 0;
+    for (const unit of units) {
+        const plunder = getPlunder(unit.get_MdbUnitId(), unit.get_CurrentLevel(), forgotten);
+        if (!plunder) continue;
+        tib += plunder.tib;
+        cry += plunder.cry;
+    }
+    return { tib, cry };
 }
 
 function fmt(n) {
