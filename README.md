@@ -1,87 +1,82 @@
-# Shockr TA Tools v5.0.0
+# Shockr TA Tools
 
-**NL:** Shockr TA Tools — hersteld en uitgebreid. Camp tracker, kill info, speler-status en alliance-verkenning voor C&C Tiberium Alliances.
+**NL:** Camp tracker, kill info, speler-status en alliance-verkenning voor C&C Tiberium Alliances.
 
-**DE:** Shockr TA Tools — repariert und erweitert. Camp-Tracker, Kill-Info, Spieler-Status und Allianz-Aufklärung für C&C Tiberium Alliances.
+**DE:** Camp-Tracker, Kill-Info, Spieler-Status und Allianz-Aufklärung für C&C Tiberium Alliances.
 
 ---
 
-## Features
+## What is this?
 
-### CampTracker
-Numbered markers on the world map for nearby camps and outposts, sorted by newest. Configurable size, font, level filter, and count. Chat alerts when new camps/outposts spawn.
+A Tampermonkey userscript for [C&C Tiberium Alliances](https://www.tiberiumalliances.com/) that adds:
 
-### KillInfo
-Plunder value tooltip when hovering over defense units in battle view. Shows repair cost (Tiberium + Crystal) = what you gain by destroying the unit.
+- **CampTracker** — numbered markers on the world map for nearby camps, outposts and bases, with chat alerts and clickable coordinates
+- **KillInfo** — plunder value tooltip in battle view (tiberium + crystal per unit)
+- **PlayerStatus** — alliance base colors by online status (green/yellow/red/grey, own bases cyan)
+- **LayoutScanner** — scan nearby FG base layouts and upload to a shared alliance server
 
-### PlayerStatus
-Alliance bases colored by online status on the world map:
-- 🟢 **Online** — bright green
-- 🟡 **Away** — amber
-- ⚫ **Offline** — dark grey
-- 🔴 **Foe** — red
-- 🔵 **Own bases** — cyan
+All features work offline — no external API dependency. The optional scanner uploads to your own self-hosted server.
 
-Refreshes every 30 seconds.
+This is a clean-room rebuild of the original [Shockr Tools](https://shockr.dev) (v4.5.3.6, NetquiK fork), which stopped working after the shockr.dev API went offline.
 
 ## Installation
 
-1. Install [Tampermonkey](https://www.tampermonkey.net/) in your browser
-2. Download [`dist/shockr-ta-tools.user.js`](dist/shockr-ta-tools.user.js) from this repo
-3. Open the file — Tampermonkey will offer to install it
-4. Reload the game
+See [INSTALL_GUIDE.md](INSTALL_GUIDE.md) for step-by-step instructions (NL + DE).
 
-**Check:** open the browser console (F12) — you should see `[ST] v5.0.0 loaded — 3/3 plugins active`.
+Quick version:
 
-## Configuration
+1. Install [Tampermonkey](https://www.tampermonkey.net/)
+2. Open `dist/shockr-ta-tools.user.js` → click "Install"
+3. Reload the game
 
-Use `/st` commands in the in-game chat (only visible to you):
+## Chat Commands
+
+All configuration via in-game chat:
 
 | Command | Description |
 |---------|-------------|
-| `/st help` | List all commands |
-| `/st version` | Show script version |
+| `/st help` | Show available commands |
+| `/st status` | Show plugin status |
 | `/st plugin enable <name>` | Enable a plugin |
 | `/st plugin disable <name>` | Disable a plugin |
-| `/st config set <key> <value>` | Set a config value |
 | `/st config list` | Show all config values |
+| `/st config set <key> <value>` | Set a config value |
 
-### CampTracker config keys
+### Scanner Setup (optional)
 
-| Key | Default | Description |
-|-----|---------|-------------|
-| `camptracker.size` | 24 | Marker size in pixels |
-| `camptracker.font` | Iosevka Term | Font family |
-| `camptracker.fontsize` | 20 | Font size in pixels |
-| `camptracker.offense` | -1 | Level filter: hide camps below main offense + this value |
-| `camptracker.count` | 10 | Max markers shown |
-| `camptracker.alert` | true | Chat alert on new spawns |
+```
+/st plugin enable LayoutScanner
+/st config set api.url https://your-server.com/shockr
+/st config set api.key YOUR_API_KEY
+/st scan
+```
 
-## Building from source
+## Alliance Scanner Server
+
+The `server/` directory contains a self-hosted FastAPI backend that receives and stores base scans. See [docs/DEPLOY.md](docs/DEPLOY.md) for deployment and [docs/SECURITY.md](docs/SECURITY.md) for the security design.
+
+Features:
+- JSONL storage per world, per alliance
+- API key auth (bcrypt hashed) for scan uploads
+- Basic Auth for the web viewer
+- Base list with sorting, filtering, color-coded freshness
+- Base detail: 9×16 resource grid, defense/offense units, scan history
+- Rate limiting, payload validation, container hardening
+
+## Build from Source
 
 ```bash
 npm install
 node build.js
+# Output: dist/shockr-ta-tools.user.js
 ```
-
-Output: `dist/shockr-ta-tools.user.js`
-
-## Compatibility
-
-- Tested on game version 26.1 (Perforce 576232)
-- Works alongside MaelstromTools, MehrStrom, CnCTAOpt, TAMap, and other common TA scripts
-- Requires no server — all features run locally in the browser
 
 ## Credits
 
-- **Shockr** — original author (contact@shockr.dev)
-- **NetquiK [SoO]** — maintained fork, regex fixes
-- **Ghozt [SoO]** — v5.0.0 rebuild, fingerprint-based patching, ongoing maintenance
+- **Shockr** — original author
+- **NetquiK [SoO]** — maintained fork
+- **Ghozt [SoO]** — rebuild (v5.0.0+), alliance scanner
 
 ## License
 
 MIT — see [LICENSE](LICENSE).
-
-## Roadmap
-
-See [ROADMAP.md](ROADMAP.md) for planned features including the alliance scanner and online base viewer.

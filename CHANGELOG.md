@@ -1,13 +1,37 @@
 # Changelog
 
-## [Unreleased]
-- Repository setup, project plan, issue audit
-- Original Shockr Tools v4.5.3.6 (NetquiK fork) archived in `legacy/`
+## v5.1.0 — 2026-10-01
 
-## History
+### Alliance Scanner
+- **Scanner backend** — FastAPI server receives and stores base scans (JSONL per world, bcrypt API key auth, rate limiting, Pydantic validation)
+- **Layout Scanner plugin** — scans nearby FG bases/camps/outposts and POSTs to the alliance server; runs on idle or via `/st scan`
+- **Alliance website** — base list with sorting, filtering (world, type, level, age), color-coded freshness; base detail with 9×16 resource grid, defense/offense units with levels and positions, scan history
+- **Security** — API key per alliance, Basic Auth on viewer, CORS restricted to game domain, container hardened (non-root, read-only fs, own network), timestamp validation
 
-### v4.5.3.6 (NetquiK fork)
-- Last known working version of the original Shockr Tools
-- Fixed regex patterns for updated game client
-- Disabled `install.track` API call
-- shockr.dev API no longer online — scanner features non-functional
+### Fixes
+- Validation: allow negative owner_id (FG bases) and faction values 3–8 (Forgotten variants)
+- CORS headers on scan endpoint for cross-origin POST from game client
+
+## v5.0.0 — 2026-09-30
+
+### Complete rebuild from Shockr Tools v4.5.3.6
+
+All shockr.dev API dependencies removed. Script works fully offline.
+
+### Plugins
+- **CampTracker** — numbered markers on the world map for nearby FG camps/outposts/bases; configurable size, font, alert threshold; chat alerts with clickable coordinates
+- **KillInfo** — plunder tooltip in battle view showing tib/crystal loot per unit
+- **PlayerStatus** — alliance base colors by online status (green/yellow/red/grey); own bases cyan
+
+### Infrastructure
+- **ClientLib Patcher** — fingerprint-based patching (10 patterns verified against Perforce 576232 / game v26.1); self-healing on client updates; chat alert on patch failure
+- **CLI** — `/st help`, `/st config`, `/st plugin enable/disable`
+- **Config** — localStorage-based, per-plugin settings
+- **Idle Detect** — 20-minute inactivity tracking
+- **BugFixer** — patches qooxdoo `_onNativeUnload` to prevent page unload errors
+- **Build** — esbuild single-file bundle with Tampermonkey header
+
+### Credits
+- Original: Shockr (shockr.dev)
+- Fork: NetquiK [SoO] (v4.5.3.6)
+- Rebuild: Ghozt [SoO] (v5.0.0+)
