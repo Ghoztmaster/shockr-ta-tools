@@ -92,7 +92,7 @@
     }
     .detail-panel {
         background: #1e1e1e;
-        max-width: 800px;
+        max-width: 900px;
         margin: 40px auto;
         padding: 20px;
         border: 1px solid #444;
@@ -101,6 +101,11 @@
     .detail-panel h2 {
         color: #e0e0e0;
         margin-bottom: 10px;
+    }
+    .detail-panel h3 {
+        color: #999;
+        margin: 15px 0 8px;
+        font-size: 13px;
     }
     .detail-close {
         float: right;
@@ -136,16 +141,39 @@
         align-items: center;
         justify-content: center;
         font-size: 9px;
-        color: #666;
+        color: rgba(255,255,255,0.6);
+        position: relative;
     }
     .grid-cell.empty { background: #1a1a1a; }
     .grid-cell.crystal { background: #1a237e; }
     .grid-cell.tiberium { background: #1b5e20; }
     .grid-cell.unknown { background: #333; }
+    .grid-cell.has-unit {
+        outline: 2px solid #ff9800;
+        outline-offset: -2px;
+        z-index: 1;
+    }
+
+    /* Unit list */
+    .unit-section { margin-top: 10px; }
+    .unit-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 4px;
+    }
+    .unit-item {
+        background: #252525;
+        padding: 4px 8px;
+        font-size: 12px;
+        border-left: 3px solid #666;
+    }
+    .unit-item.def { border-left-color: #4fc3f7; }
+    .unit-item.off { border-left-color: #f44336; }
+    .unit-level { color: #ff9800; font-weight: bold; }
+    .unit-pos { color: #666; font-size: 11px; }
 
     /* History */
     .history { margin-top: 15px; }
-    .history h3 { color: #999; margin-bottom: 8px; font-size: 13px; }
     .history-item {
         font-size: 12px;
         color: #777;
@@ -156,6 +184,20 @@
     .faction-gdi { color: #ffd600; }
     .faction-nod { color: #f44336; }
     .faction-for { color: #9e9e9e; }
+
+    /* Alliance overview */
+    .overview {
+        background: #222;
+        border-bottom: 1px solid #333;
+        padding: 8px 20px;
+        display: flex;
+        gap: 20px;
+        font-size: 12px;
+        color: #777;
+        flex-wrap: wrap;
+    }
+    .overview-item { display: flex; gap: 5px; }
+    .overview-item strong { color: #aaa; }
 
     /* Loading */
     .loading { text-align: center; padding: 40px; color: #666; }
@@ -168,10 +210,21 @@
     <div class="stats" id="stats">Loading...</div>
 </div>
 
+<div id="overview" class="overview" style="display:none"></div>
+
 <div class="filters">
     <div>
         <label>World:</label>
         <select id="filterWorld"><option value="">All</option></select>
+    </div>
+    <div>
+        <label>Type:</label>
+        <select id="filterType">
+            <option value="">All</option>
+            <option value="Camp">Camp</option>
+            <option value="Outpost">Outpost</option>
+            <option value="Base">Base</option>
+        </select>
     </div>
     <div>
         <label>Min Level:</label>
@@ -180,10 +233,10 @@
     <div>
         <label>Age:</label>
         <select id="filterAge">
-            <option value="1">< 1 hour</option>
-            <option value="6">< 6 hours</option>
-            <option value="24">< 24 hours</option>
-            <option value="168" selected>< 7 days</option>
+            <option value="1">&lt; 1 hour</option>
+            <option value="6">&lt; 6 hours</option>
+            <option value="24">&lt; 24 hours</option>
+            <option value="168" selected>&lt; 7 days</option>
         </select>
     </div>
     <button onclick="loadBases()">🔍 Filter</button>
@@ -217,7 +270,7 @@
 </div>
 
 <script>
-const API = '.';  // relative to current path
+const API = '.';
 let allBases = [];
 let sortKey = 'scanned_at';
 let sortDir = -1;
@@ -246,6 +299,7 @@ function b62decode(str, offset = 0, max = 6) {
 }
 
 function b62unpack(str) {
+    if (!str) return [];
     const out = [];
     let off = 0;
     while (off < str.length) {
@@ -271,8 +325,21 @@ function decodeTiles(tilesStr) {
     return grid;
 }
 
+// ─── Unit decoder ───────────────────────────────────────────
+// UnitPacker format: { xy: 8 bits, id: 9 bits, level: 7 bits }
+function decodeUnits(unitStr) {
+    if (!unitStr) return [];
+    const packed = b62unpack(unitStr);
+    return packed.map(n => {
+        const xy = n & 0xFF;
+        const id = (n >> 8) & 0x1FF;
+        const level = (n >> 17) & 0x7F;
+        return { x: xy % 9, y: Math.floor(xy / 9), id, level };
+    });
+}
+
 // ─── Faction names ──────────────────────────────────────────
-const FACTIONS = { 1: 'GDI', 2: 'NOD', 5: 'Forgotten' };
+const FACTIONS = { 1: 'GDI', 2: 'NOD', 3: 'Forgotten', 5: 'Forgotten', 6: 'Fortress' };
 function factionName(f) { return FACTIONS[f] || `F${f}`; }
 function factionClass(f) {
     if (f === 1) return 'faction-gdi';
@@ -286,8 +353,10 @@ function resClass(t) { return RES_TYPES[t] || 'unknown'; }
 
 // ─── Time formatting ────────────────────────────────────────
 function timeAgo(isoStr) {
+    if (!isoStr) return '—';
     const diff = Date.now() - new Date(isoStr).getTime();
     const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'just now';
     if (mins < 60) return `${mins}m ago`;
     const hrs = Math.floor(mins / 60);
     if (hrs < 24) return `${hrs}h ago`;
@@ -295,6 +364,7 @@ function timeAgo(isoStr) {
 }
 
 function freshness(isoStr) {
+    if (!isoStr) return 'old';
     const diff = Date.now() - new Date(isoStr).getTime();
     if (diff < 3600000) return 'fresh';
     if (diff < 21600000) return 'recent';
@@ -306,6 +376,7 @@ async function loadBases() {
     const world = document.getElementById('filterWorld').value;
     const level = document.getElementById('filterLevel').value;
     const age = document.getElementById('filterAge').value;
+    const type = document.getElementById('filterType').value;
 
     let url = `${API}/api/bases?max_age_hours=${age}`;
     if (world) url += `&world_id=${world}`;
@@ -321,17 +392,25 @@ async function loadBases() {
         renderTable();
         updateStats();
         updateWorldFilter();
+        updateOverview();
     } catch (e) {
         document.getElementById('baseBody').innerHTML =
             `<tr><td colspan="9" class="loading">Error: ${e.message}</td></tr>`;
     }
 }
 
+function getFilteredBases() {
+    const type = document.getElementById('filterType').value;
+    if (!type) return allBases;
+    return allBases.filter(b => (b.name || '').toLowerCase().includes(type.toLowerCase()));
+}
+
 function updateStats() {
-    const worlds = new Set(allBases.map(b => b.world_id));
-    const scanners = new Set(allBases.map(b => b.scanned_by));
+    const bases = getFilteredBases();
+    const worlds = new Set(bases.map(b => b.world_id));
+    const scanners = new Set(bases.map(b => b.scanned_by));
     document.getElementById('stats').textContent =
-        `${allBases.length} bases | ${worlds.size} world(s) | ${scanners.size} scanner(s)`;
+        `${bases.length} bases | ${worlds.size} world(s) | ${scanners.size} scanner(s)`;
 }
 
 function updateWorldFilter() {
@@ -345,12 +424,50 @@ function updateWorldFilter() {
         }).join('');
 }
 
+function updateOverview() {
+    const el = document.getElementById('overview');
+    if (allBases.length === 0) { el.style.display = 'none'; return; }
+
+    // Per scanner
+    const scannerCounts = {};
+    for (const b of allBases) {
+        const s = b.scanned_by || '?';
+        scannerCounts[s] = (scannerCounts[s] || 0) + 1;
+    }
+
+    // Type counts
+    const typeCounts = { Camp: 0, Outpost: 0, Base: 0, Other: 0 };
+    for (const b of allBases) {
+        const name = (b.name || '').toLowerCase();
+        if (name.includes('camp')) typeCounts.Camp++;
+        else if (name.includes('outpost')) typeCounts.Outpost++;
+        else if (name.includes('base')) typeCounts.Base++;
+        else typeCounts.Other++;
+    }
+
+    let html = '';
+    html += `<div class="overview-item"><strong>Types:</strong> ${typeCounts.Camp} camps, ${typeCounts.Outpost} outposts, ${typeCounts.Base} bases`;
+    if (typeCounts.Other > 0) html += `, ${typeCounts.Other} other`;
+    html += '</div>';
+
+    html += '<div class="overview-item"><strong>Scanners:</strong> ';
+    html += Object.entries(scannerCounts)
+        .sort((a,b) => b[1] - a[1])
+        .map(([name, count]) => `${name} (${count})`)
+        .join(', ');
+    html += '</div>';
+
+    el.innerHTML = html;
+    el.style.display = 'flex';
+}
+
 // ─── Render table ───────────────────────────────────────────
 function renderTable() {
-    const sorted = [...allBases].sort((a, b) => {
+    const filtered = getFilteredBases();
+    const sorted = [...filtered].sort((a, b) => {
         let av = a[sortKey], bv = b[sortKey];
         if (typeof av === 'string') return sortDir * av.localeCompare(bv);
-        return sortDir * (av - bv);
+        return sortDir * ((av || 0) - (bv || 0));
     });
 
     const tbody = document.getElementById('baseBody');
@@ -373,6 +490,12 @@ function renderTable() {
         </tr>
     `).join('');
 }
+
+// Type filter triggers re-render without reload
+document.getElementById('filterType').addEventListener('change', () => {
+    renderTable();
+    updateStats();
+});
 
 function esc(s) {
     const d = document.createElement('div');
@@ -413,7 +536,16 @@ function closeDetail() {
 function renderDetail(b) {
     const panel = document.getElementById('detailPanel');
     const grid = decodeTiles(b.tiles);
+    const defUnits = decodeUnits(b.defense_units);
+    const offUnits = decodeUnits(b.offense_units);
 
+    // Build a lookup of unit positions for grid overlay
+    const unitPositions = new Set();
+    for (const u of [...defUnits, ...offUnits]) {
+        unitPositions.add(`${u.x},${u.y}`);
+    }
+
+    // Grid HTML
     let gridHtml = '';
     if (grid) {
         gridHtml = '<div class="grid-container">';
@@ -421,7 +553,8 @@ function renderDetail(b) {
             gridHtml += '<div class="grid-row">';
             for (let x = 0; x < grid[y].length; x++) {
                 const t = grid[y][x];
-                gridHtml += `<div class="grid-cell ${resClass(t)}" title="(${x},${y}) type=${t}"></div>`;
+                const hasUnit = unitPositions.has(`${x},${y}`) ? ' has-unit' : '';
+                gridHtml += `<div class="grid-cell ${resClass(t)}${hasUnit}" title="(${x},${y}) type=${t}"></div>`;
             }
             gridHtml += '</div>';
         }
@@ -430,6 +563,29 @@ function renderDetail(b) {
         gridHtml = '<p style="color:#666">No tile data available</p>';
     }
 
+    // Defense units
+    let defHtml = '';
+    if (defUnits.length > 0) {
+        defHtml = `<h3>🛡 Defense Units (${defUnits.length})</h3><div class="unit-grid">` +
+            defUnits.map(u =>
+                `<div class="unit-item def">` +
+                `ID ${u.id} <span class="unit-level">Lv${u.level}</span> ` +
+                `<span class="unit-pos">(${u.x},${u.y})</span></div>`
+            ).join('') + '</div>';
+    }
+
+    // Offense units
+    let offHtml = '';
+    if (offUnits.length > 0) {
+        offHtml = `<h3>⚔ Offense Units (${offUnits.length})</h3><div class="unit-grid">` +
+            offUnits.map(u =>
+                `<div class="unit-item off">` +
+                `ID ${u.id} <span class="unit-level">Lv${u.level}</span> ` +
+                `<span class="unit-pos">(${u.x},${u.y})</span></div>`
+            ).join('') + '</div>';
+    }
+
+    // History
     let historyHtml = '';
     if (b.history && b.history.length > 0) {
         historyHtml = '<div class="history"><h3>Scan History (' + b.scan_count + ' scans)</h3>' +
@@ -453,8 +609,10 @@ function renderDetail(b) {
             <div>Scanned by: <span>${esc(b.scanned_by)}</span></div>
             <div>Scanned: <span>${timeAgo(b.scanned_at)}</span></div>
         </div>
-        <h3 style="color:#999;margin:10px 0 5px">Base Layout (9×16)</h3>
+        <h3>Base Layout (9×16)</h3>
         ${gridHtml}
+        ${defHtml}
+        ${offHtml}
         ${historyHtml}
     `;
 }
