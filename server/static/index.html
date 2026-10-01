@@ -339,7 +339,7 @@ function decodeUnits(unitStr) {
 }
 
 // ─── Faction names ──────────────────────────────────────────
-const FACTIONS = { 1: 'GDI', 2: 'NOD', 3: 'Forgotten', 5: 'Forgotten', 6: 'Fortress' };
+const FACTIONS = { 1: 'GDI', 2: 'NOD', 3: 'Forgotten', 5: 'Forgotten', 6: 'Forgotten' };
 function factionName(f) { return FACTIONS[f] || `F${f}`; }
 function factionClass(f) {
     if (f === 1) return 'faction-gdi';
