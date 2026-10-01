@@ -5,6 +5,18 @@
 ### Planning
 - Roadmap: Fase 6 toegevoegd — Repair Guard, Upgrade Calculator, Alliance War Dashboard
 
+## v5.2.0 — 2026-10-01
+
+### Repair Guard
+- **RepairGuard plugin** — blocks "Repair All" / bulk repair so units are not fully repaired by accident (saves crystal on Forgotten Attack worlds); per-unit repair keeps working
+- Off by default; toggle with `/st plugin enable|disable repair-guard`, chat message on activation and on a blocked attempt
+- Blocks `RepairAll*` client functions (aliases found by reference, no obfuscated names) with a qooxdoo button-text fallback — no DOM observers or document-wide listeners
+
+### CLI
+- `/st status` — shows every plugin's on/off state (plus Repair Guard details)
+- `/st plugin` accepts hyphenated names (`repair-guard` = `RepairGuard`)
+- Plugins can default to disabled (`defaultEnabled = false`)
+
 ## v5.1.0 — 2026-10-01
 
 ### Alliance Scanner

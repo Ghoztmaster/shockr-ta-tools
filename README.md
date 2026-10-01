@@ -14,6 +14,7 @@ A Tampermonkey userscript for [C&C Tiberium Alliances](https://www.tiberiumallia
 - **KillInfo** — plunder panel for the selected Forgotten base (tiberium + crystal per unit and total), toggled with `/st plunder`
 - **PlayerStatus** — alliance base colors by online status (green/yellow/red/grey, own bases cyan)
 - **LayoutScanner** — scan nearby FG base layouts and upload to a shared alliance server
+- **RepairGuard** — blocks "Repair All" so you don't fully repair by accident (saves crystal on Forgotten Attack worlds); per-unit repair keeps working. Off by default — `/st plugin enable repair-guard`
 
 All features work offline — no external API dependency. The optional scanner uploads to your own self-hosted server.
 
