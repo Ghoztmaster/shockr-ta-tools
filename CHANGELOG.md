@@ -8,8 +8,9 @@
 ## [5.3.0] — 2026-10-01
 
 ### Upgrade Calculator
-- **UpgradeCalc plugin** — panel (`/st upgradecalc`) listing every building of the current own city that is not max level, with the Tiberium + Power cost of the next level and the time to save up for it at the current production rate (incl. packages and POI), fastest first; "Gereed" when you already have enough
-- Recalculates when you switch city and refreshes every 30 s while open; closed by default
+- **UpgradeCalc plugin** — panel listing every building of the current own city that is not max level, with the Tiberium + Power cost of the next level and the time to save up for it at the current production rate (incl. packages and POI), fastest first; "Gereed" when you already have enough
+- Off by default — `/st plugin enable upgradecalc`; while enabled a floating "UC" button appears on the right when you view one of your own bases (hidden on the world map and on enemy/Forgotten bases), click toggles the panel
+- Switching base closes the panel (recalculated on the next click); refreshes every 30 s while open
 - Pure client-side (`GetTechLevelResourceRequirements_Obj` + city resource getters) — no fetch, no document-wide listeners
 
 ## v5.2.0 — 2026-10-01

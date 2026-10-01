@@ -103,7 +103,7 @@ Alliance website live.
 - [x] `plugins/upgrade-calc.js` — leest upgrade-kosten per gebouw/level via `GetTechLevelResourceRequirements_Obj` (client-side)
 - [x] Leest huidige productiesnelheid live uit ClientLib
 - [x] Toont: "gebouw X naar level Y kost Z resources, duurt N uur sparen bij huidig tempo"
-- [x] Paneel in-game, toggle via `/st upgradecalc`
+- [x] Paneel in-game via "UC"-knop in de base-view (plugin aan via `/st plugin enable upgradecalc`)
 - Puur client-side, geen server nodig
 
 ### 6c — Alliance War Dashboard 🔲

@@ -15,7 +15,7 @@ A Tampermonkey userscript for [C&C Tiberium Alliances](https://www.tiberiumallia
 - **PlayerStatus** — alliance base colors by online status (green/yellow/red/grey, own bases cyan)
 - **LayoutScanner** — scan nearby FG base layouts and upload to a shared alliance server
 - **RepairGuard** — blocks "Repair All" so you don't fully repair by accident (saves crystal on Forgotten Attack worlds); per-unit repair keeps working. Off by default — `/st plugin enable repair-guard`
-- **UpgradeCalc** — upgrade panel for your current base: next-level Tiberium + Power cost per building and how long it takes to save up at your current production (fastest first), toggled with `/st upgradecalc`
+- **UpgradeCalc** — upgrade panel for your current base: next-level Tiberium + Power cost per building and how long it takes to save up at your current production (fastest first), opened with the "UC" button on your own base. Off by default — `/st plugin enable upgradecalc`
 
 All features work offline — no external API dependency. The optional scanner uploads to your own self-hosted server.
 
@@ -40,7 +40,6 @@ All configuration via in-game chat:
 | `/st help` | Show available commands |
 | `/st status` | Show plugin status |
 | `/st plunder` | Toggle the plunder panel for the selected Forgotten base |
-| `/st upgradecalc` | Toggle the upgrade calculator panel for your current base |
 | `/st plugin enable <name>` | Enable a plugin |
 | `/st plugin disable <name>` | Disable a plugin |
 | `/st config list` | Show all config values |

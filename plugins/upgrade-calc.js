@@ -1,12 +1,19 @@
 /**
  * upgrade-calc.js — upgrade cost + saving time per building of the current own city.
  *
- * Toggled with `/st upgradecalc`: shows every building that is not max level
- * with the cost of its next level and how long it takes to save up for it at
- * the current production rate (fastest first). Closed by default.
+ * Off by default — `/st plugin enable upgradecalc`. While enabled, a floating
+ * "UC" button sits on the right side of the screen whenever you view one of
+ * your own bases (hidden on the world map and on enemy/Forgotten bases).
+ * Clicking it toggles a panel with every building that is not max level, the
+ * cost of its next level and how long it takes to save up for it at the
+ * current production rate (fastest first).
  *
- * Pure client-side — no fetch, no document-wide listeners. While the panel is
- * open a light interval watches for a city switch and refreshes the numbers.
+ * The button floats instead of being injected into the game's own base-view
+ * button bar: that bar is a qooxdoo widget without a stable, readable handle.
+ *
+ * Pure client-side — no fetch, no document-wide listeners. A 1 s timer reads
+ * two getters (view mode + viewed city) to show/hide the button; switching
+ * base closes the panel. While the panel is open it refreshes every 30 s.
  *
  * Data paths (verified in the F12 console):
  *   city  = MainData.get_Cities().get_CurrentOwnCity()
@@ -19,83 +26,91 @@
  *   stock = city.GetResourceCount(type)
  *   rate  = city.GetResourceGrowPerHour(type, true, true)   — incl. package + POI
  */
-import { chatMessage } from '../lib/main.js';
-
 const PANEL_ID = 'st-upgradecalc-panel';
+const BUTTON_ID = 'st-upgradecalc-button';
 
 const RES_TIB = 1;
 const RES_POWER = 5;
 
-/** How often the open panel checks for a city switch / refreshes the numbers. */
-const WATCH_INTERVAL_MS = 2000;
+/** How often the button checks whether an own base is in view. */
+const VIEW_CHECK_INTERVAL_MS = 1000;
+/** How often the open panel refreshes stock/production/time. */
 const REFRESH_INTERVAL_MS = 30000;
 
 export class UpgradeCalc {
-    constructor(config, cli) {
+    constructor(config) {
         this.name = 'UpgradeCalc';
+        this.defaultEnabled = false;
         this.config = config;
-        this.cli = cli;
         this.running = false;
         this._panel = null;
         this._content = null;
-        this._timer = null;
-        this._cityId = null;
-        this._lastRender = 0;
+        this._button = null;
+        this._viewTimer = null;
+        this._refreshTimer = null;
+        this._viewKey = null;
     }
 
     async start() {
         this.running = true;
-        this.cli.register('upgradecalc', () => this.toggle());
+        this._ensureButton();
+        this._checkView();
+        this._viewTimer = setInterval(() => this._checkView(), VIEW_CHECK_INTERVAL_MS);
     }
 
     stop() {
         this.running = false;
         this._hide();
-        if (this._panel) {
-            this._panel.remove();
-            this._panel = null;
-            this._content = null;
+        if (this._viewTimer) {
+            clearInterval(this._viewTimer);
+            this._viewTimer = null;
         }
+        for (const el of [this._panel, this._button]) {
+            if (el) el.remove();
+        }
+        this._panel = null;
+        this._content = null;
+        this._button = null;
+        this._viewKey = null;
     }
 
     /** One-line status for `/st status`. */
     statusText() {
-        return this._isOpen() ? 'paneel open' : 'paneel dicht (/st upgradecalc)';
+        if (!this.running) return '/st plugin enable upgradecalc';
+        return this._isOpen() ? 'knop in base-view, paneel open' : 'knop in base-view';
     }
 
-    /** `/st upgradecalc`: close the panel if open, otherwise show it for the current own city. */
+    /** Button click: close the panel if open, otherwise show it for the current own city. */
     toggle() {
         if (this._isOpen()) {
             this._hide();
             return;
         }
 
-        const city = getCurrentOwnCity();
-        if (!city) {
-            chatMessage('[ST] Upgrade Calculator: geen eigen stad geselecteerd');
-            return;
-        }
+        const city = getViewedOwnCity();
+        if (!city) return;
 
         this._ensurePanel();
         this._render(city);
         this._panel.style.display = 'block';
-        this._timer = setInterval(() => this._tick(), WATCH_INTERVAL_MS);
+        this._refreshTimer = setInterval(() => {
+            const current = getViewedOwnCity();
+            if (current) this._render(current);
+        }, REFRESH_INTERVAL_MS);
     }
 
-    /** Re-render on a city switch, and periodically so stock/time stay current. */
-    _tick() {
-        if (!this._isOpen()) return;
-        const city = getCurrentOwnCity();
-        if (!city) return;
-        const switched = city.get_Id() !== this._cityId;
-        if (switched || Date.now() - this._lastRender >= REFRESH_INTERVAL_MS) {
-            this._render(city);
+    /** Show the button only on own bases; close the panel when the view/base changes. */
+    _checkView() {
+        const city = getViewedOwnCity();
+        const key = city ? String(city.get_Id()) : null;
+        if (key !== this._viewKey) {
+            this._viewKey = key;
+            this._hide();
         }
+        if (this._button) this._button.style.display = city ? 'block' : 'none';
     }
 
     _render(city) {
-        this._cityId = city.get_Id();
-        this._lastRender = Date.now();
         try {
             this._content.innerHTML = renderPanel(city, getUpgradeRows(city));
         } catch (err) {
@@ -109,11 +124,49 @@ export class UpgradeCalc {
     }
 
     _hide() {
-        if (this._timer) {
-            clearInterval(this._timer);
-            this._timer = null;
+        if (this._refreshTimer) {
+            clearInterval(this._refreshTimer);
+            this._refreshTimer = null;
         }
         if (this._panel) this._panel.style.display = 'none';
+    }
+
+    _ensureButton() {
+        if (this._button && document.body.contains(this._button)) return this._button;
+
+        const top = this.config.get('UpgradeCalc.buttonTop', 220);
+        const btn = document.createElement('div');
+        btn.id = BUTTON_ID;
+        btn.textContent = 'UC';
+        btn.title = 'Upgrade Calculator';
+        btn.style.cssText = `
+            display: none;
+            position: fixed;
+            right: 4px;
+            top: ${typeof top === 'number' ? top + 'px' : top};
+            z-index: 9999;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            background: rgba(20, 20, 20, 0.88);
+            color: #ddd;
+            border: 1px solid #444;
+            border-radius: 4px;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            pointer-events: auto;
+        `;
+        btn.addEventListener('click', () => this.toggle());
+        btn.addEventListener('mouseenter', () => { btn.style.color = '#fff'; btn.style.borderColor = '#888'; });
+        btn.addEventListener('mouseleave', () => { btn.style.color = '#ddd'; btn.style.borderColor = '#444'; });
+
+        document.body.appendChild(btn);
+        this._button = btn;
+        return btn;
     }
 
     _ensurePanel() {
@@ -161,9 +214,20 @@ export class UpgradeCalc {
     }
 }
 
-function getCurrentOwnCity() {
+/**
+ * The own city currently shown in the base view, or null on the world map /
+ * on an enemy or Forgotten base. In base view the viewed city
+ * (get_CurrentCity) equals the selected own city (get_CurrentOwnCity).
+ */
+function getViewedOwnCity() {
     try {
-        return ClientLib.Data.MainData.GetInstance().get_Cities().get_CurrentOwnCity() || null;
+        const vis = ClientLib.Vis.VisMain.GetInstance();
+        if (vis.get_Mode() !== ClientLib.Vis.Mode.City) return null;
+        const cities = ClientLib.Data.MainData.GetInstance().get_Cities();
+        const own = cities.get_CurrentOwnCity();
+        const viewed = cities.get_CurrentCity();
+        if (!own || !viewed || own.get_Id() !== viewed.get_Id()) return null;
+        return own;
     } catch {
         return null;
     }
