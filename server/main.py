@@ -10,12 +10,12 @@ Security-first:
 import json
 import time
 import logging
+from urllib.parse import unquote
 from pathlib import Path
 from contextlib import asynccontextmanager
 
 import bcrypt
 from fastapi import FastAPI, Request, Header, HTTPException, Depends
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.responses import FileResponse
 
@@ -23,6 +23,7 @@ from server.models import ScanPayload, ScanResponse
 from server.storage import ScanStorage
 from server.ratelimit import RateLimiter
 from server.target_watch import TargetWatchPayload, TargetWatchStore
+from server.members import MemberStore, MembershipError, NOT_A_MEMBER
 
 # ─── Config ──────────────────────────────────────────────────────────
 
@@ -79,6 +80,7 @@ class KeyStore:
 key_store = KeyStore(KEYS_FILE)
 storage = ScanStorage(DATA_DIR)
 target_watches = TargetWatchStore()
+member_store = MemberStore(DATA_DIR / "members.jsonl")
 post_limiter = RateLimiter(max_requests=10, window_seconds=1)
 get_limiter = RateLimiter(max_requests=30, window_seconds=1)
 
@@ -100,16 +102,6 @@ app = FastAPI(
     redoc_url=None,
     openapi_url=None,
     lifespan=lifespan,
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "https://*.alliances.commandandconquer.com",
-    ],
-    allow_methods=["POST", "GET"],
-    allow_headers=["X-Alliance-Key", "Content-Type"],
-    allow_credentials=False,
 )
 
 # ─── Middleware ───────────────────────────────────────────────────────
@@ -145,6 +137,34 @@ async def verify_api_key(
     return alliance_id
 
 
+async def verify_member(
+    request: Request,
+    alliance_id: str = Depends(verify_api_key),
+    x_alliance_key: str = Header(..., alias="X-Alliance-Key"),
+    x_player_id: str = Header("", alias="X-Player-Id"),
+    x_player_name: str = Header("", alias="X-Player-Name"),
+    x_alliance_id: str = Header("", alias="X-Alliance-Id"),
+) -> str:
+    """
+    Membership check on top of the API key: the player (headers from the
+    userscript) must be a known member of the same in-game alliance — or is
+    registered on the first request with a valid key. Sets request.state.player_id.
+    """
+    try:
+        player_id = int(x_player_id)
+        in_game_alliance_id = int(x_alliance_id)
+    except ValueError:
+        raise HTTPException(status_code=403, detail=NOT_A_MEMBER)
+    player_name = unquote(x_player_name).strip()[:50]
+    try:
+        member_store.check(player_id, player_name, in_game_alliance_id, x_alliance_key)
+    except MembershipError as e:
+        log.warning("Membership rejected from %s: player %s alliance %s", get_client_ip(request), x_player_id, x_alliance_id)
+        raise HTTPException(status_code=403, detail=str(e))
+    request.state.player_id = player_id
+    return alliance_id
+
+
 async def rate_limit_get(request: Request):
     ip = get_client_ip(request)
     if not get_limiter.allow(ip):
@@ -156,7 +176,7 @@ async def rate_limit_get(request: Request):
 async def post_scan(
     payload: ScanPayload,
     request: Request,
-    alliance_id: str = Depends(verify_api_key),
+    alliance_id: str = Depends(verify_member),
 ):
     now_ms = int(time.time() * 1000)
     if abs(now_ms - payload.timestamp) > MAX_SCAN_AGE_S * 1000:
@@ -194,8 +214,11 @@ async def get_base(city_id: int, world_id: int | None = None):
 @app.post("/api/target-watch")
 async def post_target_watch(
     payload: TargetWatchPayload,
-    alliance_id: str = Depends(verify_api_key),
+    request: Request,
+    alliance_id: str = Depends(verify_member),
 ):
+    if payload.playerId != request.state.player_id:
+        raise HTTPException(status_code=403, detail=NOT_A_MEMBER)
     target_watches.add(alliance_id, payload)
     return {"ok": True}
 
@@ -204,7 +227,7 @@ async def post_target_watch(
 async def get_target_watchers(
     world_id: int,
     target_id: int,
-    alliance_id: str = Depends(verify_api_key),
+    alliance_id: str = Depends(verify_member),
 ):
     return {"watchers": target_watches.get_watchers(alliance_id, world_id, target_id)}
 
@@ -212,7 +235,7 @@ async def get_target_watchers(
 @app.get("/api/target-watch/{world_id}")
 async def get_world_target_watches(
     world_id: int,
-    alliance_id: str = Depends(verify_api_key),
+    alliance_id: str = Depends(verify_member),
 ):
     return {"targets": target_watches.get_world(alliance_id, world_id)}
 

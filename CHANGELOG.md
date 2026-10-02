@@ -18,6 +18,17 @@
 - `GET /api/targets` — read-only viewer endpoint (Basic Auth, like `/api/bases`) with all active worlds, so the page needs no alliance API key
 - Plain HTML/CSS/JS in the same dark theme, responsive (cards on mobile); "🎯 Target Watch" link in the base overview header
 
+## [5.5.1] — 2026-10-02
+
+### Alliance membership check
+- **Userscript:** every scan and target-watch request now sends the player's identity — `X-Player-Id`, `X-Player-Name` (URI-encoded) and `X-Alliance-Id` headers
+- **Userscript:** a server rejection shows `[ST] ⚠️ Server: not recognized — scan a base first to register.` (EN/DE/NL); a wrong API key keeps its own message; both at most once per minute
+- **Server (VPS):** extra layer on top of the `X-Alliance-Key` check for `/api/scan` and `/api/target-watch`: the first request with a valid key registers the player automatically; afterwards the in-game alliance id must match the registered one, otherwise `403 Not a recognized alliance member`; missing identity or alliance id 0 → 403; target-watch body `playerId` must match the header
+- **Server:** members not seen for 30 days are dropped (lazy cleanup); member list persisted in `data/members.jsonl` (written on registration, name change and at most hourly for `lastSeen`; compacted on startup) — survives restarts
+- **Server:** `CORSMiddleware` removed — nginx is the sole CORS handler; its `Access-Control-Allow-Headers` must include the three new headers (`/shockr/api/scan` and `/shockr/api/target-watch`)
+- `/api/bases`, `/api/targets` and the website are not affected
+- **Breaking:** script versions before 5.5.1 send no identity and get 403 on scan/target-watch — update the userscript before deploying the server
+
 ## [5.5.0] — 2026-10-02
 
 ### Help as popup panel
