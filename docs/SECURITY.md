@@ -19,8 +19,14 @@
 
 ## Authentication
 
-### POST /shockr/api/scan — API Key
-- Header: `X-Alliance-Key: <key>`
+### POST /shockr/api/enroll — enrollment code
+- Code + whitelisted in-game alliance ids in `config/enrollment.json` (server only, never in repo/script); constant-time comparison
+- Rate limit 5 attempts per IP per hour
+- Issues a per-player key (`secrets.token_hex(16)`), stored as bcrypt hash in `data/player_keys.jsonl`; plaintext returned once
+
+### POST /shockr/api/scan, /shockr/api/target-watch — API Key
+- Header: `X-Player-Key: <personal key>` — must belong to `X-Player-Id` and the enrolled alliance (checked against one bcrypt hash, then cached by SHA-256)
+- Transition: `X-Alliance-Key: <key>` (shared) until `allianceKeyUntil` in `config/enrollment.json`
 - Keys in `config/keys.json` as `{ "alliance_name": "bcrypt_hash" }`
 - Each key scoped to one alliance
 - Generated via `python -m server.keygen add "SoO"`

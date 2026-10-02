@@ -18,6 +18,19 @@
 - `GET /api/targets` — read-only viewer endpoint (Basic Auth, like `/api/bases`) with all active worlds, so the page needs no alliance API key
 - Plain HTML/CSS/JS in the same dark theme, responsive (cards on mobile); "🎯 Target Watch" link in the base overview header
 
+## [5.6.0] — 2026-10-02
+
+### Per-player API keys with enrollment
+- **Userscript:** `/st register` opens a popup (same style as the help panel, closes via ✕ / Escape) with one password field for the enrollment code; player id, name, alliance id and world id are read from the game and sent to `POST /api/enroll`
+- **Userscript:** on success the personal key is stored automatically in `api.playerKey` (plus `api.playerKeyId`, the player it belongs to — several accounts can share one browser); popup shows `✅ Registered! Your personal key is active.` and closes after 2 s, chat shows `[ST] ✅ Registered successfully`; errors (wrong code, alliance not authorized, too many attempts) shown as ❌ in the popup
+- **Userscript:** all scan/target-watch requests send `X-Player-Key` when a personal key is set for the logged-in player, otherwise the shared `X-Alliance-Key`; identity headers unchanged
+- **Userscript:** `/st status` shows the registration state (registered / shared key / not registered); `/st config get|set|list` never shows `api.playerKey`, only *set* / *not set*
+- **Userscript:** new 403 chat messages — `⚠️ Not registered — type /st register` and `⚠️ Personal key rejected — type /st register ...`; all new texts in EN/DE/NL
+- **Server (VPS):** `POST /api/enroll` (no auth header — the code is the auth): checks the enrollment code and the alliance whitelist from `config/enrollment.json` (re-read when the file changes), issues a 32-char hex key, stored as bcrypt hash in `data/player_keys.jsonl`; the plaintext is returned once. Enrolling again issues a new key and invalidates the old one. Rate limit 5 attempts per IP per hour
+- **Server:** `X-Player-Key` is checked first and must belong to `X-Player-Id` and be used from the alliance it was enrolled with; fallback to the shared `X-Alliance-Key` until `allianceKeyUntil` in `enrollment.json` (no deadline when absent); no key → `403 Not registered — type /st register`. Response header `X-Auth-Method: player-key | alliance-key`. Membership check (5.5.1) unchanged on top
+- **Server:** admin endpoints behind Basic Auth — `GET /api/members` (registered players + last activity), `DELETE /api/enroll/{playerId}` (revoke without restart)
+- **Proxy:** new public location for `/shockr/api/enroll`; `X-Player-Key` must be added to `Access-Control-Allow-Headers` for scan/target-watch — see docs/DEPLOY.md
+
 ## [5.5.1] — 2026-10-02
 
 ### Alliance membership check

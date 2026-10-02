@@ -6,6 +6,7 @@ Thumbs.db
 
 # Server
 config/keys.json
+config/enrollment.json
 data/
 __pycache__/
 *.pyc

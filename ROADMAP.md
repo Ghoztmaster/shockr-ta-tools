@@ -120,6 +120,14 @@ Uitbreiding van de bestaande alliance-website (`packetlab.nl/shockr/`).
 - [ ] Backend-opslag voor watchlist-snapshots
 - Bouwt voort op de bestaande Fase 2/3/4 infrastructuur
 
+## Auth — van gedeelde alliance-key naar per-speler keys 🟡
+
+- [x] Stap 1 (v5.5.1) — membership check: `X-Player-Id` / `X-Player-Name` / `X-Alliance-Id` bij elke scan/target-watch; alliance-wissel → 403; 30 dagen inactief → opgeruimd (`data/members.jsonl`)
+- [x] Stap 2 (v5.6.0) — per-speler keys met enrollment: `/st register` → popup met enrollment-code (alleen via alliance-chat gedeeld, staat in `config/enrollment.json` op de VPS, roteerbaar) → `POST /api/enroll` → persoonlijke key (bcrypt-hash in `data/player_keys.jsonl`) automatisch in `api.playerKey`
+- [x] Requests sturen `X-Player-Key` (key moet bij `X-Player-Id` horen); gedeelde `X-Alliance-Key` blijft geldig tot `allianceKeyUntil`
+- [x] Admin: `GET /api/members`, `DELETE /api/enroll/{playerId}` (Basic Auth); enroll rate limit 5/uur per IP
+- [ ] Overgangsperiode afsluiten — `allianceKeyUntil` zetten zodra alle actieve spelers geregistreerd zijn, daarna `api.key` uit docs/help halen
+
 ---
 
 ## Samenvatting
@@ -133,3 +141,4 @@ Uitbreiding van de bestaande alliance-website (`packetlab.nl/shockr/`).
 | 4 | Script scanner-integratie | 🟡 Grotendeels klaar — alliance-scanner en scan-button open |
 | 5 | Documentatie & release | ✅ Klaar (v5.1.0) |
 | 6 | Nieuwe plugins (Repair Guard, Upgrade Calculator, Alliance War Dashboard) | 🟡 In progress — 6c-1 userscript, 6c-2 backend en 6c-3 dashboard klaar |
+| Auth | Per-speler keys met enrollment | 🟡 Stap 1 + 2 klaar (v5.6.0) — overgangsperiode gedeelde key loopt |

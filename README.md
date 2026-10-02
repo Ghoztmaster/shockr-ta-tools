@@ -39,7 +39,8 @@ All configuration via in-game chat:
 | Command | Description |
 |---------|-------------|
 | `/st help` | Overview of all commands, plugins and useful settings — as a popup panel (close with ✕ / Escape / `/st help`); `/st config set help.popup false` shows it in the chat instead |
-| `/st status` | Show plugin status |
+| `/st status` | Show plugin status and whether you are registered with the alliance server |
+| `/st register` | Register with the alliance server — popup asking for the enrollment code |
 | `/st plunder` | Toggle the plunder panel for the selected Forgotten base |
 | `/st plugin enable <name>` | Enable a plugin |
 | `/st plugin disable <name>` | Disable a plugin |
@@ -59,9 +60,22 @@ All chat messages, panels and `/st` output are available in English, German and 
 ```
 /st plugin enable LayoutScanner
 /st config set api.url https://your-server.com/shockr
-/st config set api.key YOUR_API_KEY
+/st register
 /st scan
 ```
+
+### Registration (personal API key)
+
+Every player gets their own API key — no key to copy or paste:
+
+1. Get the **enrollment code** from your alliance chat (it is never in the script or this repo, and the alliance leader can change it at any time).
+2. Type `/st register` in the game chat. A popup asks for the enrollment code.
+3. The script sends the code together with your player id, name, alliance id and world id (read from the game) to `POST /api/enroll`.
+4. The server checks the code and whether your alliance is allowed, and returns a personal key. The script stores it in `api.playerKey` — you'll see `✅ Registered! Your personal key is active.` and `[ST] ✅ Registered successfully` in the chat.
+
+From then on every scan and target-watch request uses your personal key (`X-Player-Key`). The key is never shown: `/st config get api.playerKey` only says *set* / *not set*, and `/st status` shows whether you are registered. Registering again (e.g. new browser) gives you a new key and invalidates the old one.
+
+**Transition:** the shared alliance key (`/st config set api.key ...`) keeps working until the server admin switches it off. Players without either key get `[ST] ⚠️ Not registered — type /st register`.
 
 ## Alliance Scanner Server
 
@@ -69,7 +83,7 @@ The `server/` directory contains a self-hosted FastAPI backend that receives and
 
 Features:
 - JSONL storage per world, per alliance
-- API key auth (bcrypt hashed) for scan uploads
+- Per-player API keys via self-enrollment (`/st register`, bcrypt hashed); shared alliance key accepted during a transition period
 - Basic Auth for the web viewer
 - Base list with sorting, filtering, color-coded freshness
 - Base detail: 9×16 resource grid, defense/offense units, scan history

@@ -2,7 +2,8 @@
 Shockr Alliance Server — scan receiver and base viewer API.
 
 Security-first:
-- API key auth on POST (per alliance, bcrypt hashed)
+- Per-player API keys via self-enrollment (bcrypt hashed); the shared
+  per-alliance key is still accepted during a transition period
 - Rate limiting per IP
 - Strict Pydantic validation on all input
 - Alliance-scoped data access (derived from key, not user input)
@@ -15,7 +16,7 @@ from pathlib import Path
 from contextlib import asynccontextmanager
 
 import bcrypt
-from fastapi import FastAPI, Request, Header, HTTPException, Depends
+from fastapi import FastAPI, Request, Response, Header, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from fastapi.responses import FileResponse
 
@@ -24,12 +25,17 @@ from server.storage import ScanStorage
 from server.ratelimit import RateLimiter
 from server.target_watch import TargetWatchPayload, TargetWatchStore
 from server.members import MemberStore, MembershipError, NOT_A_MEMBER
+from server.player_keys import (
+    EnrollPayload, EnrollmentConfig, PlayerKeyStore,
+    INVALID_CODE, ALLIANCE_NOT_AUTHORIZED, NOT_REGISTERED, INVALID_PLAYER_KEY,
+)
 
 # ─── Config ──────────────────────────────────────────────────────────
 
 CONFIG_DIR = Path("/app/config")
 DATA_DIR = Path("/app/data")
 KEYS_FILE = CONFIG_DIR / "keys.json"
+ENROLLMENT_FILE = CONFIG_DIR / "enrollment.json"
 MAX_PAYLOAD_BYTES = 64 * 1024
 MAX_SCAN_AGE_S = 3600
 
@@ -81,7 +87,10 @@ key_store = KeyStore(KEYS_FILE)
 storage = ScanStorage(DATA_DIR)
 target_watches = TargetWatchStore()
 member_store = MemberStore(DATA_DIR / "members.jsonl")
+player_keys = PlayerKeyStore(DATA_DIR / "player_keys.jsonl")
+enrollment = EnrollmentConfig(ENROLLMENT_FILE)
 post_limiter = RateLimiter(max_requests=10, window_seconds=1)
+enroll_limiter = RateLimiter(max_requests=5, window_seconds=3600)
 get_limiter = RateLimiter(max_requests=30, window_seconds=1)
 
 
@@ -125,22 +134,50 @@ def get_client_ip(request: Request) -> str:
 
 async def verify_api_key(
     request: Request,
-    x_alliance_key: str = Header(..., alias="X-Alliance-Key"),
+    response: Response,
+    x_player_key: str = Header("", alias="X-Player-Key"),
+    x_alliance_key: str = Header("", alias="X-Alliance-Key"),
+    x_player_id: str = Header("", alias="X-Player-Id"),
 ) -> str:
+    """
+    X-Player-Key (personal key, must belong to X-Player-Id) first; otherwise
+    the shared X-Alliance-Key while the transition period lasts
+    (allianceKeyUntil in config/enrollment.json). Returns the storage scope and
+    sets request.state.api_key (the key used) and request.state.key_alliance_id
+    (in-game alliance id the player key was enrolled with, None for the shared key).
+    """
     ip = get_client_ip(request)
     if not post_limiter.allow(ip):
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
+
+    if x_player_key:
+        try:
+            entry = player_keys.verify(int(x_player_id), x_player_key)
+        except ValueError:
+            entry = None
+        if entry is None:
+            log.warning("Invalid player key from %s: player %s, key %s", ip, x_player_id, key_store.mask(x_player_key))
+            raise HTTPException(status_code=403, detail=INVALID_PLAYER_KEY)
+        request.state.api_key = x_player_key
+        request.state.key_alliance_id = entry["allianceId"]
+        response.headers["X-Auth-Method"] = "player-key"
+        return entry["scope"]
+
+    if not x_alliance_key or not enrollment.alliance_key_allowed():
+        raise HTTPException(status_code=403, detail=NOT_REGISTERED)
     alliance_id = key_store.verify(x_alliance_key)
     if alliance_id is None:
         log.warning("Invalid API key from %s: %s", ip, key_store.mask(x_alliance_key))
         raise HTTPException(status_code=403, detail="Invalid API key")
+    request.state.api_key = x_alliance_key
+    request.state.key_alliance_id = None
+    response.headers["X-Auth-Method"] = "alliance-key"
     return alliance_id
 
 
 async def verify_member(
     request: Request,
     alliance_id: str = Depends(verify_api_key),
-    x_alliance_key: str = Header(..., alias="X-Alliance-Key"),
     x_player_id: str = Header("", alias="X-Player-Id"),
     x_player_name: str = Header("", alias="X-Player-Name"),
     x_alliance_id: str = Header("", alias="X-Alliance-Id"),
@@ -148,16 +185,22 @@ async def verify_member(
     """
     Membership check on top of the API key: the player (headers from the
     userscript) must be a known member of the same in-game alliance — or is
-    registered on the first request with a valid key. Sets request.state.player_id.
+    registered on the first request with a valid key. A player key must also
+    be used from the in-game alliance it was enrolled with. Sets
+    request.state.player_id.
     """
     try:
         player_id = int(x_player_id)
         in_game_alliance_id = int(x_alliance_id)
     except ValueError:
         raise HTTPException(status_code=403, detail=NOT_A_MEMBER)
+    key_alliance_id = request.state.key_alliance_id
+    if key_alliance_id is not None and key_alliance_id != in_game_alliance_id:
+        log.warning("Player key of %s used from alliance %s (enrolled with %s)", x_player_id, x_alliance_id, key_alliance_id)
+        raise HTTPException(status_code=403, detail=NOT_A_MEMBER)
     player_name = unquote(x_player_name).strip()[:50]
     try:
-        member_store.check(player_id, player_name, in_game_alliance_id, x_alliance_key)
+        member_store.check(player_id, player_name, in_game_alliance_id, request.state.api_key)
     except MembershipError as e:
         log.warning("Membership rejected from %s: player %s alliance %s", get_client_ip(request), x_player_id, x_alliance_id)
         raise HTTPException(status_code=403, detail=str(e))
@@ -169,6 +212,46 @@ async def rate_limit_get(request: Request):
     ip = get_client_ip(request)
     if not get_limiter.allow(ip):
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
+
+# ─── Enrollment (per-player keys) ────────────────────────────────────
+
+@app.post("/api/enroll")
+async def post_enroll(payload: EnrollPayload, request: Request):
+    """No auth header: the enrollment code (config/enrollment.json) is the auth."""
+    ip = get_client_ip(request)
+    if not enroll_limiter.allow(ip):
+        raise HTTPException(status_code=429, detail="Too many enrollment attempts — try again later")
+    if not enrollment.check_code(payload.enrollmentCode):
+        log.warning("Enrollment with invalid code from %s: player %d alliance %d", ip, payload.playerId, payload.allianceId)
+        raise HTTPException(status_code=403, detail=INVALID_CODE)
+    if payload.allianceId not in enrollment.alliance_ids:
+        log.warning("Enrollment for unauthorized alliance %d from %s: player %d", payload.allianceId, ip, payload.playerId)
+        raise HTTPException(status_code=403, detail=ALLIANCE_NOT_AUTHORIZED)
+
+    scope = enrollment.scope
+    if not scope:
+        scope = next(iter(key_store.keys)) if len(key_store.keys) == 1 else str(payload.allianceId)
+    player_key = player_keys.enroll(payload.playerId, payload.playerName.strip()[:50], payload.allianceId, scope)
+    return {"status": "ok", "playerKey": player_key}
+
+
+@app.delete("/api/enroll/{player_id}", dependencies=[Depends(rate_limit_get)])
+async def delete_enroll(player_id: int):
+    """Revoke a player key (admin — Basic Auth at the reverse proxy)."""
+    if not player_keys.revoke(player_id):
+        raise HTTPException(status_code=404, detail="Player not registered")
+    return {"status": "ok", "playerId": player_id}
+
+
+@app.get("/api/members", dependencies=[Depends(rate_limit_get)])
+async def get_members():
+    """Registered players with last activity (admin — Basic Auth at the reverse proxy)."""
+    members = []
+    for entry in player_keys.list():
+        seen = member_store.members.get(entry["playerId"])
+        members.append({**entry, "lastSeen": seen["lastSeen"] if seen else None})
+    members.sort(key=lambda m: m["playerName"].lower())
+    return {"members": members, "count": len(members)}
 
 # ─── POST: receive scan ──────────────────────────────────────────────
 
@@ -253,7 +336,7 @@ async def get_targets_dashboard():
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "keys_loaded": len(key_store.keys)}
+    return {"status": "ok", "keys_loaded": len(key_store.keys), "player_keys": len(player_keys.players)}
 
 @app.get("/")
 async def index():
