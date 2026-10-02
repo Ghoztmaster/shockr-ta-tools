@@ -5,6 +5,18 @@
 ### Planning
 - Roadmap: Fase 6 toegevoegd — Repair Guard, Upgrade Calculator, Alliance War Dashboard
 
+## [5.4.0] — 2026-10-01
+
+### Target Watcher
+- **TargetWatcher plugin** — detects when you view a base that is not yours (Forgotten camp/outpost/base or enemy player base; alliance mates' bases are ignored) and reports it to the alliance server: `POST /api/target-watch` with player, target id/name/coords/level/type and world
+- Then `GET /api/target-watch/{worldId}/{targetId}`: if other alliance members watch the same target, one chat warning per target view — `[ST] ⚠️ NeoJackson1 kijkt ook naar Camp L47 (sinds 3 min)`
+- POST only on target change (2.5 s poll timer), max 1 POST per 5 s; nothing is sent on your own base or the world map (backend expires watches by TTL); paused while a scanner is switching cities
+- Off by default — `/st plugin enable target-watcher`; uses the existing `api.url` / `api.key`; `/st status` shows the current target and number of reports
+- Requires the backend endpoint (separate VPS update)
+
+### API client
+- `ApiClient.request(method, path, body)` — one-off JSON request with the alliance key (scan queue unchanged)
+
 ## [5.3.0] — 2026-10-01
 
 ### Upgrade Calculator

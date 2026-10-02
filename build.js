@@ -8,12 +8,12 @@ const esbuild = require('esbuild');
 const fs = require('fs');
 const path = require('path');
 
-const VERSION = '5.3.0';
+const VERSION = '5.4.0';
 
 const USERSCRIPT_HEADER = `// ==UserScript==
 // @name            Shockr - Tiberium Alliances Tools
 // @author          Ghozt [SoO] (original: Shockr, fixed by NetquiK [SoO])
-// @description     Camp tracker, kill info, player status, alliance recon & upgrade calculator for C&C Tiberium Alliances
+// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator & target watcher for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
 // @version         ${VERSION}
