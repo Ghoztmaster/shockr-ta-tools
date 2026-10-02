@@ -99,6 +99,32 @@ class TargetWatchStore:
         targets.sort(key=lambda t: t["watchers"][0]["timestamp"], reverse=True)
         return targets
 
+    def all_worlds(self) -> list[dict]:
+        """
+        Every world with active watches, for the dashboard (viewer, behind
+        Basic Auth — like /api/bases it spans all alliances on this server).
+        A target watched from several alliances is merged into one row.
+        Targets: most watchers first, then most recent.
+        """
+        self._cleanup(int(self.clock()))
+        merged: dict[int, dict[int, dict]] = {}
+        for worlds in self.watches.values():
+            for world_id, targets in worlds.items():
+                world = merged.setdefault(world_id, {})
+                for target_id, entry in targets.items():
+                    row = world.setdefault(target_id, {"target": entry["target"], "watchers": {}})
+                    for player_id, watcher in entry["watchers"].items():
+                        known = row["watchers"].get(player_id)
+                        if not known or watcher["timestamp"] > known["timestamp"]:
+                            row["watchers"][player_id] = watcher
+
+        result = []
+        for world_id in sorted(merged):
+            targets = [{**row["target"], "watchers": _sorted_watchers(row)} for row in merged[world_id].values()]
+            targets.sort(key=lambda t: (len(t["watchers"]), t["watchers"][0]["timestamp"]), reverse=True)
+            result.append({"worldId": world_id, "targets": targets})
+        return result
+
     def _cleanup(self, now: int) -> None:
         """Drop expired watchers, and targets/worlds/alliances left empty."""
         cutoff = now - self.ttl

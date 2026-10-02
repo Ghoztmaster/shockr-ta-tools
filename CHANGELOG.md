@@ -10,6 +10,13 @@
 - `GET /api/target-watch/{worldId}/{targetId}` — `{"watchers": [...]}` of that target; `GET /api/target-watch/{worldId}` — all watched targets of a world (for the dashboard)
 - In-memory only (no database/JSONL), scoped per alliance via the API key, 10 min TTL with lazy cleanup on every request
 - Same `X-Alliance-Key` auth as the scanner; scanner endpoints and storage unchanged
+- **Caddy:** `/shockr/api/target-watch*` must bypass Basic Auth (like `/api/scan`) — see docs/DEPLOY.md; otherwise the userscript gets 401
+
+### Alliance War Dashboard (VPS)
+- `/targets` page (Basic Auth) — live table of watched targets per world: target, coords, level, type, watchers with "x min ago"; auto-refresh every 20 s
+- Most watchers first, then most recent; targets with ≥2 watchers highlighted orange with ⚠️ (possible double attack); world selector when several worlds are active; friendly message when nobody is watching
+- `GET /api/targets` — read-only viewer endpoint (Basic Auth, like `/api/bases`) with all active worlds, so the page needs no alliance API key
+- Plain HTML/CSS/JS in the same dark theme, responsive (cards on mobile); "🎯 Target Watch" link in the base overview header
 
 ## [5.4.0] — 2026-10-01
 

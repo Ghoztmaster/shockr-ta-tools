@@ -216,6 +216,16 @@ async def get_world_target_watches(
 ):
     return {"targets": target_watches.get_world(alliance_id, world_id)}
 
+
+@app.get("/api/targets", dependencies=[Depends(rate_limit_get)])
+async def get_targets_dashboard():
+    """Dashboard data: all worlds with active watches (viewer, Basic Auth via Caddy)."""
+    return {
+        "serverTime": int(time.time()),
+        "ttl": target_watches.ttl,
+        "worlds": target_watches.all_worlds(),
+    }
+
 # ─── Health ──────────────────────────────────────────────────────────
 
 @app.get("/api/health")
@@ -225,3 +235,7 @@ async def health():
 @app.get("/")
 async def index():
     return FileResponse("/app/server/static/index.html")
+
+@app.get("/targets")
+async def targets_page():
+    return FileResponse("/app/server/static/targets.html")

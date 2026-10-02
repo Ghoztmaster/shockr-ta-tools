@@ -54,6 +54,13 @@ Add to the `packetlab.nl` block in the Caddyfile:
         reverse_proxy localhost:8920
     }
 
+    # Shockr Alliance — Target Watcher (API key auth in app; called by the
+    # userscript, so it must NOT sit behind Basic Auth)
+    handle /shockr/api/target-watch* {
+        uri strip_prefix /shockr
+        reverse_proxy localhost:8920
+    }
+
     # Shockr Alliance — health check (no auth)
     handle /shockr/api/health {
         uri strip_prefix /shockr
@@ -96,6 +103,11 @@ curl -X POST https://packetlab.nl/shockr/api/scan
 
 # Should return 401 without Basic Auth
 curl https://packetlab.nl/shockr/api/bases
+curl https://packetlab.nl/shockr/api/targets
+curl https://packetlab.nl/shockr/targets
+
+# Should return 403 with a wrong key (not 401 — Target Watcher bypasses Basic Auth)
+curl -H "X-Alliance-Key: wrong" https://packetlab.nl/shockr/api/target-watch/477/1
 ```
 
 ## Update

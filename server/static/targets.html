@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shockr Target Watch</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        background: #1a1a1a;
+        color: #ccc;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        font-size: 14px;
+    }
+    a { color: #4fc3f7; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Header */
+    .header {
+        background: #252525;
+        border-bottom: 1px solid #333;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .header h1 { font-size: 18px; color: #e0e0e0; }
+    .header .stats { font-size: 12px; color: #888; }
+    .nav { font-size: 13px; display: flex; gap: 14px; }
+
+    /* Toolbar */
+    .filters {
+        background: #222;
+        padding: 10px 20px;
+        border-bottom: 1px solid #333;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .filters label { color: #999; font-size: 12px; }
+    .filters select {
+        background: #333;
+        color: #ccc;
+        border: 1px solid #444;
+        padding: 4px 8px;
+        font-size: 13px;
+    }
+    .filters button {
+        background: #66bb6a;
+        color: #111;
+        border: none;
+        padding: 5px 14px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+    .filters button:hover { background: #81c784; }
+    .filters .updated { color: #777; font-size: 12px; margin-left: auto; }
+    .filters .updated.error { color: #e57373; }
+
+    /* Table */
+    .content { padding: 10px 20px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+        background: #2a2a2a;
+        color: #aaa;
+        text-align: left;
+        padding: 8px 10px;
+        border-bottom: 1px solid #444;
+    }
+    td {
+        padding: 6px 10px;
+        border-bottom: 1px solid #2a2a2a;
+        vertical-align: top;
+    }
+    tr:hover { background: #252525; }
+    tr td:first-child { border-left: 3px solid #555; }
+
+    /* ≥2 watchers = possible double attack */
+    tr.double { background: #3a2e14; }
+    tr.double:hover { background: #46371a; }
+    tr.double td:first-child { border-left-color: #ff9800; }
+    .double-flag { color: #ffb74d; font-weight: bold; margin-top: 3px; }
+
+    .target-name { color: #e0e0e0; }
+    .type { color: #999; }
+    .type-camp { color: #8bc34a; }
+    .type-outpost { color: #4fc3f7; }
+    .type-base { color: #ff9800; }
+    .type-player { color: #e57373; }
+    .watcher { white-space: nowrap; }
+    .watcher + .watcher { margin-top: 3px; }
+    .ago { color: #777; font-size: 12px; }
+
+    /* Empty / loading */
+    .loading { text-align: center; padding: 40px; color: #666; }
+    tr td.loading:first-child { border-left: none; }
+
+    /* Mobile: rows become cards */
+    @media (max-width: 640px) {
+        .header, .filters, .content { padding-left: 12px; padding-right: 12px; }
+        .filters .updated { margin-left: 0; width: 100%; }
+        thead { display: none; }
+        table, tbody, tr, td { display: block; width: 100%; }
+        tr { border: 1px solid #2a2a2a; border-left: 3px solid #555; margin-bottom: 8px; }
+        tr.double { border-left-color: #ff9800; }
+        tr td:first-child { border-left: none; }
+        td { border-bottom: none; padding: 4px 10px; }
+        td[data-label]::before {
+            content: attr(data-label);
+            display: inline-block;
+            width: 72px;
+            color: #777;
+            font-size: 12px;
+        }
+        td.target-cell { padding-top: 8px; font-size: 14px; }
+        td.watchers-cell { display: flex; }
+        td.watchers-cell::before { flex: none; }
+    }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>🎯 Alliance Target Watch <span id="worldTitle"></span></h1>
+    <div class="nav">
+        <a href="./">⚔ Bases</a>
+        <span class="stats" id="stats">Loading...</span>
+    </div>
+</div>
+
+<div class="filters">
+    <div id="worldPicker" style="display:none">
+        <label for="worldSelect">World:</label>
+        <select id="worldSelect"></select>
+    </div>
+    <button onclick="loadTargets()">↻ Refresh</button>
+    <span class="updated" id="updated"></span>
+</div>
+
+<div class="content">
+    <table>
+        <thead>
+            <tr>
+                <th>Target</th>
+                <th>Coord</th>
+                <th>Level</th>
+                <th>Type</th>
+                <th>Watchers</th>
+            </tr>
+        </thead>
+        <tbody id="targetBody">
+            <tr><td colspan="5" class="loading">Loading...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+const API = '.';
+const REFRESH_MS = 20000;
+const WORLD_KEY = 'st-targets-world';
+
+let worlds = [];        // [{ worldId, targets: [...] }]
+let serverTime = 0;     // unix s, from the response — ages don't depend on the browser clock
+let ttl = 600;
+let selectedWorld = readStoredWorld();
+
+async function loadTargets() {
+    const updated = document.getElementById('updated');
+    try {
+        const resp = await fetch(`${API}/api/targets`, { cache: 'no-store' });
+        if (!resp.ok) throw new Error(`${resp.status} ${resp.statusText}`);
+        const data = await resp.json();
+        worlds = data.worlds || [];
+        serverTime = data.serverTime || Math.floor(Date.now() / 1000);
+        ttl = data.ttl || 600;
+        updated.classList.remove('error');
+        updated.textContent = `Updated ${new Date().toLocaleTimeString()} · auto-refresh every ${REFRESH_MS / 1000}s`;
+    } catch (e) {
+        updated.classList.add('error');
+        updated.textContent = `Refresh failed: ${e.message} — retrying in ${REFRESH_MS / 1000}s`;
+        if (!worlds.length) {
+            document.getElementById('targetBody').innerHTML =
+                `<tr><td colspan="5" class="loading">Error: ${esc(e.message)}</td></tr>`;
+        }
+        return;
+    }
+    renderWorldPicker();
+    render();
+}
+
+function renderWorldPicker() {
+    const ids = worlds.map(w => w.worldId);
+    if (!ids.includes(selectedWorld)) selectedWorld = ids[0] ?? null;
+
+    const picker = document.getElementById('worldPicker');
+    const select = document.getElementById('worldSelect');
+    picker.style.display = ids.length > 1 ? '' : 'none';
+    select.innerHTML = worlds.map(w =>
+        `<option value="${w.worldId}">World ${w.worldId} (${w.targets.length})</option>`
+    ).join('');
+    if (selectedWorld !== null) select.value = String(selectedWorld);
+}
+
+function render() {
+    const tbody = document.getElementById('targetBody');
+    const world = worlds.find(w => w.worldId === selectedWorld);
+    document.getElementById('worldTitle').textContent = world ? `— World ${world.worldId}` : '';
+
+    // Drop watchers past the TTL (the backend does this too, on every request)
+    const targets = (world ? world.targets : [])
+        .map(t => ({ ...t, watchers: t.watchers.filter(w => serverTime - w.timestamp <= ttl) }))
+        .filter(t => t.watchers.length)
+        .sort((a, b) => (b.watchers.length - a.watchers.length) || (latest(b) - latest(a)));
+
+    const watcherCount = new Set(targets.flatMap(t => t.watchers.map(w => w.playerId))).size;
+    const doubles = targets.filter(t => t.watchers.length >= 2).length;
+    document.getElementById('stats').textContent =
+        `${targets.length} target(s) | ${watcherCount} watcher(s)` + (doubles ? ` | ⚠️ ${doubles} double` : '');
+
+    if (!targets.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="loading">No active watchers — enable Target Watcher in Shockr Tools to start tracking.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = targets.map(t => {
+        const double = t.watchers.length >= 2;
+        const type = (t.targetType || '').toLowerCase();
+        const watchers = t.watchers.map(w =>
+            `<div class="watcher">${esc(w.playerName)} <span class="ago">(${ago(serverTime - w.timestamp)})</span></div>`
+        ).join('');
+        return `<tr class="${double ? 'double' : ''}">
+            <td class="target-cell" data-label="Target"><span class="target-name">${esc(t.targetName || '?')}</span></td>
+            <td data-label="Coord">${t.targetX}:${t.targetY}</td>
+            <td data-label="Level">L${Math.floor(t.targetLevel)}</td>
+            <td data-label="Type"><span class="type type-${esc(type)}">${esc(type || '—')}</span></td>
+            <td class="watchers-cell" data-label="Watchers"><div>${watchers}${double ? `<div class="double-flag">⚠️ ${t.watchers.length} watchers!</div>` : ''}</div></td>
+        </tr>`;
+    }).join('');
+}
+
+function latest(t) {
+    return Math.max(...t.watchers.map(w => w.timestamp));
+}
+
+function ago(seconds) {
+    const min = Math.floor(Math.max(0, seconds) / 60);
+    return min < 1 ? 'just now' : `${min} min ago`;
+}
+
+function esc(s) {
+    return String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
+}
+
+function readStoredWorld() {
+    try {
+        const v = parseInt(localStorage.getItem(WORLD_KEY), 10);
+        return Number.isNaN(v) ? null : v;
+    } catch { return null; }
+}
+
+document.getElementById('worldSelect').addEventListener('change', (e) => {
+    selectedWorld = parseInt(e.target.value, 10);
+    try { localStorage.setItem(WORLD_KEY, String(selectedWorld)); } catch { /* private mode */ }
+    render();
+});
+
+loadTargets();
+setInterval(loadTargets, REFRESH_MS);
+</script>
+</body>
+</html>

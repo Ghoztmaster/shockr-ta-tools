@@ -112,7 +112,7 @@ Uitbreiding van de bestaande alliance-website (`packetlab.nl/shockr/`).
 
 - [x] 6c-1 Target Watcher (userscript, v5.4.0) — `plugins/target-watcher.js` detecteert welke niet-eigen base je bekijkt, POST naar `/api/target-watch` bij target-wissel (max 1 per 5 s), GET wie er nog meer kijkt → chat-melding
 - [x] 6c-2 backend — `server/target_watch.py`: `POST /api/target-watch`, `GET /api/target-watch/{worldId}/{targetId}` en `GET /api/target-watch/{worldId}`; in-memory per alliance, 10 min TTL (lazy cleanup)
-- [ ] 6c-1 website — wie kijkt naar welk target
+- [x] 6c-3 website — `/targets`: live-tabel wie naar welk target kijkt, ≥2 watchers gemarkeerd, world-selector, auto-refresh (data via `GET /api/targets`)
 
 - [ ] Combineert WatchList-watcher data (`get_AllianceWatchListWatcher()`) met scan-data en loot-logs
 - [ ] Toont wie naar welk target kijkt, voorkomt dubbele aanvallen, alliance-voortgang per sector
@@ -132,4 +132,4 @@ Uitbreiding van de bestaande alliance-website (`packetlab.nl/shockr/`).
 | 3 | Alliance-website | ✅ Live |
 | 4 | Script scanner-integratie | 🟡 Grotendeels klaar — alliance-scanner en scan-button open |
 | 5 | Documentatie & release | ✅ Klaar (v5.1.0) |
-| 6 | Nieuwe plugins (Repair Guard, Upgrade Calculator, Alliance War Dashboard) | 🟡 In progress — 6c-1 Target Watcher userscript + 6c-2 backend klaar, website volgt |
+| 6 | Nieuwe plugins (Repair Guard, Upgrade Calculator, Alliance War Dashboard) | 🟡 In progress — 6c-1 userscript, 6c-2 backend en 6c-3 dashboard klaar |
