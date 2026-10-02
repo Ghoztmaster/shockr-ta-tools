@@ -38,13 +38,21 @@ All configuration via in-game chat:
 
 | Command | Description |
 |---------|-------------|
-| `/st help` | Show available commands |
+| `/st help` | Overview of all commands, plugins and useful settings |
 | `/st status` | Show plugin status |
 | `/st plunder` | Toggle the plunder panel for the selected Forgotten base |
 | `/st plugin enable <name>` | Enable a plugin |
 | `/st plugin disable <name>` | Disable a plugin |
 | `/st config list` | Show all config values |
 | `/st config set <key> <value>` | Set a config value |
+
+### Language
+
+All chat messages, panels and `/st` output are available in English, German and Dutch (default: English). Switching applies immediately:
+
+```
+/st config set language nl    # en | de | nl
+```
 
 ### Scanner Setup (optional)
 

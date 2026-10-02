@@ -12,6 +12,7 @@
  *   api.key  — alliance API key
  */
 import { chatMessage } from '../lib/main.js';
+import { t } from '../lib/i18n.js';
 import { getAllNearbyObjects, waitForCity } from '../lib/city-util.js';
 import { extractScan, acquireScanLock, releaseScanLock } from '../lib/scanner-util.js';
 
@@ -22,6 +23,9 @@ const SCAN_INTERVAL_MS = 3600000; // re-scan every 60 minutes when idle
 const scannedVersions = new Map();
 
 export class LayoutScanner {
+    /** Short description for `/st help`. */
+    get description() { return t('descLayoutScanner'); }
+
     constructor(config, cli, apiClient, idleDetect) {
         this.name = 'LayoutScanner';
         this.config = config;
@@ -37,20 +41,20 @@ export class LayoutScanner {
         // Register CLI command first — works even without API config
         this.cli.register('scan', () => {
             if (!this.api.isConfigured) {
-                chatMessage('[ST] Scanner not configured. Set api.url and api.key first.');
+                chatMessage(`[ST] ${t('scanNotConfigured')}`);
                 return;
             }
             if (this._scanning) {
-                chatMessage('[ST] Scan already in progress...');
+                chatMessage(`[ST] ${t('scanInProgress')}`);
                 return;
             }
-            chatMessage('[ST] Manual scan started...');
+            chatMessage(`[ST] ${t('scanManualStarted')}`);
             this.scanAll();
         });
 
         if (!this.api.isConfigured) {
             console.log('[ST] LayoutScanner: no API configured — scanner inactive');
-            chatMessage('[ST] LayoutScanner enabled but no server configured. Set api.url and api.key first.');
+            chatMessage(`[ST] ${t('scanNoServer')}`);
             this.running = true;
             return;
         }
@@ -58,9 +62,7 @@ export class LayoutScanner {
         // Show consent notice on first enable
         const consentShown = this.config.get('layoutscanner.consent', false);
         if (!consentShown) {
-            chatMessage('[ST] ⚠ LayoutScanner sends base layouts to an external server (' +
-                this.api._url + '). This includes base positions, units, and buildings ' +
-                'of FG camps/outposts/bases near you. Disable with /st plugin disable LayoutScanner');
+            chatMessage(`[ST] ${t('scanConsent', { url: this.api._url })}`);
             this.config.set('layoutscanner.consent', true);
         }
 
@@ -157,13 +159,13 @@ export class LayoutScanner {
 
             const duration = ((Date.now() - startTime) / 1000).toFixed(1);
             if (scanned > 0) {
-                chatMessage(`[ST] Scan complete: ${scanned} base(s) sent, ${skipped} skipped (${duration}s)`);
+                chatMessage(`[ST] ${t('scanComplete', { scanned, skipped, duration })}`);
             }
             console.log(`[ST] LayoutScanner: ${scanned} sent, ${skipped} skipped, ${duration}s`);
 
         } catch (e) {
             console.error('[ST] LayoutScanner error:', e);
-            chatMessage('[ST] ⚠ Scan failed: ' + e.message);
+            chatMessage(`[ST] ${t('scanFailed', { error: e.message })}`);
         } finally {
             // Restore original city view
             if (originalCityId) {

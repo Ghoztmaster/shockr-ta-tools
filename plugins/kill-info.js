@@ -15,6 +15,7 @@
  *   t:2 = Tiberium, t:6 = Crystal
  */
 import { chatMessage } from '../lib/main.js';
+import { t } from '../lib/i18n.js';
 
 const PANEL_ID = 'mehrstrom-killinfo-panel';
 
@@ -28,6 +29,9 @@ const PLAYER_FACTIONS = [1, 2];
 const plunderCache = new Map();
 
 export class KillInfo {
+    /** Short description for `/st help`. */
+    get description() { return t('descKillInfo'); }
+
     constructor(config, cli) {
         this.name = 'KillInfo';
         this.config = config;
@@ -61,7 +65,7 @@ export class KillInfo {
         const city = getSelectedForgottenCity();
         const units = city ? getDefenseUnits(city) : [];
         if (!city || !units.length) {
-            chatMessage('[ST] Select a Forgotten base first');
+            chatMessage(`[ST] ${t('plunderSelectFirst')}`);
             return;
         }
 
@@ -70,7 +74,7 @@ export class KillInfo {
         this._panel.style.display = 'block';
 
         const { tib, cry } = getTotals(city, units);
-        chatMessage(`[ST] Plunder: ${city.get_Name()} Lvl ${Math.floor(city.get_LvlBase())} — Tib ${fmt(tib)}, Crystal ${fmt(cry)}`);
+        chatMessage(`[ST] ${t('plunderChat', { name: city.get_Name(), level: Math.floor(city.get_LvlBase()), tib: fmt(tib), cry: fmt(cry) })}`);
     }
 
     _isOpen() {
@@ -106,7 +110,7 @@ export class KillInfo {
 
         const close = document.createElement('div');
         close.textContent = '✕';
-        close.title = 'Close';
+        close.title = t('close');
         close.style.cssText = 'position:absolute;top:4px;right:8px;cursor:pointer;color:#999;font-size:13px;line-height:1;';
         close.addEventListener('click', () => this._hide());
         close.addEventListener('mouseenter', () => { close.style.color = '#fff'; });
@@ -217,15 +221,15 @@ function renderPanel(city, units) {
     const td = 'padding:1px 4px;';
     const num = td + 'text-align:right;';
 
-    let html = `<div style="font-weight:bold;margin-bottom:6px;color:#fff;">⚔ Plunder — ${escapeHtml(city.get_Name())}</div>`;
+    let html = `<div style="font-weight:bold;margin-bottom:6px;color:#fff;">⚔ ${t('plunderTitle')} — ${escapeHtml(city.get_Name())}</div>`;
     html += '<table style="width:100%;border-collapse:collapse;">';
-    html += `<tr style="color:#999;"><th style="${td}text-align:left;">Unit</th><th style="${num}">Lv</th>`
-        + `<th style="${num}">#</th><th style="${num}color:#8bc34a;">Tib</th><th style="${num}color:#42a5f5;">Crystal</th></tr>`;
+    html += `<tr style="color:#999;"><th style="${td}text-align:left;">${t('plunderUnit')}</th><th style="${num}">${t('plunderLevel')}</th>`
+        + `<th style="${num}">#</th><th style="${num}color:#8bc34a;">${t('plunderTib')}</th><th style="${num}color:#42a5f5;">${t('plunderCrystal')}</th></tr>`;
     for (const r of sorted) {
         html += `<tr><td style="${td}">${escapeHtml(r.name)}</td><td style="${num}">${r.level}</td>`
             + `<td style="${num}">${r.count}</td><td style="${num}">${fmt(r.tib)}</td><td style="${num}">${fmt(r.cry)}</td></tr>`;
     }
-    html += `<tr style="border-top:1px solid #555;font-weight:bold;"><td style="${td}" colspan="3">Total</td>`
+    html += `<tr style="border-top:1px solid #555;font-weight:bold;"><td style="${td}" colspan="3">${t('plunderTotal')}</td>`
         + `<td style="${num}color:#8bc34a;">${fmt(totalTib)}</td><td style="${num}color:#42a5f5;">${fmt(totalCry)}</td></tr>`;
     html += '</table>';
     return html;

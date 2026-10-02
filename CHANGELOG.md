@@ -5,6 +5,12 @@
 ### Planning
 - Roadmap: Fase 6 toegevoegd — Repair Guard, Upgrade Calculator, Alliance War Dashboard
 
+### Target Watch backend (VPS)
+- `POST /api/target-watch` — register/refresh that a player is viewing a target (one entry per player per target, timestamp = server time)
+- `GET /api/target-watch/{worldId}/{targetId}` — `{"watchers": [...]}` of that target; `GET /api/target-watch/{worldId}` — all watched targets of a world (for the dashboard)
+- In-memory only (no database/JSONL), scoped per alliance via the API key, 10 min TTL with lazy cleanup on every request
+- Same `X-Alliance-Key` auth as the scanner; scanner endpoints and storage unchanged
+
 ## [5.4.0] — 2026-10-01
 
 ### Target Watcher
@@ -13,6 +19,14 @@
 - POST only on target change (2.5 s poll timer), max 1 POST per 5 s; nothing is sent on your own base or the world map (backend expires watches by TTL); paused while a scanner is switching cities
 - Off by default — `/st plugin enable target-watcher`; uses the existing `api.url` / `api.key`; `/st status` shows the current target and number of reports
 - Requires the backend endpoint (separate VPS update)
+
+### Languages (EN / DE / NL)
+- `lib/i18n.js` — every user-facing text (chat messages, panel labels, `/st status`, `/st help`, errors) in English, German and Dutch; `t(key, vars)` with `{placeholder}` substitution and English fallback
+- `/st config set language en|de|nl` — default `en`, applies immediately without reload; console logs stay English, game names come from the client
+
+### Help
+- `/st help` rewritten — monospace overview of plugin commands, available plugins (generated from the registered plugins, each with a translated `description`), tool commands, settings and useful config keys
+- `<name>`/`<key>` placeholders in usage messages are now escaped (were swallowed as HTML in chat)
 
 ### API client
 - `ApiClient.request(method, path, body)` — one-off JSON request with the alliance key (scan queue unchanged)

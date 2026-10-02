@@ -20,6 +20,7 @@
  * Both patches are removed on stop().
  */
 import { chatMessage } from '../lib/main.js';
+import { t } from '../lib/i18n.js';
 
 /** Readable bulk-repair method names (RepairAll, RepairAllOffense, ...). */
 const REPAIR_ALL_FN = /^RepairAll/;
@@ -31,6 +32,9 @@ const REPAIR_ALL_TEXT = /repair\s*all|alle[s]?\s*repar|tout\s*r[ée]parer/i;
 const NOTIFY_INTERVAL_MS = 3000;
 
 export class RepairGuard {
+    /** Short description for `/st help`. */
+    get description() { return t('descRepairGuard'); }
+
     constructor(config) {
         this.name = 'RepairGuard';
         this.defaultEnabled = false;
@@ -46,7 +50,7 @@ export class RepairGuard {
         const fnCount = this._patchRepairFunctions();
         const btnPatched = this._patchButtons();
 
-        chatMessage('[ST] Repair Guard actief — Repair All geblokkeerd');
+        chatMessage(`[ST] ${t('repairGuardEnabled')}`);
         console.log(`[ST] RepairGuard: started (functions: ${fnCount}, button fallback: ${btnPatched})`);
     }
 
@@ -61,8 +65,8 @@ export class RepairGuard {
 
     /** One-line status for `/st status`. */
     statusText() {
-        if (!this.running) return 'Repair All toegestaan';
-        return `Repair All geblokkeerd (${this._patches.length} patches)`;
+        if (!this.running) return t('repairGuardStatusOff');
+        return t('repairGuardStatusOn', { count: this._patches.length });
     }
 
     /** Wrap every RepairAll* method (plus its obfuscated aliases) on city prototypes. */
@@ -138,7 +142,7 @@ export class RepairGuard {
         const now = Date.now();
         if (now - this._lastNotify < NOTIFY_INTERVAL_MS) return;
         this._lastNotify = now;
-        chatMessage('[ST] Repair Guard: Repair All geblokkeerd — repareer per unit of /st plugin disable repair-guard');
+        chatMessage(`[ST] ${t('repairGuardBlocked')}`);
     }
 }
 

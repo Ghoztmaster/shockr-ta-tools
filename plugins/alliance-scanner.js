@@ -17,6 +17,7 @@
  *   api.key  — alliance API key
  */
 import { chatMessage } from '../lib/main.js';
+import { t } from '../lib/i18n.js';
 import { waitForCity } from '../lib/city-util.js';
 import { extractScan, acquireScanLock, releaseScanLock, scanLockHolder } from '../lib/scanner-util.js';
 
@@ -31,6 +32,9 @@ const LOCK_WAIT_MAX = 120;        // ... for at most 10 minutes
 const scannedVersions = new Map();
 
 export class AllianceScanner {
+    /** Short description for `/st help`. */
+    get description() { return t('descAllianceScanner'); }
+
     constructor(config, cli, apiClient, idleDetect) {
         this.name = 'AllianceScanner';
         this.config = config;
@@ -46,19 +50,19 @@ export class AllianceScanner {
         // Register CLI command first — works even without API config
         this.cli.register('scanalliance', () => {
             if (!this.api.isConfigured) {
-                chatMessage('[ST] Alliance scan not configured. Set api.url and api.key first.');
+                chatMessage(`[ST] ${t('allianceScanNotConfigured')}`);
                 return;
             }
             if (this._scanning) {
-                chatMessage('[ST] Alliance scan already in progress...');
+                chatMessage(`[ST] ${t('allianceScanInProgress')}`);
                 return;
             }
             const holder = scanLockHolder();
             if (holder) {
-                chatMessage(`[ST] ${holder} is scanning — try again when it is done.`);
+                chatMessage(`[ST] ${t('allianceScanLocked', { holder })}`);
                 return;
             }
-            chatMessage('[ST] Alliance scan started...');
+            chatMessage(`[ST] ${t('allianceScanStarted')}`);
             this.scanAll({ manual: true });
         });
 
@@ -162,13 +166,13 @@ export class AllianceScanner {
 
             const duration = ((Date.now() - startTime) / 1000).toFixed(1);
             if (manual || scanned > 0) {
-                chatMessage(`[ST] Alliance scan complete: ${scanned} base(s) sent, ${skipped} skipped (${duration}s)`);
+                chatMessage(`[ST] ${t('allianceScanComplete', { scanned, skipped, duration })}`);
             }
             console.log(`[ST] AllianceScanner: ${scanned} sent, ${skipped} skipped, ${duration}s${aborted ? ' (aborted: player active)' : ''}`);
 
         } catch (e) {
             console.error('[ST] AllianceScanner error:', e);
-            chatMessage('[ST] ⚠ Alliance scan failed: ' + e.message);
+            chatMessage(`[ST] ${t('allianceScanFailed', { error: e.message })}`);
         } finally {
             // Restore original city view
             if (originalCityId) {

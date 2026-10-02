@@ -26,6 +26,8 @@
  *   stock = city.GetResourceCount(type)
  *   rate  = city.GetResourceGrowPerHour(type, true, true)   — incl. package + POI
  */
+import { t } from '../lib/i18n.js';
+
 const PANEL_ID = 'st-upgradecalc-panel';
 const BUTTON_ID = 'st-upgradecalc-button';
 
@@ -38,6 +40,9 @@ const VIEW_CHECK_INTERVAL_MS = 1000;
 const REFRESH_INTERVAL_MS = 30000;
 
 export class UpgradeCalc {
+    /** Short description for `/st help`. */
+    get description() { return t('descUpgradeCalc'); }
+
     constructor(config) {
         this.name = 'UpgradeCalc';
         this.defaultEnabled = false;
@@ -77,7 +82,7 @@ export class UpgradeCalc {
     /** One-line status for `/st status`. */
     statusText() {
         if (!this.running) return '/st plugin enable upgradecalc';
-        return this._isOpen() ? 'knop in base-view, paneel open' : 'knop in base-view';
+        return t(this._isOpen() ? 'upgradeCalcStatusOpen' : 'upgradeCalcStatusButton');
     }
 
     /** Button click: close the panel if open, otherwise show it for the current own city. */
@@ -115,7 +120,7 @@ export class UpgradeCalc {
             this._content.innerHTML = renderPanel(city, getUpgradeRows(city));
         } catch (err) {
             console.error('[ST] UpgradeCalc: render failed', err);
-            this._content.innerHTML = `<div style="color:#e57373;">Upgrade Calculator: fout — ${escapeHtml(err.message)}</div>`;
+            this._content.innerHTML = `<div style="color:#e57373;">${escapeHtml(t('upgradeCalcError', { error: err.message }))}</div>`;
         }
     }
 
@@ -198,7 +203,7 @@ export class UpgradeCalc {
 
         const close = document.createElement('div');
         close.textContent = '✕';
-        close.title = 'Close';
+        close.title = t('close');
         close.style.cssText = 'position:absolute;top:4px;right:8px;cursor:pointer;color:#999;font-size:13px;line-height:1;';
         close.addEventListener('click', () => this._hide());
         close.addEventListener('mouseenter', () => { close.style.color = '#fff'; });
@@ -351,18 +356,19 @@ function renderPanel(city, { rows, stock, rate }) {
     const tibColor = 'color:#8bc34a;';
     const powColor = 'color:#ffca28;';
 
-    let html = `<div style="font-weight:bold;margin-bottom:4px;color:#fff;">🔧 Upgrades — ${escapeHtml(city.get_Name())}</div>`;
+    const perHour = t('upgradeCalcPerHour');
+    let html = `<div style="font-weight:bold;margin-bottom:4px;color:#fff;">🔧 ${t('upgradeCalcTitle')} — ${escapeHtml(city.get_Name())}</div>`;
     html += `<div style="margin-bottom:6px;color:#aaa;">`
-        + `<span style="${tibColor}">Tib</span> ${fmt(stock.tib)} (+${fmt(rate.tib)}/u) · `
-        + `<span style="${powColor}">Power</span> ${fmt(stock.power)} (+${fmt(rate.power)}/u)</div>`;
+        + `<span style="${tibColor}">${t('upgradeCalcTib')}</span> ${fmt(stock.tib)} (+${fmt(rate.tib)}${perHour}) · `
+        + `<span style="${powColor}">${t('upgradeCalcPower')}</span> ${fmt(stock.power)} (+${fmt(rate.power)}${perHour})</div>`;
 
     if (!rows.length) {
-        return html + '<div style="color:#999;">Alle gebouwen op max-level</div>';
+        return html + `<div style="color:#999;">${t('upgradeCalcAllMax')}</div>`;
     }
 
     html += '<table style="width:100%;border-collapse:collapse;">';
-    html += `<tr style="color:#999;"><th style="${td}text-align:left;">Gebouw</th><th style="${num}">Level</th>`
-        + `<th style="${num}${tibColor}">Tib</th><th style="${num}${powColor}">Power</th><th style="${num}">Tijd</th></tr>`;
+    html += `<tr style="color:#999;"><th style="${td}text-align:left;">${t('upgradeCalcBuilding')}</th><th style="${num}">${t('upgradeCalcLevel')}</th>`
+        + `<th style="${num}${tibColor}">${t('upgradeCalcTib')}</th><th style="${num}${powColor}">${t('upgradeCalcPower')}</th><th style="${num}">${t('upgradeCalcTime')}</th></tr>`;
     for (const r of rows) {
         const ready = r.hours === 0;
         html += `<tr><td style="${td}">${escapeHtml(r.name)}</td><td style="${num}">${r.level}→${r.level + 1}</td>`
@@ -374,10 +380,10 @@ function renderPanel(city, { rows, stock, rate }) {
 }
 
 function fmtHours(h) {
-    if (h === 0) return 'Gereed';
+    if (h === 0) return t('upgradeCalcReady');
     if (!isFinite(h)) return '∞';
     const totalMin = Math.ceil(h * 60);
-    return `${Math.floor(totalMin / 60)}u ${String(totalMin % 60).padStart(2, '0')}m`;
+    return t('upgradeCalcHours', { h: Math.floor(totalMin / 60), m: String(totalMin % 60).padStart(2, '0') });
 }
 
 function fmt(n) {

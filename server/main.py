@@ -22,6 +22,7 @@ from fastapi.responses import FileResponse
 from server.models import ScanPayload, ScanResponse
 from server.storage import ScanStorage
 from server.ratelimit import RateLimiter
+from server.target_watch import TargetWatchPayload, TargetWatchStore
 
 # ─── Config ──────────────────────────────────────────────────────────
 
@@ -77,6 +78,7 @@ class KeyStore:
 
 key_store = KeyStore(KEYS_FILE)
 storage = ScanStorage(DATA_DIR)
+target_watches = TargetWatchStore()
 post_limiter = RateLimiter(max_requests=10, window_seconds=1)
 get_limiter = RateLimiter(max_requests=30, window_seconds=1)
 
@@ -186,6 +188,33 @@ async def get_base(city_id: int, world_id: int | None = None):
     if detail is None:
         raise HTTPException(status_code=404, detail="Base not found")
     return detail
+
+# ─── Target Watch (in-memory, 10 min TTL) ───────────────────────────
+
+@app.post("/api/target-watch")
+async def post_target_watch(
+    payload: TargetWatchPayload,
+    alliance_id: str = Depends(verify_api_key),
+):
+    target_watches.add(alliance_id, payload)
+    return {"ok": True}
+
+
+@app.get("/api/target-watch/{world_id}/{target_id}")
+async def get_target_watchers(
+    world_id: int,
+    target_id: int,
+    alliance_id: str = Depends(verify_api_key),
+):
+    return {"watchers": target_watches.get_watchers(alliance_id, world_id, target_id)}
+
+
+@app.get("/api/target-watch/{world_id}")
+async def get_world_target_watches(
+    world_id: int,
+    alliance_id: str = Depends(verify_api_key),
+):
+    return {"targets": target_watches.get_world(alliance_id, world_id)}
 
 # ─── Health ──────────────────────────────────────────────────────────
 

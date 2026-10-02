@@ -31,6 +31,7 @@
  *   { playerId, playerName, timestamp }   — timestamp in unix seconds (ms also accepted)
  */
 import { chatMessage } from '../lib/main.js';
+import { t } from '../lib/i18n.js';
 import { scanLockHolder } from '../lib/scanner-util.js';
 
 const POLL_INTERVAL_MS = 2500;
@@ -43,6 +44,9 @@ const PLAYER_FACTIONS = [1, 2];
 const BASE_VIEW_MODES = ['City', 'CombatSetup', 'Battleground'];
 
 export class TargetWatcher {
+    /** Short description for `/st help`. */
+    get description() { return t('descTargetWatcher'); }
+
     constructor(config, apiClient) {
         this.name = 'TargetWatcher';
         this.defaultEnabled = false;
@@ -60,7 +64,7 @@ export class TargetWatcher {
     async start() {
         this.running = true;
         if (!this.api.isConfigured) {
-            chatMessage('[ST] TargetWatcher enabled but no server configured. Set api.url and api.key first.');
+            chatMessage(`[ST] ${t('targetWatcherNoServer')}`);
         }
         this._tick();
         this._timer = setInterval(() => this._tick(), POLL_INTERVAL_MS);
@@ -82,11 +86,11 @@ export class TargetWatcher {
     /** One-line status for `/st status`. */
     statusText() {
         if (!this.running) return '/st plugin enable target-watcher';
-        if (!this.api.isConfigured) return 'geen server geconfigureerd (api.url / api.key)';
-        const watching = this._current
-            ? `kijkt naar ${this._current.targetName} (${this._current.targetX}:${this._current.targetY})`
-            : 'geen target in beeld';
-        return `${watching}, ${this._postCount} melding(en) verstuurd`;
+        if (!this.api.isConfigured) return t('targetWatcherStatusNoServer');
+        const count = this._postCount;
+        if (!this._current) return t('targetWatcherStatusIdle', { count });
+        const { targetName: target, targetX: x, targetY: y } = this._current;
+        return t('targetWatcherStatusWatching', { target, x, y, count });
     }
 
     _tick() {
@@ -124,10 +128,10 @@ export class TargetWatcher {
         const name = (w) => escapeHtml(w.playerName || '?');
         const targetName = escapeHtml(target.targetName);
         if (others.length === 1) {
-            chatMessage(`[ST] ⚠️ ${name(others[0])} kijkt ook naar ${targetName}${since(others[0].timestamp)}`);
+            chatMessage(`[ST] ${t('targetWatcherWarning', { player: name(others[0]), target: targetName, since: since(others[0].timestamp) })}`);
         } else {
             const names = others.map(w => `${name(w)}${since(w.timestamp)}`).join(', ');
-            chatMessage(`[ST] ⚠️ ${names} kijken ook naar ${targetName}`);
+            chatMessage(`[ST] ${t('targetWatcherWarningMulti', { players: names, target: targetName })}`);
         }
     }
 }
@@ -203,7 +207,7 @@ function since(ts) {
     if (!n) return '';
     const ms = n < 1e12 ? n * 1000 : n;
     const min = Math.max(0, Math.round((Date.now() - ms) / 60000));
-    return min < 1 ? ' (net)' : ` (sinds ${min} min)`;
+    return min < 1 ? t('targetWatcherSinceNow') : t('targetWatcherSince', { min });
 }
 
 function escapeHtml(s) {

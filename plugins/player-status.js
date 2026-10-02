@@ -27,6 +27,8 @@
  *   AllianceRelation: 1=Friend, 2=NAP, 3=Foe
  */
 
+import { t } from '../lib/i18n.js';
+
 const PLAYER_COLORS = {
     0: '#5a5653',   // Offline
     1: '#76ff03',   // Online
@@ -76,6 +78,9 @@ function getPlayerColor(playerId, allianceId) {
 }
 
 export class PlayerStatus {
+    /** Short description for `/st help`. */
+    get description() { return t('descPlayerStatus'); }
+
     constructor() {
         this.name = 'PlayerStatus';
         this.running = false;

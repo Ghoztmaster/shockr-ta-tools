@@ -17,6 +17,7 @@
  *   alert     — chat alert on new spawns (default true)
  */
 import { chatMessage } from '../lib/main.js';
+import { t } from '../lib/i18n.js';
 import { getMainCity, getObjectsNearCity } from '../lib/city-util.js';
 
 const DEFAULTS = {
@@ -29,6 +30,9 @@ const DEFAULTS = {
 };
 
 export class CampTracker {
+    /** Short description for `/st help`. */
+    get description() { return t('descCampTracker'); }
+
     constructor(config, cli) {
         this.name = 'CampTracker';
         this.config = config;
@@ -177,12 +181,12 @@ export class CampTracker {
 
                 // Alert (skip first load to avoid spam)
                 if (!this._firstUpdate && alertEnabled && index === 0) {
-                    const type = camp.campType === 2 ? 'Camp' : 'Outpost';
+                    const type = t(camp.campType === 2 ? 'campTypeCamp' : 'campTypeOutpost');
                     const time = new Date().toLocaleTimeString('de-DE', { hour12: false });
                     const cx = Math.round(camp.x);
                     const cy = Math.round(camp.y);
                     const coord = `<a style="color:${webfrontend.gui.util.BBCode.clrLink};cursor:pointer;" onClick="webfrontend.gui.UtilView.centerCoordinatesOnRegionViewWindow(${cx},${cy});">${cx}:${cy}</a>`;
-                    chatMessage(`[ST] ${time}: New L${camp.level || '?'} ${type} spawned at ${coord}`);
+                    chatMessage(`[ST] ${t('campSpawned', { time, level: camp.level || '?', type, coord })}`);
                 }
             }
         });
@@ -204,7 +208,7 @@ export class CampTracker {
     /** Create a marker DOM element and track it. */
     _addMarker(cityId, x, y, index) {
         const el = document.createElement('div');
-        el.title = `Object #${cityId}`;
+        el.title = t('markerTitle', { id: cityId });
         this._applyStyle(el);
         this.markers.set(cityId, { el, x, y, index });
         this._updateElement(el, x, y, index);
