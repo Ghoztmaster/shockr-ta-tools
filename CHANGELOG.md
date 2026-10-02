@@ -18,6 +18,14 @@
 - `GET /api/targets` — read-only viewer endpoint (Basic Auth, like `/api/bases`) with all active worlds, so the page needs no alliance API key
 - Plain HTML/CSS/JS in the same dark theme, responsive (cards on mobile); "🎯 Target Watch" link in the base overview header
 
+## [5.5.0] — 2026-10-02
+
+### Help as popup panel
+- `/st help` opens a centered popup panel (same dark style as the KillInfo / Upgrade Calculator panels): section headings, command | description tables with aligned columns, commands in monospace light blue, descriptions in grey
+- Close with ✕, Escape or typing `/st help` again; scrolls when it doesn't fit; full width with stacked rows on mobile
+- `/st config set help.popup false` — help in the chat as before (unchanged output); default `true`
+- Escape listener only while the panel is open, removed on close; help content and translations unchanged (new: close hint in EN/DE/NL)
+
 ## [5.4.0] — 2026-10-01
 
 ### Target Watcher

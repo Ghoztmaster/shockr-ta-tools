@@ -38,7 +38,7 @@ All configuration via in-game chat:
 
 | Command | Description |
 |---------|-------------|
-| `/st help` | Overview of all commands, plugins and useful settings |
+| `/st help` | Overview of all commands, plugins and useful settings — as a popup panel (close with ✕ / Escape / `/st help`); `/st config set help.popup false` shows it in the chat instead |
 | `/st status` | Show plugin status |
 | `/st plunder` | Toggle the plunder panel for the selected Forgotten base |
 | `/st plugin enable <name>` | Enable a plugin |
