@@ -17,6 +17,8 @@ from contextlib import asynccontextmanager
 
 import bcrypt
 from fastapi import FastAPI, Request, Response, Header, HTTPException, Depends
+from fastapi.exceptions import RequestValidationError
+from fastapi.exception_handlers import request_validation_exception_handler
 from fastapi.responses import JSONResponse
 from fastapi.responses import FileResponse
 
@@ -112,6 +114,32 @@ app = FastAPI(
     openapi_url=None,
     lifespan=lifespan,
 )
+
+# ─── Validation errors (422) ────────────────────────────────────────
+
+# Body excerpt logged with a rejected target-watch POST (enough to see the
+# fields; the payload holds no secrets - auth travels in headers).
+VALIDATION_LOG_BODY_CHARS = 500
+
+
+@app.exception_handler(RequestValidationError)
+async def log_validation_error(request: Request, exc: RequestValidationError):
+    """Same 422 response as FastAPI's default, but a rejected target-watch POST
+    is logged with the failing fields and the body, so it is visible WHICH
+    field the userscript got wrong (5.6.1: it answered a constant 422)."""
+    if request.url.path.endswith("/api/target-watch"):
+        fields = "; ".join(
+            f"{'.'.join(str(p) for p in e.get('loc', ()))}: {e.get('msg')} (got {e.get('input')!r})"
+            for e in exc.errors()
+        )
+        body = exc.body
+        if isinstance(body, (bytes, bytearray)):
+            body = body.decode("utf-8", "replace")
+        log.warning("target-watch 422 from player %s: %s | body: %.*s",
+                    request.headers.get("x-player-id", "?"), fields,
+                    VALIDATION_LOG_BODY_CHARS, json.dumps(body, default=str) if not isinstance(body, str) else body)
+    return await request_validation_exception_handler(request, exc)
+
 
 # ─── Middleware ───────────────────────────────────────────────────────
 

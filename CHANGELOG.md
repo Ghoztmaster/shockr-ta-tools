@@ -18,6 +18,14 @@
 - `GET /api/targets` — read-only viewer endpoint (Basic Auth, like `/api/bases`) with all active worlds, so the page needs no alliance API key
 - Plain HTML/CSS/JS in the same dark theme, responsive (cards on mobile); "🎯 Target Watch" link in the base overview header
 
+## [5.6.1] — 2026-10-03
+
+### Target Watch: 422 Unprocessable Entity
+- **Userscript:** the watch payload reads the player via `get_Id()`/`get_Name()` first (same order as `readPlayer()` in api-client), skips the tick while id/name are unknown, and sends every field typed and bounded as `TargetWatchPayload` expects (integers, names trimmed and cut to 50 chars) - an undefined `player.id`/`.name` is dropped by `JSON.stringify`, which the server answers with 422
+- **Userscript:** a 422 from any one-off API request now logs the server's `detail` (which field was rejected) in the console, not just the status
+- **Server (VPS):** a rejected `POST /api/target-watch` is logged as `target-watch 422 from player <id>: <field>: <reason> (got ...) | body: ...`; the 422 response itself is unchanged (FastAPI's default handler)
+- Root cause not confirmed live yet - if the 422 persists after the update, the server log line names the field
+
 ## [5.6.0] — 2026-10-02
 
 ### Per-player API keys with enrollment

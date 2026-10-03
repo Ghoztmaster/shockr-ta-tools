@@ -37,6 +37,9 @@ import { scanLockHolder } from '../lib/scanner-util.js';
 const POLL_INTERVAL_MS = 2500;
 const POST_MIN_INTERVAL_MS = 5000;
 
+/** Server-side limits of TargetWatchPayload (server/target_watch.py) - longer strings were a 422. */
+const NAME_MAX_LENGTH = 50;
+
 /** Player factions (GDI / Nod); everything else is a Forgotten variant. */
 const PLAYER_FACTIONS = [1, 2];
 
@@ -152,7 +155,13 @@ function getViewedTarget() {
         if (city.IsOwnBase()) return null;
 
         const player = md.get_Player();
-        if (city.get_OwnerId() === player.id) return null;
+        // 5.6.1: getters first (the same order as api-client's readPlayer()) -
+        // an undefined player.id/.name would be dropped by JSON.stringify and
+        // the server answers a missing required field with 422.
+        const playerId = Number(typeof player.get_Id === 'function' ? player.get_Id() : player.id) || 0;
+        const playerName = String((typeof player.get_Name === 'function' ? player.get_Name() : player.name) || '');
+        if (!playerId || !playerName) return null;   // game data not ready - next tick
+        if (city.get_OwnerId() === playerId) return null;
 
         const faction = city.get_CityFaction();
         const alliance = md.get_Alliance();
@@ -167,16 +176,18 @@ function getViewedTarget() {
         const type = getTargetType(x, y, faction);
         const label = { camp: 'Camp', outpost: 'Outpost', base: 'FG Base', player: 'Base' }[type];
 
+        // Every field typed and bounded exactly as TargetWatchPayload expects
+        // (ints, names <= 50 chars) - anything else is a 422 on the server.
         return {
-            playerId: player.id,
-            playerName: player.name,
-            targetId: city.get_Id(),
-            targetName: city.get_Name() || `${label} L${level}`,
-            targetX: x,
-            targetY: y,
-            targetLevel: level,
+            playerId,
+            playerName: clip(playerName),
+            targetId: Number(city.get_Id()),
+            targetName: clip(city.get_Name() || `${label} L${level}`),
+            targetX: Math.round(Number(x)),
+            targetY: Math.round(Number(y)),
+            targetLevel: Number.isFinite(level) ? level : 0,
             targetType: type,
-            worldId: md.get_Server().get_WorldId(),
+            worldId: Number(md.get_Server().get_WorldId()),
             timestamp: Math.floor(Date.now() / 1000),
         };
     } catch {
@@ -192,6 +203,11 @@ function getTargetType(x, y, faction) {
         if (obj && obj.Type === 3) return obj.$CampType === 2 ? 'camp' : 'outpost';
     } catch { /* fall through */ }
     return 'base';
+}
+
+/** Trimmed and cut to the server's name limit. */
+function clip(s) {
+    return String(s).trim().slice(0, NAME_MAX_LENGTH);
 }
 
 /** GET response → watcher array (accepts a bare array or { watchers: [...] }). */
