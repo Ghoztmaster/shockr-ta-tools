@@ -169,6 +169,7 @@ class ScanStorage:
             "defense_units": latest.get("defense_units", ""),
             "offense_units": latest.get("offense_units", ""),
             "upgrades": latest.get("upgrades", {}),
+            "unit_names": latest.get("unit_names", {}),
             "scanned_by": latest.get("scanned_by", ""),
             "scanned_at": latest.get("stored_at", ""),
             "version": latest["version"],

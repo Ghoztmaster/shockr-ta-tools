@@ -18,6 +18,13 @@
 - `GET /api/targets` — read-only viewer endpoint (Basic Auth, like `/api/bases`) with all active worlds, so the page needs no alliance API key
 - Plain HTML/CSS/JS in the same dark theme, responsive (cards on mobile); "🎯 Target Watch" link in the base overview header
 
+## [5.7.0] — 2026-10-04
+
+### Unit-namen op de base-detail pagina
+- **Userscript:** de scan stuurt `unit_names` mee: per unit-type (mdb-id) `{name, displayName}` uit `info.n`/`info.dn` (bron: `get_UnitGameData_Obj()`, dan `GAMEDATA.units[id]`, dan `ClientLib.Res.ResMain.GetInstance().GetUnit_Obj(id)`). Een unit waarvan geen naam te lezen is valt eruit; de scan zelf gaat altijd door. De gepakte unit-strings (`defense_units`/`offense_units`) zijn ongewijzigd
+- **Server (VPS):** `ScanPayload.unit_names` is optioneel (oude clients sturen het niet), `GET /api/base/...` geeft het terug
+- **Website (VPS):** units tonen `displayName`, anders `name`, anders `ID {type}` (oude scans); het layout-grid heeft kolomnummers (0-8) bovenaan en rijnummers links, 0-based zoals de game telt
+
 ## [5.6.1] — 2026-10-03
 
 ### Target Watch: 422 Unprocessable Entity

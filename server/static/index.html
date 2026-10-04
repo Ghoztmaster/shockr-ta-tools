@@ -133,6 +133,16 @@
         margin: 10px 0;
     }
     .grid-row { display: flex; }
+    .grid-label {
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        color: #777;
+    }
+    .grid-label.row-label { width: 16px; }
     .grid-cell {
         width: 28px;
         height: 28px;
@@ -337,6 +347,14 @@ function decodeUnits(unitStr) {
         const level = (n >> 17) & 0x7F;
         return { x: xy % 9, y: Math.floor(xy / 9), id, level };
     });
+}
+
+// Unit label: displayName, else tech name, else "ID {type}" (scans from before unit_names)
+function unitLabel(id, names) {
+    const n = names && names[id];
+    if (n && n.displayName) return n.displayName;
+    if (n && n.name) return n.name;
+    return `ID ${id}`;
 }
 
 // ─── Faction names ──────────────────────────────────────────
@@ -550,8 +568,14 @@ function renderDetail(b) {
     let gridHtml = '';
     if (grid) {
         gridHtml = '<div class="grid-container">';
+        // Column numbers 0-8 on top, row numbers on the left (0-based, as the game counts)
+        gridHtml += '<div class="grid-row"><div class="grid-label row-label"></div>';
+        for (let x = 0; x < (grid[0] || []).length; x++) {
+            gridHtml += `<div class="grid-label">${x}</div>`;
+        }
+        gridHtml += '</div>';
         for (let y = 0; y < grid.length; y++) {
-            gridHtml += '<div class="grid-row">';
+            gridHtml += `<div class="grid-row"><div class="grid-label row-label">${y}</div>`;
             for (let x = 0; x < grid[y].length; x++) {
                 const t = grid[y][x];
                 const hasUnit = unitPositions.has(`${x},${y}`) ? ' has-unit' : '';
@@ -570,7 +594,7 @@ function renderDetail(b) {
         defHtml = `<h3>🛡 Defense Units (${defUnits.length})</h3><div class="unit-grid">` +
             defUnits.map(u =>
                 `<div class="unit-item def">` +
-                `ID ${u.id} <span class="unit-level">Lv${u.level}</span> ` +
+                `${esc(unitLabel(u.id, b.unit_names))} <span class="unit-level">Lv${u.level}</span> ` +
                 `<span class="unit-pos">(${u.x},${u.y})</span></div>`
             ).join('') + '</div>';
     }
@@ -581,7 +605,7 @@ function renderDetail(b) {
         offHtml = `<h3>⚔ Offense Units (${offUnits.length})</h3><div class="unit-grid">` +
             offUnits.map(u =>
                 `<div class="unit-item off">` +
-                `ID ${u.id} <span class="unit-level">Lv${u.level}</span> ` +
+                `${esc(unitLabel(u.id, b.unit_names))} <span class="unit-level">Lv${u.level}</span> ` +
                 `<span class="unit-pos">(${u.x},${u.y})</span></div>`
             ).join('') + '</div>';
     }

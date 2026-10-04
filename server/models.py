@@ -7,6 +7,12 @@ from pydantic import BaseModel, Field, field_validator
 BASE62_PATTERN = re.compile(r'^[0-9A-Za-z.\-]*$')
 
 
+class UnitName(BaseModel):
+    """Game-data names of one unit type (info.n / info.dn)."""
+    name: str = Field(max_length=60, default="")
+    displayName: str = Field(max_length=60, default="")
+
+
 class ScanPayload(BaseModel):
     """Incoming scan from the Tampermonkey script."""
     city_id: int = Field(gt=0)
@@ -28,6 +34,8 @@ class ScanPayload(BaseModel):
     defense_units: str = Field(max_length=2000, default="")
     offense_units: str = Field(max_length=2000, default="")
     upgrades: dict[str, int] = Field(default_factory=dict)
+    # mdb unit id -> names; optional, older clients don't send it
+    unit_names: dict[str, UnitName] = Field(default_factory=dict)
     scanned_by: str = Field(max_length=50)
     version: int = Field(gt=0)
     timestamp: int = Field(gt=0)
@@ -42,6 +50,16 @@ class ScanPayload(BaseModel):
     def validate_encoded_fields(cls, v: str) -> str:
         if v and not BASE62_PATTERN.match(v):
             raise ValueError('Field contains invalid characters')
+        return v
+
+    @field_validator('unit_names')
+    @classmethod
+    def validate_unit_names(cls, v: dict) -> dict:
+        if len(v) > 100:
+            raise ValueError('Too many unit name entries')
+        for key in v:
+            if not key.isdigit():
+                raise ValueError(f'Invalid unit id {key}')
         return v
 
     @field_validator('upgrades')
