@@ -730,9 +730,12 @@ function renderUnitViews(b, mode) {
     const offUnits = decodeUnits(b.offense_units);
     const names = b.unit_names;
 
-    // Unit per grid position (defense first, as before both sets mark the cell)
+    // Unit per grid position. The scanner sends defense rows relative to the defense
+    // area (0-7), which is grid rows 8-15; offense rows are already grid rows 0-7.
+    const DEFENSE_ROW_OFFSET = 8;
     const unitAt = new Map();
-    for (const u of [...defUnits, ...offUnits]) {
+    for (const u of defUnits) unitAt.set(`${u.x},${u.y + DEFENSE_ROW_OFFSET}`, u);
+    for (const u of offUnits) {
         const key = `${u.x},${u.y}`;
         if (!unitAt.has(key)) unitAt.set(key, u);
     }
