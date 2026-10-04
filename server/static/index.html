@@ -163,6 +163,30 @@
         outline-offset: -2px;
         z-index: 1;
     }
+    /* Unit symbol + level inside a grid cell (all modes) */
+    .cell-unit {
+        color: #fff;
+        font: bold 9px/1 Consolas, "Courier New", monospace;
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: 26px;
+        text-shadow: 0 0 2px #000, 0 0 2px #000;
+        pointer-events: none;
+    }
+    .cell-unit.emoji { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; letter-spacing: -1px; }
+    /* Mode C: coloured badge inside the cell; the cell's own colour stays around it */
+    .cell-unit.badge { padding: 3px 2px; border-radius: 2px; text-shadow: none; }
+    .ucat-infantry  { background: #1565c0; }
+    .ucat-vehicle   { background: #c62828; }
+    .ucat-structure { background: #2e7d32; }
+    .ucat-artillery { background: #6a1b9a; }
+    .ucat-air       { background: #b88a00; }
+    .ucat-unknown   { background: #555; }
+    .unit-sym { display: inline-block; min-width: 1.2em; text-align: center; font-weight: bold; margin-right: 3px; }
+    .unit-sym.badge { color: #fff; border-radius: 2px; padding: 0 3px; }
+    .unit-mode-bar { display: flex; align-items: center; gap: 8px; margin: 10px 0 0; }
+    .unit-mode-bar h3 { margin: 0; }
+    .unit-legend { font-size: 12px; color: #aaa; margin: 4px 0 6px; display: flex; flex-wrap: wrap; gap: 4px 12px; }
 
     /* Unit list */
     .unit-section { margin-top: 10px; }
@@ -355,6 +379,105 @@ function unitLabel(id, names) {
     if (n && n.displayName) return n.displayName;
     if (n && n.name) return n.name;
     return `ID ${id}`;
+}
+
+// ─── Unit symbols (display only; names/scan data untouched) ─
+// Category per unit name (lower-case displayName or tech name). abbr = mode A.
+const UNIT_SYMBOL_MAP = {
+    'anti-tank barrier': { cat: 'structure', abbr: 'AT' },
+    'barricade':         { cat: 'structure', abbr: 'Ba' },
+    'forgotten':         { cat: 'infantry',  abbr: 'Fg' },
+    'missile squad':     { cat: 'infantry',  abbr: 'MS' },
+    'riflemen':          { cat: 'infantry',  abbr: 'Ri' },
+    'sniper':            { cat: 'infantry',  abbr: 'Sn' },
+    'sniper team':       { cat: 'infantry',  abbr: 'Sn' },
+    'zone trooper':      { cat: 'infantry',  abbr: 'ZT' },
+    'zone troopers':     { cat: 'infantry',  abbr: 'ZT' },
+    'scooper':           { cat: 'vehicle',   abbr: 'Sc' },
+    'rocket fist':       { cat: 'vehicle',   abbr: 'RF' },
+    'mammoth':           { cat: 'vehicle',   abbr: 'Mm' },
+    'pitbull':           { cat: 'vehicle',   abbr: 'Pb' },
+    'predator':          { cat: 'vehicle',   abbr: 'Pr' },
+    'apc guardian':      { cat: 'vehicle',   abbr: 'AP' },
+    'guardian apc':      { cat: 'vehicle',   abbr: 'AP' },
+    'juggernaut':        { cat: 'artillery', abbr: 'Jg' },
+    'mlrs':              { cat: 'artillery', abbr: 'ML' },
+    'firehawk':          { cat: 'air',       abbr: 'FH' },
+    'orca':              { cat: 'air',       abbr: 'Or' },
+};
+const UNIT_CAT_SYMBOL = {   // mode D (NATO)
+    structure: '▬', infantry: '✕', vehicle: '◆', artillery: '●', air: '△',
+};
+const UNIT_CAT_EMOJI = {    // mode B
+    structure: '🛡', infantry: '👤', vehicle: '🚗', artillery: '💣', air: '✈️',
+};
+const UNIT_MODES = [        // dropdown order
+    { id: 'A', label: 'Afkortingen' },
+    { id: 'B', label: 'Emoji' },
+    { id: 'C', label: 'Kleur' },
+    { id: 'D', label: 'NATO' },
+];
+const UNIT_MODE_KEY = 'shockr_unit_symbol_mode';
+
+function getUnitMode() {
+    try {
+        const m = localStorage.getItem(UNIT_MODE_KEY);
+        if (UNIT_MODES.some(o => o.id === m)) return m;
+    } catch (e) { /* storage blocked: default */ }
+    return 'D';
+}
+function setUnitMode(m) {
+    try { localStorage.setItem(UNIT_MODE_KEY, m); } catch (e) { /* not remembered, still applied */ }
+}
+
+// Normalize a name for lookup: lower case, faction prefix (FOR_/GDI_/NOD_) and underscores gone
+function normUnitName(s) {
+    return String(s || '').toLowerCase().replace(/^(for|gdi|nod)_/, '').replace(/_/g, ' ').trim();
+}
+
+// {cat, abbr, named} for a unit id; exact name match first, then "starts with" a known name
+function unitClass(id, names) {
+    const n = names && names[id];
+    const candidates = n ? [n.displayName, n.name].filter(Boolean).map(normUnitName) : [];
+    for (const c of candidates) {
+        if (UNIT_SYMBOL_MAP[c]) return { ...UNIT_SYMBOL_MAP[c], named: true };
+    }
+    const keys = Object.keys(UNIT_SYMBOL_MAP).sort((a, b) => b.length - a.length);
+    for (const c of candidates) {
+        const k = keys.find(k => c.startsWith(k + ' '));
+        if (k) return { ...UNIT_SYMBOL_MAP[k], named: true };
+    }
+    return { cat: 'unknown', abbr: null, named: candidates.length > 0 };
+}
+
+// Symbol for a unit in the given mode: {text, cat, emoji}
+function unitSymbol(id, names, mode) {
+    const cls = unitClass(id, names);
+    const label = cls.named ? unitLabel(id, names) : '';
+    const firstLetters = k => (label ? label.replace(/[^A-Za-z0-9]/g, '').slice(0, k) : '') || '?';
+    if (mode === 'A') {
+        const t = cls.abbr || firstLetters(2);
+        return { text: t.length > 1 ? t[0].toUpperCase() + t.slice(1) : t, cat: cls.cat };
+    }
+    if (mode === 'B') return { text: UNIT_CAT_EMOJI[cls.cat] || '🔲', cat: cls.cat, emoji: true };
+    if (mode === 'C') return { text: firstLetters(1).toUpperCase(), cat: cls.cat };
+    return { text: UNIT_CAT_SYMBOL[cls.cat] || '?', cat: cls.cat };
+}
+
+// Inner HTML of a grid cell holding a unit; symbol only when symbol+level won't fit
+function cellUnitHtml(u, names, mode) {
+    const s = unitSymbol(u.id, names, mode);
+    const width = s.emoji ? 2 + String(u.level).length : s.text.length + String(u.level).length;
+    const text = width <= 4 ? `${s.text}${u.level}` : s.text;
+    const cls = ['cell-unit', s.emoji ? 'emoji' : '', mode === 'C' ? `badge ucat-${s.cat}` : ''].join(' ');
+    return `<span class="${cls}">${esc(text)}</span>`;
+}
+
+// Symbol prefix for the unit list / legend
+function listSymbolHtml(id, names, mode) {
+    const s = unitSymbol(id, names, mode);
+    const cls = mode === 'C' ? `unit-sym badge ucat-${s.cat}` : 'unit-sym';
+    return `<span class="${cls}">${esc(s.text)}</span>`;
 }
 
 // ─── Faction names ──────────────────────────────────────────
@@ -552,63 +675,11 @@ function closeDetail() {
     document.getElementById('detailOverlay').style.display = 'none';
 }
 
+let currentDetail = null;
+
 function renderDetail(b) {
+    currentDetail = b;
     const panel = document.getElementById('detailPanel');
-    const grid = decodeTiles(b.tiles);
-    const defUnits = decodeUnits(b.defense_units);
-    const offUnits = decodeUnits(b.offense_units);
-
-    // Build a lookup of unit positions for grid overlay
-    const unitPositions = new Set();
-    for (const u of [...defUnits, ...offUnits]) {
-        unitPositions.add(`${u.x},${u.y}`);
-    }
-
-    // Grid HTML
-    let gridHtml = '';
-    if (grid) {
-        gridHtml = '<div class="grid-container">';
-        // Column numbers 0-8 on top, row numbers on the left (0-based, as the game counts)
-        gridHtml += '<div class="grid-row"><div class="grid-label row-label"></div>';
-        for (let x = 0; x < (grid[0] || []).length; x++) {
-            gridHtml += `<div class="grid-label">${x}</div>`;
-        }
-        gridHtml += '</div>';
-        for (let y = 0; y < grid.length; y++) {
-            gridHtml += `<div class="grid-row"><div class="grid-label row-label">${y}</div>`;
-            for (let x = 0; x < grid[y].length; x++) {
-                const t = grid[y][x];
-                const hasUnit = unitPositions.has(`${x},${y}`) ? ' has-unit' : '';
-                gridHtml += `<div class="grid-cell ${resClass(t)}${hasUnit}" title="(${x},${y}) type=${t}"></div>`;
-            }
-            gridHtml += '</div>';
-        }
-        gridHtml += '</div>';
-    } else {
-        gridHtml = '<p style="color:#666">No tile data available</p>';
-    }
-
-    // Defense units
-    let defHtml = '';
-    if (defUnits.length > 0) {
-        defHtml = `<h3>🛡 Defense Units (${defUnits.length})</h3><div class="unit-grid">` +
-            defUnits.map(u =>
-                `<div class="unit-item def">` +
-                `${esc(unitLabel(u.id, b.unit_names))} <span class="unit-level">Lv${u.level}</span> ` +
-                `<span class="unit-pos">(${u.x},${u.y})</span></div>`
-            ).join('') + '</div>';
-    }
-
-    // Offense units
-    let offHtml = '';
-    if (offUnits.length > 0) {
-        offHtml = `<h3>⚔ Offense Units (${offUnits.length})</h3><div class="unit-grid">` +
-            offUnits.map(u =>
-                `<div class="unit-item off">` +
-                `${esc(unitLabel(u.id, b.unit_names))} <span class="unit-level">Lv${u.level}</span> ` +
-                `<span class="unit-pos">(${u.x},${u.y})</span></div>`
-            ).join('') + '</div>';
-    }
 
     // History
     let historyHtml = '';
@@ -618,6 +689,10 @@ function renderDetail(b) {
                 `<div class="history-item">v${h.version} — ${esc(h.scanned_by)} — ${timeAgo(h.scanned_at)}</div>`
             ).join('') + '</div>';
     }
+
+    const mode = getUnitMode();
+    const modeOptions = UNIT_MODES.map(o =>
+        `<option value="${o.id}"${o.id === mode ? ' selected' : ''}>${o.label}</option>`).join('');
 
     panel.innerHTML = `
         <button class="detail-close" onclick="closeDetail()">✕</button>
@@ -634,12 +709,83 @@ function renderDetail(b) {
             <div>Scanned by: <span>${esc(b.scanned_by)}</span></div>
             <div>Scanned: <span>${timeAgo(b.scanned_at)}</span></div>
         </div>
-        <h3>Base Layout (9×16)</h3>
-        ${gridHtml}
-        ${defHtml}
-        ${offHtml}
+        <div class="unit-mode-bar">
+            <h3>Base Layout (9×16)</h3>
+            <select id="unitModeSelect" title="Unit-symbolen">${modeOptions}</select>
+        </div>
+        <div id="unitViews"></div>
         ${historyHtml}
     `;
+    document.getElementById('unitModeSelect').addEventListener('change', e => {
+        setUnitMode(e.target.value);
+        renderUnitViews(currentDetail, e.target.value);
+    });
+    renderUnitViews(b, mode);
+}
+
+// Grid + defense/offense lists; re-rendered in place when the symbol mode changes
+function renderUnitViews(b, mode) {
+    const grid = decodeTiles(b.tiles);
+    const defUnits = decodeUnits(b.defense_units);
+    const offUnits = decodeUnits(b.offense_units);
+    const names = b.unit_names;
+
+    // Unit per grid position (defense first, as before both sets mark the cell)
+    const unitAt = new Map();
+    for (const u of [...defUnits, ...offUnits]) {
+        const key = `${u.x},${u.y}`;
+        if (!unitAt.has(key)) unitAt.set(key, u);
+    }
+
+    // Grid HTML
+    let gridHtml = '';
+    if (grid) {
+        gridHtml = '<div class="grid-container">';
+        // Column numbers 0-8 on top, row numbers on the left (0-based, as the game counts)
+        gridHtml += '<div class="grid-row"><div class="grid-label row-label"></div>';
+        for (let x = 0; x < (grid[0] || []).length; x++) {
+            gridHtml += `<div class="grid-label">${x}</div>`;
+        }
+        gridHtml += '</div>';
+        for (let y = 0; y < grid.length; y++) {
+            gridHtml += `<div class="grid-row"><div class="grid-label row-label">${y}</div>`;
+            for (let x = 0; x < grid[y].length; x++) {
+                const t = grid[y][x];
+                const u = unitAt.get(`${x},${y}`);
+                if (u) {
+                    const tip = `${unitLabel(u.id, names)} Lv${u.level} (${x},${y}) type=${t}`;
+                    gridHtml += `<div class="grid-cell ${resClass(t)} has-unit" title="${esc(tip).replace(/"/g, '&quot;')}">` +
+                        `${cellUnitHtml(u, names, mode)}</div>`;
+                } else {
+                    gridHtml += `<div class="grid-cell ${resClass(t)}" title="(${x},${y}) type=${t}"></div>`;
+                }
+            }
+            gridHtml += '</div>';
+        }
+        gridHtml += '</div>';
+    } else {
+        gridHtml = '<p style="color:#666">No tile data available</p>';
+    }
+
+    // Unit lists: symbol of the active mode before each name, plus a per-type legend with counts
+    const unitListHtml = (units, title, kind) => {
+        if (units.length === 0) return '';
+        const counts = new Map();
+        for (const u of units) counts.set(u.id, (counts.get(u.id) || 0) + 1);
+        const legend = [...counts].map(([id, n]) =>
+            `<span>${listSymbolHtml(id, names, mode)}${esc(unitLabel(id, names))} ×${n}</span>`).join('');
+        return `<h3>${title} (${units.length})</h3><div class="unit-legend">${legend}</div><div class="unit-grid">` +
+            units.map(u =>
+                `<div class="unit-item ${kind}">` +
+                `${listSymbolHtml(u.id, names, mode)}${esc(unitLabel(u.id, names))} <span class="unit-level">Lv${u.level}</span> ` +
+                `<span class="unit-pos">(${u.x},${u.y})</span></div>`
+            ).join('') + '</div>';
+    };
+
+    document.getElementById('unitViews').innerHTML =
+        gridHtml +
+        unitListHtml(defUnits, '🛡 Defense Units', 'def') +
+        unitListHtml(offUnits, '⚔ Offense Units', 'off');
 }
 
 // ─── Keyboard ───────────────────────────────────────────────

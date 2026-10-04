@@ -18,6 +18,13 @@
 - `GET /api/targets` — read-only viewer endpoint (Basic Auth, like `/api/bases`) with all active worlds, so the page needs no alliance API key
 - Plain HTML/CSS/JS in the same dark theme, responsive (cards on mobile); "🎯 Target Watch" link in the base overview header
 
+### Unit-symbolen in het base-detail grid (website, VPS)
+- Elk unit-vakje in het layout-grid toont symbool + level (bv. `✕12`, `◆18`); past dat niet in de cel (> 4 tekens), dan alleen het symbool. De tooltip toont nu volledige naam, level en positie, in elke modus
+- Vier modi via een dropdown naast "Base Layout": Afkortingen (AT, MS, RF, …) / Emoji (🛡 👤 🚗 💣 ✈️) / Kleur (gekleurde badge + eerste letter) / **NATO (standaard)** (▬ ✕ ◆ ● △). Wisselt zonder herladen, keuze in localStorage (`shockr_unit_symbol_mode`)
+- Defense- en offense-lijst: symbool vóór de naam, plus een legenda per unit-type met aantal
+- Categorie uit `UNIT_SYMBOL_MAP` op displayName/name (prefix `FOR_`/`GDI_`/`NOD_` en `_` genegeerd). Onbekende units: `?` / eerste 2 letters / 🔲 / eerste letter; oude scans zonder namen: fallback-symbool + "ID 192"
+- Puur frontend (`server/static/index.html`); grid-nummering, unit-namen, scan- en opslaglogica ongewijzigd. Geen userscript-wijziging, dus geen versiebump
+
 ## [5.7.0] — 2026-10-04
 
 ### Unit-namen op de base-detail pagina
