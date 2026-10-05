@@ -2,6 +2,8 @@
  * layout-scanner.js — scan nearby FG base layouts and POST to alliance server.
  *
  * - Only scans when player is truly idle (20 min inactive)
+ * - Paused while the player's own status is "Online" (lib/online-state.js);
+ *   a running batch finishes, no new one starts; resumes on Away/Offline
  * - Manual scan via /st scan (always works)
  * - Restores original city view after scanning
  * - 2 second delay between individual base scans to avoid flickering
@@ -26,12 +28,13 @@ export class LayoutScanner {
     /** Short description for `/st help`. */
     get description() { return t('descLayoutScanner'); }
 
-    constructor(config, cli, apiClient, idleDetect) {
+    constructor(config, cli, apiClient, idleDetect, onlineWatch) {
         this.name = 'LayoutScanner';
         this.config = config;
         this.cli = cli;
         this.api = apiClient;
         this.idle = idleDetect;
+        this.online = onlineWatch;
         this.running = false;
         this._scanning = false;
         this._scanInterval = null;
@@ -67,10 +70,9 @@ export class LayoutScanner {
         }
 
         // Only scan on idle — never immediately
-        this.idle.on('idle', () => this.scanAll());
-        this._scanInterval = setInterval(() => {
-            if (this.idle.isIdle) this.scanAll();
-        }, SCAN_INTERVAL_MS);
+        this.idle.on('idle', () => this._autoScan());
+        this.online.on('resume', () => this._autoScan());
+        this._scanInterval = setInterval(() => this._autoScan(), SCAN_INTERVAL_MS);
 
         this.running = true;
         console.log('[ST] LayoutScanner: started (server: ' + this.api._url + ')');
@@ -82,6 +84,12 @@ export class LayoutScanner {
             clearInterval(this._scanInterval);
             this._scanInterval = null;
         }
+    }
+
+    /** Automatic trigger: only when idle and not paused by the online status. */
+    _autoScan() {
+        if (!this.running || !this.idle.isIdle || this.online.isPaused) return;
+        this.scanAll();
     }
 
     /** Scan all nearby FG objects. */

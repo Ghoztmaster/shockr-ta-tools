@@ -5,6 +5,8 @@
  * - Only scans when player is truly idle (20 min inactive)
  * - Manual scan via /st scanalliance (always works)
  * - Idle scans abort as soon as the player becomes active again
+ * - Paused while the player's own status is "Online" (lib/online-state.js);
+ *   a running batch finishes, no new one starts; resumes on Away/Offline
  * - Restores original city view after scanning
  * - 2 second delay between individual base scans
  * - Shares a scan lock with LayoutScanner (both switch the city view)
@@ -35,12 +37,13 @@ export class AllianceScanner {
     /** Short description for `/st help`. */
     get description() { return t('descAllianceScanner'); }
 
-    constructor(config, cli, apiClient, idleDetect) {
+    constructor(config, cli, apiClient, idleDetect, onlineWatch) {
         this.name = 'AllianceScanner';
         this.config = config;
         this.cli = cli;
         this.api = apiClient;
         this.idle = idleDetect;
+        this.online = onlineWatch;
         this.running = false;
         this._scanning = false;
         this._scanInterval = null;
@@ -74,9 +77,8 @@ export class AllianceScanner {
 
         // Only scan on idle — never immediately
         this.idle.on('idle', () => this._scanWhenFree());
-        this._scanInterval = setInterval(() => {
-            if (this.idle.isIdle) this._scanWhenFree();
-        }, SCAN_INTERVAL_MS);
+        this.online.on('resume', () => this._scanWhenFree());
+        this._scanInterval = setInterval(() => this._scanWhenFree(), SCAN_INTERVAL_MS);
 
         this.running = true;
         console.log('[ST] AllianceScanner: started (server: ' + this.api._url + ')');
@@ -90,11 +92,17 @@ export class AllianceScanner {
         }
     }
 
-    /** Idle trigger: wait for another scanner (e.g. LayoutScanner) to finish first. */
+    /**
+     * Automatic trigger (idle / interval / online-resume): only when idle and
+     * not paused by the online status; waits for another scanner (e.g.
+     * LayoutScanner) to finish first.
+     */
     async _scanWhenFree() {
+        const allowed = () => this.running && this.idle.isIdle && !this.online.isPaused;
+        if (!allowed()) return;
         for (let i = 0; i < LOCK_WAIT_MAX && scanLockHolder(); i++) {
             await sleep(LOCK_WAIT_MS);
-            if (!this.idle.isIdle || !this.running) return;
+            if (!allowed()) return;
         }
         this.scanAll({ manual: false });
     }

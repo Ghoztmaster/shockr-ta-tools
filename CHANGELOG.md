@@ -25,6 +25,15 @@
 - Categorie uit `UNIT_SYMBOL_MAP` op displayName/name (prefix `FOR_`/`GDI_`/`NOD_` en `_` genegeerd). Onbekende units: `?` / eerste 2 letters / 🔲 / eerste letter; oude scans zonder namen: fallback-symbool + "ID 192"
 - Puur frontend (`server/static/index.html`); grid-nummering, unit-namen, scan- en opslaglogica ongewijzigd. Geen userscript-wijziging, dus geen versiebump
 
+## [5.8.0] — 2026-10-05
+
+### Scanner auto-pause bij online-status
+- LayoutScanner en AllianceScanner starten geen automatische scan zolang de eigen status **Online** (OnlineState 1) is; bij Away (2) of Offline (0) hervatten ze. Een batch die al loopt maakt zijn scan af. Geldt niet voor de TargetWatcher
+- Console: `[ST] Scanner: gepauzeerd (speler online)` / `[ST] Scanner: hervat (speler away)` (of `offline`) — één regel per overgang, één gedeelde watcher (`lib/online-state.js`, elke 10 s)
+- Bij hervatten start meteen een scan als de speler ook idle is (de 20-min-idle-regel blijft gelden); handmatige `/st scan` en `/st scanalliance` blijven altijd werken
+- Bron eigen status: `alliance.get_MemberData().d[eigen id].OnlineState` (zelfde veld als player-status), anders `get_Player().get_OnlineState()` (niet live geverifieerd). Niet leesbaar → nooit gepauzeerd, één waarschuwing
+- `npm test` draait nu `node --test` (de oude `node --test tests/` werkt niet op Node 24); eerste test: `tests/online-state.test.mjs`
+
 ## [5.7.1] — 2026-10-05
 
 ### Fixes
