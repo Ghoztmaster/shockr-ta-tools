@@ -110,6 +110,8 @@ export class TargetWatcher {
         }
 
         if (!target || this._posted) return;
+        // No valid target position (the client reports -1 while nothing is selected)
+        if (!(target.targetX >= 0 && target.targetY >= 0)) return;
         if (Date.now() - this._lastPostAt < POST_MIN_INTERVAL_MS) return;
 
         this._posted = true;

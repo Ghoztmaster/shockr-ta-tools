@@ -25,6 +25,12 @@
 - Categorie uit `UNIT_SYMBOL_MAP` op displayName/name (prefix `FOR_`/`GDI_`/`NOD_` en `_` genegeerd). Onbekende units: `?` / eerste 2 letters / 🔲 / eerste letter; oude scans zonder namen: fallback-symbool + "ID 192"
 - Puur frontend (`server/static/index.html`); grid-nummering, unit-namen, scan- en opslaglogica ongewijzigd. Geen userscript-wijziging, dus geen versiebump
 
+## [5.7.1] — 2026-10-05
+
+### Fixes
+- **Alliance scanner: geen 429-bursts meer** — `ApiClient` stuurt hooguit één `/api/scan` per 2 s (ook als twee flushes tegelijk starten: die wachten nu op elkaar). Bij een 429: backoff 5 s, 10 s, 20 s; blijft de server 429 geven, dan gaan deze en de resterende scans terug in de wachtrij voor de volgende flush in plaats van door te hameren
+- **Target-watch: geen POST met -1-coördinaten** — als `targetX` of `targetY` geen geldige positie (≥ 0) is, wordt de POST overgeslagen
+
 ## [5.7.0] — 2026-10-04
 
 ### Unit-namen op de base-detail pagina
