@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" data-i18n-doctitle="attacksPageTitle">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shockr Attacks</title>
+<script src="static/i18n.js"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        background: #1a1a1a;
+        color: #ccc;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        font-size: 14px;
+    }
+    a { color: #4fc3f7; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Header */
+    .header {
+        background: #252525;
+        border-bottom: 1px solid #333;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .header h1 { font-size: 18px; color: #e0e0e0; }
+    .nav { font-size: 13px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+
+    /* Filters */
+    .filters {
+        background: #222;
+        padding: 10px 20px;
+        border-bottom: 1px solid #333;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .filters label { color: #999; font-size: 12px; margin-right: 4px; }
+    .filters select {
+        background: #333;
+        color: #ccc;
+        border: 1px solid #444;
+        padding: 4px 8px;
+        font-size: 13px;
+    }
+    .filters button {
+        background: #66bb6a;
+        color: #111;
+        border: none;
+        padding: 5px 14px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+    .filters button:hover { background: #81c784; }
+    .filters .updated { color: #777; font-size: 12px; margin-left: auto; }
+    .filters .updated.error { color: #e57373; }
+
+    .content { padding: 12px 20px; }
+    .summary {
+        background: #222;
+        border: 1px solid #333;
+        border-left: 3px solid #66bb6a;
+        padding: 10px 14px;
+        margin-bottom: 14px;
+        color: #e0e0e0;
+    }
+    .summary .period { color: #999; margin-right: 6px; }
+
+    /* Tunnel cards */
+    .tunnel {
+        background: #212121;
+        border: 1px solid #333;
+        margin-bottom: 12px;
+    }
+    .tunnel-head {
+        padding: 10px 14px;
+        cursor: pointer;
+        user-select: none;
+    }
+    .tunnel-head:hover { background: #262626; }
+    .tunnel-title { color: #e0e0e0; font-size: 15px; }
+    .tunnel-title .lvl { color: #999; font-size: 13px; }
+    .tunnel-title .caret { color: #777; display: inline-block; width: 14px; }
+    .tunnel-totals { color: #aaa; font-size: 13px; margin-top: 3px; }
+    .contributors { margin-top: 8px; display: grid; grid-template-columns: auto auto auto auto auto; gap: 2px 16px; justify-content: start; font-size: 13px; }
+    .contributors .name { color: #e0e0e0; }
+    .contributors .num { text-align: right; color: #bbb; }
+
+    .detail { border-top: 1px solid #333; padding: 6px 14px 10px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+        background: #2a2a2a;
+        color: #aaa;
+        text-align: left;
+        padding: 6px 8px;
+        border-bottom: 1px solid #444;
+        white-space: nowrap;
+    }
+    th.num, td.num { text-align: right; }
+    td { padding: 5px 8px; border-bottom: 1px solid #2a2a2a; white-space: nowrap; }
+    tr:hover td { background: #252525; }
+    .type-camp { color: #8bc34a; }
+    .type-outpost { color: #4fc3f7; }
+    .type-base { color: #ff9800; }
+
+    .loading { text-align: center; padding: 40px; color: #666; }
+
+    @media (max-width: 640px) {
+        .header, .filters, .content { padding-left: 12px; padding-right: 12px; }
+        .filters .updated { margin-left: 0; width: 100%; }
+        .contributors { grid-template-columns: auto auto auto auto; gap: 2px 10px; }
+        .contributors .credits-col { display: none; }
+    }
+    /* Website session (session.js) */
+    .user { font-size: 12px; color: #888; display: flex; align-items: center; gap: 6px; }
+    .user strong { color: #e0e0e0; font-weight: normal; }
+    .user form { display: inline; }
+    .user button {
+        background: #444; color: #ccc; border: none; border-radius: 3px;
+        padding: 3px 8px; font-size: 12px; cursor: pointer;
+    }
+    .user button:hover { background: #666; }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1><span data-i18n="attacksTitle">🗡 Alliance Attacks</span> <span id="worldTitle"></span></h1>
+    <div class="nav">
+        <a href="./" data-i18n="navBases">⚔ Bases</a>
+        <a href="targets" data-i18n="navTargetWatch">🎯 Target Watch</a>
+        <span class="user" id="userBox"></span>
+        <span class="lang-switch" id="langSwitch"></span>
+    </div>
+</div>
+
+<div class="filters">
+    <div id="worldPicker" style="display:none">
+        <label for="worldSelect" data-i18n="world">World:</label>
+        <select id="worldSelect"></select>
+    </div>
+    <div>
+        <label for="playerSelect" data-i18n="attacksFilterPlayer">Player:</label>
+        <select id="playerSelect"></select>
+    </div>
+    <div>
+        <label for="periodSelect" data-i18n="attacksFilterPeriod">Period:</label>
+        <select id="periodSelect">
+            <option value="today" data-i18n="attacksPeriodToday">Today</option>
+            <option value="3" data-i18n="attacksPeriod3">3 days</option>
+            <option value="7" data-i18n="attacksPeriod7">7 days</option>
+        </select>
+    </div>
+    <div>
+        <label for="typeSelect" data-i18n="filterType">Type:</label>
+        <select id="typeSelect">
+            <option value="" data-i18n="all">All</option>
+            <option value="camp">Camp</option>
+            <option value="outpost">Outpost</option>
+            <option value="base">Base</option>
+        </select>
+    </div>
+    <button onclick="loadAttacks()" data-i18n="refresh">↻ Refresh</button>
+    <span class="updated" id="updated"></span>
+</div>
+
+<div class="content">
+    <div class="summary" id="summary" data-i18n="loading">Loading...</div>
+    <div id="tunnels"></div>
+</div>
+
+<script src="static/session.js"></script>
+<script>
+const API = '.';
+const REFRESH_MS = 60000;
+const PREFS_KEY = 'st-attacks-prefs';
+
+const prefs = readPrefs();     // {world, player, period, type}
+let data = null;               // last /api/attacks response
+let lastStatus = null;
+const open = new Set();        // expanded tunnels ("x:y")
+
+async function loadAttacks() {
+    const params = new URLSearchParams();
+    if (prefs.world) params.set('worldId', prefs.world);
+    if (prefs.period === 'today') {
+        const midnight = new Date();
+        midnight.setHours(0, 0, 0, 0);
+        params.set('since', String(midnight.getTime()));
+    } else {
+        params.set('days', prefs.period);
+    }
+    if (prefs.player) params.set('player', prefs.player);
+    if (prefs.type) params.set('type', prefs.type);
+    try {
+        const resp = await fetch(`${API}/api/attacks?${params}`, { cache: 'no-store' });
+        if (!resp.ok) throw new Error(`${resp.status} ${resp.statusText}`);
+        data = await resp.json();
+        showStatus({ key: 'updated', vars: { time: new Date().toLocaleTimeString(), s: REFRESH_MS / 1000 }, error: false });
+    } catch (e) {
+        showStatus({ key: 'refreshFailed', vars: { msg: e.message, s: REFRESH_MS / 1000 }, error: true });
+        if (!data) document.getElementById('summary').textContent = T('error', { msg: e.message });
+        return;
+    }
+    render();
+}
+
+function showStatus(status) {
+    lastStatus = status;
+    const el = document.getElementById('updated');
+    el.classList.toggle('error', status.error);
+    el.textContent = T(status.key, status.vars);
+}
+
+function render() {
+    if (!data) return;
+    renderPickers();
+    document.getElementById('worldTitle').textContent = data.worldId ? T('worldTitle', { id: data.worldId }) : '';
+
+    const s = data.summary;
+    const periodKey = { today: 'attacksPeriodToday', 3: 'attacksPeriod3', 7: 'attacksPeriod7' }[prefs.period];
+    document.getElementById('summary').innerHTML =
+        `<span class="period">${esc(T(periodKey))}:</span>` +
+        esc(T('attacksSummary', { attacks: nAttacks(s.attacks), players: nPlayers(s.players) })) +
+        ` · ${fmt(s.lootTib)} tib · ${fmt(s.lootCrystal)} crystal · ${fmt(s.lootCredits)} credits`;
+
+    const box = document.getElementById('tunnels');
+    if (!data.tunnels.length) {
+        box.innerHTML = `<div class="loading">${esc(T('attacksNone'))}</div>`;
+        return;
+    }
+    box.innerHTML = data.tunnels.map(tunnelHtml).join('');
+    box.querySelectorAll('.tunnel-head').forEach(head => head.addEventListener('click', () => {
+        const key = head.dataset.key;
+        if (open.has(key)) open.delete(key); else open.add(key);
+        render();
+    }));
+}
+
+function tunnelHtml(tn) {
+    const key = `${tn.x}:${tn.y}`;
+    const expanded = open.has(key);
+    const lvl = tn.tunnelLevel != null
+        ? `lvl ${Math.floor(tn.tunnelLevel)}`
+        : (Math.floor(tn.minLevel) === Math.floor(tn.maxLevel)
+            ? T('attacksTargetsLevel', { lvl: Math.floor(tn.minLevel) })
+            : T('attacksTargetsLevels', { min: Math.floor(tn.minLevel), max: Math.floor(tn.maxLevel) }));
+    const contributors = tn.contributors.map(p => `
+        <span class="name">${esc(p.playerName)}</span>
+        <span class="num">${esc(nAttacks(p.attacks))}</span>
+        <span class="num">${fmt(p.lootTib)} tib</span>
+        <span class="num">${fmt(p.lootCrystal)} crystal</span>
+        <span class="num credits-col">${fmt(p.lootCredits)} credits</span>`).join('');
+    const detail = expanded ? `
+        <div class="detail"><table>
+            <thead><tr>
+                <th>${esc(T('attacksColTime'))}</th><th>${esc(T('attacksColPlayer'))}</th>
+                <th>${esc(T('colType'))}</th><th>${esc(T('colLevel'))}</th><th>${esc(T('attacksColCoords'))}</th>
+                <th class="num">Tib</th><th class="num">Crystal</th><th class="num">Credits</th>
+            </tr></thead>
+            <tbody>${tn.attackList.map(rowHtml).join('')}</tbody>
+        </table></div>` : '';
+    return `<div class="tunnel">
+        <div class="tunnel-head" data-key="${key}" title="${esc(T('attacksToggleDetail'))}">
+            <div class="tunnel-title"><span class="caret">${expanded ? '▾' : '▸'}</span>${esc(T('attacksTunnel', { x: tn.x, y: tn.y }))} <span class="lvl">(${esc(lvl)})</span></div>
+            <div class="tunnel-totals">${esc(nAttacks(tn.attacks))} · ${esc(nPlayers(tn.players))} · ${fmt(tn.lootTib)} tib · ${fmt(tn.lootCrystal)} crystal · ${fmt(tn.lootCredits)} credits</div>
+            <div class="contributors">${contributors}</div>
+        </div>${detail}
+    </div>`;
+}
+
+function rowHtml(a) {
+    return `<tr>
+        <td>${esc(timeLabel(a.timestamp))}</td>
+        <td>${esc(a.playerName)}</td>
+        <td><span class="type-${esc(a.targetType)}">${esc(a.targetType)}</span></td>
+        <td>${Math.floor(a.targetLevel)}</td>
+        <td>${a.targetX}:${a.targetY}</td>
+        <td class="num">${fmt(a.lootTib)}</td>
+        <td class="num">${fmt(a.lootCrystal)}</td>
+        <td class="num">${fmt(a.lootCredits)}</td>
+    </tr>`;
+}
+
+function renderPickers() {
+    const worlds = data.worlds || [];
+    const picker = document.getElementById('worldPicker');
+    const ws = document.getElementById('worldSelect');
+    picker.style.display = worlds.length > 1 ? '' : 'none';
+    ws.innerHTML = worlds.map(w => `<option value="${w}">${esc(T('attacksWorldOption', { id: w }))}</option>`).join('');
+    if (data.worldId) ws.value = String(data.worldId);
+
+    const ps = document.getElementById('playerSelect');
+    const players = data.players || [];
+    if (prefs.player && !players.includes(prefs.player)) players.push(prefs.player);
+    ps.innerHTML = `<option value="">${esc(T('all'))}</option>` +
+        players.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
+    ps.value = prefs.player || '';
+    document.getElementById('periodSelect').value = prefs.period;
+    document.getElementById('typeSelect').value = prefs.type || '';
+}
+
+function nAttacks(n) { return T(n === 1 ? 'attacksOne' : 'attacksCount', { n }); }
+function nPlayers(n) { return T(n === 1 ? 'playersOne' : 'playersCount', { n }); }
+
+/** "08:43" today, otherwise "Mon 08:43" (browser locale). */
+function timeLabel(ms) {
+    const d = new Date(ms);
+    const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return d.toDateString() === new Date().toDateString()
+        ? time
+        : `${d.toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'numeric' })} ${time}`;
+}
+
+/** 2.1M / 890k / 950 */
+function fmt(n) {
+    n = Number(n) || 0;
+    if (n >= 1e9) return (n / 1e9).toFixed(1).replace(/\.0$/, '') + 'G';
+    if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (n >= 1e3) return Math.round(n / 1e3) + 'k';
+    return String(Math.round(n));
+}
+
+function esc(s) {
+    return String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
+}
+
+function readPrefs() {
+    const def = { world: null, player: '', period: 'today', type: '' };
+    try {
+        const v = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
+        return { ...def, ...v, period: ['today', '3', '7'].includes(String(v.period)) ? String(v.period) : 'today' };
+    } catch { return def; }
+}
+
+function savePrefs() {
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch { /* private mode */ }
+}
+
+function onFilter(field, value) {
+    prefs[field] = value;
+    if (field === 'world') prefs.player = '';
+    savePrefs();
+    loadAttacks();
+}
+
+document.getElementById('worldSelect').addEventListener('change', e => onFilter('world', parseInt(e.target.value, 10) || null));
+document.getElementById('playerSelect').addEventListener('change', e => onFilter('player', e.target.value));
+document.getElementById('periodSelect').addEventListener('change', e => onFilter('period', e.target.value));
+document.getElementById('typeSelect').addEventListener('change', e => onFilter('type', e.target.value));
+
+document.addEventListener('shockr-lang', () => {
+    if (lastStatus) showStatus(lastStatus);
+    render();
+});
+
+loadAttacks();
+setInterval(loadAttacks, REFRESH_MS);
+</script>
+</body>
+</html>

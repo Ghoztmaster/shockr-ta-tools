@@ -29,7 +29,7 @@
     }
     .header h1 { font-size: 18px; color: #e0e0e0; }
     .header .stats { font-size: 12px; color: #888; }
-    .nav { font-size: 13px; display: flex; gap: 14px; }
+    .nav { font-size: 13px; display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
 
     /* Toolbar */
     .filters {
@@ -137,6 +137,7 @@
     <h1><span data-i18n="targetsTitle">🎯 Alliance Target Watch</span> <span id="worldTitle"></span></h1>
     <div class="nav">
         <a href="./" data-i18n="navBases">⚔ Bases</a>
+        <a href="attacks" data-i18n="navAttacks">🗡 Attacks</a>
         <span class="stats" id="stats" data-i18n="loading">Loading...</span>
         <span class="user" id="userBox"></span>
         <span class="lang-switch" id="langSwitch"></span>

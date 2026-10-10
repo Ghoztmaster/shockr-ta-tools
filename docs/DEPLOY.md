@@ -253,6 +253,46 @@ curl -s -o /dev/null -w '%{http_code}\n' https://packetlab.nl/shockr/api/target-
 
 Sessies staan in het geheugen: na `docker compose up -d --build` moet iedereen opnieuw inloggen. Een speler die de alliance verlaat: `DELETE /shockr/api/enroll/{id}` — zijn website-sessie vervalt direct.
 
+## 9. Attack Tracker (`/api/attack`, `/attacks`)
+
+`POST /shockr/api/attack` is called from the game page (cross-origin) with `X-Player-Key`, so it needs a CORS block like `/shockr/api/scan`. Put it **before** the broad `/shockr/` block:
+
+```nginx
+    # Shockr Alliance — attack tracker (userscript POST, X-Player-Key checked in the app)
+    location = /shockr/api/attack {
+        if ($request_method = OPTIONS) {
+            add_header Access-Control-Allow-Origin $http_origin always;
+            add_header Access-Control-Allow-Methods "POST, OPTIONS" always;
+            add_header Access-Control-Allow-Headers "Content-Type, X-Alliance-Key, X-Player-Id, X-Player-Name, X-Alliance-Id, X-Player-Key" always;
+            add_header Access-Control-Max-Age 86400;
+            return 204;
+        }
+        add_header Access-Control-Allow-Origin $http_origin always;
+        add_header Access-Control-Allow-Headers "Content-Type, X-Alliance-Key, X-Player-Id, X-Player-Name, X-Alliance-Id, X-Player-Key" always;
+
+        proxy_pass http://127.0.0.1:8920/api/attack;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+```
+
+**Exact match (`location =`)**, not a prefix: `location /shockr/api/attack` would also catch `GET /shockr/api/attacks` (the dashboard data). That still reaches the app, but without the `X-Forwarded-Prefix` of the website block and with CORS headers it doesn't need. With `=` the dashboard API and the page `/shockr/attacks` stay under the existing `/shockr/` website block (session cookie) — no extra nginx config for them.
+
+```bash
+nginx -t && systemctl reload nginx
+
+# CORS preflight -> 204 with the allow headers
+curl -si -X OPTIONS https://packetlab.nl/shockr/api/attack -H 'Origin: https://www.alliances.commandandconquer.com' | head -5
+# Without a key -> 403
+curl -s -o /dev/null -w '%{http_code}\n' -X POST https://packetlab.nl/shockr/api/attack -H 'Content-Type: application/json' -d '{}'
+# Dashboard data without a session -> 401
+curl -s -o /dev/null -w '%{http_code}\n' https://packetlab.nl/shockr/api/attacks
+```
+
+Storage: `data/attacks/{worldId}.jsonl` (same `./data` volume). Records older than 7 days are removed at container start.
+
 ## Update
 
 ```bash

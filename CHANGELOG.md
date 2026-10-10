@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+## [5.10.0] — 2026-10-10
+
+### Alliance Attack Tracker (userscript + server + website + nginx, VPS)
+- Nieuwe plugin **AttackTracker** (standaard aan): leest elke 2 min de eigen gevechtsrapporten (`GetReportHeaderAll` type 1, alleen lezen — nooit gelezen-markeren of verwijderen) en meldt elke **gewonnen** aanval (`s`) op een **Forgotten** camp/outpost/base (`tp` 2 = NPCRaid; `dbn` 1-2 camp, 3 outpost, 4 base) via `POST /api/attack`: type, level, coördinaten, buit tib/crystal/credits (`RequestReportData` + `ReportDelivered`, één tegelijk, 1 s ertussen). Verloren aanvallen, PvP, fortress/event worden niet verstuurd
+- Console bij succes: `[ST] Attack logged: outpost lvl 18 @ 84:293`. Buffer in localStorage (`st-attacks-outbox`), max 1 POST per 5 s met tot 20 aanvallen; mislukte POST blijft staan voor de volgende flush (na 5 mislukkingen weg). Dedup: laatste 100 rapport-id's per wereld (`st-attacks-done-<world>`); een verse installatie neemt de laatste 7 dagen mee
+- Server: `POST /api/attack` (X-Player-Key, één aanval of een lijst van max 50; extra veld `reportId`), opslag `data/attacks/{worldId}.jsonl` met playerId/playerName/receivedAt, dedup op speler + target + ±60 s (en reportId), 7 dagen bewaard, oudere regels weg bij het opstarten
+- `GET /api/attacks?worldId=&days=|since=&player=&type=` (website-sessie): aanvallen, totalen en een **per-tunnel overzicht** — aanvallen binnen 10 velden van een centrum (het meest aangevallen target begint een cluster); per tunnel aantal, buit en bijdrage per speler
+- Website: pagina **🗡 Attacks** (`/attacks`, link naast 🎯 Target Watch op beide pagina's): samenvatting, tunnelkaarten met per-speler-bijdrage, uitklapbare detailtabel, filters speler / vandaag-3-7 dagen / type; EN/DE/NL
+- nginx: nieuw CORS-blok `location = /shockr/api/attack`, zie docs/DEPLOY.md §9
+- Ongewijzigd: scan, target-watch, login, enrollment
+- Tests: `tests/test_attacks.py`, `tests/attack-tracker.test.mjs`
+
 ### Fix: player_keys.jsonl één regel per speler (server, VPS)
 - Herregistratie (`/st register`) en intrekken (`DELETE /api/enroll/{id}`) voegden een regel toe; de oude regel (met de oude key-hash) bleef in het bestand tot de volgende herstart. Nu overschrijven ze de regel van die speler: het hele bestand wordt atomisch herschreven (tijdelijk bestand + rename)
 - Oude bestanden met meerdere regels per speler worden nog gelezen: per speler wint de nieuwste `createdAt`/`revokedAt` (niet meer de laatste regel; bij gelijke tijd wel de laatste regel), en het bestand wordt bij het opstarten opgeschoond

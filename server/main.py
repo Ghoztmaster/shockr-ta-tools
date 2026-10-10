@@ -29,6 +29,7 @@ from server.models import ScanPayload, ScanResponse
 from server.storage import ScanStorage
 from server.ratelimit import RateLimiter
 from server.target_watch import TargetWatchPayload, TargetWatchStore
+from server.attacks import AttackPayload, AttackStore, MAX_BATCH as ATTACK_MAX_BATCH, RETENTION_DAYS as ATTACK_RETENTION_DAYS
 from server.members import MemberStore, MembershipError, NOT_A_MEMBER
 from server.player_keys import (
     EnrollPayload, EnrollmentConfig, PlayerKeyStore,
@@ -93,6 +94,7 @@ class KeyStore:
 key_store = KeyStore(KEYS_FILE)
 storage = ScanStorage(DATA_DIR)
 target_watches = TargetWatchStore()
+attack_store = AttackStore(DATA_DIR)
 member_store = MemberStore(DATA_DIR / "members.jsonl")
 player_keys = PlayerKeyStore(DATA_DIR / "player_keys.jsonl")
 enrollment = EnrollmentConfig(ENROLLMENT_FILE)
@@ -107,6 +109,10 @@ sessions = SessionStore(player_keys)
 async def lifespan(app: FastAPI):
     log.info("Shockr Alliance Server starting")
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+    try:
+        attack_store.prune()
+    except Exception as e:
+        log.warning("Attacks: prune at startup failed: %s", e)
     yield
     log.info("Shockr Alliance Server stopping")
 
@@ -134,7 +140,8 @@ async def log_validation_error(request: Request, exc: RequestValidationError):
     """Same 422 response as FastAPI's default, but a rejected target-watch POST
     is logged with the failing fields and the body, so it is visible WHICH
     field the userscript got wrong (5.6.1: it answered a constant 422)."""
-    if request.url.path.endswith("/api/target-watch"):
+    path = request.url.path
+    if path.endswith("/api/target-watch") or path.endswith("/api/attack"):
         fields = "; ".join(
             f"{'.'.join(str(p) for p in e.get('loc', ()))}: {e.get('msg')} (got {e.get('input')!r})"
             for e in exc.errors()
@@ -142,7 +149,8 @@ async def log_validation_error(request: Request, exc: RequestValidationError):
         body = exc.body
         if isinstance(body, (bytes, bytearray)):
             body = body.decode("utf-8", "replace")
-        log.warning("target-watch 422 from player %s: %s | body: %.*s",
+        log.warning("%s 422 from player %s: %s | body: %.*s",
+                    "attack" if path.endswith("/api/attack") else "target-watch",
                     request.headers.get("x-player-id", "?"), fields,
                     VALIDATION_LOG_BODY_CHARS, json.dumps(body, default=str) if not isinstance(body, str) else body)
     return await request_validation_exception_handler(request, exc)
@@ -425,6 +433,58 @@ async def get_targets_dashboard():
         "worlds": target_watches.all_worlds(),
     }
 
+# ─── Attack Tracker (won attacks on FG targets) ─────────────────────
+
+@app.post("/api/attack")
+async def post_attack(
+    payload: AttackPayload | list[AttackPayload],
+    request: Request,
+    alliance_id: str = Depends(verify_member),
+    x_player_name: str = Header("", alias="X-Player-Name"),
+):
+    """One attack, or a batch (the userscript sends what it buffered, max 50)."""
+    items = payload if isinstance(payload, list) else [payload]
+    if len(items) > ATTACK_MAX_BATCH:
+        raise HTTPException(status_code=400, detail=f"At most {ATTACK_MAX_BATCH} attacks per request")
+    player_id = request.state.player_id
+    player_name = unquote(x_player_name).strip()[:50] or str(player_id)
+    counts = {"ok": 0, "duplicate": 0, "stale": 0}
+    for item in items:
+        result = attack_store.add(item, player_id, player_name, alliance_id)
+        counts[result] += 1
+        if result == "ok":
+            log.info("Attack stored: %s world=%d %s L%g @ %d:%d", player_name, item.worldId,
+                     item.targetType, item.targetLevel, item.targetX, item.targetY)
+    return {"status": "ok", "stored": counts["ok"], "duplicates": counts["duplicate"], "stale": counts["stale"]}
+
+
+@app.get("/api/attacks", dependencies=[Depends(rate_limit_get), Depends(require_session)])
+async def get_attacks(
+    worldId: int | None = None,
+    days: int = 7,
+    since: int | None = None,
+    player: str | None = None,
+    type: str | None = None,
+):
+    """
+    Dashboard data (website session). Period: `since` (ms epoch, e.g. local
+    midnight for "today") or else the last `days` days, never more than the
+    retention. No worldId: the world with the most recent attack.
+    """
+    worlds = attack_store.worlds()
+    world_id = worldId if worldId is not None else (worlds[0] if worlds else None)
+    now_ms = int(time.time() * 1000)
+    floor_ms = now_ms - ATTACK_RETENTION_DAYS * 86400 * 1000
+    since_ms = since if since is not None else now_ms - max(1, min(days, ATTACK_RETENTION_DAYS)) * 86400 * 1000
+    since_ms = max(since_ms, floor_ms)
+    target_type = (type or "").strip().lower() or None
+    if world_id is None:
+        return {"worldId": None, "worlds": [], "since": since_ms, "serverTime": now_ms,
+                "summary": {"attacks": 0, "players": 0, "lootTib": 0, "lootCrystal": 0, "lootCredits": 0},
+                "tunnels": [], "attacks": [], "players": []}
+    data = attack_store.query(world_id, since_ms, player=(player or "").strip() or None, target_type=target_type)
+    return {**data, "worlds": worlds, "serverTime": now_ms}
+
 # ─── Health ──────────────────────────────────────────────────────────
 
 @app.get("/api/health")
@@ -460,3 +520,7 @@ async def index(request: Request):
 @app.get("/targets")
 async def targets_page(request: Request):
     return page(request, "targets.html", "login")
+
+@app.get("/attacks")
+async def attacks_page(request: Request):
+    return page(request, "attacks.html", "login")
