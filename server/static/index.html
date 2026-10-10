@@ -235,6 +235,15 @@
 
     /* Loading */
     .loading { text-align: center; padding: 40px; color: #666; }
+    /* Website session (session.js) */
+    .user { font-size: 12px; color: #888; display: flex; align-items: center; gap: 6px; }
+    .user strong { color: #e0e0e0; font-weight: normal; }
+    .user form { display: inline; }
+    .user button {
+        background: #444; color: #ccc; border: none; border-radius: 3px;
+        padding: 3px 8px; font-size: 12px; cursor: pointer;
+    }
+    .user button:hover { background: #666; }
 </style>
 </head>
 <body>
@@ -243,6 +252,7 @@
     <h1>⚔ Shockr Alliance Scanner</h1>
     <a href="targets" style="font-size:13px;margin-left:auto;margin-right:15px;">🎯 Target Watch</a>
     <div class="stats" id="stats">Loading...</div>
+    <div class="user" id="userBox" style="margin-left:15px"></div>
 </div>
 
 <div id="overview" class="overview" style="display:none"></div>
@@ -304,6 +314,7 @@
     <div class="detail-panel" id="detailPanel"></div>
 </div>
 
+<script src="static/session.js"></script>
 <script>
 const API = '.';
 let allBases = [];

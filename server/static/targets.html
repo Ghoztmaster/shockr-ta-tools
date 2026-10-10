@@ -119,6 +119,15 @@
         td.watchers-cell { display: flex; }
         td.watchers-cell::before { flex: none; }
     }
+    /* Website session (session.js) */
+    .user { font-size: 12px; color: #888; display: flex; align-items: center; gap: 6px; }
+    .user strong { color: #e0e0e0; font-weight: normal; }
+    .user form { display: inline; }
+    .user button {
+        background: #444; color: #ccc; border: none; border-radius: 3px;
+        padding: 3px 8px; font-size: 12px; cursor: pointer;
+    }
+    .user button:hover { background: #666; }
 </style>
 </head>
 <body>
@@ -128,6 +137,7 @@
     <div class="nav">
         <a href="./">⚔ Bases</a>
         <span class="stats" id="stats">Loading...</span>
+        <span class="user" id="userBox"></span>
     </div>
 </div>
 
@@ -157,6 +167,7 @@
     </table>
 </div>
 
+<script src="static/session.js"></script>
 <script>
 const API = '.';
 const REFRESH_MS = 20000;

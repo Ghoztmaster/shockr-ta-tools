@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### Website login via persoonlijke API key (server + nginx, VPS)
+- Vervangt het gedeelde Basic Auth-wachtwoord op `/shockr/`: inloggen op `/shockr/login` met speler-naam + de API key uit `/st register`
+- `POST /api/login {playerName, apiKey}` → sessie-cookie `shockr_session` (HttpOnly, Secure achter https, SameSite=Lax, 7 dagen, in het geheugen — na een herstart opnieuw inloggen); fout → 401 `{"error": "Onbekende speler of ongeldige key"}`; max 10 pogingen/IP/minuut
+- `POST /api/logout` (sessie + cookie weg, redirect naar login), `GET /api/me` (ingelogde speler)
+- Key-check via dezelfde `PlayerKeyStore.verify()` als `X-Player-Key`; naam hoofdletterongevoelig. Een sessie vervalt direct als de key wordt ingetrokken (`DELETE /api/enroll/{id}`) of opnieuw uitgegeven
+- Pagina's `/` en `/targets` zonder sessie → redirect naar login; viewer-API (`/api/bases`, `/api/base/{id}`, `/api/targets`) zonder sessie → 401 (de pagina gaat dan naar login)
+- Rechtsboven op beide pagina's "Ingelogd als: <naam> [Uitloggen]" (`static/session.js`)
+- Ongewijzigd: enrollment, `player_keys.py`, scan/target-watch op `X-Player-Key`, CORS, website-inhoud. Admin-endpoints (`/api/members`, `DELETE /api/enroll/{id}`) blijven Basic Auth — **nginx moet die nu expliciet afschermen**, zie docs/DEPLOY.md §8
+- Geen userscript-wijziging, dus geen versiebump. Tests: `tests/test_web_auth.py`
+
 ### Planning
 - Roadmap: Fase 6 toegevoegd — Repair Guard, Upgrade Calculator, Alliance War Dashboard
 

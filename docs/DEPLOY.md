@@ -101,10 +101,11 @@ curl https://packetlab.nl/shockr/api/health
 # Should return 403 without key
 curl -X POST https://packetlab.nl/shockr/api/scan
 
-# Should return 401 without Basic Auth
+# Should return 401 without a website session (see §8; was Basic Auth)
 curl https://packetlab.nl/shockr/api/bases
 curl https://packetlab.nl/shockr/api/targets
-curl https://packetlab.nl/shockr/targets
+# Should redirect to login (303) without a website session
+curl -i https://packetlab.nl/shockr/targets
 
 # Should return 403 with a wrong key (not 401 — Target Watcher bypasses Basic Auth)
 curl -H "X-Alliance-Key: wrong" https://packetlab.nl/shockr/api/target-watch/477/1
@@ -175,6 +176,82 @@ curl -X POST https://packetlab.nl/shockr/api/enroll -H "Content-Type: applicatio
 ```
 
 `/api/health` shows `player_keys` (number of registered players).
+
+## 8. Website login via persoonlijke API key (vervangt Basic Auth op /shockr/)
+
+De website (`/shockr/`, `/shockr/targets`) en de viewer-API (`/api/bases`, `/api/base/{id}`, `/api/targets`) checken nu zelf een sessie-cookie (`shockr_session`), verkregen via `/shockr/login` met speler-naam + de key uit `/st register`. Nginx hoeft daar dus geen Basic Auth meer te doen; alleen de admin-endpoints houden Basic Auth.
+
+**Volgorde: eerst `git pull && docker compose up -d --build`, dan pas nginx aanpassen** — anders staat de site even zonder enige auth open.
+
+### Verwijderen
+- `auth_basic` / `auth_basic_user_file` op `location /shockr/` (website)
+- `auth_basic` / `auth_basic_user_file` op het viewer-API-blok (`location /shockr/api/` of losse blokken voor `/shockr/api/bases`, `/shockr/api/targets`) — anders krijgt de browser bij elke fetch alsnog een wachtwoord-popup
+
+### Behouden / expliciet maken: admin op Basic Auth
+De app controleert de admin-endpoints NIET zelf. Zodra de Basic Auth van het brede `/shockr/api/`-blok weg is, moeten ze een eigen blok hebben:
+
+```nginx
+    # Shockr Alliance — admin (Basic Auth blijft)
+    location = /shockr/api/members {
+        auth_basic "Shockr admin";
+        auth_basic_user_file /etc/nginx/.htpasswd-shockr;   # bestaand bestand
+        proxy_pass http://127.0.0.1:8920/api/members;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+    location ~ ^/shockr/api/enroll/[0-9]+$ {
+        auth_basic "Shockr admin";
+        auth_basic_user_file /etc/nginx/.htpasswd-shockr;
+        rewrite ^/shockr(/.*)$ $1 break;
+        proxy_pass http://127.0.0.1:8920;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+```
+
+`location = /shockr/api/enroll` (publiek, POST enrollment), `/shockr/api/scan` en `/shockr/api/target-watch` blijven precies zoals ze zijn (CORS ongewijzigd).
+
+### Website-blok (zonder Basic Auth)
+
+```nginx
+    # Shockr Alliance — website + viewer-API + login (sessie-cookie in de app)
+    location /shockr/ {
+        proxy_pass http://127.0.0.1:8920/;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Prefix /shockr;    # cookie-pad /shockr/ i.p.v. het hele domein
+    }
+    location = /shockr { return 301 /shockr/; }
+```
+
+`/shockr/login`, `/shockr/api/login`, `/shockr/api/logout`, `/shockr/api/me` en `/shockr/static/session.js` vallen hier gewoon onder; een aparte publieke `location = /shockr/login` / `location /shockr/static/` is alleen nodig als `/shockr/` zelf toch achter Basic Auth blijft (dan zou de login onbereikbaar zijn). Zonder `X-Forwarded-Proto: https` krijgt de cookie geen `Secure`-vlag.
+
+```bash
+nginx -t && systemctl reload nginx
+```
+
+### Verifiëren
+
+```bash
+# Zonder cookie -> 303 naar login
+curl -si https://packetlab.nl/shockr/ | grep -i '^location'          # location: login
+curl -s -o /dev/null -w '%{http_code}\n' https://packetlab.nl/shockr/api/bases   # 401
+
+# Login (verkeerde key -> 401 {"error":"Onbekende speler of ongeldige key"})
+curl -si -c /tmp/shockr.jar https://packetlab.nl/shockr/api/login \
+  -H 'Content-Type: application/json' -d '{"playerName":"GhoztMasters","apiKey":"<key>"}'
+curl -s -b /tmp/shockr.jar https://packetlab.nl/shockr/api/me        # {"playerName":"GhoztMasters",...}
+
+# Uitloggen -> 303 naar ../login, cookie gewist
+curl -si -b /tmp/shockr.jar -X POST https://packetlab.nl/shockr/api/logout | grep -i '^location\|^set-cookie'
+
+# Admin blijft Basic Auth (zonder -u: 401 van nginx, MET sessie-cookie ook 401)
+curl -s -o /dev/null -w '%{http_code}\n' -b /tmp/shockr.jar https://packetlab.nl/shockr/api/members   # 401
+curl -u ghozt https://packetlab.nl/shockr/api/members
+
+# Scan/target-watch blijven op X-Player-Key (zonder key: 403, niet 401)
+curl -s -o /dev/null -w '%{http_code}\n' https://packetlab.nl/shockr/api/target-watch/477   # 403
+```
+
+Sessies staan in het geheugen: na `docker compose up -d --build` moet iedereen opnieuw inloggen. Een speler die de alliance verlaat: `DELETE /shockr/api/enroll/{id}` — zijn website-sessie vervalt direct.
 
 ## Update
 

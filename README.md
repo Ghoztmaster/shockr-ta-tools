@@ -84,7 +84,7 @@ The `server/` directory contains a self-hosted FastAPI backend that receives and
 Features:
 - JSONL storage per world, per alliance
 - Per-player API keys via self-enrollment (`/st register`, bcrypt hashed); shared alliance key accepted during a transition period
-- Basic Auth for the web viewer
+- Web viewer login with player name + personal API key (session cookie); admin endpoints on Basic Auth
 - Base list with sorting, filtering, color-coded freshness
 - Base detail: 9×16 resource grid, defense/offense units, scan history
 - Rate limiting, payload validation, container hardening

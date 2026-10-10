@@ -7,6 +7,9 @@ Security-first:
 - Rate limiting per IP
 - Strict Pydantic validation on all input
 - Alliance-scoped data access (derived from key, not user input)
+- Website (pages + viewer API) behind a session cookie from /login with the
+  personal API key (server/web_auth.py); admin endpoints stay on Basic Auth
+  at the reverse proxy
 """
 import json
 import time
@@ -20,7 +23,7 @@ from fastapi import FastAPI, Request, Response, Header, HTTPException, Depends
 from fastapi.exceptions import RequestValidationError
 from fastapi.exception_handlers import request_validation_exception_handler
 from fastapi.responses import JSONResponse
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 
 from server.models import ScanPayload, ScanResponse
 from server.storage import ScanStorage
@@ -31,6 +34,7 @@ from server.player_keys import (
     EnrollPayload, EnrollmentConfig, PlayerKeyStore,
     INVALID_CODE, ALLIANCE_NOT_AUTHORIZED, NOT_REGISTERED, INVALID_PLAYER_KEY,
 )
+from server.web_auth import LoginPayload, SessionStore, SESSION_COOKIE, LOGIN_FAILED
 
 # ─── Config ──────────────────────────────────────────────────────────
 
@@ -40,6 +44,7 @@ KEYS_FILE = CONFIG_DIR / "keys.json"
 ENROLLMENT_FILE = CONFIG_DIR / "enrollment.json"
 MAX_PAYLOAD_BYTES = 64 * 1024
 MAX_SCAN_AGE_S = 3600
+STATIC_DIR = Path(__file__).parent / "static"
 
 # ─── Logging ─────────────────────────────────────────────────────────
 
@@ -94,6 +99,8 @@ enrollment = EnrollmentConfig(ENROLLMENT_FILE)
 post_limiter = RateLimiter(max_requests=10, window_seconds=1)
 enroll_limiter = RateLimiter(max_requests=5, window_seconds=3600)
 get_limiter = RateLimiter(max_requests=30, window_seconds=1)
+login_limiter = RateLimiter(max_requests=10, window_seconds=60)
+sessions = SessionStore(player_keys)
 
 
 @asynccontextmanager
@@ -241,6 +248,64 @@ async def rate_limit_get(request: Request):
     if not get_limiter.allow(ip):
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
 
+def current_session(request: Request) -> dict | None:
+    return sessions.get(request.cookies.get(SESSION_COOKIE))
+
+
+async def require_session(request: Request) -> dict:
+    """Viewer API: a valid website session (cookie), else 401."""
+    session = current_session(request)
+    if session is None:
+        raise HTTPException(status_code=401, detail="Niet ingelogd")
+    return session
+
+
+def cookie_path(request: Request) -> str:
+    """The proxy prefix (X-Forwarded-Prefix, e.g. /shockr) so the cookie is not
+    sent to the rest of the domain; '/' when served without a prefix."""
+    prefix = request.headers.get("x-forwarded-prefix", "").rstrip("/")
+    return (prefix if prefix.startswith("/") else "") + "/"
+
+
+def is_https(request: Request) -> bool:
+    proto = request.headers.get("x-forwarded-proto", request.url.scheme)
+    return proto.split(",")[0].strip() == "https"
+
+# ─── Website login (session cookie) ──────────────────────────────────
+
+@app.post("/api/login")
+async def post_login(payload: LoginPayload, request: Request):
+    ip = get_client_ip(request)
+    if not login_limiter.allow(ip):
+        raise HTTPException(status_code=429, detail="Te veel inlogpogingen — probeer het over een minuut opnieuw")
+    result = sessions.login(payload.playerName, payload.apiKey)
+    if result is None:
+        log.warning("Website login failed from %s: player %r", ip, payload.playerName[:50])
+        return JSONResponse(status_code=401, content={"error": LOGIN_FAILED})
+    token, session = result
+    log.info("Website login: %s (%d) from %s", session["playerName"], session["playerId"], ip)
+    response = JSONResponse({"status": "ok", "playerName": session["playerName"]})
+    response.set_cookie(
+        SESSION_COOKIE, token, max_age=sessions.ttl, path=cookie_path(request),
+        httponly=True, secure=is_https(request), samesite="lax",
+    )
+    return response
+
+
+@app.post("/api/logout")
+async def post_logout(request: Request):
+    sessions.logout(request.cookies.get(SESSION_COOKIE))
+    # Relative: /shockr/api/logout -> /shockr/login, whatever the proxy prefix
+    response = RedirectResponse("../login", status_code=303)
+    response.delete_cookie(SESSION_COOKIE, path=cookie_path(request),
+                           httponly=True, secure=is_https(request), samesite="lax")
+    return response
+
+
+@app.get("/api/me")
+async def get_me(session: dict = Depends(require_session)):
+    return {"playerName": session["playerName"], "playerId": session["playerId"]}
+
 # ─── Enrollment (per-player keys) ────────────────────────────────────
 
 @app.post("/api/enroll")
@@ -302,7 +367,7 @@ async def post_scan(
 
 # ─── GET: list bases ─────────────────────────────────────────────────
 
-@app.get("/api/bases", dependencies=[Depends(rate_limit_get)])
+@app.get("/api/bases", dependencies=[Depends(rate_limit_get), Depends(require_session)])
 async def get_bases(
     world_id: int | None = None,
     min_level: float | None = None,
@@ -313,7 +378,7 @@ async def get_bases(
 
 # ─── GET: base detail ────────────────────────────────────────────────
 
-@app.get("/api/base/{city_id}", dependencies=[Depends(rate_limit_get)])
+@app.get("/api/base/{city_id}", dependencies=[Depends(rate_limit_get), Depends(require_session)])
 async def get_base(city_id: int, world_id: int | None = None):
     detail = storage.get_base(city_id, world_id=world_id)
     if detail is None:
@@ -351,9 +416,9 @@ async def get_world_target_watches(
     return {"targets": target_watches.get_world(alliance_id, world_id)}
 
 
-@app.get("/api/targets", dependencies=[Depends(rate_limit_get)])
+@app.get("/api/targets", dependencies=[Depends(rate_limit_get), Depends(require_session)])
 async def get_targets_dashboard():
-    """Dashboard data: all worlds with active watches (viewer, Basic Auth via Caddy)."""
+    """Dashboard data: all worlds with active watches (viewer, website session)."""
     return {
         "serverTime": int(time.time()),
         "ttl": target_watches.ttl,
@@ -366,10 +431,26 @@ async def get_targets_dashboard():
 async def health():
     return {"status": "ok", "keys_loaded": len(key_store.keys), "player_keys": len(player_keys.players)}
 
+# ─── Pages (website session; no session -> login) ──────────────────
+
+def page(request: Request, name: str, login_url: str):
+    if current_session(request) is None:
+        return RedirectResponse(login_url, status_code=303)
+    return FileResponse(STATIC_DIR / name)
+
+
+@app.get("/login")
+async def login_page():
+    return FileResponse(STATIC_DIR / "login.html")
+
+@app.get("/static/session.js")
+async def session_js():
+    return FileResponse(STATIC_DIR / "session.js", media_type="text/javascript")
+
 @app.get("/")
-async def index():
-    return FileResponse("/app/server/static/index.html")
+async def index(request: Request):
+    return page(request, "index.html", "login")
 
 @app.get("/targets")
-async def targets_page():
-    return FileResponse("/app/server/static/targets.html")
+async def targets_page(request: Request):
+    return page(request, "targets.html", "login")

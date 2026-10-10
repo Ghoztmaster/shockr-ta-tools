@@ -5,7 +5,7 @@
 | Threat | Mitigation |
 |--------|-----------|
 | Unauthorized scan submission | API key per alliance, bcrypt hashed, checked on every POST |
-| Unauthorized data access | Basic Auth on all GET endpoints (Caddy) |
+| Unauthorized data access | Website + viewer API: session cookie from a login with the personal API key; admin endpoints: Basic Auth (reverse proxy) |
 | Malformed/oversized payloads | Pydantic validation, 64 KB max payload, field limits |
 | Scan data injection | Strict type validation, no eval, no SQL |
 | Brute force | Rate limiting (10/s POST, 30/s GET per IP) |
@@ -31,9 +31,15 @@
 - Each key scoped to one alliance
 - Generated via `python -m server.keygen add "SoO"`
 
-### GET /shockr/api/* — Basic Auth
-- Caddy handles auth at the reverse proxy level
-- Backend never sees passwords
+### Website (/shockr/, /shockr/targets, GET /shockr/api/bases|base/{id}|targets) — session cookie
+- `POST /shockr/api/login {playerName, apiKey}`: the key is checked with the same `PlayerKeyStore.verify()` as `X-Player-Key` (no second key check, no password stored); one error message for unknown player and wrong key; rate limit 10 attempts per IP per minute
+- Success: random token (`secrets.token_urlsafe(32)`), kept in memory server-side, cookie `shockr_session` (HttpOnly, Secure behind https, SameSite=Lax, Path = `X-Forwarded-Prefix`), 7-day TTL; a restart logs everyone out
+- A session ends at once when the player's key is revoked or re-issued (the session is bound to the stored key hash)
+- No session: pages redirect to `/shockr/login`, viewer API answers 401
+- The session cookie does NOT authorize scan/target-watch (those stay on `X-Player-Key`) nor the admin endpoints
+
+### GET /shockr/api/members, DELETE /shockr/api/enroll/{id} — Basic Auth
+- Admin only, enforced at the reverse proxy; the app itself has no check on these — the proxy MUST keep them behind Basic Auth (see DEPLOY.md §8)
 
 ## Input Validation
 
@@ -54,7 +60,7 @@ ports: 127.0.0.1:8920 (localhost only)
 ## Network
 
 ```
-Internet → Caddy (TLS + Basic Auth) → localhost:8920 → shockr-alliance container
+Internet → nginx (TLS; Basic Auth on admin endpoints only) → localhost:8920 → shockr-alliance container
 ```
 
 Own bridge network `shockr-net`, not connected to any other stack.

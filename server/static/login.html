@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shockr — Inloggen</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        background: #1a1a1a;
+        color: #ccc;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        font-size: 14px;
+    }
+    .header {
+        background: #252525;
+        border-bottom: 1px solid #333;
+        padding: 12px 20px;
+    }
+    .header h1 { font-size: 18px; color: #e0e0e0; }
+    .login {
+        max-width: 380px;
+        margin: 60px auto;
+        padding: 24px;
+        background: #222;
+        border: 1px solid #333;
+        border-radius: 6px;
+    }
+    .login p { color: #999; font-size: 13px; line-height: 1.5; margin-bottom: 18px; }
+    .login code { color: #4fc3f7; }
+    .login label { display: block; color: #999; font-size: 12px; margin-bottom: 4px; }
+    .login input {
+        width: 100%;
+        background: #333;
+        color: #e0e0e0;
+        border: 1px solid #444;
+        border-radius: 3px;
+        padding: 8px;
+        font-size: 14px;
+        margin-bottom: 14px;
+    }
+    .login input:focus { outline: none; border-color: #4fc3f7; }
+    .login button {
+        width: 100%;
+        background: #4fc3f7;
+        color: #1a1a1a;
+        border: none;
+        border-radius: 3px;
+        padding: 9px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .login button:hover { background: #81d4fa; }
+    .login button:disabled { background: #555; cursor: default; }
+    .error { color: #ef5350; font-size: 13px; margin-top: 12px; min-height: 18px; }
+    @media (max-width: 440px) { .login { margin: 24px 16px; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>⚔ Shockr Alliance Scanner</h1>
+</div>
+
+<form class="login" id="loginForm">
+    <p>Log in met je speler-naam en de API key die je via <code>/st register</code> in de game hebt gekregen.</p>
+    <label for="playerName">Speler-naam</label>
+    <input id="playerName" name="playerName" autocomplete="username" required maxlength="50" autofocus>
+    <label for="apiKey">API key</label>
+    <input id="apiKey" name="apiKey" type="password" autocomplete="current-password" required maxlength="100">
+    <button type="submit" id="loginBtn">Inloggen</button>
+    <div class="error" id="error" role="alert"></div>
+</form>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const btn = document.getElementById('loginBtn');
+    const error = document.getElementById('error');
+    error.textContent = '';
+    btn.disabled = true;
+    try {
+        const resp = await fetch('api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                playerName: document.getElementById('playerName').value.trim(),
+                apiKey: document.getElementById('apiKey').value.trim(),
+            }),
+        });
+        if (resp.ok) {
+            location.href = './';
+            return;
+        }
+        const data = await resp.json().catch(() => ({}));
+        error.textContent = data.error || (typeof data.detail === 'string' && data.detail) || 'Onbekende speler of ongeldige key';
+    } catch (e) {
+        error.textContent = 'Server niet bereikbaar';
+    } finally {
+        btn.disabled = false;
+    }
+});
+</script>
+</body>
+</html>
