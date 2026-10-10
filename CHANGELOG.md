@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Fix: player_keys.jsonl één regel per speler (server, VPS)
+- Herregistratie (`/st register`) en intrekken (`DELETE /api/enroll/{id}`) voegden een regel toe; de oude regel (met de oude key-hash) bleef in het bestand tot de volgende herstart. Nu overschrijven ze de regel van die speler: het hele bestand wordt atomisch herschreven (tijdelijk bestand + rename)
+- Oude bestanden met meerdere regels per speler worden nog gelezen: per speler wint de nieuwste `createdAt`/`revokedAt` (niet meer de laatste regel; bij gelijke tijd wel de laatste regel), en het bestand wordt bij het opstarten opgeschoond
+- Geen gedragsverandering voor spelers: ook vóór de fix gold in het geheugen al de nieuwste key. Tests: `tests/test_player_keys.py`
+
 ## [5.9.0] — 2026-10-10
 
 ### API key zichtbaar na registratie (userscript)

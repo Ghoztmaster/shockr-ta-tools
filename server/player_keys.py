@@ -21,9 +21,13 @@ Keys: 32-char hex (secrets.token_hex(16)), stored as a bcrypt hash; the
 plaintext is returned once. Enrolling again with the same playerId issues a
 NEW key and invalidates the old one (the old plaintext can't be recovered).
 
-Storage: append-only log in data/player_keys.jsonl, latest line per player
-wins; a {"playerId": N, "revoked": true} line removes a player. Compacted on
-startup.
+Storage: data/player_keys.jsonl, one line per registered player. Enrolling
+again and revoking OVERWRITE that player's line: the whole file is rewritten
+atomically (temp file + rename), so it never holds an old key. Files from
+before this (append-only: several lines per player, {"playerId": N,
+"revoked": true} tombstones) are still read: per player the line with the
+newest createdAt/revokedAt wins (file order breaks a tie), and the file is
+rewritten clean on startup.
 """
 import hashlib
 import json
@@ -123,26 +127,37 @@ class PlayerKeyStore:
     def load(self) -> None:
         if not self.path or not self.path.exists():
             return
+        # playerId -> ((timestamp, line number), entry or None for a revoke)
+        latest: dict[int, tuple[tuple[float, int], dict | None]] = {}
+        lines = 0
         try:
             with open(self.path) as f:
-                for line in f:
+                for lineno, line in enumerate(f):
                     line = line.strip()
                     if not line:
                         continue
+                    lines += 1
                     try:
                         entry = json.loads(line)
                         pid = int(entry["playerId"])
                     except (json.JSONDecodeError, KeyError, TypeError, ValueError):
                         continue
                     if entry.get("revoked"):
-                        self.players.pop(pid, None)
+                        rank, value = (_timestamp(entry.get("revokedAt")), lineno), None
                     elif entry.get("playerKey"):
-                        self.players[pid] = entry
+                        rank, value = (_timestamp(entry.get("createdAt")), lineno), entry
+                    else:
+                        continue
+                    if pid not in latest or rank > latest[pid][0]:
+                        latest[pid] = (rank, value)
         except OSError as e:
             log.warning("Could not read %s: %s", self.path, e)
             return
-        self._compact()
-        log.info("Loaded %d player key(s)", len(self.players))
+        self.players = {pid: entry for pid, (_, entry) in latest.items() if entry is not None}
+        if lines != len(self.players):
+            self._save()
+        log.info("Loaded %d player key(s)%s", len(self.players),
+                 f" (file had {lines} line(s), rewritten)" if lines != len(self.players) else "")
 
     def enroll(self, player_id: int, player_name: str, alliance_id: int, scope: str) -> str:
         """Issue a new key for the player (replacing any previous one). @returns the plaintext key"""
@@ -158,7 +173,7 @@ class PlayerKeyStore:
         replaced = player_id in self.players
         self.players[player_id] = entry
         self._verified.pop(player_id, None)
-        self._append(entry)
+        self._save()   # overwrites the player's previous line
         log.info("Player key %s: %s (%d), alliance %d, scope %s",
                  "re-issued" if replaced else "issued", player_name, player_id, alliance_id, scope)
         return raw_key
@@ -184,7 +199,7 @@ class PlayerKeyStore:
         if self.players.pop(player_id, None) is None:
             return False
         self._verified.pop(player_id, None)
-        self._append({"playerId": player_id, "revoked": True, "revokedAt": int(self.clock())})
+        self._save()   # the player's line is gone
         log.info("Player key revoked: %d", player_id)
         return True
 
@@ -192,16 +207,8 @@ class PlayerKeyStore:
         """Registered players without key hashes."""
         return [{k: v for k, v in e.items() if k != "playerKey"} for e in self.players.values()]
 
-    def _append(self, entry: dict) -> None:
-        if not self.path:
-            return
-        try:
-            with open(self.path, "a") as f:
-                f.write(json.dumps(entry, separators=(",", ":")) + "\n")
-        except OSError as e:
-            log.warning("Could not write %s: %s", self.path, e)
-
-    def _compact(self) -> None:
+    def _save(self) -> None:
+        """Write every current player, one line each (temp file + atomic rename)."""
         if not self.path:
             return
         tmp = self.path.with_suffix(".jsonl.tmp")
@@ -211,4 +218,12 @@ class PlayerKeyStore:
                     f.write(json.dumps(entry, separators=(",", ":")) + "\n")
             tmp.replace(self.path)
         except OSError as e:
-            log.warning("Could not compact %s: %s", self.path, e)
+            log.warning("Could not write %s: %s", self.path, e)
+
+
+def _timestamp(value) -> float:
+    """createdAt/revokedAt as a number; missing or unreadable sorts oldest."""
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return float("-inf")
