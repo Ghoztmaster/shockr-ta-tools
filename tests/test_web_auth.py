@@ -48,11 +48,36 @@ def test_pages_redirect_to_login_without_cookie(env):
         assert r.headers["location"] == "login"
 
 
-def test_login_page_and_session_js_are_public(env):
+def test_login_page_and_scripts_are_public(env):
     c = env["client"]
     assert c.get("/login").status_code == 200
-    assert "Inloggen" in c.get("/login").text
-    assert c.get("/static/session.js").status_code == 200
+    assert 'data-i18n="loginButton"' in c.get("/login").text
+    for name in ("session.js", "i18n.js"):
+        r = c.get(f"/static/{name}")
+        assert r.status_code == 200 and "javascript" in r.headers["content-type"], name
+    # Only the whitelisted scripts — the pages themselves stay behind the session
+    for name in ("index.html", "targets.html", "login.html", "..%2Fmain.py"):
+        assert c.get(f"/static/{name}").status_code == 404, name
+
+
+def test_i18n_has_every_key_in_all_languages():
+    """Every T()/data-i18n key used by the pages exists in en, de and nl."""
+    import re
+    from pathlib import Path
+    static = Path(main.STATIC_DIR)
+    src = (static / "i18n.js").read_text(encoding="utf-8")
+    tables = {}
+    for lang in ("en", "de", "nl"):
+        block = re.search(rf"\n        {lang}: \{{(.*?)\n        \}},", src, re.S).group(1)
+        tables[lang] = set(re.findall(r"^\s+(\w+):", block, re.M))
+    assert tables["en"] == tables["de"] == tables["nl"]
+    used = set()
+    for page in ("login.html", "index.html", "targets.html", "session.js"):
+        text = (static / page).read_text(encoding="utf-8")
+        used |= set(re.findall(r"\bT\('(\w+)'", text))
+        used |= set(re.findall(r'data-i18n(?:-placeholder|-title|-doctitle)?="(\w+)"', text))
+        used |= set(re.findall(r"label: '(\w+)'", text))
+    assert used - tables["en"] == set()
 
 
 def test_viewer_api_requires_session(env):

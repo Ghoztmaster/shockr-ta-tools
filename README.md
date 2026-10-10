@@ -72,8 +72,9 @@ Every player gets their own API key — no key to copy or paste:
 2. Type `/st register` in the game chat. A popup asks for the enrollment code.
 3. The script sends the code together with your player id, name, alliance id and world id (read from the game) to `POST /api/enroll`.
 4. The server checks the code and whether your alliance is allowed, and returns a personal key. The script stores it in `api.playerKey` — you'll see `✅ Registered! Your personal key is active.` and `[ST] ✅ Registered successfully` in the chat.
+5. The popup then shows the key itself with a **Copy** button and stays open until you click **Close**. You need it (with your player name) to log in to the Shockr Alliance website.
 
-From then on every scan and target-watch request uses your personal key (`X-Player-Key`). The key is never shown: `/st config get api.playerKey` only says *set* / *not set*, and `/st status` shows whether you are registered. Registering again (e.g. new browser) gives you a new key and invalidates the old one.
+From then on every scan and target-watch request uses your personal key (`X-Player-Key`). `/st config get api.playerKey` shows the key again (only in your own chat, nothing is sent); `/st config list` still shows it as *set* / *not set*, and `/st status` shows whether you are registered. Registering again (e.g. new browser) gives you a new key and invalidates the old one.
 
 **Transition:** the shared alliance key (`/st config set api.key ...`) keeps working until the server admin switches it off. Players without either key get `[ST] ⚠️ Not registered — type /st register`.
 

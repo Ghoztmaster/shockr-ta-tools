@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-i18n-doctitle="targetsPageTitle">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shockr Target Watch</title>
+<script src="static/i18n.js"></script>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -133,20 +134,21 @@
 <body>
 
 <div class="header">
-    <h1>🎯 Alliance Target Watch <span id="worldTitle"></span></h1>
+    <h1><span data-i18n="targetsTitle">🎯 Alliance Target Watch</span> <span id="worldTitle"></span></h1>
     <div class="nav">
-        <a href="./">⚔ Bases</a>
-        <span class="stats" id="stats">Loading...</span>
+        <a href="./" data-i18n="navBases">⚔ Bases</a>
+        <span class="stats" id="stats" data-i18n="loading">Loading...</span>
         <span class="user" id="userBox"></span>
+        <span class="lang-switch" id="langSwitch"></span>
     </div>
 </div>
 
 <div class="filters">
     <div id="worldPicker" style="display:none">
-        <label for="worldSelect">World:</label>
+        <label for="worldSelect" data-i18n="world">World:</label>
         <select id="worldSelect"></select>
     </div>
-    <button onclick="loadTargets()">↻ Refresh</button>
+    <button onclick="loadTargets()" data-i18n="refresh">↻ Refresh</button>
     <span class="updated" id="updated"></span>
 </div>
 
@@ -154,15 +156,15 @@
     <table>
         <thead>
             <tr>
-                <th>Target</th>
-                <th>Coord</th>
-                <th>Level</th>
-                <th>Type</th>
-                <th>Watchers</th>
+                <th data-i18n="colTarget">Target</th>
+                <th data-i18n="colCoord">Coord</th>
+                <th data-i18n="colLevel">Level</th>
+                <th data-i18n="colType">Type</th>
+                <th data-i18n="colWatchers">Watchers</th>
             </tr>
         </thead>
         <tbody id="targetBody">
-            <tr><td colspan="5" class="loading">Loading...</td></tr>
+            <tr><td colspan="5" class="loading" data-i18n="loading">Loading...</td></tr>
         </tbody>
     </table>
 </div>
@@ -177,9 +179,9 @@ let worlds = [];        // [{ worldId, targets: [...] }]
 let serverTime = 0;     // unix s, from the response — ages don't depend on the browser clock
 let ttl = 600;
 let selectedWorld = readStoredWorld();
+let lastStatus = null;  // {key, vars, error} of the "updated" line, re-translated on a language switch
 
 async function loadTargets() {
-    const updated = document.getElementById('updated');
     try {
         const resp = await fetch(`${API}/api/targets`, { cache: 'no-store' });
         if (!resp.ok) throw new Error(`${resp.status} ${resp.statusText}`);
@@ -187,19 +189,24 @@ async function loadTargets() {
         worlds = data.worlds || [];
         serverTime = data.serverTime || Math.floor(Date.now() / 1000);
         ttl = data.ttl || 600;
-        updated.classList.remove('error');
-        updated.textContent = `Updated ${new Date().toLocaleTimeString()} · auto-refresh every ${REFRESH_MS / 1000}s`;
+        showStatus({ key: 'updated', vars: { time: new Date().toLocaleTimeString(), s: REFRESH_MS / 1000 }, error: false });
     } catch (e) {
-        updated.classList.add('error');
-        updated.textContent = `Refresh failed: ${e.message} — retrying in ${REFRESH_MS / 1000}s`;
+        showStatus({ key: 'refreshFailed', vars: { msg: e.message, s: REFRESH_MS / 1000 }, error: true });
         if (!worlds.length) {
             document.getElementById('targetBody').innerHTML =
-                `<tr><td colspan="5" class="loading">Error: ${esc(e.message)}</td></tr>`;
+                `<tr><td colspan="5" class="loading">${esc(T('error', { msg: e.message }))}</td></tr>`;
         }
         return;
     }
     renderWorldPicker();
     render();
+}
+
+function showStatus(status) {
+    lastStatus = status;
+    const updated = document.getElementById('updated');
+    updated.classList.toggle('error', status.error);
+    updated.textContent = T(status.key, status.vars);
 }
 
 function renderWorldPicker() {
@@ -210,7 +217,7 @@ function renderWorldPicker() {
     const select = document.getElementById('worldSelect');
     picker.style.display = ids.length > 1 ? '' : 'none';
     select.innerHTML = worlds.map(w =>
-        `<option value="${w.worldId}">World ${w.worldId} (${w.targets.length})</option>`
+        `<option value="${w.worldId}">${esc(T('worldOption', { id: w.worldId, n: w.targets.length }))}</option>`
     ).join('');
     if (selectedWorld !== null) select.value = String(selectedWorld);
 }
@@ -218,7 +225,7 @@ function renderWorldPicker() {
 function render() {
     const tbody = document.getElementById('targetBody');
     const world = worlds.find(w => w.worldId === selectedWorld);
-    document.getElementById('worldTitle').textContent = world ? `— World ${world.worldId}` : '';
+    document.getElementById('worldTitle').textContent = world ? T('worldTitle', { id: world.worldId }) : '';
 
     // Drop watchers past the TTL (the backend does this too, on every request)
     const targets = (world ? world.targets : [])
@@ -229,10 +236,10 @@ function render() {
     const watcherCount = new Set(targets.flatMap(t => t.watchers.map(w => w.playerId))).size;
     const doubles = targets.filter(t => t.watchers.length >= 2).length;
     document.getElementById('stats').textContent =
-        `${targets.length} target(s) | ${watcherCount} watcher(s)` + (doubles ? ` | ⚠️ ${doubles} double` : '');
+        T('targetsStats', { targets: targets.length, watchers: watcherCount }) + (doubles ? T('targetsDoubles', { n: doubles }) : '');
 
     if (!targets.length) {
-        tbody.innerHTML = '<tr><td colspan="5" class="loading">No active watchers — enable Target Watcher in Shockr Tools to start tracking.</td></tr>';
+        tbody.innerHTML = `<tr><td colspan="5" class="loading">${esc(T('noWatchers'))}</td></tr>`;
         return;
     }
 
@@ -243,11 +250,11 @@ function render() {
             `<div class="watcher">${esc(w.playerName)} <span class="ago">(${ago(serverTime - w.timestamp)})</span></div>`
         ).join('');
         return `<tr class="${double ? 'double' : ''}">
-            <td class="target-cell" data-label="Target"><span class="target-name">${esc(t.targetName || '?')}</span></td>
-            <td data-label="Coord">${t.targetX}:${t.targetY}</td>
-            <td data-label="Level">L${Math.floor(t.targetLevel)}</td>
-            <td data-label="Type"><span class="type type-${esc(type)}">${esc(type || '—')}</span></td>
-            <td class="watchers-cell" data-label="Watchers"><div>${watchers}${double ? `<div class="double-flag">⚠️ ${t.watchers.length} watchers!</div>` : ''}</div></td>
+            <td class="target-cell" data-label="${esc(T('colTarget'))}"><span class="target-name">${esc(t.targetName || '?')}</span></td>
+            <td data-label="${esc(T('colCoord'))}">${t.targetX}:${t.targetY}</td>
+            <td data-label="${esc(T('colLevel'))}">L${Math.floor(t.targetLevel)}</td>
+            <td data-label="${esc(T('colType'))}"><span class="type type-${esc(type)}">${esc(type || '—')}</span></td>
+            <td class="watchers-cell" data-label="${esc(T('colWatchers'))}"><div>${watchers}${double ? `<div class="double-flag">${esc(T('doubleFlag', { n: t.watchers.length }))}</div>` : ''}</div></td>
         </tr>`;
     }).join('');
 }
@@ -258,7 +265,7 @@ function latest(t) {
 
 function ago(seconds) {
     const min = Math.floor(Math.max(0, seconds) / 60);
-    return min < 1 ? 'just now' : `${min} min ago`;
+    return min < 1 ? T('justNow') : T('minAgo', { n: min });
 }
 
 function esc(s) {
@@ -275,6 +282,13 @@ function readStoredWorld() {
 document.getElementById('worldSelect').addEventListener('change', (e) => {
     selectedWorld = parseInt(e.target.value, 10);
     try { localStorage.setItem(WORLD_KEY, String(selectedWorld)); } catch { /* private mode */ }
+    render();
+});
+
+// Language switch: re-render what was built in JS
+document.addEventListener('shockr-lang', () => {
+    if (lastStatus) showStatus(lastStatus);
+    renderWorldPicker();
     render();
 });
 

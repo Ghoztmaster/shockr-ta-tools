@@ -443,9 +443,15 @@ def page(request: Request, name: str, login_url: str):
 async def login_page():
     return FileResponse(STATIC_DIR / "login.html")
 
-@app.get("/static/session.js")
-async def session_js():
-    return FileResponse(STATIC_DIR / "session.js", media_type="text/javascript")
+# Public page scripts (no data in them; the login page needs i18n.js before a session exists)
+PUBLIC_SCRIPTS = {"session.js", "i18n.js"}
+
+
+@app.get("/static/{name}")
+async def static_script(name: str):
+    if name not in PUBLIC_SCRIPTS:
+        raise HTTPException(status_code=404, detail="Not found")
+    return FileResponse(STATIC_DIR / name, media_type="text/javascript")
 
 @app.get("/")
 async def index(request: Request):

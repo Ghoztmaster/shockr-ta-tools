@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en" data-i18n-doctitle="loginPageTitle">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shockr — Inloggen</title>
+<title>Shockr — Log in</title>
+<script src="static/i18n.js"></script>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -16,6 +17,10 @@
         background: #252525;
         border-bottom: 1px solid #333;
         padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
     }
     .header h1 { font-size: 18px; color: #e0e0e0; }
     .login {
@@ -27,7 +32,6 @@
         border-radius: 6px;
     }
     .login p { color: #999; font-size: 13px; line-height: 1.5; margin-bottom: 18px; }
-    .login code { color: #4fc3f7; }
     .login label { display: block; color: #999; font-size: 12px; margin-bottom: 4px; }
     .login input {
         width: 100%;
@@ -61,24 +65,32 @@
 
 <div class="header">
     <h1>⚔ Shockr Alliance Scanner</h1>
+    <span class="lang-switch" id="langSwitch"></span>
 </div>
 
 <form class="login" id="loginForm">
-    <p>Log in met je speler-naam en de API key die je via <code>/st register</code> in de game hebt gekregen.</p>
-    <label for="playerName">Speler-naam</label>
-    <input id="playerName" name="playerName" autocomplete="username" required maxlength="50" autofocus>
-    <label for="apiKey">API key</label>
-    <input id="apiKey" name="apiKey" type="password" autocomplete="current-password" required maxlength="100">
-    <button type="submit" id="loginBtn">Inloggen</button>
+    <p data-i18n="loginIntro"></p>
+    <label for="playerName" data-i18n="loginName"></label>
+    <input id="playerName" name="playerName" autocomplete="username" required maxlength="50" autofocus data-i18n-placeholder="loginNamePlaceholder">
+    <label for="apiKey" data-i18n="loginKey"></label>
+    <input id="apiKey" name="apiKey" type="password" autocomplete="current-password" required maxlength="100" data-i18n-placeholder="loginKeyPlaceholder">
+    <button type="submit" id="loginBtn" data-i18n="loginButton"></button>
     <div class="error" id="error" role="alert"></div>
 </form>
 
 <script>
+// Error shown last, so a language switch can re-translate it
+let lastErrorKey = null;
+function showError(key) {
+    lastErrorKey = key;
+    document.getElementById('error').textContent = key ? T(key) : '';
+}
+document.addEventListener('shockr-lang', () => showError(lastErrorKey));
+
 document.getElementById('loginForm').addEventListener('submit', async (ev) => {
     ev.preventDefault();
     const btn = document.getElementById('loginBtn');
-    const error = document.getElementById('error');
-    error.textContent = '';
+    showError(null);
     btn.disabled = true;
     try {
         const resp = await fetch('api/login', {
@@ -93,10 +105,9 @@ document.getElementById('loginForm').addEventListener('submit', async (ev) => {
             location.href = './';
             return;
         }
-        const data = await resp.json().catch(() => ({}));
-        error.textContent = data.error || (typeof data.detail === 'string' && data.detail) || 'Onbekende speler of ongeldige key';
+        showError(resp.status === 429 ? 'loginRateLimited' : 'loginFailed');
     } catch (e) {
-        error.textContent = 'Server niet bereikbaar';
+        showError('loginUnreachable');
     } finally {
         btn.disabled = false;
     }

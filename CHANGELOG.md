@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [5.9.0] — 2026-10-10
+
+### API key zichtbaar na registratie (userscript)
+- `/st register`: na succes toont de popup de persoonlijke key in een alleen-lezen veld met een Copy/Kopieren/Kopiëren-knop (clipboard-API, terugval select + `execCommand('copy')`) en de tekst "This is your personal API key. Copy it now — you can see it again later with /st config get api.playerkey. …" in EN/DE/NL (volgt `/st config set language`)
+- De popup sluit niet meer vanzelf na 2 s, maar pas op Close/Schließen/Sluiten (of ✕ / Escape)
+- `/st config get api.playerkey` toont de echte key i.p.v. "set" (alleen een lokaal systeembericht in de eigen chat); `config list` en `config set` tonen hem nog steeds als set/not set
+
+### Website in EN/DE/NL (server, VPS)
+- Nieuw `server/static/i18n.js`: alle vaste tekst op login, base-overzicht (incl. detailpaneel) en Target Watch in Engels, Duits en Nederlands; vlaggen 🇬🇧 🇩🇪 🇳🇱 rechtsboven, keuze in localStorage (`shockr_lang`), zonder keuze de browsertaal (de/nl) en anders Engels. Wisselen vertaalt direct, zonder herladen
+- Login-pagina: labels, placeholders, knop en foutmeldingen (onbekende speler/ongeldige key, te veel pogingen, server onbereikbaar) vertaald; "Ingelogd als: … [Uitloggen]" ook
+- Spelbegrippen (Camp/Outpost/Base, factie- en unitnamen, Lv) blijven zoals het spel ze toont
+- `GET /static/{name}` serveert alleen `session.js` en `i18n.js` (whitelist), publiek zodat de login-pagina vertaald is vóór er een sessie is
+
 ### Website login via persoonlijke API key (server + nginx, VPS)
 - Vervangt het gedeelde Basic Auth-wachtwoord op `/shockr/`: inloggen op `/shockr/login` met speler-naam + de API key uit `/st register`
 - `POST /api/login {playerName, apiKey}` → sessie-cookie `shockr_session` (HttpOnly, Secure achter https, SameSite=Lax, 7 dagen, in het geheugen — na een herstart opnieuw inloggen); fout → 401 `{"error": "Onbekende speler of ongeldige key"}`; max 10 pogingen/IP/minuut

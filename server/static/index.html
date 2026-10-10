@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-i18n-doctitle="basesPageTitle">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shockr Alliance Scanner</title>
+<script src="static/i18n.js"></script>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -250,61 +251,62 @@
 
 <div class="header">
     <h1>⚔ Shockr Alliance Scanner</h1>
-    <a href="targets" style="font-size:13px;margin-left:auto;margin-right:15px;">🎯 Target Watch</a>
-    <div class="stats" id="stats">Loading...</div>
+    <a href="targets" style="font-size:13px;margin-left:auto;margin-right:15px;" data-i18n="navTargetWatch">🎯 Target Watch</a>
+    <div class="stats" id="stats" data-i18n="loading">Loading...</div>
     <div class="user" id="userBox" style="margin-left:15px"></div>
+    <span class="lang-switch" id="langSwitch" style="margin-left:10px"></span>
 </div>
 
 <div id="overview" class="overview" style="display:none"></div>
 
 <div class="filters">
     <div>
-        <label>World:</label>
-        <select id="filterWorld"><option value="">All</option></select>
+        <label data-i18n="world">World:</label>
+        <select id="filterWorld"><option value="" data-i18n="all">All</option></select>
     </div>
     <div>
-        <label>Type:</label>
+        <label data-i18n="filterType">Type:</label>
         <select id="filterType">
-            <option value="">All</option>
+            <option value="" data-i18n="all">All</option>
             <option value="Camp">Camp</option>
             <option value="Outpost">Outpost</option>
             <option value="Base">Base</option>
         </select>
     </div>
     <div>
-        <label>Min Level:</label>
-        <input type="number" id="filterLevel" min="1" max="65" value="" placeholder="any" style="width:60px">
+        <label data-i18n="filterMinLevel">Min Level:</label>
+        <input type="number" id="filterLevel" min="1" max="65" value="" placeholder="any" data-i18n-placeholder="filterAny" style="width:60px">
     </div>
     <div>
-        <label>Age:</label>
+        <label data-i18n="filterAge">Age:</label>
         <select id="filterAge">
-            <option value="1">&lt; 1 hour</option>
-            <option value="6">&lt; 6 hours</option>
-            <option value="24">&lt; 24 hours</option>
-            <option value="168" selected>&lt; 7 days</option>
+            <option value="1" data-i18n="age1h">&lt; 1 hour</option>
+            <option value="6" data-i18n="age6h">&lt; 6 hours</option>
+            <option value="24" data-i18n="age24h">&lt; 24 hours</option>
+            <option value="168" selected data-i18n="age7d">&lt; 7 days</option>
         </select>
     </div>
-    <button onclick="loadBases()">🔍 Filter</button>
-    <button onclick="loadBases()" style="background:#66bb6a">↻ Refresh</button>
+    <button onclick="loadBases()" data-i18n="filterButton">🔍 Filter</button>
+    <button onclick="loadBases()" style="background:#66bb6a" data-i18n="refresh">↻ Refresh</button>
 </div>
 
 <div class="content">
     <table id="baseTable">
         <thead>
             <tr>
-                <th data-sort="name">Name</th>
-                <th data-sort="owner">Owner</th>
-                <th data-sort="level_base">Base</th>
-                <th data-sort="level_off">Off</th>
-                <th data-sort="level_def">Def</th>
-                <th data-sort="faction">Faction</th>
-                <th data-sort="x">Coords</th>
-                <th data-sort="scanned_by">Scanner</th>
-                <th data-sort="scanned_at">Scanned</th>
+                <th data-sort="name" data-i18n="colName">Name</th>
+                <th data-sort="owner" data-i18n="colOwner">Owner</th>
+                <th data-sort="level_base" data-i18n="colBase">Base</th>
+                <th data-sort="level_off" data-i18n="colOff">Off</th>
+                <th data-sort="level_def" data-i18n="colDef">Def</th>
+                <th data-sort="faction" data-i18n="colFaction">Faction</th>
+                <th data-sort="x" data-i18n="colCoords">Coords</th>
+                <th data-sort="scanned_by" data-i18n="colScanner">Scanner</th>
+                <th data-sort="scanned_at" data-i18n="colScanned">Scanned</th>
             </tr>
         </thead>
         <tbody id="baseBody">
-            <tr><td colspan="9" class="loading">Loading...</td></tr>
+            <tr><td colspan="9" class="loading" data-i18n="loading">Loading...</td></tr>
         </tbody>
     </table>
 </div>
@@ -422,11 +424,11 @@ const UNIT_CAT_SYMBOL = {   // mode D (NATO)
 const UNIT_CAT_EMOJI = {    // mode B
     structure: '🛡', infantry: '👤', vehicle: '🚗', artillery: '💣', air: '✈️',
 };
-const UNIT_MODES = [        // dropdown order
-    { id: 'A', label: 'Afkortingen' },
-    { id: 'B', label: 'Emoji' },
-    { id: 'C', label: 'Kleur' },
-    { id: 'D', label: 'NATO' },
+const UNIT_MODES = [        // dropdown order; label = i18n key
+    { id: 'A', label: 'modeAbbr' },
+    { id: 'B', label: 'modeEmoji' },
+    { id: 'C', label: 'modeColor' },
+    { id: 'D', label: 'modeNato' },
 ];
 const UNIT_MODE_KEY = 'shockr_unit_symbol_mode';
 
@@ -509,11 +511,11 @@ function timeAgo(isoStr) {
     if (!isoStr) return '—';
     const diff = Date.now() - new Date(isoStr).getTime();
     const mins = Math.floor(diff / 60000);
-    if (mins < 1) return 'just now';
-    if (mins < 60) return `${mins}m ago`;
+    if (mins < 1) return T('justNow');
+    if (mins < 60) return T('minutesAgo', { n: mins });
     const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
-    return `${Math.floor(hrs / 24)}d ago`;
+    if (hrs < 24) return T('hoursAgo', { n: hrs });
+    return T('daysAgo', { n: Math.floor(hrs / 24) });
 }
 
 function freshness(isoStr) {
@@ -548,7 +550,7 @@ async function loadBases() {
         updateOverview();
     } catch (e) {
         document.getElementById('baseBody').innerHTML =
-            `<tr><td colspan="9" class="loading">Error: ${e.message}</td></tr>`;
+            `<tr><td colspan="9" class="loading">${esc(T('error', { msg: e.message }))}</td></tr>`;
     }
 }
 
@@ -563,14 +565,14 @@ function updateStats() {
     const worlds = new Set(bases.map(b => b.world_id));
     const scanners = new Set(bases.map(b => b.scanned_by));
     document.getElementById('stats').textContent =
-        `${bases.length} bases | ${worlds.size} world(s) | ${scanners.size} scanner(s)`;
+        T('basesStats', { bases: bases.length, worlds: worlds.size, scanners: scanners.size });
 }
 
 function updateWorldFilter() {
     const select = document.getElementById('filterWorld');
     const current = select.value;
     const worlds = [...new Set(allBases.map(b => b.world_id))].sort((a,b) => a-b);
-    select.innerHTML = '<option value="">All</option>' +
+    select.innerHTML = `<option value="">${esc(T('all'))}</option>` +
         worlds.map(w => {
             const name = worldNames[w] || w;
             return `<option value="${w}" ${w==current?'selected':''}>${name}</option>`;
@@ -599,11 +601,12 @@ function updateOverview() {
     }
 
     let html = '';
-    html += `<div class="overview-item"><strong>Types:</strong> ${typeCounts.Camp} camps, ${typeCounts.Outpost} outposts, ${typeCounts.Base} bases`;
-    if (typeCounts.Other > 0) html += `, ${typeCounts.Other} other`;
+    html += `<div class="overview-item"><strong>${esc(T('overviewTypes'))}</strong> ` +
+        esc(T('overviewTypeCounts', { camp: typeCounts.Camp, outpost: typeCounts.Outpost, base: typeCounts.Base }));
+    if (typeCounts.Other > 0) html += esc(T('overviewOther', { n: typeCounts.Other }));
     html += '</div>';
 
-    html += '<div class="overview-item"><strong>Scanners:</strong> ';
+    html += `<div class="overview-item"><strong>${esc(T('overviewScanners'))}</strong> `;
     html += Object.entries(scannerCounts)
         .sort((a,b) => b[1] - a[1])
         .map(([name, count]) => `${name} (${count})`)
@@ -625,7 +628,7 @@ function renderTable() {
 
     const tbody = document.getElementById('baseBody');
     if (sorted.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="loading">No bases found</td></tr>';
+        tbody.innerHTML = `<tr><td colspan="9" class="loading">${esc(T('noBases'))}</td></tr>`;
         return;
     }
 
@@ -670,7 +673,7 @@ document.querySelectorAll('th[data-sort]').forEach(th => {
 async function openDetail(cityId, worldId) {
     const overlay = document.getElementById('detailOverlay');
     const panel = document.getElementById('detailPanel');
-    panel.innerHTML = '<div class="loading">Loading...</div>';
+    panel.innerHTML = `<div class="loading">${esc(T('loading'))}</div>`;
     overlay.style.display = 'block';
 
     try {
@@ -678,7 +681,7 @@ async function openDetail(cityId, worldId) {
         const base = await resp.json();
         renderDetail(base);
     } catch (e) {
-        panel.innerHTML = `<p>Error: ${e.message}</p>`;
+        panel.innerHTML = `<p>${esc(T('error', { msg: e.message }))}</p>`;
     }
 }
 
@@ -695,7 +698,7 @@ function renderDetail(b) {
     // History
     let historyHtml = '';
     if (b.history && b.history.length > 0) {
-        historyHtml = '<div class="history"><h3>Scan History (' + b.scan_count + ' scans)</h3>' +
+        historyHtml = `<div class="history"><h3>${esc(T('scanHistory', { n: b.scan_count }))}</h3>` +
             b.history.map(h =>
                 `<div class="history-item">v${h.version} — ${esc(h.scanned_by)} — ${timeAgo(h.scanned_at)}</div>`
             ).join('') + '</div>';
@@ -703,26 +706,26 @@ function renderDetail(b) {
 
     const mode = getUnitMode();
     const modeOptions = UNIT_MODES.map(o =>
-        `<option value="${o.id}"${o.id === mode ? ' selected' : ''}>${o.label}</option>`).join('');
+        `<option value="${o.id}"${o.id === mode ? ' selected' : ''}>${esc(T(o.label))}</option>`).join('');
 
     panel.innerHTML = `
         <button class="detail-close" onclick="closeDetail()">✕</button>
         <h2>${esc(b.name)}</h2>
         <div class="detail-info">
-            <div>Owner: <span>${esc(b.owner)}</span></div>
-            <div>Alliance: <span>${esc(b.alliance) || '—'}</span></div>
-            <div>Faction: <span class="${factionClass(b.faction)}">${factionName(b.faction)}</span></div>
-            <div>Coords: <span>${b.x}:${b.y}</span></div>
-            <div>Base Level: <span>${b.level_base.toFixed(1)}</span></div>
-            <div>Offense: <span>${b.level_off.toFixed(1)}</span></div>
-            <div>Defense: <span>${b.level_def.toFixed(1)}</span></div>
-            <div>Version: <span>${b.version}</span></div>
-            <div>Scanned by: <span>${esc(b.scanned_by)}</span></div>
-            <div>Scanned: <span>${timeAgo(b.scanned_at)}</span></div>
+            <div>${esc(T('detailOwner'))} <span>${esc(b.owner)}</span></div>
+            <div>${esc(T('detailAlliance'))} <span>${esc(b.alliance) || '—'}</span></div>
+            <div>${esc(T('detailFaction'))} <span class="${factionClass(b.faction)}">${factionName(b.faction)}</span></div>
+            <div>${esc(T('detailCoords'))} <span>${b.x}:${b.y}</span></div>
+            <div>${esc(T('detailBaseLevel'))} <span>${b.level_base.toFixed(1)}</span></div>
+            <div>${esc(T('detailOffense'))} <span>${b.level_off.toFixed(1)}</span></div>
+            <div>${esc(T('detailDefense'))} <span>${b.level_def.toFixed(1)}</span></div>
+            <div>${esc(T('detailVersion'))} <span>${b.version}</span></div>
+            <div>${esc(T('detailScannedBy'))} <span>${esc(b.scanned_by)}</span></div>
+            <div>${esc(T('detailScanned'))} <span>${timeAgo(b.scanned_at)}</span></div>
         </div>
         <div class="unit-mode-bar">
-            <h3>Base Layout (9×16)</h3>
-            <select id="unitModeSelect" title="Unit-symbolen">${modeOptions}</select>
+            <h3>${esc(T('baseLayout'))}</h3>
+            <select id="unitModeSelect" title="${esc(T('unitSymbols'))}">${modeOptions}</select>
         </div>
         <div id="unitViews"></div>
         ${historyHtml}
@@ -778,7 +781,7 @@ function renderUnitViews(b, mode) {
         }
         gridHtml += '</div>';
     } else {
-        gridHtml = '<p style="color:#666">No tile data available</p>';
+        gridHtml = `<p style="color:#666">${esc(T('noTiles'))}</p>`;
     }
 
     // Unit lists: symbol of the active mode before each name, plus a per-type legend with counts
@@ -788,7 +791,7 @@ function renderUnitViews(b, mode) {
         for (const u of units) counts.set(u.id, (counts.get(u.id) || 0) + 1);
         const legend = [...counts].map(([id, n]) =>
             `<span>${listSymbolHtml(id, names, mode)}${esc(unitLabel(id, names))} ×${n}</span>`).join('');
-        return `<h3>${title} (${units.length})</h3><div class="unit-legend">${legend}</div><div class="unit-grid">` +
+        return `<h3>${esc(title)} (${units.length})</h3><div class="unit-legend">${legend}</div><div class="unit-grid">` +
             units.map(u =>
                 `<div class="unit-item ${kind}">` +
                 `${listSymbolHtml(u.id, names, mode)}${esc(unitLabel(u.id, names))} <span class="unit-level">Lv${u.level}</span> ` +
@@ -798,13 +801,24 @@ function renderUnitViews(b, mode) {
 
     document.getElementById('unitViews').innerHTML =
         gridHtml +
-        unitListHtml(defUnits, '🛡 Defense Units', 'def') +
-        unitListHtml(offUnits, '⚔ Offense Units', 'off');
+        unitListHtml(defUnits, T('defenseUnits'), 'def') +
+        unitListHtml(offUnits, T('offenseUnits'), 'off');
 }
 
 // ─── Keyboard ───────────────────────────────────────────────
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeDetail();
+});
+
+// ─── Language switch: re-render what was built in JS ───────
+document.addEventListener('shockr-lang', () => {
+    renderTable();
+    updateStats();
+    updateWorldFilter();
+    updateOverview();
+    if (currentDetail && document.getElementById('detailOverlay').style.display === 'block') {
+        renderDetail(currentDetail);
+    }
 });
 
 // ─── Init ───────────────────────────────────────────────────
