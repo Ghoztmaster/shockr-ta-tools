@@ -293,6 +293,66 @@ curl -s -o /dev/null -w '%{http_code}\n' https://packetlab.nl/shockr/api/attacks
 
 Storage: `data/attacks/{worldId}.jsonl` (same `./data` volume). Records older than 7 days are removed at container start.
 
+## 10. WatchList (`/api/watchlist`, `/watchlist`)
+
+`POST /shockr/api/watchlist` is called from the game page (cross-origin) with `X-Player-Key` — claim, unclaim and the claims list all go through this one POST. CORS block, **before** the broad `/shockr/` block:
+
+```nginx
+    # Shockr Alliance — watchlist (userscript POST, X-Player-Key)
+    location = /shockr/api/watchlist {
+        if ($request_method = OPTIONS) {
+            add_header Access-Control-Allow-Origin $http_origin always;
+            add_header Access-Control-Allow-Methods "POST, OPTIONS" always;
+            add_header Access-Control-Allow-Headers "Content-Type, X-Alliance-Key, X-Player-Id, X-Player-Name, X-Alliance-Id, X-Player-Key" always;
+            add_header Access-Control-Max-Age 86400;
+            return 204;
+        }
+        add_header Access-Control-Allow-Origin $http_origin always;
+        add_header Access-Control-Allow-Headers "Content-Type, X-Alliance-Key, X-Player-Id, X-Player-Name, X-Alliance-Id, X-Player-Key" always;
+
+        proxy_pass http://127.0.0.1:8920/api/watchlist;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+```
+
+The website's own calls (`GET /shockr/api/watchlist?worldId=` and `DELETE /shockr/api/watchlist/{id}`, session cookie) go through the exact-match block resp. the broad `/shockr/` block — no extra config. The GET has no CORS need (same origin); the extra CORS headers the exact block adds are harmless.
+
+**Admin delete** (`DELETE /shockr/api/admin/watchlist/{id}`, any player's claim): the app checks the website session but NOT the admin role — that is nginx's Basic Auth, like `/api/members`. Without this block every logged-in member can delete any claim (never an outsider):
+
+```nginx
+    # Shockr Alliance — admin: delete any watchlist claim (Basic Auth)
+    location ~ ^/shockr/api/admin/ {
+        auth_basic "Shockr admin";
+        auth_basic_user_file /etc/nginx/.htpasswd-shockr;
+        rewrite ^/shockr(/.*)$ $1 break;
+        proxy_pass http://127.0.0.1:8920;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+```
+
+On the page, the "Admin" checkbox shows ✕ on every claim; the browser asks for the admin password on the first admin delete.
+
+```bash
+nginx -t && systemctl reload nginx
+
+# CORS preflight -> 204
+curl -si -X OPTIONS https://packetlab.nl/shockr/api/watchlist -H 'Origin: https://www.alliances.commandandconquer.com' | head -5
+# Without a key -> 403
+curl -s -o /dev/null -w '%{http_code}
+' -X POST https://packetlab.nl/shockr/api/watchlist -H 'Content-Type: application/json' -d '{"action":"list","worldId":477}'
+# Website data without a session -> 401; admin path without Basic Auth -> 401 (nginx)
+curl -s -o /dev/null -w '%{http_code}
+' https://packetlab.nl/shockr/api/watchlist
+curl -s -o /dev/null -w '%{http_code}
+' -X DELETE https://packetlab.nl/shockr/api/admin/watchlist/x
+```
+
+Storage: `data/watchlist/{worldId}.json` (same `./data` volume). Claims older than 24 h are dropped on the next access.
+
 ## Update
 
 ```bash

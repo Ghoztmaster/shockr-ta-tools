@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" data-i18n-doctitle="watchPageTitle">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shockr WatchList</title>
+<script src="static/i18n.js"></script>
+<script src="static/footer.js"></script>
+<script src="static/announcements.js"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        background: #1a1a1a;
+        color: #ccc;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        font-size: 14px;
+    }
+    a { color: #4fc3f7; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Header */
+    .header {
+        background: #252525;
+        border-bottom: 1px solid #333;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .header h1 { font-size: 18px; color: #e0e0e0; }
+    .nav { font-size: 13px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+
+    /* Filters */
+    .filters {
+        background: #222;
+        padding: 10px 20px;
+        border-bottom: 1px solid #333;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .filters label { color: #999; font-size: 12px; margin-right: 4px; }
+    .filters select {
+        background: #333;
+        color: #ccc;
+        border: 1px solid #444;
+        padding: 4px 8px;
+        font-size: 13px;
+    }
+    .filters button {
+        background: #66bb6a;
+        color: #111;
+        border: none;
+        padding: 5px 14px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+    .filters button:hover { background: #81c784; }
+    .filters .admin-toggle { color: #999; font-size: 12px; cursor: pointer; user-select: none; }
+    .filters .admin-toggle input { vertical-align: middle; margin-right: 4px; }
+    .filters .updated { color: #777; font-size: 12px; margin-left: auto; }
+    .filters .updated.error { color: #e57373; }
+
+    .content { padding: 12px 20px; overflow-x: auto; }
+    .summary {
+        background: #222;
+        border: 1px solid #333;
+        border-left: 3px solid #66bb6a;
+        padding: 10px 14px;
+        margin-bottom: 14px;
+        color: #e0e0e0;
+    }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+        background: #2a2a2a;
+        color: #aaa;
+        text-align: left;
+        padding: 6px 8px;
+        border-bottom: 1px solid #444;
+        white-space: nowrap;
+    }
+    td { padding: 5px 8px; border-bottom: 1px solid #2a2a2a; white-space: nowrap; }
+    tr:hover td { background: #252525; }
+    tr.mine td:first-child { color: #e0e0e0; }
+    .me { color: #777; font-size: 12px; }
+    .type-camp { color: #8bc34a; }
+    .type-outpost { color: #4fc3f7; }
+    .type-base { color: #ff9800; }
+    .muted { color: #777; }
+    td.actions { text-align: right; width: 1%; }
+    .del {
+        background: none;
+        border: 1px solid #555;
+        color: #e57373;
+        border-radius: 3px;
+        padding: 1px 7px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+    .del:hover { background: #3a2323; border-color: #e57373; }
+    .del.admin { color: #ffb74d; }
+    .del.admin:hover { background: #3a3023; border-color: #ffb74d; }
+
+    .loading { text-align: center; padding: 40px; color: #666; }
+    .lvl-inline { display: none; color: #999; }
+
+    @media (max-width: 640px) {
+        .header, .filters, .content { padding-left: 12px; padding-right: 12px; }
+        .filters .updated { margin-left: 0; width: 100%; }
+        .hide-narrow { display: none; }
+        .lvl-inline { display: inline; }
+        td, th { padding-left: 4px; padding-right: 4px; }
+        .me { display: none; }
+    }
+    /* Website session (session.js) */
+    .user { font-size: 12px; color: #888; display: flex; align-items: center; gap: 6px; }
+    .user strong { color: #e0e0e0; font-weight: normal; }
+    .user form { display: inline; }
+    .user button {
+        background: #444; color: #ccc; border: none; border-radius: 3px;
+        padding: 3px 8px; font-size: 12px; cursor: pointer;
+    }
+    .user button:hover { background: #666; }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1><span data-i18n="watchTitle">📌 Alliance WatchList</span> <span id="worldTitle"></span></h1>
+    <div class="nav">
+        <a href="./" data-i18n="navBases">⚔ Bases</a>
+        <a href="targets" data-i18n="navTargetWatch">🎯 Target Watch</a>
+        <a href="attacks" data-i18n="navAttacks">🗡 Attacks</a>
+        <a href="info" data-i18n="navInfo">ℹ Info</a>
+        <span class="user" id="userBox"></span>
+        <span class="lang-switch" id="langSwitch"></span>
+    </div>
+</div>
+
+<div class="filters">
+    <div id="worldPicker" style="display:none">
+        <label for="worldSelect" data-i18n="world">World:</label>
+        <select id="worldSelect"></select>
+    </div>
+    <div>
+        <label for="playerSelect" data-i18n="watchFilterPlayer">Player:</label>
+        <select id="playerSelect"></select>
+    </div>
+    <div>
+        <label for="typeSelect" data-i18n="filterType">Type:</label>
+        <select id="typeSelect">
+            <option value="" data-i18n="all">All</option>
+            <option value="camp">Camp</option>
+            <option value="outpost">Outpost</option>
+            <option value="base">Base</option>
+        </select>
+    </div>
+    <button onclick="loadClaims()" data-i18n="refresh">↻ Refresh</button>
+    <label class="admin-toggle" data-i18n-title="watchAdminTitle" title="Admin mode: remove any claim (asks for the admin password)">
+        <input type="checkbox" id="adminToggle"><span data-i18n="watchAdminMode">Admin</span>
+    </label>
+    <span class="updated" id="updated"></span>
+</div>
+
+<div class="content">
+    <div class="summary" id="summary" data-i18n="loading">Loading...</div>
+    <div id="claims"></div>
+</div>
+
+<script src="static/session.js"></script>
+<script>
+const API = '.';
+const REFRESH_MS = 60000;
+const PREFS_KEY = 'st-watchlist-prefs';
+
+const prefs = readPrefs();     // {world, player, type, admin}
+let data = null;               // last /api/watchlist response
+let lastStatus = null;
+
+async function loadClaims() {
+    const params = new URLSearchParams();
+    if (prefs.world) params.set('worldId', prefs.world);
+    try {
+        const resp = await fetch(`${API}/api/watchlist?${params}`, { cache: 'no-store' });
+        if (!resp.ok) throw new Error(`${resp.status} ${resp.statusText}`);
+        data = await resp.json();
+        data.clientOffset = data.serverTime - Date.now();
+        showStatus({ key: 'updated', vars: { time: new Date().toLocaleTimeString(), s: REFRESH_MS / 1000 }, error: false });
+    } catch (e) {
+        showStatus({ key: 'refreshFailed', vars: { msg: e.message, s: REFRESH_MS / 1000 }, error: true });
+        if (!data) document.getElementById('summary').textContent = T('error', { msg: e.message });
+        return;
+    }
+    render();
+}
+
+function showStatus(status) {
+    lastStatus = status;
+    const el = document.getElementById('updated');
+    el.classList.toggle('error', status.error);
+    el.textContent = T(status.key, status.vars);
+}
+
+function render() {
+    if (!data) return;
+    renderPickers();
+    document.getElementById('worldTitle').textContent = data.worldId ? T('worldTitle', { id: data.worldId }) : '';
+    document.getElementById('adminToggle').checked = !!prefs.admin;
+
+    const rows = data.claims.filter(c =>
+        (!prefs.player || c.playerName === prefs.player) && (!prefs.type || c.targetType === prefs.type));
+    document.getElementById('summary').textContent = T('watchSummary', { n: data.claims.length });
+
+    const box = document.getElementById('claims');
+    if (!rows.length) {
+        box.innerHTML = `<div class="loading">${esc(T('watchNone'))}</div>`;
+        return;
+    }
+    box.innerHTML = `<table>
+        <thead><tr>
+            <th>${esc(T('watchColPlayer'))}</th><th>${esc(T('colType'))}</th><th class="hide-narrow">${esc(T('colLevel'))}</th>
+            <th>${esc(T('watchColCoords'))}</th><th>${esc(T('watchColClaimed'))}</th>
+            <th class="hide-narrow">${esc(T('watchColExpires'))}</th><th></th>
+        </tr></thead>
+        <tbody>${rows.map(rowHtml).join('')}</tbody>
+    </table>`;
+    box.querySelectorAll('button.del').forEach(btn => btn.addEventListener('click', () => removeClaim(btn.dataset.id, btn.classList.contains('admin'))));
+}
+
+function rowHtml(c) {
+    const now = Date.now() + data.clientOffset;
+    const mine = c.playerId === data.me;
+    let action = '';
+    if (mine) action = `<button class="del" data-id="${esc(c.id)}" title="${esc(T('watchDelete'))}">✕</button>`;
+    else if (prefs.admin) action = `<button class="del admin" data-id="${esc(c.id)}" title="${esc(T('watchDeleteAdmin'))}">✕</button>`;
+    return `<tr class="${mine ? 'mine' : ''}">
+        <td>${esc(c.playerName)}${mine ? ` <span class="me">${esc(T('watchMine'))}</span>` : ''}</td>
+        <td><span class="type-${esc(c.targetType)}">${esc(c.targetType)}</span><span class="lvl-inline"> ${Math.floor(c.targetLevel)}</span></td>
+        <td class="hide-narrow">${Math.floor(c.targetLevel)}</td>
+        <td>${c.targetX}:${c.targetY}</td>
+        <td title="${esc(new Date(c.claimedAt).toLocaleString())}">${esc(ago(now - c.claimedAt))}</td>
+        <td class="muted hide-narrow">${esc(until(c.claimedAt + data.ttl * 1000 - now))}</td>
+        <td class="actions">${action}</td>
+    </tr>`;
+}
+
+async function removeClaim(id, admin) {
+    const c = data.claims.find(k => k.id === id);
+    if (!c || !confirm(T('watchDeleteConfirm', { player: c.playerName, x: c.targetX, y: c.targetY }))) return;
+    try {
+        const status = admin
+            ? await adminDelete(id)
+            : (await fetch(`${API}/api/watchlist/${encodeURIComponent(id)}`, { method: 'DELETE' })).status;
+        if (status !== 200 && status !== 404) throw new Error(`HTTP ${status}`);
+    } catch (e) {
+        alert(T('watchDeleteFailed', { msg: e.message }));
+    }
+    loadClaims();
+}
+
+/**
+ * Admin delete via XMLHttpRequest, not fetch: session.js sends every fetch
+ * answering 401 to the login page, and a cancelled Basic Auth prompt on the
+ * admin path is exactly that.
+ */
+function adminDelete(id) {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('DELETE', `${API}/api/admin/watchlist/${encodeURIComponent(id)}`);
+        xhr.onload = () => resolve(xhr.status);
+        xhr.onerror = () => reject(new Error('network error'));
+        xhr.send();
+    });
+}
+
+function renderPickers() {
+    const worlds = data.worlds || [];
+    const picker = document.getElementById('worldPicker');
+    const ws = document.getElementById('worldSelect');
+    picker.style.display = worlds.length > 1 ? '' : 'none';
+    ws.innerHTML = worlds.map(w => `<option value="${w}">${esc(T('watchWorldOption', { id: w }))}</option>`).join('');
+    if (data.worldId) ws.value = String(data.worldId);
+
+    const ps = document.getElementById('playerSelect');
+    const players = data.players || [];
+    if (prefs.player && !players.includes(prefs.player)) players.push(prefs.player);
+    ps.innerHTML = `<option value="">${esc(T('all'))}</option>` +
+        players.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
+    ps.value = prefs.player || '';
+    document.getElementById('typeSelect').value = prefs.type || '';
+}
+
+function ago(ms) {
+    const min = Math.max(0, Math.round(ms / 60000));
+    if (min < 1) return T('justNow');
+    if (min < 60) return T('minAgo', { n: min });
+    return T('hoursAgo', { n: Math.round(min / 60) });
+}
+
+function until(ms) {
+    const min = Math.max(0, Math.round(ms / 60000));
+    return min < 60 ? T('watchInMin', { n: min }) : T('watchInHours', { n: Math.round(min / 60) });
+}
+
+function esc(s) {
+    return String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
+}
+
+function readPrefs() {
+    const def = { world: null, player: '', type: '', admin: false };
+    try {
+        return { ...def, ...JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') };
+    } catch { return def; }
+}
+
+function savePrefs() {
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch { /* private mode */ }
+}
+
+function onFilter(field, value) {
+    prefs[field] = value;
+    if (field === 'world') prefs.player = '';
+    savePrefs();
+    if (field === 'world') loadClaims(); else render();
+}
+
+document.getElementById('worldSelect').addEventListener('change', e => onFilter('world', parseInt(e.target.value, 10) || null));
+document.getElementById('playerSelect').addEventListener('change', e => onFilter('player', e.target.value));
+document.getElementById('typeSelect').addEventListener('change', e => onFilter('type', e.target.value));
+document.getElementById('adminToggle').addEventListener('change', e => onFilter('admin', e.target.checked));
+
+document.addEventListener('shockr-lang', () => {
+    if (lastStatus) showStatus(lastStatus);
+    render();
+});
+
+loadClaims();
+setInterval(loadClaims, REFRESH_MS);
+</script>
+</body>
+</html>

@@ -30,6 +30,7 @@ from server.storage import ScanStorage
 from server.ratelimit import RateLimiter
 from server.target_watch import TargetWatchPayload, TargetWatchStore
 from server.attacks import AttackPayload, AttackStore, MAX_BATCH as ATTACK_MAX_BATCH, RETENTION_DAYS as ATTACK_RETENTION_DAYS
+from server.watchlist import WatchlistPayload, WatchlistStore, ClaimNotFound, ClaimForbidden
 from server.members import MemberStore, MembershipError, NOT_A_MEMBER
 from server.player_keys import (
     EnrollPayload, EnrollmentConfig, PlayerKeyStore,
@@ -96,6 +97,7 @@ key_store = KeyStore(KEYS_FILE)
 storage = ScanStorage(DATA_DIR)
 target_watches = TargetWatchStore()
 attack_store = AttackStore(DATA_DIR)
+watchlist = WatchlistStore(DATA_DIR)
 member_store = MemberStore(DATA_DIR / "members.jsonl")
 player_keys = PlayerKeyStore(DATA_DIR / "player_keys.jsonl")
 enrollment = EnrollmentConfig(ENROLLMENT_FILE)
@@ -143,7 +145,7 @@ async def log_validation_error(request: Request, exc: RequestValidationError):
     is logged with the failing fields and the body, so it is visible WHICH
     field the userscript got wrong (5.6.1: it answered a constant 422)."""
     path = request.url.path
-    if path.endswith("/api/target-watch") or path.endswith("/api/attack"):
+    if path.endswith("/api/target-watch") or path.endswith("/api/attack") or path.endswith("/api/watchlist"):
         fields = "; ".join(
             f"{'.'.join(str(p) for p in e.get('loc', ()))}: {e.get('msg')} (got {e.get('input')!r})"
             for e in exc.errors()
@@ -152,7 +154,7 @@ async def log_validation_error(request: Request, exc: RequestValidationError):
         if isinstance(body, (bytes, bytearray)):
             body = body.decode("utf-8", "replace")
         log.warning("%s 422 from player %s: %s | body: %.*s",
-                    "attack" if path.endswith("/api/attack") else "target-watch",
+                    path.rsplit("/", 1)[-1],
                     request.headers.get("x-player-id", "?"), fields,
                     VALIDATION_LOG_BODY_CHARS, json.dumps(body, default=str) if not isinstance(body, str) else body)
     return await request_validation_exception_handler(request, exc)
@@ -451,13 +453,22 @@ async def post_attack(
     player_id = request.state.player_id
     player_name = unquote(x_player_name).strip()[:50] or str(player_id)
     counts = {"ok": 0, "duplicate": 0, "stale": 0}
+    unclaimed = []
     for item in items:
         result = attack_store.add(item, player_id, player_name, alliance_id)
         counts[result] += 1
         if result == "ok":
             log.info("Attack stored: %s world=%d %s L%g @ %d:%d", player_name, item.worldId,
                      item.targetType, item.targetLevel, item.targetX, item.targetY)
-    return {"status": "ok", "stored": counts["ok"], "duplicates": counts["duplicate"], "stale": counts["stale"]}
+            # WatchList hook: a won attack ends the player's own claim on that target
+            removed = watchlist.on_attack(item.worldId, player_id, item.targetX, item.targetY, item.timestamp)
+            for claim in removed:
+                log.info("Watchlist: claim of %s @ %d:%d removed (target defeated)", player_name, item.targetX, item.targetY)
+            unclaimed.extend(removed)
+    response = {"status": "ok", "stored": counts["ok"], "duplicates": counts["duplicate"], "stale": counts["stale"]}
+    if unclaimed:
+        response["unclaimed"] = unclaimed   # read by the userscript's WatchList hook
+    return response
 
 
 @app.get("/api/attacks", dependencies=[Depends(rate_limit_get), Depends(require_session)])
@@ -486,6 +497,82 @@ async def get_attacks(
                 "tunnels": [], "attacks": [], "players": []}
     data = attack_store.query(world_id, since_ms, player=(player or "").strip() or None, target_type=target_type)
     return {**data, "worlds": worlds, "serverTime": now_ms}
+
+# ─── WatchList (claims on FG targets, 24 h) ─────────────────────────
+
+@app.post("/api/watchlist")
+async def post_watchlist(
+    payload: WatchlistPayload,
+    request: Request,
+    alliance_id: str = Depends(verify_member),
+    x_player_name: str = Header("", alias="X-Player-Name"),
+):
+    """Userscript: claim / unclaim / unclaim_all / list (server/watchlist.py)."""
+    player_id = request.state.player_id
+    player_name = unquote(x_player_name).strip()[:50] or str(player_id)
+    world_id = payload.worldId
+
+    if payload.action == "list":
+        return {"status": "ok", "serverTime": int(time.time() * 1000),
+                "claims": watchlist.active(world_id, scope=alliance_id)}
+    if payload.action == "claim":
+        result = watchlist.claim(world_id, alliance_id, player_id, player_name, payload.targetX, payload.targetY,
+                                 payload.targetLevel, payload.targetType, force=payload.force)
+        if result["status"] != "conflict":
+            log.info("Watchlist: %s %s %s L%g @ %d:%d (world %d)%s", player_name, result["status"],
+                     payload.targetType, payload.targetLevel, payload.targetX, payload.targetY, world_id,
+                     " [force]" if result["others"] else "")
+        return {**result, "serverTime": int(time.time() * 1000)}
+    if payload.action == "unclaim":
+        removed = watchlist.unclaim(world_id, player_id, payload.targetX, payload.targetY)
+    else:
+        removed = watchlist.unclaim(world_id, player_id)
+    if removed:
+        log.info("Watchlist: %s removed %d claim(s) (world %d)", player_name, len(removed), world_id)
+    return {"status": "ok", "removed": removed}
+
+
+@app.get("/api/watchlist", dependencies=[Depends(rate_limit_get)])
+async def get_watchlist(worldId: int | None = None, session: dict = Depends(require_session)):
+    """Website: active claims of a world (no worldId: the world with the most recent claim)."""
+    worlds = watchlist.worlds()
+    world_id = worldId if worldId is not None else (worlds[0] if worlds else None)
+    claims = watchlist.active(world_id) if world_id is not None else []
+    return {
+        "worldId": world_id,
+        "worlds": worlds,
+        "serverTime": int(time.time() * 1000),
+        "ttl": watchlist.ttl,
+        "me": session["playerId"],
+        "claims": claims,
+        "players": sorted({c["playerName"] for c in claims}, key=str.lower),
+    }
+
+
+def _delete_claim(claim_id: str, player_id: int | None, actor: str) -> dict:
+    try:
+        claim = watchlist.delete(claim_id, player_id)
+    except ClaimNotFound:
+        raise HTTPException(status_code=404, detail="Claim not found")
+    except ClaimForbidden:
+        raise HTTPException(status_code=403, detail="Not your claim")
+    log.info("Watchlist: claim %s of %s @ %d:%d deleted by %s", claim_id, claim["playerName"],
+             claim["targetX"], claim["targetY"], actor)
+    return {"status": "ok", "claim": claim}
+
+
+@app.delete("/api/watchlist/{claim_id}", dependencies=[Depends(rate_limit_get)])
+async def delete_watchlist_claim(claim_id: str, session: dict = Depends(require_session)):
+    """Website: a player deletes one of their OWN claims."""
+    return _delete_claim(claim_id, session["playerId"], session["playerName"])
+
+
+@app.delete("/api/admin/watchlist/{claim_id}", dependencies=[Depends(rate_limit_get)])
+async def admin_delete_watchlist_claim(claim_id: str, session: dict = Depends(require_session)):
+    """Admin: delete ANY claim. Basic Auth at the reverse proxy (like /api/members) on
+    top of the website session - without that nginx block any logged-in member could
+    use this, never an outsider."""
+    return _delete_claim(claim_id, None, f"admin ({session['playerName']})")
 
 # ─── Health ──────────────────────────────────────────────────────────
 
@@ -551,6 +638,10 @@ async def targets_page(request: Request):
 @app.get("/attacks")
 async def attacks_page(request: Request):
     return page(request, "attacks.html", "login")
+
+@app.get("/watchlist")
+async def watchlist_page(request: Request):
+    return page(request, "watchlist.html", "login")
 
 @app.get("/info")
 async def info_page(request: Request):

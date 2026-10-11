@@ -63,12 +63,12 @@ class TestSiteInfo:
     def test_repo_config_files(self, cfg):
         si = SiteInfo(cfg)
         v = si.version()
-        assert (v["version"], v["date"]) == ("5.10.0", "2026-10-11")
-        assert [c["version"] for c in v["changelog"]] == ["5.10.0", "5.9.0", "5.8.0"]
+        assert (v["version"], v["date"]) == ("5.11.0", "2026-10-11")
+        assert [c["version"] for c in v["changelog"]] == ["5.11.0", "5.10.0", "5.9.0"]
         for c in v["changelog"]:
             assert set(c["changes"]) == {"en", "de", "nl"}, "changelog translated per language"
-        assert v["changelog"][1]["changes"]["nl"][0] == "API key zichtbaar na register"
-        assert v["changelog"][1]["changes"]["en"][0] == "API key visible after register"
+        assert v["changelog"][2]["changes"]["nl"][0] == "API key zichtbaar na register"
+        assert v["changelog"][2]["changes"]["en"][0] == "API key visible after register"
         a = si.announcements()
         assert len(a) == 1 and a[0]["type"] == "info" and set(a[0]["message"]) == {"en", "de", "nl"}
         r = si.roadmap()
@@ -116,13 +116,13 @@ class TestSiteInfo:
 class TestRoutes:
     def test_version_is_public(self, env):
         r = env["client"].get("/api/version")
-        assert r.status_code == 200 and r.json()["version"] == "5.10.0"
+        assert r.status_code == 200 and r.json()["version"] == "5.11.0"
 
     def test_info_api_needs_session(self, env):
         assert env["client"].get("/api/info").status_code == 401
         login(env)
         d = env["client"].get("/api/info").json()
-        assert d["version"]["version"] == "5.10.0"
+        assert d["version"]["version"] == "5.11.0"
         assert len(d["announcements"]) == 1 and len(d["roadmap"]["planned"]) == 2
 
     def test_info_page_needs_session(self, env):

@@ -73,6 +73,8 @@ export class AttackTracker {
         this._lastPostAt = 0;
         this._posting = false;
         this._logged = 0;
+        /** WatchList hook (set by main.js): called per claim the server removed because this attack was won. */
+        this.onUnclaimed = null;
     }
 
     async start() {
@@ -250,6 +252,9 @@ export class AttackTracker {
                 console.log(`[ST] Attack logged: ${a.targetType} lvl ${a.targetLevel} @ ${a.targetX}:${a.targetY}`);
             }
             this._logged += batch.length;
+            if (this.onUnclaimed && Array.isArray(result.unclaimed)) {
+                for (const claim of result.unclaimed) this.onUnclaimed(claim);
+            }
         } else {
             // Rejected or unreachable: keep for the next flush; a batch that keeps failing is dropped
             outbox = outbox

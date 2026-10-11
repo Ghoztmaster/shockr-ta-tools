@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+## [5.11.0] — 2026-10-11
+
+### WatchList — vaste targets claimen (userscript + server + website + nginx, VPS)
+- Nieuwe plugin **WatchList** (standaard aan, `/st plugin disable watchlist`). Anders dan Target Watcher (automatisch, 10 min "ik kijk hiernaar") is een claim handmatig en blijft hij staan tot je hem verwijdert, een aanval erop wint of 24 uur verstreken zijn
+- `/st watch` claimt het geselecteerde target: op de wereldkaart de selectie (`get_SelectedObject`), in de base-view de base in beeld. Alleen Forgotten camp/outpost/base; type + level uit het wereldobject (`$CampType`/`$Level`). Chat + console: `[ST] WatchList: outpost lvl 18 @ 84:293 claimed`
+- Al geclaimd door een ander → `⚠ this target is already claimed by OzookerO`, er wordt niets opgeslagen. `/st watch force` claimt toch: je claim komt **naast** de zijne (die van de ander wordt nooit verwijderd — "één claim per speler per coördinaat")
+- `/st unwatch` (geselecteerd target) en `/st unwatch all` (al je claims in deze wereld)
+- Waarschuwing bij bekijken: een lokale 2,5 s-timer leest het geselecteerde target; staat het op de WatchList van een ander → één regel per target-view `[ST] ⚠ This target is claimed by OzookerO (2 hours ago)`. De claimlijst komt via `POST /api/watchlist {action:"list"}`, hooguit 1× per minuut en alleen als er een FG-target in beeld is; pauzeert tijdens een scan (scan-lock)
+- Automatisch weg: wint AttackTracker een aanval op een target dat je geclaimd had, dan haalt de server je claim weg (alleen claims van vóór de aanval) en meldt hem in het `/api/attack`-antwoord (`unclaimed`, alleen als er iets weg is — anders is het antwoord ongewijzigd); de plugin zegt `outpost @ 84:293 defeated — claim removed`. AttackTracker kreeg alleen die hook (`onUnclaimed`), verder ongewijzigd
+- Server: `POST /api/watchlist` (X-Player-Key; `action` claim / unclaim / unclaim_all / list — `list` is een POST zodat het ene nginx-CORS-blok volstaat), `GET /api/watchlist?worldId=` en `DELETE /api/watchlist/{id}` (sessie-cookie; alleen eigen claims, anders 403), `DELETE /api/admin/watchlist/{id}` (elke claim; Basic Auth bij nginx bovenop de sessie). Opslag in het geheugen + `data/watchlist/{worldId}.json` (atomisch herschreven), claims verlopen na 24 uur
+- Website: pagina **📌 WatchList** (`/watchlist`, in de navigatie tussen 🗡 Attacks en ℹ Info op alle pagina's): speler, type, level, coördinaten, geclaimd, verloopt; filters speler/type; ✕ bij eigen claims; vinkje "Admin" toont ✕ bij alle claims (browser vraagt het admin-wachtwoord); EN/DE/NL
+- nginx: CORS-blok `location = /shockr/api/watchlist` + admin-blok, zie docs/DEPLOY.md §10
+- Ongewijzigd: Target Watcher, scan/enrollment, Attack Tracker-logica
+- Tests: `tests/test_watchlist.py`, `tests/watchlist.test.mjs`
+
 ## [5.10.0] — 2026-10-10
 
 ### Alliance Attack Tracker (userscript + server + website + nginx, VPS)

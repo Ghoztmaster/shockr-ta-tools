@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name            Shockr - Tiberium Alliances Tools
 // @author          Ghozt [SoO] (original: Shockr, fixed by NetquiK [SoO])
-// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher & attack tracker for C&C Tiberium Alliances
+// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker & watchlist for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
-// @version         5.10.0
+// @version         5.11.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // ==/UserScript==
 
@@ -473,7 +473,29 @@ var ShockrTools = (() => {
       targetWatcherStatusIdle: "no target in view, {count} report(s) sent",
       // ── AttackTracker ──
       attackTrackerStatus: "{count} attack(s) logged this session, {queued} waiting to be sent",
-      attackTrackerStatusNoServer: "no server configured (api.url / /st register)"
+      attackTrackerStatusNoServer: "no server configured (api.url / /st register)",
+      descWatchList: "Claim Forgotten targets you intend to attack (/st watch) \u2014 visible to the alliance",
+      helpCmdWatch: "Claim the selected FG target (force: claim anyway)",
+      helpCmdUnwatch: "Remove your claim on the selected target (all: every claim)",
+      watchClaimed: "{type} lvl {level} @ {x}:{y} claimed",
+      watchRefreshed: "{type} lvl {level} @ {x}:{y} claimed again (24 h from now)",
+      watchAlsoClaimedBy: "(also claimed by {players})",
+      watchConflict: "this target is already claimed by {players} \u2014 /st watch force to claim it anyway",
+      watchClaimedBy: "This target is claimed by {players}",
+      watchUnclaimed: "claim on {type} @ {x}:{y} removed",
+      watchUnclaimedAll: "{count} claim(s) removed",
+      watchNothingToRemove: "you have no claim on {x}:{y}",
+      watchDefeated: "{type} @ {x}:{y} defeated \u2014 claim removed",
+      watchSelectFirst: "select a Forgotten camp, outpost or base first (world map or base view)",
+      watchOnlyForgotten: "only Forgotten targets (camp, outpost, base) can be claimed",
+      watchNoServer: "no server configured \u2014 set api.url, then /st register",
+      watchFailed: "request failed \u2014 see the console (F12)",
+      watchStatus: "{own} own claim(s), {total} in the alliance",
+      watchStatusNoServer: "no server configured (api.url / /st register)",
+      watchAgoNow: "just now",
+      watchAgoMin: "{n} min ago",
+      watchAgoHour: "1 hour ago",
+      watchAgoHours: "{n} hours ago"
     },
     de: {
       loaded: "v{version} geladen \u2014 {active}/{total} Plugins aktiv",
@@ -604,7 +626,29 @@ var ShockrTools = (() => {
       targetWatcherStatusWatching: "schaut {target} ({x}:{y}) an, {count} Meldung(en) gesendet",
       targetWatcherStatusIdle: "kein Ziel im Blick, {count} Meldung(en) gesendet",
       attackTrackerStatus: "{count} Angriff(e) in dieser Sitzung gemeldet, {queued} warten auf Versand",
-      attackTrackerStatusNoServer: "kein Server eingerichtet (api.url / /st register)"
+      attackTrackerStatusNoServer: "kein Server eingerichtet (api.url / /st register)",
+      descWatchList: "Forgotten-Ziele reservieren, die du angreifen willst (/st watch) \u2014 f\xFCr die Allianz sichtbar",
+      helpCmdWatch: "Ausgew\xE4hltes FG-Ziel reservieren (force: trotzdem reservieren)",
+      helpCmdUnwatch: "Deine Reservierung des ausgew\xE4hlten Ziels entfernen (all: alle)",
+      watchClaimed: "{type} Lv {level} @ {x}:{y} reserviert",
+      watchRefreshed: "{type} Lv {level} @ {x}:{y} erneut reserviert (24 Std. ab jetzt)",
+      watchAlsoClaimedBy: "(auch reserviert von {players})",
+      watchConflict: "dieses Ziel ist bereits von {players} reserviert \u2014 /st watch force, um es trotzdem zu reservieren",
+      watchClaimedBy: "Dieses Ziel ist reserviert von {players}",
+      watchUnclaimed: "Reservierung f\xFCr {type} @ {x}:{y} entfernt",
+      watchUnclaimedAll: "{count} Reservierung(en) entfernt",
+      watchNothingToRemove: "du hast keine Reservierung auf {x}:{y}",
+      watchDefeated: "{type} @ {x}:{y} besiegt \u2014 Reservierung entfernt",
+      watchSelectFirst: "w\xE4hle zuerst ein Forgotten-Camp, -Outpost oder -Base aus (Weltkarte oder Basisansicht)",
+      watchOnlyForgotten: "nur Forgotten-Ziele (Camp, Outpost, Base) k\xF6nnen reserviert werden",
+      watchNoServer: "kein Server eingerichtet \u2014 setze api.url, dann /st register",
+      watchFailed: "Anfrage fehlgeschlagen \u2014 siehe Konsole (F12)",
+      watchStatus: "{own} eigene Reservierung(en), {total} in der Allianz",
+      watchStatusNoServer: "kein Server eingerichtet (api.url / /st register)",
+      watchAgoNow: "gerade eben",
+      watchAgoMin: "vor {n} Min.",
+      watchAgoHour: "vor 1 Stunde",
+      watchAgoHours: "vor {n} Stunden"
     },
     nl: {
       loaded: "v{version} geladen \u2014 {active}/{total} plugins actief",
@@ -735,7 +779,29 @@ var ShockrTools = (() => {
       targetWatcherStatusWatching: "kijkt naar {target} ({x}:{y}), {count} melding(en) verstuurd",
       targetWatcherStatusIdle: "geen target in beeld, {count} melding(en) verstuurd",
       attackTrackerStatus: "{count} aanval(len) gemeld deze sessie, {queued} wachten op verzenden",
-      attackTrackerStatusNoServer: "geen server ingesteld (api.url / /st register)"
+      attackTrackerStatusNoServer: "geen server ingesteld (api.url / /st register)",
+      descWatchList: "Forgotten-targets claimen die je wilt aanvallen (/st watch) \u2014 zichtbaar voor de alliance",
+      helpCmdWatch: "Geselecteerd FG-target claimen (force: toch claimen)",
+      helpCmdUnwatch: "Je claim op het geselecteerde target verwijderen (all: alle claims)",
+      watchClaimed: "{type} lvl {level} @ {x}:{y} geclaimd",
+      watchRefreshed: "{type} lvl {level} @ {x}:{y} opnieuw geclaimd (24 uur vanaf nu)",
+      watchAlsoClaimedBy: "(ook geclaimd door {players})",
+      watchConflict: "dit target is al geclaimd door {players} \u2014 /st watch force om het toch te claimen",
+      watchClaimedBy: "Dit target is geclaimd door {players}",
+      watchUnclaimed: "claim op {type} @ {x}:{y} verwijderd",
+      watchUnclaimedAll: "{count} claim(s) verwijderd",
+      watchNothingToRemove: "je hebt geen claim op {x}:{y}",
+      watchDefeated: "{type} @ {x}:{y} verslagen \u2014 claim verwijderd",
+      watchSelectFirst: "selecteer eerst een Forgotten camp, outpost of base (wereldkaart of base-view)",
+      watchOnlyForgotten: "alleen Forgotten-targets (camp, outpost, base) kun je claimen",
+      watchNoServer: "geen server ingesteld \u2014 zet api.url en doe dan /st register",
+      watchFailed: "verzoek mislukt \u2014 zie de console (F12)",
+      watchStatus: "{own} eigen claim(s), {total} in de alliance",
+      watchStatusNoServer: "geen server ingesteld (api.url / /st register)",
+      watchAgoNow: "net",
+      watchAgoMin: "{n} min geleden",
+      watchAgoHour: "1 uur geleden",
+      watchAgoHours: "{n} uur geleden"
     }
   };
   var _config = null;
@@ -1322,7 +1388,9 @@ var ShockrTools = (() => {
   var TOOL_COMMANDS = [
     { cmd: "plunder", usage: "/st plunder", key: "helpCmdPlunder" },
     { cmd: "scan", usage: "/st scan", key: "helpCmdScan" },
-    { cmd: "scanalliance", usage: "/st scanalliance", key: "helpCmdScanAlliance" }
+    { cmd: "scanalliance", usage: "/st scanalliance", key: "helpCmdScanAlliance" },
+    { cmd: "watch", usage: "/st watch [force]", key: "helpCmdWatch" },
+    { cmd: "unwatch", usage: "/st unwatch [all]", key: "helpCmdUnwatch" }
   ];
   var USEFUL_SETTINGS = [
     ["language", "helpSetLanguage"],
@@ -2485,25 +2553,25 @@ var ShockrTools = (() => {
     });
   }
   function getUnitNames(city) {
-    const names = {};
+    const names2 = {};
     try {
       const units = city.get_CityUnitsData();
-      if (!units) return names;
+      if (!units) return names2;
       for (const list of [units.$DefenseUnits, units.$OffenseUnits]) {
         if (!list || !list.d) continue;
         for (const u of Object.values(list.d)) {
           try {
             const id = u.get_MdbUnitId();
-            if (names[id]) continue;
+            if (names2[id]) continue;
             const entry = readUnitName(u, id);
-            if (entry) names[id] = entry;
+            if (entry) names2[id] = entry;
           } catch {
           }
         }
       }
     } catch {
     }
-    return names;
+    return names2;
   }
   function readUnitName(unit, id) {
     const sources = [
@@ -3430,8 +3498,8 @@ var ShockrTools = (() => {
       if (others.length === 1) {
         chatMessage(`[ST] ${t("targetWatcherWarning", { player: name(others[0]), target: targetName, since: since(others[0].timestamp) })}`);
       } else {
-        const names = others.map((w) => `${name(w)}${since(w.timestamp)}`).join(", ");
-        chatMessage(`[ST] ${t("targetWatcherWarningMulti", { players: names, target: targetName })}`);
+        const names2 = others.map((w) => `${name(w)}${since(w.timestamp)}`).join(", ");
+        chatMessage(`[ST] ${t("targetWatcherWarningMulti", { players: names2, target: targetName })}`);
       }
     }
   };
@@ -3543,6 +3611,7 @@ var ShockrTools = (() => {
       this._lastPostAt = 0;
       this._posting = false;
       this._logged = 0;
+      this.onUnclaimed = null;
     }
     async start() {
       this.running = true;
@@ -3715,6 +3784,9 @@ var ShockrTools = (() => {
           console.log(`[ST] Attack logged: ${a.targetType} lvl ${a.targetLevel} @ ${a.targetX}:${a.targetY}`);
         }
         this._logged += batch.length;
+        if (this.onUnclaimed && Array.isArray(result.unclaimed)) {
+          for (const claim of result.unclaimed) this.onUnclaimed(claim);
+        }
       } else {
         outbox = outbox.map((e) => sent.has(attackKey(e.attack)) ? { ...e, failures: (e.failures || 0) + 1 } : e).filter((e) => {
           if ((e.failures || 0) < MAX_POST_FAILURES) return true;
@@ -3807,8 +3879,294 @@ var ShockrTools = (() => {
     }
   }
 
+  // plugins/watchlist.js
+  var POLL_INTERVAL_MS3 = 2500;
+  var LIST_REFRESH_MS = 60 * 1e3;
+  var PLAYER_FACTIONS3 = [1, 2];
+  var BASE_VIEW_MODES2 = ["City", "CombatSetup", "Battleground"];
+  var CAMP_TYPES2 = { 1: "camp", 2: "camp", 3: "outpost", 4: "base" };
+  var WatchList = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descWatchList");
+    }
+    constructor(config, cli, apiClient) {
+      this.name = "WatchList";
+      this.config = config;
+      this.cli = cli;
+      this.api = apiClient;
+      this.running = false;
+      this._timer = null;
+      this._viewKey = null;
+      this._warned = false;
+      this._claims = null;
+      this._claimsAt = 0;
+      this._refreshing = null;
+    }
+    async start() {
+      this.running = true;
+      this.cli.register("watch", (args) => this.watch(args));
+      this.cli.register("unwatch", (args) => this.unwatch(args));
+      this._timer = setInterval(() => this._tick(), POLL_INTERVAL_MS3);
+    }
+    stop() {
+      this.running = false;
+      if (this._timer) clearInterval(this._timer);
+      this._timer = null;
+      this._viewKey = null;
+      this._claims = null;
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      if (!this.api.isConfigured) return t("watchStatusNoServer");
+      const me = myPlayerId();
+      const own = (this._claims || []).filter((c) => c.playerId === me).length;
+      return t("watchStatus", { own, total: (this._claims || []).length });
+    }
+    // ─── Commands ────────────────────────────────────────────────────
+    /** `/st watch [force]` */
+    async watch(args = []) {
+      if (!this._ready()) return;
+      const target = readSelectedTarget();
+      if (!this._usable(target)) return;
+      const force = String(args[0] || "").toLowerCase() === "force";
+      const result = await this.api.request("POST", "/api/watchlist", {
+        action: "claim",
+        targetType: target.targetType,
+        targetLevel: target.targetLevel,
+        targetX: target.targetX,
+        targetY: target.targetY,
+        worldId: target.worldId,
+        force
+      });
+      if (!result) {
+        say(t("watchFailed"));
+        return;
+      }
+      const others = Array.isArray(result.others) ? result.others : [];
+      if (result.status === "conflict") {
+        say(`\u26A0 ${t("watchConflict", { players: names(others) })}`);
+        this._remember(others, result.serverTime);
+        this._markWarned(target);
+        return;
+      }
+      const vars = { type: target.targetType, level: Math.floor(target.targetLevel), x: target.targetX, y: target.targetY };
+      say(t(result.status === "refreshed" ? "watchRefreshed" : "watchClaimed", vars) + (others.length ? ` ${t("watchAlsoClaimedBy", { players: names(others) })}` : ""));
+      this._remember([result.claim, ...others], result.serverTime);
+      this._markWarned(target);
+    }
+    /** `/st unwatch [all]` */
+    async unwatch(args = []) {
+      if (!this._ready()) return;
+      if (String(args[0] || "").toLowerCase() === "all") {
+        const worldId = currentWorldId();
+        const result2 = worldId && await this.api.request("POST", "/api/watchlist", { action: "unclaim_all", worldId });
+        if (!result2) {
+          say(t("watchFailed"));
+          return;
+        }
+        const removed2 = result2.removed || [];
+        this._forget(removed2);
+        say(t("watchUnclaimedAll", { count: removed2.length }));
+        return;
+      }
+      const target = readSelectedTarget();
+      if (!this._usable(target)) return;
+      const result = await this.api.request("POST", "/api/watchlist", {
+        action: "unclaim",
+        targetX: target.targetX,
+        targetY: target.targetY,
+        worldId: target.worldId
+      });
+      if (!result) {
+        say(t("watchFailed"));
+        return;
+      }
+      const removed = result.removed || [];
+      this._forget(removed);
+      say(removed.length ? t("watchUnclaimed", { type: target.targetType, x: target.targetX, y: target.targetY }) : t("watchNothingToRemove", { x: target.targetX, y: target.targetY }));
+    }
+    /** AttackTracker hook: the server removed this claim because the attack on it was won. */
+    notifyDefeated(claim) {
+      if (!claim) return;
+      this._forget([claim]);
+      say(t("watchDefeated", { type: claim.targetType, x: claim.targetX, y: claim.targetY }));
+    }
+    // ─── Warning while viewing ───────────────────────────────────────
+    _tick() {
+      if (!this.running || !this.api.isConfigured || scanLockHolder()) return;
+      const target = readSelectedTarget();
+      const key = target && target.targetType ? `${target.worldId}:${target.targetX}:${target.targetY}` : null;
+      if (key !== this._viewKey) {
+        this._viewKey = key;
+        this._warned = false;
+      }
+      if (!key || this._warned) return;
+      if (this._claims && Date.now() - this._claimsAt < LIST_REFRESH_MS) {
+        this._warned = true;
+        this._warnIfClaimed(target);
+        return;
+      }
+      if (this._refreshing) return;
+      this._refreshing = this._refresh(target.worldId).finally(() => {
+        this._refreshing = null;
+      });
+    }
+    async _refresh(worldId) {
+      const result = await this.api.request("POST", "/api/watchlist", { action: "list", worldId });
+      this._claimsAt = Date.now();
+      if (result && Array.isArray(result.claims)) {
+        this._claims = result.claims;
+        this._serverOffset = Number(result.serverTime) ? Number(result.serverTime) - Date.now() : 0;
+      } else if (!this._claims) {
+        this._claims = [];
+      }
+    }
+    _markWarned(target) {
+      this._viewKey = `${target.worldId}:${target.targetX}:${target.targetY}`;
+      this._warned = true;
+    }
+    _warnIfClaimed(target) {
+      const me = myPlayerId();
+      const others = claimsAt(this._claims, target.targetX, target.targetY).filter((c) => c.playerId !== me);
+      if (!others.length) return;
+      const now = Date.now() + (this._serverOffset || 0);
+      const list = others.map((c) => `${escapeHtml(c.playerName || "?")} (${ago(now - c.claimedAt)})`).join(", ");
+      say(`\u26A0 ${t("watchClaimedBy", { players: list })}`, false);
+    }
+    // ─── Local claims cache ──────────────────────────────────────────
+    /** Merge claims the server just returned into the cached list (by id, or by player + coordinate). */
+    _remember(claims, serverTime) {
+      if (!this._claims) return;
+      for (const c of claims) {
+        if (!c) continue;
+        this._claims = this._claims.filter((k) => k.id !== c.id && !(k.playerId === c.playerId && k.targetX === c.targetX && k.targetY === c.targetY));
+        this._claims.push(c);
+      }
+      if (Number(serverTime)) this._serverOffset = Number(serverTime) - Date.now();
+    }
+    _forget(claims) {
+      if (!this._claims) return;
+      const ids = new Set(claims.map((c) => c && c.id));
+      this._claims = this._claims.filter((c) => !ids.has(c.id));
+    }
+    // ─── Checks ──────────────────────────────────────────────────────
+    _ready() {
+      if (!this.running) return false;
+      if (!this.api.isConfigured) {
+        say(t("watchNoServer"));
+        return false;
+      }
+      return true;
+    }
+    _usable(target) {
+      if (!target) {
+        say(t("watchSelectFirst"));
+        return false;
+      }
+      if (target.notForgotten) {
+        say(t("watchOnlyForgotten"));
+        return false;
+      }
+      if (!target.targetType) {
+        say(t("watchSelectFirst"));
+        return false;
+      }
+      return true;
+    }
+  };
+  function readSelectedTarget() {
+    try {
+      const md = ClientLib.Data.MainData.GetInstance();
+      const vis = ClientLib.Vis.VisMain.GetInstance();
+      const baseModes = BASE_VIEW_MODES2.map((m) => ClientLib.Vis.Mode[m]).filter((m) => m !== void 0);
+      let x, y, cityLevel = null, inBaseView = false;
+      if (baseModes.includes(vis.get_Mode())) {
+        const city = md.get_Cities().get_CurrentCity();
+        if (!city || city.get_IsGhostMode() || city.IsOwnBase()) return null;
+        if (PLAYER_FACTIONS3.includes(city.get_CityFaction())) return { notForgotten: true };
+        x = city.get_PosX();
+        y = city.get_PosY();
+        cityLevel = city.get_LvlBase();
+        inBaseView = true;
+      } else {
+        const sel = vis.get_SelectedObject();
+        if (!sel || typeof sel.get_VisObjectType !== "function") return null;
+        const types = ClientLib.Vis.VisObject.EObjectType;
+        const type = sel.get_VisObjectType();
+        if (type === types.RegionCityType) return { notForgotten: true };
+        if (type !== types.RegionNPCBase && type !== types.RegionNPCCamp) return null;
+        x = sel.get_RawX();
+        y = sel.get_RawY();
+        try {
+          const city = md.get_Cities().GetCity(sel.get_Id());
+          if (city && !city.get_IsGhostMode()) cityLevel = city.get_LvlBase();
+        } catch {
+        }
+      }
+      if (!(x >= 0 && y >= 0)) return null;
+      const obj = md.get_World().GetObjectFromPosition(x, y);
+      let targetType = null;
+      let level = null;
+      if (obj && obj.Type === 3) {
+        targetType = CAMP_TYPES2[obj.$CampType] || null;
+        level = obj.$Level;
+      } else if (obj && obj.Type === 2) {
+        targetType = "base";
+        level = obj.$Level;
+      } else if (inBaseView) {
+        targetType = "base";
+      }
+      if (!targetType) return null;
+      if (level === null || level === void 0 || !Number.isFinite(Number(level))) level = cityLevel;
+      level = Number(level);
+      return {
+        targetType,
+        targetLevel: Number.isFinite(level) && level >= 0 ? Math.min(level, 100) : 0,
+        targetX: Math.round(Number(x)),
+        targetY: Math.round(Number(y)),
+        worldId: Number(md.get_Server().get_WorldId())
+      };
+    } catch {
+      return null;
+    }
+  }
+  function claimsAt(claims, x, y) {
+    return (claims || []).filter((c) => c && c.targetX === x && c.targetY === y);
+  }
+  function ago(ms) {
+    const min = Math.max(0, Math.round(ms / 6e4));
+    if (min < 1) return t("watchAgoNow");
+    if (min < 60) return t("watchAgoMin", { n: min });
+    const h = Math.round(min / 60);
+    return t(h === 1 ? "watchAgoHour" : "watchAgoHours", { n: h });
+  }
+  function names(claims) {
+    return claims.map((c) => escapeHtml(c && c.playerName || "?")).join(", ");
+  }
+  function myPlayerId() {
+    try {
+      const player = ClientLib.Data.MainData.GetInstance().get_Player();
+      return Number(typeof player.get_Id === "function" ? player.get_Id() : player.id) || 0;
+    } catch {
+      return 0;
+    }
+  }
+  function currentWorldId() {
+    try {
+      return Number(ClientLib.Data.MainData.GetInstance().get_Server().get_WorldId()) || 0;
+    } catch {
+      return 0;
+    }
+  }
+  function say(msg, withPrefix = true) {
+    const text = `[ST] ${withPrefix ? "WatchList: " : ""}${msg}`;
+    chatMessage(text);
+    console.log(text.replace(/<[^>]*>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'"));
+  }
+
   // lib/main.js
-  var ST_VERSION = "5.10.0";
+  var ST_VERSION = "5.11.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -3821,14 +4179,17 @@ var ShockrTools = (() => {
     const patchResults = applyPatches(PATCHES);
     const failed = patchResults.filter((r) => !r.ok);
     if (failed.length > 0) {
-      const names = failed.map((r) => r.name).join(", ");
-      console.warn(`[ST] Patch failures: ${names}`);
-      chatMessage(`[ST] ${t("patchFailed", { names })}`);
+      const names2 = failed.map((r) => r.name).join(", ");
+      console.warn(`[ST] Patch failures: ${names2}`);
+      chatMessage(`[ST] ${t("patchFailed", { names: names2 })}`);
     }
     const cli = new Cli(config);
     const idle = new IdleDetect();
     const online = new OnlineStateWatch();
     const api = new ApiClient(config);
+    const attackTracker = new AttackTracker(config, api);
+    const watchList = new WatchList(config, cli, api);
+    attackTracker.onUnclaimed = (claim) => watchList.notifyDefeated(claim);
     const plugins = [
       new CampTracker(config, cli),
       new KillInfo(config, cli),
@@ -3838,7 +4199,8 @@ var ShockrTools = (() => {
       new RepairGuard(config),
       new UpgradeCalc(config),
       new TargetWatcher(config, api),
-      new AttackTracker(config, api)
+      attackTracker,
+      watchList
     ];
     for (const plugin of plugins) {
       const enabled = config.get(`${plugin.name}.enabled`, plugin.defaultEnabled !== false);
