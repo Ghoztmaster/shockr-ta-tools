@@ -1,0 +1,33 @@
+{
+  "version": "5.10.0",
+  "date": "2026-10-11",
+  "changelog": [
+    {
+      "version": "5.10.0",
+      "date": "2026-10-11",
+      "changes": {
+        "en": ["Alliance Attack Tracker", "dist/ in the repo"],
+        "de": ["Alliance Attack Tracker", "dist/ im Repo"],
+        "nl": ["Alliance Attack Tracker", "dist/ in repo"]
+      }
+    },
+    {
+      "version": "5.9.0",
+      "date": "2026-10-10",
+      "changes": {
+        "en": ["API key visible after register", "i18n EN/DE/NL"],
+        "de": ["API-Key nach register sichtbar", "i18n EN/DE/NL"],
+        "nl": ["API key zichtbaar na register", "i18n EN/DE/NL"]
+      }
+    },
+    {
+      "version": "5.8.0",
+      "date": "2026-10-06",
+      "changes": {
+        "en": ["Scanner auto-pause on online status"],
+        "de": ["Scanner Auto-Pause bei Online-Status"],
+        "nl": ["Scanner auto-pause bij online status"]
+      }
+    }
+  ]
+}

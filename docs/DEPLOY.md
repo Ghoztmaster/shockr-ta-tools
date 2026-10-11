@@ -300,3 +300,23 @@ cd /opt/shockr-alliance
 git pull
 docker compose up -d --build
 ```
+
+## Info-pagina: versie, aankondigingen, roadmap (`config/*.json`)
+
+`/info` (achter de sessie-login) en de versie-footer op elke pagina lezen drie bestanden in `config/`:
+`version.json`, `announcements.json` en `roadmap.json`. De server herleest een bestand zodra het verandert
+(mtime) - **geen restart nodig**. Een ontbrekend of kapot bestand geeft een lege sectie, geen fout.
+
+- Actieve aankondigingen staan ook als banner onder de kop van Bases, Target Watch en Attacks
+  (`/api/announcements`, achter de sessie).
+- Changelog-items zijn per taal: `"changes": {"en": [...], "de": [...], "nl": [...]}`. Ontbreekt een taal,
+  dan toont de pagina de Engelse tekst; een oude platte lijst wordt in elke taal getoond.
+
+```bash
+nano /opt/shockr-alliance/config/announcements.json   # "active": false verbergt zonder te verwijderen
+curl -s https://packetlab.nl/shockr/api/version        # publiek: alleen versie + datum + changelog
+```
+
+Deze drie bestanden staan **wel** in git (in tegenstelling tot `keys.json`/`enrollment.json`). Bewerk je ze
+op de VPS, commit dan dezelfde wijziging in de repo - anders botst de volgende `git pull` met de lokale
+wijziging.

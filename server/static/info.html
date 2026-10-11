@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" data-i18n-doctitle="infoPageTitle">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shockr — Info</title>
+<script src="static/i18n.js"></script>
+<script src="static/footer.js"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        background: #1a1a1a;
+        color: #ccc;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        font-size: 14px;
+    }
+    a { color: #4fc3f7; text-decoration: none; word-break: break-all; }
+    a:hover { text-decoration: underline; }
+
+    /* Header (same as targets/attacks) */
+    .header {
+        background: #252525;
+        border-bottom: 1px solid #333;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .header h1 { font-size: 18px; color: #e0e0e0; }
+    .nav { font-size: 13px; display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+    .user strong { color: #e0e0e0; font-weight: normal; }
+    .user form { display: inline; }
+    .user button {
+        background: #444; color: #ccc; border: none; border-radius: 3px;
+        padding: 3px 8px; font-size: 12px; cursor: pointer;
+    }
+    .user button:hover { background: #666; }
+
+    .content { max-width: 960px; margin: 0 auto; padding: 16px 20px; }
+    section {
+        background: #222;
+        border: 1px solid #333;
+        border-radius: 4px;
+        padding: 14px 16px;
+        margin-bottom: 14px;
+    }
+    section h2 { font-size: 15px; color: #e0e0e0; margin-bottom: 10px; }
+    section h3 { font-size: 13px; color: #aaa; margin: 10px 0 4px; font-weight: 600; }
+    .muted { color: #888; font-size: 13px; }
+
+    /* Announcements: info = blue, warning = orange, update = green */
+    .announcement {
+        border-left: 4px solid #4fc3f7;
+        background: #1d2a33;
+        color: #e0e0e0;
+        padding: 9px 12px;
+        border-radius: 3px;
+        margin-bottom: 6px;
+    }
+    .announcement.warning { border-left-color: #ffa726; background: #33281a; }
+    .announcement.update { border-left-color: #66bb6a; background: #1e2e1f; }
+
+    .kv { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; }
+    .kv dt { color: #888; }
+    .kv dd { color: #e0e0e0; }
+    .changelog { list-style: none; }
+    .changelog > li { margin-bottom: 6px; }
+    .changelog .cl-head { color: #e0e0e0; }
+    .changelog .cl-head span { color: #888; margin-left: 6px; font-size: 12px; }
+    ul.items { margin-left: 20px; }
+    ul.items li { margin: 2px 0; }
+
+    ol.install { margin-left: 22px; }
+    ol.install li { margin: 5px 0; line-height: 1.45; }
+    ol.install small { color: #999; }
+    code {
+        background: #2e2e2e; color: #ffd54f; padding: 1px 5px; border-radius: 3px;
+        font-family: Consolas, monospace; font-size: 13px; word-break: break-all;
+    }
+
+    .bug-box {
+        background: #2a1f1f; border-left: 4px solid #ef5350; border-radius: 3px;
+        padding: 8px 12px; margin-bottom: 10px;
+    }
+    .bug-box h3 { margin-top: 0; color: #e0e0e0; }
+    .bug-box p { margin-bottom: 4px; }
+    table.trouble { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.trouble th {
+        text-align: left; color: #888; font-weight: normal;
+        border-bottom: 1px solid #444; padding: 6px 8px;
+    }
+    table.trouble td { border-bottom: 1px solid #2e2e2e; padding: 7px 8px; vertical-align: top; }
+    table.trouble td:first-child { color: #e0e0e0; width: 34%; }
+
+    @media (max-width: 600px) {
+        table.trouble, table.trouble tbody, table.trouble tr, table.trouble td { display: block; width: 100%; }
+        table.trouble thead { display: none; }
+        table.trouble td:first-child { border-bottom: none; padding-bottom: 0; width: 100%; }
+    }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1 data-i18n="infoTitle">ℹ Shockr Alliance Tools — Info</h1>
+    <div class="nav">
+        <a href="./" data-i18n="navBases">⚔ Bases</a>
+        <a href="targets" data-i18n="navTargetWatch">🎯 Target Watch</a>
+        <a href="attacks" data-i18n="navAttacks">🗡 Attacks</a>
+        <span class="user" id="userBox"></span>
+        <span class="lang-switch" id="langSwitch"></span>
+    </div>
+</div>
+
+<div class="content">
+    <!-- 2. Announcements (config/announcements.json) - top of the page -->
+    <section id="secAnnouncements">
+        <h2 data-i18n="infoAnnouncementsTitle">📢 Announcements</h2>
+        <div id="announcements" class="muted"></div>
+    </section>
+
+    <!-- 1. Current version (config/version.json) -->
+    <section id="secVersion">
+        <h2 data-i18n="infoVersionTitle">Current version</h2>
+        <div id="version" class="muted"></div>
+    </section>
+
+    <!-- 3. Roadmap (config/roadmap.json) - Shockr features only -->
+    <section id="secRoadmap">
+        <h2 data-i18n="infoRoadmapTitle">Feature roadmap</h2>
+        <div id="roadmap" class="muted"></div>
+    </section>
+
+    <!-- 4. Installation (fixed text, i18n.js) -->
+    <section id="secInstall">
+        <h2 data-i18n="infoInstallTitle">Installation</h2>
+        <ol class="install" id="installSteps"></ol>
+        <p class="muted" style="margin-top:8px" data-i18n="infoInstallAutoUpdate"></p>
+    </section>
+
+    <!-- 5. Troubleshooting (fixed text, i18n.js) -->
+    <section id="secTrouble">
+        <h2 data-i18n="infoTroubleTitle">Troubleshooting</h2>
+        <table class="trouble">
+            <thead><tr><th data-i18n="infoTroubleColProblem">Problem</th><th data-i18n="infoTroubleColSolution">Solution</th></tr></thead>
+            <tbody id="troubleRows"></tbody>
+        </table>
+    </section>
+
+    <!-- 6. Contact -->
+    <section id="secContact">
+        <h2 data-i18n="infoContactTitle">Contact</h2>
+        <!-- Bug melden: apart blok boven de contactregel -->
+        <div class="bug-box">
+            <h3 data-i18n="infoBugTitle">🐛 Report a bug?</h3>
+            <p data-i18n="infoBugIntro"></p>
+            <ul class="items">
+                <li data-i18n="infoBug1"></li>
+                <li data-i18n="infoBug2"></li>
+                <li id="bugStep3"></li>
+            </ul>
+        </div>
+        <p data-i18n="infoContact"></p>
+    </section>
+</div>
+
+<script src="static/session.js"></script>
+<script>
+const INSTALL_STEPS = 9;
+const TROUBLE_ROWS = 10;
+let info = null;
+let loadError = null;
+
+function lang() { return ShockrI18n.getLang(); }
+
+// A text from the JSON files is already per language (ShockrI18n.pick: chosen
+// language, else English, else any).
+const pick = (texts) => ShockrI18n.pick(texts);
+
+function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+}
+
+function renderStatic() {
+    // Install steps contain links/code: the HTML comes from i18n.js itself (static, ours).
+    const ol = document.getElementById('installSteps');
+    ol.textContent = '';
+    for (let i = 1; i <= INSTALL_STEPS; i++) {
+        const li = document.createElement('li');
+        li.innerHTML = T('infoInstall' + i + 'Html');
+        ol.appendChild(li);
+    }
+    // Screenshot step carries the prnt.sc link (static HTML from i18n.js)
+    document.getElementById('bugStep3').innerHTML = T('infoBug3Html');
+    const tb = document.getElementById('troubleRows');
+    tb.textContent = '';
+    for (let i = 1; i <= TROUBLE_ROWS; i++) {
+        const tr = document.createElement('tr');
+        tr.append(el('td', '', T('infoTrouble' + i + 'P')), el('td', '', T('infoTrouble' + i + 'S')));
+        tb.appendChild(tr);
+    }
+}
+
+function renderAnnouncements() {
+    const box = document.getElementById('announcements');
+    box.textContent = '';
+    const list = (info && info.announcements) || [];
+    if (!list.length) {
+        box.className = 'muted';
+        box.textContent = loadError ? T('error', { msg: loadError }) : (info ? T('infoNoAnnouncements') : T('loading'));
+        return;
+    }
+    box.className = '';
+    for (const a of list) box.appendChild(el('div', 'announcement ' + a.type, '📢 ' + pick(a.message)));
+}
+
+function renderVersion() {
+    const box = document.getElementById('version');
+    box.textContent = '';
+    const v = info && info.version;
+    if (!v || !v.version) {
+        box.className = 'muted';
+        box.textContent = loadError ? T('error', { msg: loadError }) : (info ? T('infoVersionUnknown') : T('loading'));
+        return;
+    }
+    box.className = '';
+    const dl = el('dl', 'kv');
+    dl.append(el('dt', '', T('infoVersionCurrent')), el('dd', '', 'v' + v.version),
+              el('dt', '', T('infoVersionDate')), el('dd', '', ShockrFooter.formatDate(v.date, lang())));
+    box.appendChild(dl);
+    if (v.changelog && v.changelog.length) {
+        box.appendChild(el('h3', '', T('infoChangelog')));
+        const ul = el('ul', 'changelog');
+        for (const c of v.changelog) {
+            const li = el('li');
+            const head = el('div', 'cl-head', 'v' + c.version);
+            if (c.date) head.appendChild(el('span', '', ShockrFooter.formatDate(c.date, lang())));
+            const items = el('ul', 'items');
+            for (const ch of pick(c.changes) || []) items.appendChild(el('li', '', ch));
+            li.append(head, items);
+            ul.appendChild(li);
+        }
+        box.appendChild(ul);
+    }
+}
+
+function renderRoadmap() {
+    const box = document.getElementById('roadmap');
+    box.textContent = '';
+    if (!info) {
+        box.className = 'muted';
+        box.textContent = loadError ? T('error', { msg: loadError }) : T('loading');
+        return;
+    }
+    box.className = '';
+    for (const [key, label] of [['planned', 'infoRoadmapPlanned'], ['ideas', 'infoRoadmapIdeas']]) {
+        box.appendChild(el('h3', '', T(label)));
+        const items = (info.roadmap && info.roadmap[key]) || [];
+        if (!items.length) { box.appendChild(el('p', 'muted', T('infoRoadmapEmpty'))); continue; }
+        const ul = el('ul', 'items');
+        for (const it of items) ul.appendChild(el('li', '', pick(it)));
+        box.appendChild(ul);
+    }
+}
+
+function renderAll() {
+    renderStatic();
+    renderAnnouncements();
+    renderVersion();
+    renderRoadmap();
+}
+
+async function loadInfo() {
+    try {
+        const resp = await fetch('api/info', { cache: 'no-store' });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        info = await resp.json();
+        loadError = null;
+    } catch (e) {
+        loadError = e.message;
+    }
+    renderAll();
+}
+
+// No data-i18n on the three data boxes: applyI18n (on DOMContentLoaded and on
+// a language switch) would overwrite rendered content with "Loading...".
+document.addEventListener('shockr-lang', renderAll);
+renderAll();
+loadInfo();
+</script>
+</body>
+</html>

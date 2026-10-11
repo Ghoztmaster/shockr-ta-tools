@@ -36,6 +36,7 @@ from server.player_keys import (
     INVALID_CODE, ALLIANCE_NOT_AUTHORIZED, NOT_REGISTERED, INVALID_PLAYER_KEY,
 )
 from server.web_auth import LoginPayload, SessionStore, SESSION_COOKIE, LOGIN_FAILED
+from server.siteinfo import SiteInfo
 
 # ─── Config ──────────────────────────────────────────────────────────
 
@@ -103,6 +104,7 @@ enroll_limiter = RateLimiter(max_requests=5, window_seconds=3600)
 get_limiter = RateLimiter(max_requests=30, window_seconds=1)
 login_limiter = RateLimiter(max_requests=10, window_seconds=60)
 sessions = SessionStore(player_keys)
+site_info = SiteInfo(CONFIG_DIR)
 
 
 @asynccontextmanager
@@ -491,6 +493,31 @@ async def get_attacks(
 async def health():
     return {"status": "ok", "keys_loaded": len(key_store.keys), "player_keys": len(player_keys.players)}
 
+# ─── Site info (/info page + version footer) ────────────────────────
+# config/version.json, announcements.json, roadmap.json - re-read on change,
+# no restart (server/siteinfo.py).
+
+@app.get("/api/version", dependencies=[Depends(rate_limit_get)])
+async def get_version():
+    """Public on purpose: the footer also shows on the login page. Version
+    number + date + short changelog only, no player or alliance data."""
+    return site_info.version()
+
+
+@app.get("/api/announcements", dependencies=[Depends(rate_limit_get), Depends(require_session)])
+async def get_announcements():
+    """Active announcements only - the banner on Bases / Target Watch / Attacks."""
+    return {"announcements": site_info.announcements()}
+
+
+@app.get("/api/info", dependencies=[Depends(rate_limit_get), Depends(require_session)])
+async def get_info():
+    return {
+        "version": site_info.version(),
+        "announcements": site_info.announcements(),
+        "roadmap": site_info.roadmap(),
+    }
+
 # ─── Pages (website session; no session -> login) ──────────────────
 
 def page(request: Request, name: str, login_url: str):
@@ -504,7 +531,7 @@ async def login_page():
     return FileResponse(STATIC_DIR / "login.html")
 
 # Public page scripts (no data in them; the login page needs i18n.js before a session exists)
-PUBLIC_SCRIPTS = {"session.js", "i18n.js"}
+PUBLIC_SCRIPTS = {"session.js", "i18n.js", "footer.js", "announcements.js"}
 
 
 @app.get("/static/{name}")
@@ -524,3 +551,7 @@ async def targets_page(request: Request):
 @app.get("/attacks")
 async def attacks_page(request: Request):
     return page(request, "attacks.html", "login")
+
+@app.get("/info")
+async def info_page(request: Request):
+    return page(request, "info.html", "login")

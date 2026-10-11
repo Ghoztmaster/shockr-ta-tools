@@ -1,0 +1,26 @@
+{
+  "planned": [
+    {
+      "en": "Alliance War Dashboard expansion",
+      "de": "Alliance War Dashboard Erweiterung",
+      "nl": "Alliance War Dashboard uitbreiding"
+    },
+    {
+      "en": "Base detail: CP/CY/DF columns",
+      "de": "Base-Detail: CP/CY/DF Spalten",
+      "nl": "Base-detail: CP/CY/DF kolommen"
+    }
+  ],
+  "ideas": [
+    {
+      "en": "Resource overflow alarm",
+      "de": "Ressourcen-Überlauf Alarm",
+      "nl": "Resource overflow alarm"
+    },
+    {
+      "en": "Loot efficiency dashboard",
+      "de": "Beute-Effizienz Dashboard",
+      "nl": "Loot-efficiency dashboard"
+    }
+  ]
+}
