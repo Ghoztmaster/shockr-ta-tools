@@ -1,7 +1,40 @@
 {
-  "version": "5.11.0",
-  "date": "2026-10-11",
+  "version": "5.12.0",
+  "date": "2026-10-12",
   "changelog": [
+    {
+      "version": "5.12.0",
+      "date": "2026-10-12",
+      "changes": {
+        "en": [
+          "TargetWatcher on by default for new installs",
+          "Existing installs keep their current setting"
+        ],
+        "de": [
+          "TargetWatcher bei Neuinstallationen standardmäßig an",
+          "Bestehende Installationen behalten ihre Einstellung"
+        ],
+        "nl": [
+          "TargetWatcher standaard aan bij nieuwe installaties",
+          "Bestaande installaties houden hun huidige instelling"
+        ]
+      }
+    },
+    {
+      "version": "5.11.1",
+      "date": "2026-10-12",
+      "changes": {
+        "en": [
+          "PlayerStatus: switchable color scheme (shockr/maelstrom)"
+        ],
+        "de": [
+          "PlayerStatus: umschaltbares Farbschema (shockr/maelstrom)"
+        ],
+        "nl": [
+          "PlayerStatus: schakelbaar kleurschema (shockr/maelstrom)"
+        ]
+      }
+    },
     {
       "version": "5.11.0",
       "date": "2026-10-11",
@@ -53,21 +86,6 @@
         "nl": [
           "API key zichtbaar na register",
           "i18n EN/DE/NL"
-        ]
-      }
-    },
-    {
-      "version": "5.8.0",
-      "date": "2026-10-06",
-      "changes": {
-        "en": [
-          "Scanner auto-pause on online status"
-        ],
-        "de": [
-          "Scanner Auto-Pause bei Online-Status"
-        ],
-        "nl": [
-          "Scanner auto-pause bij online status"
         ]
       }
     }
