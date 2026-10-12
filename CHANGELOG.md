@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [5.12.0] — 2026-10-12
+
+### Standaard-plugins
+- **TargetWatcher** staat voortaan standaard **aan** voor nieuwe installaties (was uit). **LayoutScanner** stond al standaard aan — ongewijzigd
+- Bestaande installaties houden hun huidige stand: bij de eerste start van 5.12.0 wordt een niet-gezette `targetwatcher.enabled` vastgezet op de oude standaard (uit); wie hem zelf aan- of uitzette, houdt die keuze. Nieuw = geen `st-config` in localStorage bij het laden (`Config.isNew`, `Config.pinChangedDefaults`)
+- Tests: `tests/config-defaults.test.mjs`
+
 ## [5.11.0] — 2026-10-11
 
 ### WatchList — vaste targets claimen (userscript + server + website + nginx, VPS)

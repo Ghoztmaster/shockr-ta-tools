@@ -4,7 +4,7 @@
 // @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker & watchlist for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
-// @version         5.11.1
+// @version         5.12.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // ==/UserScript==
 
@@ -284,14 +284,33 @@ var ShockrTools = (() => {
     constructor(storageKey = "st-config") {
       this.storageKey = storageKey;
       this.data = {};
+      this.isNew = true;
       this.load();
     }
     load() {
       try {
         const raw = localStorage.getItem(this.storageKey);
+        this.isNew = !raw;
         if (raw) this.data = JSON.parse(raw);
       } catch {
         this.data = {};
+      }
+    }
+    /**
+     * Pin `<plugin>.enabled` for plugins whose default changed, so the new default
+     * only reaches fresh installs. Unset key: fresh install -> the plugin's current
+     * default, existing install -> the old default from `legacyDefaults`. A key the
+     * player set is never touched. After this runs the key is always stored,
+     * so later startups (when isNew is false) can't flip it.
+     * @param {Array<{name: string, defaultEnabled?: boolean}>} plugins
+     * @param {Object<string, boolean>} legacyDefaults — plugin name -> old default
+     */
+    pinChangedDefaults(plugins, legacyDefaults) {
+      for (const plugin of plugins) {
+        if (!(plugin.name in legacyDefaults)) continue;
+        const key = `${plugin.name}.enabled`;
+        if (this.get(key) !== void 0) continue;
+        this.set(key, this.isNew ? plugin.defaultEnabled !== false : legacyDefaults[plugin.name]);
       }
     }
     save() {
@@ -3493,7 +3512,6 @@ var ShockrTools = (() => {
     }
     constructor(config, apiClient) {
       this.name = "TargetWatcher";
-      this.defaultEnabled = false;
       this.config = config;
       this.api = apiClient;
       this.running = false;
@@ -4231,7 +4249,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.11.0";
+  var ST_VERSION = "5.12.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -4267,6 +4285,7 @@ var ShockrTools = (() => {
       attackTracker,
       watchList
     ];
+    config.pinChangedDefaults(plugins, { TargetWatcher: false });
     for (const plugin of plugins) {
       const enabled = config.get(`${plugin.name}.enabled`, plugin.defaultEnabled !== false);
       if (!enabled) {

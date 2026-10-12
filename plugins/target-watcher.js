@@ -52,7 +52,6 @@ export class TargetWatcher {
 
     constructor(config, apiClient) {
         this.name = 'TargetWatcher';
-        this.defaultEnabled = false;
         this.config = config;
         this.api = apiClient;
         this.running = false;
