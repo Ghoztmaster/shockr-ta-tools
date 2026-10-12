@@ -1017,6 +1017,18 @@ var ShockrTools = (() => {
   var POLL_MS = 1e4;
   var ONLINE = 1;
   var STATE_NAMES = { 0: "offline", 1: "online", 2: "away", 3: "hidden" };
+  function ownPlayerId(player) {
+    if (!player) return null;
+    try {
+      if (typeof player.get_Id === "function") {
+        const id2 = Number(player.get_Id());
+        if (id2 > 0) return id2;
+      }
+    } catch {
+    }
+    const id = Number(player.id);
+    return id > 0 ? id : null;
+  }
   function readOwnOnlineState() {
     let md;
     try {
@@ -1027,7 +1039,8 @@ var ShockrTools = (() => {
     try {
       const alliance = md.get_Alliance();
       if (alliance && alliance.get_Id() > 0) {
-        const member = alliance.get_MemberData().d[md.get_Player().id];
+        const id = ownPlayerId(md.get_Player());
+        const member = id === null ? null : alliance.get_MemberData().d[id];
         if (member && typeof member.OnlineState === "number") return member.OnlineState;
       }
     } catch {
@@ -1052,6 +1065,7 @@ var ShockrTools = (() => {
       this.listeners = { pause: [], resume: [] };
     }
     start() {
+      if (this._interval) return;
       this.check();
       this._interval = setInterval(() => this.check(), POLL_MS);
     }
@@ -1073,13 +1087,14 @@ var ShockrTools = (() => {
       const state = this._read();
       if (state === null) {
         if (!this._warned) {
-          console.warn("[ST] Scanner: online-status niet leesbaar \u2014 scanners niet gepauzeerd");
+          console.warn("[ST] Scanner: online state not readable \u2014 scanners not paused");
           this._warned = true;
         }
         this.state = null;
         this._set(false, null);
         return;
       }
+      this._warned = false;
       this.state = state;
       this._set(state === ONLINE, state);
     }
@@ -1087,11 +1102,11 @@ var ShockrTools = (() => {
       if (paused === this.paused) return;
       this.paused = paused;
       if (paused) {
-        console.log("[ST] Scanner: gepauzeerd (speler online)");
+        console.log("[ST] Scanner paused (player online)");
         this.listeners.pause.forEach((fn) => fn());
       } else {
-        const why = state === null ? "status onbekend" : `speler ${STATE_NAMES[state] || state}`;
-        console.log(`[ST] Scanner: hervat (${why})`);
+        const why = state === null ? "state unknown" : `player ${STATE_NAMES[state] || state}`;
+        console.log(`[ST] Scanner resumed (${why})`);
         this.listeners.resume.forEach((fn) => fn());
       }
     }
@@ -2774,7 +2789,7 @@ var ShockrTools = (() => {
           return;
         }
         chatMessage(`[ST] ${t("scanManualStarted")}`);
-        this.scanAll();
+        this.scanAll({ manual: true });
       });
       if (!this.api.isConfigured) {
         console.log("[ST] LayoutScanner: no API configured \u2014 scanner inactive");
@@ -2803,10 +2818,10 @@ var ShockrTools = (() => {
     /** Automatic trigger: only when idle and not paused by the online status. */
     _autoScan() {
       if (!this.running || !this.idle.isIdle || this.online.isPaused) return;
-      this.scanAll();
+      this.scanAll({ manual: false });
     }
     /** Scan all nearby FG objects. */
-    async scanAll() {
+    async scanAll({ manual = false } = {}) {
       if (this._scanning) return;
       if (!this.api.isConfigured) return;
       if (!acquireScanLock(this.name)) return;
@@ -2814,6 +2829,7 @@ var ShockrTools = (() => {
       const startTime = Date.now();
       let scanned = 0;
       let skipped = 0;
+      let aborted = false;
       let originalCityId = null;
       try {
         const cities = ClientLib.Data.MainData.GetInstance().get_Cities();
@@ -2823,6 +2839,10 @@ var ShockrTools = (() => {
       try {
         const nearbyObjects = getAllNearbyObjects();
         for (const obj of nearbyObjects) {
+          if (!manual && this.online.isPaused) {
+            aborted = true;
+            break;
+          }
           if (obj.object.Type !== 2 && obj.object.Type !== 3) continue;
           if (typeof obj.object.$CampType !== "undefined" && obj.object.$CampType === 0) continue;
           const cityId = obj.id;
@@ -2858,7 +2878,7 @@ var ShockrTools = (() => {
         if (scanned > 0) {
           chatMessage(`[ST] ${t("scanComplete", { scanned, skipped, duration })}`);
         }
-        console.log(`[ST] LayoutScanner: ${scanned} sent, ${skipped} skipped, ${duration}s`);
+        console.log(`[ST] LayoutScanner: ${scanned} sent, ${skipped} skipped, ${duration}s${aborted ? " (aborted: player online)" : ""}`);
       } catch (e) {
         console.error("[ST] LayoutScanner error:", e);
         chatMessage(`[ST] ${t("scanFailed", { error: e.message })}`);
@@ -2971,8 +2991,8 @@ var ShockrTools = (() => {
         const cityIds = await getAllianceCityIds();
         const cities = ClientLib.Data.MainData.GetInstance().get_Cities();
         for (const cityId of cityIds) {
-          if (!manual && !this.idle.isIdle) {
-            aborted = true;
+          if (!manual && (!this.idle.isIdle || this.online.isPaused)) {
+            aborted = this.online.isPaused ? "player online" : "player active";
             break;
           }
           try {
@@ -3003,7 +3023,7 @@ var ShockrTools = (() => {
         if (manual || scanned > 0) {
           chatMessage(`[ST] ${t("allianceScanComplete", { scanned, skipped, duration })}`);
         }
-        console.log(`[ST] AllianceScanner: ${scanned} sent, ${skipped} skipped, ${duration}s${aborted ? " (aborted: player active)" : ""}`);
+        console.log(`[ST] AllianceScanner: ${scanned} sent, ${skipped} skipped, ${duration}s${aborted ? ` (aborted: ${aborted})` : ""}`);
       } catch (e) {
         console.error("[ST] AllianceScanner error:", e);
         chatMessage(`[ST] ${t("allianceScanFailed", { error: e.message })}`);

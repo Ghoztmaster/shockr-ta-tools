@@ -6,7 +6,8 @@
  * - Manual scan via /st scanalliance (always works)
  * - Idle scans abort as soon as the player becomes active again
  * - Paused while the player's own status is "Online" (lib/online-state.js);
- *   a running batch finishes, no new one starts; resumes on Away/Offline
+ *   no new automatic batch starts and a running one stops at its next base;
+ *   resumes on Away/Offline. Manual /st scanalliance is never paused
  * - Restores original city view after scanning
  * - 2 second delay between individual base scans
  * - Shares a scan lock with LayoutScanner (both switch the city view)
@@ -131,8 +132,8 @@ export class AllianceScanner {
 
             for (const cityId of cityIds) {
                 // Idle scans stop as soon as the player is back
-                if (!manual && !this.idle.isIdle) {
-                    aborted = true;
+                if (!manual && (!this.idle.isIdle || this.online.isPaused)) {
+                    aborted = this.online.isPaused ? 'player online' : 'player active';
                     break;
                 }
 
@@ -176,7 +177,7 @@ export class AllianceScanner {
             if (manual || scanned > 0) {
                 chatMessage(`[ST] ${t('allianceScanComplete', { scanned, skipped, duration })}`);
             }
-            console.log(`[ST] AllianceScanner: ${scanned} sent, ${skipped} skipped, ${duration}s${aborted ? ' (aborted: player active)' : ''}`);
+            console.log(`[ST] AllianceScanner: ${scanned} sent, ${skipped} skipped, ${duration}s${aborted ? ` (aborted: ${aborted})` : ''}`);
 
         } catch (e) {
             console.error('[ST] AllianceScanner error:', e);

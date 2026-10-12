@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.11.0 planned for Oct 18 — Alliance War Dashboard expansion",
-      "de": "v5.11.0 geplant für 18. Oktober — Alliance War Dashboard Erweiterung",
-      "nl": "v5.11.0 gepland voor 18 oktober — Alliance War Dashboard uitbreiding"
+      "en": "v5.12.0 released — TargetWatcher on by default for new installs (existing installs keep their setting)",
+      "de": "v5.12.0 veröffentlicht — TargetWatcher bei Neuinstallationen standardmäßig an (bestehende Installationen behalten ihre Einstellung)",
+      "nl": "v5.12.0 uitgebracht — TargetWatcher standaard aan bij nieuwe installaties (bestaande installaties houden hun instelling)"
     },
     "type": "info",
     "active": true

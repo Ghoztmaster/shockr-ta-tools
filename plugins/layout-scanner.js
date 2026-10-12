@@ -2,8 +2,9 @@
  * layout-scanner.js — scan nearby FG base layouts and POST to alliance server.
  *
  * - Only scans when player is truly idle (20 min inactive)
- * - Paused while the player's own status is "Online" (lib/online-state.js);
- *   a running batch finishes, no new one starts; resumes on Away/Offline
+ * - Paused while the player's own status is "Online" (lib/online-state.js):
+ *   no new automatic batch starts and a running one stops at its next base;
+ *   resumes on Away/Offline. Manual /st scan is never paused
  * - Manual scan via /st scan (always works)
  * - Restores original city view after scanning
  * - 2 second delay between individual base scans to avoid flickering
@@ -52,7 +53,7 @@ export class LayoutScanner {
                 return;
             }
             chatMessage(`[ST] ${t('scanManualStarted')}`);
-            this.scanAll();
+            this.scanAll({ manual: true });
         });
 
         if (!this.api.isConfigured) {
@@ -89,11 +90,11 @@ export class LayoutScanner {
     /** Automatic trigger: only when idle and not paused by the online status. */
     _autoScan() {
         if (!this.running || !this.idle.isIdle || this.online.isPaused) return;
-        this.scanAll();
+        this.scanAll({ manual: false });
     }
 
     /** Scan all nearby FG objects. */
-    async scanAll() {
+    async scanAll({ manual = false } = {}) {
         if (this._scanning) return;
         if (!this.api.isConfigured) return;
         if (!acquireScanLock(this.name)) return;
@@ -103,6 +104,7 @@ export class LayoutScanner {
         const startTime = Date.now();
         let scanned = 0;
         let skipped = 0;
+        let aborted = false;
 
         // Remember current city so we can restore it after scanning
         let originalCityId = null;
@@ -115,6 +117,12 @@ export class LayoutScanner {
             const nearbyObjects = getAllNearbyObjects();
 
             for (const obj of nearbyObjects) {
+                // Automatic batches stop as soon as the player is Online
+                if (!manual && this.online.isPaused) {
+                    aborted = true;
+                    break;
+                }
+
                 // Only NPC bases and camps (type 2 = NPCBase, type 3 = NPCCamp)
                 if (obj.object.Type !== 2 && obj.object.Type !== 3) continue;
 
@@ -169,7 +177,7 @@ export class LayoutScanner {
             if (scanned > 0) {
                 chatMessage(`[ST] ${t('scanComplete', { scanned, skipped, duration })}`);
             }
-            console.log(`[ST] LayoutScanner: ${scanned} sent, ${skipped} skipped, ${duration}s`);
+            console.log(`[ST] LayoutScanner: ${scanned} sent, ${skipped} skipped, ${duration}s${aborted ? ' (aborted: player online)' : ''}`);
 
         } catch (e) {
             console.error('[ST] LayoutScanner error:', e);

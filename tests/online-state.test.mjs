@@ -42,7 +42,7 @@ function captureLog() {
     return { lines, restore: () => Object.assign(console, orig) };
 }
 
-function setGame({ memberState, playerGetter, allianceId = 7 } = {}) {
+function setGame({ memberState, playerGetter, allianceId = 7, idField = true, idGetter = false } = {}) {
     globalThis.ClientLib = {
         Data: { MainData: { GetInstance: () => ({
             get_Alliance: () => ({
@@ -50,7 +50,8 @@ function setGame({ memberState, playerGetter, allianceId = 7 } = {}) {
                 get_MemberData: () => ({ d: memberState === undefined ? {} : { 42: { OnlineState: memberState } } }),
             }),
             get_Player: () => {
-                const p = { id: 42 };
+                const p = idField ? { id: 42 } : {};
+                if (idGetter) p.get_Id = () => 42;
                 if (playerGetter !== undefined) p.get_OnlineState = () => playerGetter;
                 return p;
             },
@@ -69,6 +70,30 @@ test('readOwnOnlineState: member data first, player getter as fallback, else nul
     assert.equal(mod.readOwnOnlineState(), null);
 });
 
+test('readOwnOnlineState: own id via get_Id() when the player has no plain .id', () => {
+    setGame({ memberState: 1, idField: false, idGetter: true });
+    assert.equal(mod.readOwnOnlineState(), 1);
+    setGame({ memberState: 1, idField: false, idGetter: false });
+    assert.equal(mod.readOwnOnlineState(), null);
+    delete globalThis.ClientLib;
+});
+
+test('watcher: start() polls every 10 s', (t) => {
+    t.mock.timers.enable({ apis: ['setInterval'] });
+    let reads = 0;
+    const w = new mod.OnlineStateWatch(() => { reads++; return 2; });
+    w.start();
+    w.start();                         // idempotent: no second interval
+    assert.equal(reads, 1, 'immediate check on start');
+    t.mock.timers.tick(9999);
+    assert.equal(reads, 1);
+    t.mock.timers.tick(1);
+    assert.equal(reads, 2);
+    t.mock.timers.tick(20000);
+    assert.equal(reads, 4);
+    w.stop();
+});
+
 test('watcher: pauses on Online, resumes on Away/Offline, one line per transition', () => {
     let state = 1;
     const w = new mod.OnlineStateWatch(() => state);
@@ -85,10 +110,10 @@ test('watcher: pauses on Online, resumes on Away/Offline, one line per transitio
     } finally { log.restore(); }
     assert.deepEqual(ev, ['pause', 'resume', 'pause', 'resume']);
     assert.deepEqual(log.lines, [
-        '[ST] Scanner: gepauzeerd (speler online)',
-        '[ST] Scanner: hervat (speler away)',
-        '[ST] Scanner: gepauzeerd (speler online)',
-        '[ST] Scanner: hervat (speler offline)',
+        '[ST] Scanner paused (player online)',
+        '[ST] Scanner resumed (player away)',
+        '[ST] Scanner paused (player online)',
+        '[ST] Scanner resumed (player offline)',
     ]);
     assert.equal(w.isPaused, false);
 });
@@ -102,8 +127,8 @@ test('watcher: unreadable state never pauses (old behaviour), warns once', () =>
         state = null; w.check(); w.check();
     } finally { log.restore(); }
     assert.equal(w.isPaused, false);
-    assert.equal(log.lines.filter(l => l.includes('niet leesbaar')).length, 1);
-    assert.ok(log.lines.includes('[ST] Scanner: hervat (status onbekend)'));
+    assert.equal(log.lines.filter(l => l.includes('not readable')).length, 1);
+    assert.ok(log.lines.includes('[ST] Scanner resumed (state unknown)'));
 });
 
 function fakeDeps() {
@@ -150,4 +175,96 @@ for (const [Name, cmd] of [['LayoutScanner', 'scan'], ['AllianceScanner', 'scana
             log.restore();
         }
     });
+}
+
+// Running automatic batch: stops at the next base once the player is Online.
+// city-util/scanner-util are stubbed so the loop runs without a game client.
+async function loadWithFakeScanUtils() {
+    const stubs = {
+        'city-util': `export function getAllNearbyObjects() {
+                          return [1, 2, 3, 4].map(id => ({ id, object: { Type: 2 } }));
+                      }
+                      export async function waitForCity(id) {
+                          return { get_Version: () => globalThis.__scanVersion, get_Id: () => id };
+                      }`,
+        'scanner-util': `let holder = null;
+                         export function extractScan(city) { return { city_id: city.get_Id() }; }
+                         export function acquireScanLock(o) { if (holder) return false; holder = o; return true; }
+                         export function releaseScanLock(o) { if (holder === o) holder = null; }
+                         export function scanLockHolder() { return holder; }`,
+        main: 'export function chatMessage() {}',
+    };
+    const out = await esbuild.build({
+        stdin: {
+            contents: `export { LayoutScanner } from './plugins/layout-scanner.js';
+                       export { AllianceScanner } from './plugins/alliance-scanner.js';
+                       export { OnlineStateWatch } from './lib/online-state.js';`,
+            resolveDir: root,
+        },
+        bundle: true, format: 'esm', write: false,
+        plugins: [{
+            name: 'stubs',
+            setup(b) {
+                b.onResolve({ filter: /lib\/(main|city-util|scanner-util)\.js$/ }, (a) => ({
+                    path: a.path.match(/(main|city-util|scanner-util)/)[1], namespace: 'stub',
+                }));
+                b.onLoad({ filter: /.*/, namespace: 'stub' }, (a) => ({ contents: stubs[a.path] }));
+            },
+        }],
+    });
+    return import('data:text/javascript,' + encodeURIComponent(out.outputFiles[0].text));
+}
+const fake = await loadWithFakeScanUtils();
+
+function setScanGame() {
+    globalThis.ClientLib = {
+        Data: { MainData: { GetInstance: () => ({
+            get_Cities: () => ({ get_CurrentCityId: () => 99, set_CurrentCityId() {}, GetCity: () => null }),
+            get_Alliance: () => ({ get_Id: () => 7, get_MemberDataAsArray: () => [{ Id: 42 }] }),
+        }) } },
+        Net: { CommunicationManager: { GetInstance: () => ({
+            SendSimpleCommand: (_n, _a, cb) => cb(null, { c: [1, 2, 3, 4].map(i => ({ i })) }),
+        }) }, CommandResult: {} },
+    };
+    globalThis.webfrontend = { phe: { cnc: { Util: { createEventDelegate: (_t, _c, fn) => fn } } } };
+}
+
+for (const Name of ['LayoutScanner', 'AllianceScanner']) {
+    for (const manual of [false, true]) {
+        test(`${Name}: ${manual ? 'manual batch ignores' : 'running automatic batch stops on'} Online`, async () => {
+            setScanGame();
+            globalThis.__scanVersion = (globalThis.__scanVersion || 0) + 1; // scanners dedup per version
+            const realTimeout = globalThis.setTimeout;
+            globalThis.setTimeout = (fn) => { queueMicrotask(fn); return 0; };
+            const online = new fake.OnlineStateWatch(() => online._s);
+            online._s = 2;
+            const sent = [];
+            const api = {
+                isConfigured: true, _url: 'x', flush: async () => {},
+                send(p) {
+                    sent.push(p.city_id);
+                    if (sent.length === 1) { online._s = 1; online.check(); } // player comes online
+                },
+            };
+            const idle = { isIdle: true, on() {} };
+            const cli = { register() {} };
+            const s = new fake[Name]({ get: () => true, set() {} }, cli, api, idle, online);
+            const log = captureLog();
+            try {
+                s.running = true;
+                await s.scanAll({ manual });
+            } finally {
+                globalThis.setTimeout = realTimeout;
+                log.restore();
+                delete globalThis.ClientLib;
+                delete globalThis.webfrontend;
+            }
+            if (manual) {
+                assert.deepEqual(sent, [1, 2, 3, 4], 'manual scan runs to the end');
+            } else {
+                assert.deepEqual(sent, [1], 'no base sent after the player came online');
+                assert.ok(log.lines.some(l => l.includes('aborted: player online')), log.lines.join(' | '));
+            }
+        });
+    }
 }
