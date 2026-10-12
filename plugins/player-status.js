@@ -4,12 +4,17 @@
  * Replaces the BaseColors.GetBaseColor function to return colors based on
  * alliance member online state and diplomatic relations.
  *
- * Colors:
+ * Member colors per scheme (`/st config set colors shockr|maelstrom`,
+ * default shockr):
+ *              shockr               maelstrom
+ *   Online  → #76ff03 (green)      #B700FF (purple)
+ *   Away    → #ffd600 (amber)      #FFFF00 (yellow)
+ *   Offline → #5a5653 (dark grey)  #FF0000 (red)
+ *   Hidden  → as Offline           #C2C2C2 (grey)
+ * maelstrom = the colors of Maelstrom_CityOnlineStateColorer.
+ *
+ * Other colors (both schemes):
  *   Own     → #00bcd4 (cyan — distinct from unknown, fixes Shockr issue #9)
- *   Online  → #76ff03 (bright green)
- *   Away    → #ffd600 (amber)
- *   Offline → #5a5653 (dark grey)
- *   Hidden  → #ffff00 (yellow)
  *   Friend  → #76ff03
  *   NAP     → #bbdefb
  *   Foe     → #f44336
@@ -27,14 +32,33 @@
  *   AllianceRelation: 1=Friend, 2=NAP, 3=Foe
  */
 
-import { t } from '../lib/i18n.js';
+import { t, escapeHtml } from '../lib/i18n.js';
+import { chatMessage } from '../lib/main.js';
 
-const PLAYER_COLORS = {
-    0: '#5a5653',   // Offline
-    1: '#76ff03',   // Online
-    2: '#ffd600',   // Away
-    3: '#ffff00',   // Hidden
+const COLOR_SCHEMES = {
+    shockr: {
+        0: '#5a5653',   // Offline
+        1: '#76ff03',   // Online
+        2: '#ffd600',   // Away
+        3: '#5a5653',   // Hidden — same as Offline
+    },
+    maelstrom: {
+        0: '#FF0000',   // Offline
+        1: '#B700FF',   // Online
+        2: '#FFFF00',   // Away
+        3: '#C2C2C2',   // Hidden
+    },
 };
+const DEFAULT_SCHEME = 'shockr';
+const SCHEME_KEY = 'colors';
+
+let PLAYER_COLORS = COLOR_SCHEMES[DEFAULT_SCHEME];
+
+/** Scheme name from the config; unknown values fall back to the default. */
+function schemeName(value) {
+    const name = String(value || '').toLowerCase();
+    return COLOR_SCHEMES[name] ? name : DEFAULT_SCHEME;
+}
 
 const RELATION_COLORS = {
     1: '#76ff03',   // Friend
@@ -81,13 +105,36 @@ export class PlayerStatus {
     /** Short description for `/st help`. */
     get description() { return t('descPlayerStatus'); }
 
-    constructor() {
+    constructor(config, cli) {
         this.name = 'PlayerStatus';
         this.running = false;
         this._patchedNames = [];
         this._oldFunctions = {};
         this._refreshInterval = null;
         this._events = [];
+        this.config = config;
+
+        if (config) PLAYER_COLORS = COLOR_SCHEMES[schemeName(config.get(SCHEME_KEY))];
+        if (cli) cli.onConfigSet(SCHEME_KEY, (value) => this.setScheme(value));
+    }
+
+    /** `/st config set colors <scheme>` — store, switch, repaint, confirm. */
+    setScheme(value) {
+        const name = String(value).toLowerCase();
+        if (!COLOR_SCHEMES[name]) {
+            chatMessage(`[ST] ${escapeHtml(t('colorSchemeUnknown', {
+                scheme: value, schemes: Object.keys(COLOR_SCHEMES).join(', '),
+            }))}`);
+            return;
+        }
+        if (this.config) this.config.set(SCHEME_KEY, name);
+        PLAYER_COLORS = COLOR_SCHEMES[name];
+        if (this.running) {
+            try {
+                ClientLib.Vis.VisMain.GetInstance().get_Region().SetColorDirty();
+            } catch { /* ignore */ }
+        }
+        chatMessage(`[ST] ${escapeHtml(t('colorSchemeSet', { scheme: name }))}`);
     }
 
     async start() {

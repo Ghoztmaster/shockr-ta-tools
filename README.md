@@ -12,7 +12,7 @@ A Tampermonkey userscript for [C&C Tiberium Alliances](https://www.tiberiumallia
 
 - **CampTracker** — numbered markers on the world map for nearby camps, outposts and bases, with chat alerts and clickable coordinates
 - **KillInfo** — plunder panel for the selected Forgotten base (tiberium + crystal per unit and total), toggled with `/st plunder`
-- **PlayerStatus** — alliance base colors by online status (green/yellow/red/grey, own bases cyan)
+- **PlayerStatus** — alliance base colors by online status, own bases cyan; scheme via `/st config set colors shockr|maelstrom` (default shockr)
 - **LayoutScanner** — scan nearby FG base layouts and upload to a shared alliance server
 - **RepairGuard** — blocks "Repair All" so you don't fully repair by accident (saves crystal on Forgotten Attack worlds); per-unit repair keeps working. Off by default — `/st plugin enable repair-guard`
 - **UpgradeCalc** — upgrade panel for your current base: next-level Tiberium + Power cost per building and how long it takes to save up at your current production (fastest first), opened with the "UC" button on your own base. Off by default — `/st plugin enable upgradecalc`

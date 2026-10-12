@@ -163,7 +163,7 @@ class TestPages:
 
 
 class TestI18n:
-    """Every info key exists in all three languages; 9 install steps, 10 trouble rows."""
+    """Every info key exists in all three languages; 9 install steps, 11 trouble rows."""
 
     def keys_per_lang(self):
         src = (STATIC / "i18n.js").read_text(encoding="utf-8")
@@ -181,7 +181,7 @@ class TestI18n:
             assert info <= k[lang], (lang, info - k[lang])
         for i in range(1, 10):
             assert f"infoInstall{i}Html" in info
-        for i in range(1, 11):
+        for i in range(1, 12):
             assert f"infoTrouble{i}P" in info and f"infoTrouble{i}S" in info
         for key in ("infoBugTitle", "infoBugIntro", "infoBug1", "infoBug2", "infoBug3Html", "infoContact"):
             assert key in info
