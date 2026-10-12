@@ -1,7 +1,25 @@
 {
-  "version": "5.12.0",
+  "version": "5.12.1",
   "date": "2026-10-12",
   "changelog": [
+    {
+      "version": "5.12.1",
+      "date": "2026-10-12",
+      "changes": {
+        "en": [
+          "Scanner pause now also holds the send queue: no scans are sent while you are online",
+          "Buffered scans are sent once the scanner resumes"
+        ],
+        "de": [
+          "Scanner-Pause hält jetzt auch die Sendewarteschlange an: keine Scans, solange du online bist",
+          "Gepufferte Scans werden nach dem Fortsetzen gesendet"
+        ],
+        "nl": [
+          "Scanner-pauze houdt nu ook de verzendwachtrij vast: geen scans versturen zolang je online bent",
+          "Gebufferde scans worden verstuurd zodra de scanner hervat"
+        ]
+      }
+    },
     {
       "version": "5.12.0",
       "date": "2026-10-12",
@@ -68,24 +86,6 @@
         "nl": [
           "Alliance Attack Tracker",
           "dist/ in repo"
-        ]
-      }
-    },
-    {
-      "version": "5.9.0",
-      "date": "2026-10-10",
-      "changes": {
-        "en": [
-          "API key visible after register",
-          "i18n EN/DE/NL"
-        ],
-        "de": [
-          "API-Key nach register sichtbar",
-          "i18n EN/DE/NL"
-        ],
-        "nl": [
-          "API key zichtbaar na register",
-          "i18n EN/DE/NL"
         ]
       }
     }

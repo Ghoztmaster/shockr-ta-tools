@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.12.0 released — TargetWatcher on by default for new installs (existing installs keep their setting)",
-      "de": "v5.12.0 veröffentlicht — TargetWatcher bei Neuinstallationen standardmäßig an (bestehende Installationen behalten ihre Einstellung)",
-      "nl": "v5.12.0 uitgebracht — TargetWatcher standaard aan bij nieuwe installaties (bestaande installaties houden hun instelling)"
+      "en": "v5.12.1 released — scanner pause also holds the send queue (no scans sent while you are online, buffered scans go out on resume); TargetWatcher on by default for new installs",
+      "de": "v5.12.1 veröffentlicht — Scanner-Pause hält auch die Sendewarteschlange an (keine Scans, solange du online bist; gepufferte Scans gehen nach dem Fortsetzen raus); TargetWatcher bei Neuinstallationen standardmäßig an",
+      "nl": "v5.12.1 uitgebracht — scanner-pauze houdt ook de verzendwachtrij vast (geen scans zolang je online bent, gebufferde scans gaan uit bij hervatten); TargetWatcher standaard aan bij nieuwe installaties"
     },
     "type": "info",
     "active": true

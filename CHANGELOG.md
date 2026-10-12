@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [5.12.1] — 2026-10-12
+
+### Scanner-pauze houdt ook de verzendwachtrij vast
+- Bug: na "[ST] Scanner paused (player online)" gingen er alsnog scans naar de server ("[ST] API: 7 scan(s) sent") - de pauze stopte wel nieuwe scans, maar niet de wachtrij van `ApiClient` (flush-timer, de eigen `flush()` van een scanner, een batch die al verstuurd werd)
+- Zolang de scanners gepauzeerd zijn gaat er geen `/api/scan`-request meer uit: `send()` buffert, `flush()` doet niets, en een lopende batch stopt vóór de volgende scan (de rest gaat terug in de wachtrij). Console: `[ST] API: sending held (scanner paused) — N scan(s) buffered`, één keer per pauze
+- Bij hervatten gaat de buffer in de oorspronkelijke volgorde de deur uit (`[ST] API: sending resumed — N buffered scan(s)`), met dezelfde pacing van 2 s per request
+- Losse requests (TargetWatcher, WatchList, AttackTracker) worden niet vastgehouden. De buffer staat in het geheugen; een herlaad van de pagina tijdens de pauze gooit hem weg (zoals de wachtrij altijd al deed)
+- Tests: `tests/api-hold.test.mjs`
+
 ## [5.12.0] — 2026-10-12
 
 ### Standaard-plugins

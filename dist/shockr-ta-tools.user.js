@@ -4,7 +4,7 @@
 // @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker & watchlist for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
-// @version         5.12.0
+// @version         5.12.1
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // ==/UserScript==
 
@@ -1136,6 +1136,34 @@ var ShockrTools = (() => {
       this._lastRejectNotify = 0;
       this._nextScanAt = 0;
       this._flushing = null;
+      this._gate = null;
+      this._heldLogged = false;
+    }
+    /** Hold the scan queue while gate() returns true (e.g. () => online.isPaused). */
+    setSendGate(gate) {
+      this._gate = gate;
+    }
+    /** True while scans must not be sent. */
+    get isHeld() {
+      try {
+        return !!(this._gate && this._gate());
+      } catch {
+        return false;
+      }
+    }
+    _logHeld() {
+      if (this._heldLogged) return;
+      this._heldLogged = true;
+      console.log(`[ST] API: sending held (scanner paused) \u2014 ${this.queue.length} scan(s) buffered`);
+    }
+    /** Send what was buffered during the hold (call when the scanners resume). */
+    resumeQueue() {
+      if (this.isHeld) return;
+      const wasHeld = this._heldLogged;
+      this._heldLogged = false;
+      if (this.queue.length === 0) return;
+      if (wasHeld) console.log(`[ST] API: sending resumed \u2014 ${this.queue.length} buffered scan(s)`);
+      this.flush();
     }
     /** Check if the API is configured (URL + personal or shared key set). */
     get isConfigured() {
@@ -1212,6 +1240,10 @@ var ShockrTools = (() => {
     send(payload) {
       if (!this.isConfigured) return;
       this.queue.push(payload);
+      if (this.isHeld) {
+        this._logHeld();
+        return;
+      }
       if (this.queue.length >= MAX_BATCH) {
         this.flush();
       } else if (!this._flushTimer) {
@@ -1237,10 +1269,19 @@ var ShockrTools = (() => {
         this._flushTimer = null;
       }
       if (this.queue.length === 0 || !this.isConfigured) return;
+      if (this.isHeld) {
+        this._logHeld();
+        return;
+      }
       const batch = this.queue.splice(0, MAX_BATCH);
       let success = 0;
       let failed = 0;
       for (let i = 0; i < batch.length; i++) {
+        if (this.isHeld) {
+          this.queue.unshift(...batch.slice(i));
+          this._logHeld();
+          break;
+        }
         const result = await this._sendOne(batch[i]);
         if (result === true) {
           success++;
@@ -4269,7 +4310,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.12.0";
+  var ST_VERSION = "5.12.1";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -4290,6 +4331,8 @@ var ShockrTools = (() => {
     const idle = new IdleDetect();
     const online = new OnlineStateWatch();
     const api = new ApiClient(config);
+    api.setSendGate(() => online.isPaused);
+    online.on("resume", () => api.resumeQueue());
     const attackTracker = new AttackTracker(config, api);
     const watchList = new WatchList(config, cli, api);
     attackTracker.onUnclaimed = (claim) => watchList.notifyDefeated(claim);
