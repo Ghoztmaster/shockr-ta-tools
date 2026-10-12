@@ -4,7 +4,7 @@
 // @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker & watchlist for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
-// @version         5.11.0
+// @version         5.11.1
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // ==/UserScript==
 
@@ -367,6 +367,7 @@ var ShockrTools = (() => {
       helpVersion: "Show script version",
       helpUsefulSettings: "Useful settings:",
       helpSetLanguage: "en / de / nl (default: en)",
+      helpSetColors: "shockr / maelstrom (default: shockr)",
       helpSetApiUrl: "Server URL for scanners/watcher",
       helpSetApiKey: "Shared alliance key (transition \u2014 use /st register)",
       helpSetButtonLeft: "UC button X position (px)",
@@ -377,6 +378,8 @@ var ShockrTools = (() => {
       descCampTracker: "FG base markers on world map",
       descKillInfo: "Plunder panel for the selected FG base",
       descPlayerStatus: "Alliance base colors by online status",
+      colorSchemeSet: "Color scheme set to: {scheme}",
+      colorSchemeUnknown: "Unknown color scheme: {scheme} (choose: {schemes})",
       descLayoutScanner: "Scan FG base layouts",
       descAllianceScanner: "Scan alliance base layouts",
       descRepairGuard: "Block Repair All buttons",
@@ -531,6 +534,7 @@ var ShockrTools = (() => {
       helpVersion: "Script-Version anzeigen",
       helpUsefulSettings: "N\xFCtzliche Einstellungen:",
       helpSetLanguage: "en / de / nl (Standard: en)",
+      helpSetColors: "shockr / maelstrom (Standard: shockr)",
       helpSetApiUrl: "Server-URL f\xFCr Scanner/Watcher",
       helpSetApiKey: "Gemeinsamer Allianz-Key (\xDCbergang \u2014 nutze /st register)",
       helpSetButtonLeft: "UC-Button X-Position (px)",
@@ -540,6 +544,8 @@ var ShockrTools = (() => {
       descCampTracker: "FG-Basis-Markierungen auf der Weltkarte",
       descKillInfo: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte FG-Basis",
       descPlayerStatus: "Allianz-Basisfarben nach Online-Status",
+      colorSchemeSet: "Farbschema gesetzt auf: {scheme}",
+      colorSchemeUnknown: "Unbekanntes Farbschema: {scheme} (Auswahl: {schemes})",
       descLayoutScanner: "FG-Basis-Layouts scannen",
       descAllianceScanner: "Allianz-Basis-Layouts scannen",
       descRepairGuard: "Repair-All-Buttons blockieren",
@@ -684,6 +690,7 @@ var ShockrTools = (() => {
       helpVersion: "Script-versie tonen",
       helpUsefulSettings: "Handige instellingen:",
       helpSetLanguage: "en / de / nl (standaard: en)",
+      helpSetColors: "shockr / maelstrom (standaard: shockr)",
       helpSetApiUrl: "Server-URL voor scanners/watcher",
       helpSetApiKey: "Gedeelde alliance-key (overgang \u2014 gebruik /st register)",
       helpSetButtonLeft: "UC-knop X-positie (px)",
@@ -693,6 +700,8 @@ var ShockrTools = (() => {
       descCampTracker: "FG-base-markeringen op de wereldkaart",
       descKillInfo: "Plunder-paneel voor de geselecteerde FG-base",
       descPlayerStatus: "Alliance-basekleuren op online-status",
+      colorSchemeSet: "Kleurschema ingesteld op: {scheme}",
+      colorSchemeUnknown: "Onbekend kleurschema: {scheme} (kies: {schemes})",
       descLayoutScanner: "FG-base-layouts scannen",
       descAllianceScanner: "Alliance-base-layouts scannen",
       descRepairGuard: "Repair All-knoppen blokkeren",
@@ -831,12 +840,20 @@ var ShockrTools = (() => {
     constructor(config) {
       this.config = config;
       this.commands = {};
+      this._setHooks = {};
       this.PREFIX = "/st";
       this._handleKeyDown = this._handleKeyDown.bind(this);
     }
     /** Register a command handler. */
     register(name, handler) {
       this.commands[name.toLowerCase()] = handler;
+    }
+    /**
+     * Let a plugin own `/st config set <key> <value>` for one key: the hook
+     * validates, stores and confirms itself (no generic "key = value" line).
+     */
+    onConfigSet(key, hook) {
+      this._setHooks[key.toLowerCase()] = hook;
     }
     /** Start listening for chat input. */
     start() {
@@ -849,6 +866,11 @@ var ShockrTools = (() => {
         if (action === "set" && rest.length >= 2) {
           const key = rest[0];
           const value = this._parseValue(rest.slice(1).join(" "));
+          const hook = this._setHooks[key.toLowerCase()];
+          if (hook) {
+            hook(value);
+            return;
+          }
           this.config.set(key, value);
           chatMessage(`[ST] ${key} = ${this._display(key, value)}`);
         } else if (action === "get" && rest.length >= 1) {
@@ -1394,6 +1416,7 @@ var ShockrTools = (() => {
   ];
   var USEFUL_SETTINGS = [
     ["language", "helpSetLanguage"],
+    ["colors", "helpSetColors"],
     ["api.url", "helpSetApiUrl"],
     ["api.key", "helpSetApiKey"],
     ["UpgradeCalc.buttonLeft", "helpSetButtonLeft"],
@@ -2230,16 +2253,35 @@ var ShockrTools = (() => {
   }
 
   // plugins/player-status.js
-  var PLAYER_COLORS = {
-    0: "#5a5653",
-    // Offline
-    1: "#76ff03",
-    // Online
-    2: "#ffd600",
-    // Away
-    3: "#ffff00"
-    // Hidden
+  var COLOR_SCHEMES = {
+    shockr: {
+      0: "#5a5653",
+      // Offline
+      1: "#76ff03",
+      // Online
+      2: "#ffd600",
+      // Away
+      3: "#5a5653"
+      // Hidden — same as Offline
+    },
+    maelstrom: {
+      0: "#FF0000",
+      // Offline
+      1: "#B700FF",
+      // Online
+      2: "#FFFF00",
+      // Away
+      3: "#C2C2C2"
+      // Hidden
+    }
   };
+  var DEFAULT_SCHEME = "shockr";
+  var SCHEME_KEY = "colors";
+  var PLAYER_COLORS = COLOR_SCHEMES[DEFAULT_SCHEME];
+  function schemeName(value) {
+    const name = String(value || "").toLowerCase();
+    return COLOR_SCHEMES[name] ? name : DEFAULT_SCHEME;
+  }
   var RELATION_COLORS = {
     1: "#76ff03",
     // Friend
@@ -2281,13 +2323,36 @@ var ShockrTools = (() => {
     get description() {
       return t("descPlayerStatus");
     }
-    constructor() {
+    constructor(config, cli) {
       this.name = "PlayerStatus";
       this.running = false;
       this._patchedNames = [];
       this._oldFunctions = {};
       this._refreshInterval = null;
       this._events = [];
+      this.config = config;
+      if (config) PLAYER_COLORS = COLOR_SCHEMES[schemeName(config.get(SCHEME_KEY))];
+      if (cli) cli.onConfigSet(SCHEME_KEY, (value) => this.setScheme(value));
+    }
+    /** `/st config set colors <scheme>` — store, switch, repaint, confirm. */
+    setScheme(value) {
+      const name = String(value).toLowerCase();
+      if (!COLOR_SCHEMES[name]) {
+        chatMessage(`[ST] ${escapeHtml(t("colorSchemeUnknown", {
+          scheme: value,
+          schemes: Object.keys(COLOR_SCHEMES).join(", ")
+        }))}`);
+        return;
+      }
+      if (this.config) this.config.set(SCHEME_KEY, name);
+      PLAYER_COLORS = COLOR_SCHEMES[name];
+      if (this.running) {
+        try {
+          ClientLib.Vis.VisMain.GetInstance().get_Region().SetColorDirty();
+        } catch {
+        }
+      }
+      chatMessage(`[ST] ${escapeHtml(t("colorSchemeSet", { scheme: name }))}`);
     }
     async start() {
       const proto = ClientLib.Data.BaseColors.prototype;
@@ -4193,7 +4258,7 @@ var ShockrTools = (() => {
     const plugins = [
       new CampTracker(config, cli),
       new KillInfo(config, cli),
-      new PlayerStatus(),
+      new PlayerStatus(config, cli),
       new LayoutScanner(config, cli, api, idle, online),
       new AllianceScanner(config, cli, api, idle, online),
       new RepairGuard(config),
