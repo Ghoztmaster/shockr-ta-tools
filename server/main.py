@@ -29,11 +29,14 @@ from server.models import ScanPayload, ScanResponse
 from server.storage import ScanStorage
 from server.ratelimit import RateLimiter
 from server.target_watch import TargetWatchPayload, TargetWatchStore
-from server.attacks import AttackPayload, AttackStore, MAX_BATCH as ATTACK_MAX_BATCH, RETENTION_DAYS as ATTACK_RETENTION_DAYS
+from server.attacks import (
+    AttackPayload, AttackStore, MAX_BATCH as ATTACK_MAX_BATCH, RETENTION_DAYS as ATTACK_RETENTION_DAYS,
+    ALLIANCE_WINDOW_MS as ATTACK_ALLIANCE_WINDOW_MS,
+)
 from server.watchlist import WatchlistPayload, WatchlistStore, ClaimNotFound, ClaimForbidden
 from server.members import MemberStore, MembershipError, NOT_A_MEMBER
 from server.player_keys import (
-    EnrollPayload, EnrollmentConfig, PlayerKeyStore,
+    AllianceMembershipCheck, EnrollPayload, EnrollmentConfig, PlayerKeyStore,
     INVALID_CODE, ALLIANCE_NOT_AUTHORIZED, NOT_REGISTERED, INVALID_PLAYER_KEY,
 )
 from server.web_auth import LoginPayload, SessionStore, SESSION_COOKIE, LOGIN_FAILED
@@ -100,6 +103,7 @@ attack_store = AttackStore(DATA_DIR)
 watchlist = WatchlistStore(DATA_DIR)
 member_store = MemberStore(DATA_DIR / "members.jsonl")
 player_keys = PlayerKeyStore(DATA_DIR / "player_keys.jsonl")
+membership_check = AllianceMembershipCheck()
 enrollment = EnrollmentConfig(ENROLLMENT_FILE)
 post_limiter = RateLimiter(max_requests=10, window_seconds=1)
 enroll_limiter = RateLimiter(max_requests=5, window_seconds=3600)
@@ -365,10 +369,17 @@ async def post_scan(
     payload: ScanPayload,
     request: Request,
     alliance_id: str = Depends(verify_member),
+    x_alliance_id: str = Header("", alias="X-Alliance-Id"),
 ):
     now_ms = int(time.time() * 1000)
     if abs(now_ms - payload.timestamp) > MAX_SCAN_AGE_S * 1000:
         raise HTTPException(status_code=400, detail="Scan timestamp too old or too far in the future")
+
+    if payload.allianceMembers:
+        # Auto-revoke (5.17.0): before storing, so a duplicate scan still delivers the list.
+        # X-Alliance-Id was already validated (and matched to a player key's alliance) by verify_member.
+        membership_check.check_alliance_membership(player_keys, int(x_alliance_id), request.state.player_id,
+                                                   payload.allianceMembers)
 
     stored = storage.store(alliance_id, payload)
     if not stored:
@@ -528,6 +539,16 @@ def _attack_period(world_id: int | None, days: int, since: int | None) -> tuple[
     floor_ms = now_ms - ATTACK_RETENTION_DAYS * 86400 * 1000
     since_ms = since if since is not None else now_ms - max(1, min(days, ATTACK_RETENTION_DAYS)) * 86400 * 1000
     return worlds, world, now_ms, max(since_ms, floor_ms)
+
+@app.get("/api/attacks/alliance")
+async def get_alliance_attacks(worldId: int, alliance_id: str = Depends(verify_member)):
+    """
+    Userscript (X-Player-Key, Map Labels ⚔): the won attacks of the caller's
+    own alliance in one world over the last 24 h - player name, target and
+    time only. Loot stays behind the website login (GET /api/attacks).
+    """
+    since_ms = int(time.time() * 1000) - ATTACK_ALLIANCE_WINDOW_MS
+    return {"attacks": attack_store.alliance_recent(worldId, alliance_id, since_ms)}
 
 # ─── WatchList (claims on FG targets, 24 h) ─────────────────────────
 

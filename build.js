@@ -8,7 +8,7 @@ const esbuild = require('esbuild');
 const fs = require('fs');
 const path = require('path');
 
-const VERSION = '5.16.0';
+const VERSION = '5.17.0';
 
 const USERSCRIPT_HEADER = `// ==UserScript==
 // @name            Shockr - Tiberium Alliances Tools

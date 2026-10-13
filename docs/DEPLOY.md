@@ -342,16 +342,58 @@ nginx -t && systemctl reload nginx
 # CORS preflight -> 204
 curl -si -X OPTIONS https://packetlab.nl/shockr/api/watchlist -H 'Origin: https://www.alliances.commandandconquer.com' | head -5
 # Without a key -> 403
-curl -s -o /dev/null -w '%{http_code}
-' -X POST https://packetlab.nl/shockr/api/watchlist -H 'Content-Type: application/json' -d '{"action":"list","worldId":477}'
+curl -s -o /dev/null -w '%{http_code}\n' -X POST https://packetlab.nl/shockr/api/watchlist -H 'Content-Type: application/json' -d '{"action":"list","worldId":477}'
 # Website data without a session -> 401; admin path without Basic Auth -> 401 (nginx)
-curl -s -o /dev/null -w '%{http_code}
-' https://packetlab.nl/shockr/api/watchlist
-curl -s -o /dev/null -w '%{http_code}
-' -X DELETE https://packetlab.nl/shockr/api/admin/watchlist/x
+curl -s -o /dev/null -w '%{http_code}\n' https://packetlab.nl/shockr/api/watchlist
+curl -s -o /dev/null -w '%{http_code}\n' -X DELETE https://packetlab.nl/shockr/api/admin/watchlist/x
 ```
 
 Storage: `data/watchlist/{worldId}.json` (same `./data` volume). Claims older than 24 h are dropped on the next access.
+
+## 11. Alliance attacks for Map Labels (`/api/attacks/alliance`, v5.17.0)
+
+`GET /shockr/api/attacks/alliance?worldId=` is called from the game page (cross-origin) with `X-Player-Key`: the won attacks of the caller's own alliance over the last 24 h (player name, target, time - **no loot**). CORS block, **before** the broad `/shockr/` block:
+
+```nginx
+    # Shockr Alliance — alliance attacks for Map Labels (userscript GET, X-Player-Key checked in the app)
+    location = /shockr/api/attacks/alliance {
+        if ($request_method = OPTIONS) {
+            add_header Access-Control-Allow-Origin $http_origin always;
+            add_header Access-Control-Allow-Methods "GET, OPTIONS" always;
+            add_header Access-Control-Allow-Headers "Content-Type, X-Alliance-Key, X-Player-Id, X-Player-Name, X-Alliance-Id, X-Player-Key" always;
+            add_header Access-Control-Max-Age 86400;
+            return 204;
+        }
+        add_header Access-Control-Allow-Origin $http_origin always;
+        add_header Access-Control-Allow-Headers "Content-Type, X-Alliance-Key, X-Player-Id, X-Player-Name, X-Alliance-Id, X-Player-Key" always;
+
+        proxy_pass http://127.0.0.1:8920/api/attacks/alliance;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+```
+
+`proxy_pass` with a URI path keeps the query string (`?worldId=477`). `/shockr/api/attacks` (website data) and `/shockr/api/attacks/targets` (loot) stay under the `/shockr/` website block.
+
+```bash
+nginx -t && systemctl reload nginx
+
+curl -si -X OPTIONS https://packetlab.nl/shockr/api/attacks/alliance -H 'Origin: https://www.alliances.commandandconquer.com' | head -5   # 204
+curl -s -o /dev/null -w '%{http_code}\n' 'https://packetlab.nl/shockr/api/attacks/alliance?worldId=477'                              # 403
+curl -s 'https://packetlab.nl/shockr/api/attacks/alliance?worldId=477'   -H 'X-Player-Key: <key>' -H 'X-Player-Id: <id>' -H 'X-Player-Name: <name>' -H 'X-Alliance-Id: <alliance id>'
+```
+
+Note: the membership check needs the identity headers too (`X-Player-Id`, `X-Player-Name`, `X-Alliance-Id`) - a curl with only `X-Player-Key` gets 403, just like `/api/watchlist`.
+
+## 12. Auto-revoke of keys (v5.17.0)
+
+No nginx change: the member list rides along on `POST /api/scan` (`allianceMembers`, first scan batch after login, then hourly). At most once per hour per alliance the server compares the lists with the registered keys; a key holder that **at least 3 different scanners** no longer see is revoked (`INFO Key revoked: name (id) — no longer in alliance`), fewer scanners only log `WARNING name not in alliance list (reported by 1/3 required scanners)`. The lists live in memory: after a restart it takes up to an hour (and three scanners) again. A revoked player registers again with `/st register`; lists from before the new key don't count against it.
+
+```bash
+docker compose logs -f | grep -E 'Key revoked|not in alliance list'
+```
 
 ## Update
 

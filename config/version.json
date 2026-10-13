@@ -1,7 +1,28 @@
 {
-  "version": "5.16.0",
+  "version": "5.17.0",
   "date": "2026-10-13",
   "changelog": [
+    {
+      "version": "5.17.0",
+      "date": "2026-10-13",
+      "changes": {
+        "en": [
+          "Map Labels: ⚔ now shows the won attacks of every alliance member (last 24 h), not only your own",
+          "Keys of players who left the alliance are revoked automatically (confirmed by at least 3 scanners)",
+          "Back in the alliance? Register again with /st register"
+        ],
+        "de": [
+          "Map Labels: ⚔ zeigt jetzt die gewonnenen Angriffe aller Allianzmitglieder (letzte 24 Std.), nicht nur deine eigenen",
+          "Keys von Spielern, die die Allianz verlassen haben, werden automatisch widerrufen (bestätigt von mindestens 3 Scannern)",
+          "Wieder in der Allianz? Mit /st register neu registrieren"
+        ],
+        "nl": [
+          "Map Labels: ⚔ toont nu de gewonnen aanvallen van alle alliance-leden (laatste 24 u), niet alleen je eigen",
+          "Keys van spelers die de alliance verlaten worden automatisch ingetrokken (bevestigd door minstens 3 scanners)",
+          "Terug in de alliance? Registreer opnieuw met /st register"
+        ]
+      }
+    },
     {
       "version": "5.16.0",
       "date": "2026-10-13",
@@ -80,24 +101,6 @@
           "Nieuwe plugin Base Info: offense-/defense-level + nummer (#1, #2…) bij speler-bases op de wereldkaart",
           "Nieuwe plugin Attack Range: bereikcirkel rond je eigen bases op de wereldkaart",
           "Fix: scanners pauzeren nu betrouwbaar zolang je online bent (/st status toont de scannerstand)"
-        ]
-      }
-    },
-    {
-      "version": "5.12.1",
-      "date": "2026-10-12",
-      "changes": {
-        "en": [
-          "Scanner pause now also holds the send queue: no scans are sent while you are online",
-          "Buffered scans are sent once the scanner resumes"
-        ],
-        "de": [
-          "Scanner-Pause hält jetzt auch die Sendewarteschlange an: keine Scans, solange du online bist",
-          "Gepufferte Scans werden nach dem Fortsetzen gesendet"
-        ],
-        "nl": [
-          "Scanner-pauze houdt nu ook de verzendwachtrij vast: geen scans versturen zolang je online bent",
-          "Gebufferde scans worden verstuurd zodra de scanner hervat"
         ]
       }
     }

@@ -55,7 +55,7 @@ class ScanStorage:
         if self._is_duplicate(file_path, scan.city_id, scan.version):
             return False
 
-        record = scan.model_dump()
+        record = scan.model_dump(exclude={"allianceMembers"})   # the member list is no scan data
         record["alliance_key_id"] = alliance_id
         record["stored_at"] = datetime.now(timezone.utc).isoformat()
 

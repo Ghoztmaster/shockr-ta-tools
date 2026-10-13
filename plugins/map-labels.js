@@ -4,7 +4,7 @@
  *
  *   👁 Name  (yellow) — viewing: Target Watcher
  *   📌 Name  (orange) — claimed: WatchList
- *   ⚔ Name   (red)    — attacked: own won attacks
+ *   ⚔ Name   (red)    — attacked: won attacks of every alliance member
  *
  * One line per player, stacked; per player only the highest status shows
  * (attacked > claimed > viewing). Only on Forgotten targets (world object
@@ -22,13 +22,16 @@
  *         while the local TargetWatcher's current target is that target.
  *   - 📌  POST /api/watchlist {action: "list"} (member auth), every 60 s. The
  *         server already ends a claim after 24 h, on unclaim or a won attack.
- *   - ⚔   OWN won attacks only, from the own combat report headers (the same
- *         read-only GetReportHeaderAll route and filter as AttackTracker:
- *         NPCRaid + won + camp/outpost/base), last 7 days, every 60 s. Never
- *         MarkReportsAsRead/DeleteReports. LIMITATION: other players' attacks
- *         live on the server behind GET /api/attacks, which needs a website
- *         session (cookie) — the userscript can't read it, and a member-auth
- *         attack list would be a new server route (excluded by the work order).
+ *   - ⚔   (5.17.0) every alliance member's won attacks of the last 24 h from
+ *         GET /api/attacks/alliance?worldId= (member auth, name + target +
+ *         time only, no loot), every 60 s. Plus, as before, the OWN won
+ *         attacks from the own combat report headers (the same read-only
+ *         GetReportHeaderAll route and filter as AttackTracker: NPCRaid + won
+ *         + camp/outpost/base), last 7 days, every 60 s - so the own ⚔ also
+ *         shows without a server key or before AttackTracker sent it. Never
+ *         MarkReportsAsRead/DeleteReports. The server list carries no
+ *         playerId: an entry with the own name is matched to the own id, so
+ *         the two sources give one ⚔ line, not two.
  *
  * Polling and rendering only while the world map is shown. Label font: the
  * CampTracker font, at 0.6 × its fontsize (min 11 px) — CampTracker's size is
@@ -46,6 +49,7 @@ import { isLoggable } from './attack-tracker.js';
 const WATCH_POLL_MS = 10 * 1000;
 const CLAIM_POLL_MS = 60 * 1000;
 const ATTACK_POLL_MS = 60 * 1000;
+const ALLIANCE_ATTACK_POLL_MS = 60 * 1000;
 const RENDER_MS = 2000;
 const ATTACK_MAX_AGE_MS = 7 * 24 * 3600 * 1000;
 const NAME_MAX = 10;
@@ -157,9 +161,10 @@ export class MapLabels {
         this.running = false;
         this.watches = [];
         this.claims = [];
-        this.attacks = [];
-        this._last = { watch: 0, claim: 0, attack: 0 };
-        this._busy = { watch: false, claim: false, attack: false };
+        this.attacks = [];          // own won attacks (report headers)
+        this.allianceAttacks = [];  // every member's won attacks (server, 24 h)
+        this._last = { watch: 0, claim: 0, attack: 0, alliance: 0 };
+        this._busy = { watch: false, claim: false, attack: false, alliance: false };
         this.labels = new Map();   // "x:y" -> { el, x, y }
         this._events = [];
         this._timer = null;
@@ -189,7 +194,7 @@ export class MapLabels {
 
     /** One-line status for `/st status`. */
     statusText() {
-        return `👁 ${this.watches.length} · 📌 ${this.claims.length} · ⚔ ${this.attacks.length}`;
+        return `👁 ${this.watches.length} · 📌 ${this.claims.length} · ⚔ ${new Set(this._allAttacks().map(a => `${a.x}:${a.y}:${a.playerId ?? a.playerName}`)).size}`;
     }
 
     /** Called every second: fires each source when its interval is due. Only on the world map. */
@@ -200,6 +205,7 @@ export class MapLabels {
             const configured = !!(this.api && this.api.isConfigured);
             if (configured && now - this._last.watch >= WATCH_POLL_MS) this._fetchWatches(now);
             if (configured && now - this._last.claim >= CLAIM_POLL_MS) this._fetchClaims(now);
+            if (configured && now - this._last.alliance >= ALLIANCE_ATTACK_POLL_MS) this._fetchAllianceAttacks(now);
             if (now - this._last.attack >= ATTACK_POLL_MS) this._readAttacks(now);
         } catch (e) {
             console.warn('[ST] MapLabels: poll failed', e && e.message);
@@ -244,6 +250,34 @@ export class MapLabels {
         } catch { /* keep the last list */ } finally {
             this._busy.claim = false;
         }
+    }
+
+    /** Every alliance member's won attacks of the last 24 h (GET /api/attacks/alliance). */
+    async _fetchAllianceAttacks(now) {
+        if (this._busy.alliance) return;
+        const wid = worldId();
+        if (!wid) return;
+        this._busy.alliance = true;
+        this._last.alliance = now;
+        try {
+            const data = await this.api.request('GET', `/api/attacks/alliance?worldId=${wid}`);
+            if (data && Array.isArray(data.attacks)) {
+                const me = ownPlayer();
+                this.allianceAttacks = data.attacks.map(a => ({
+                    x: a.targetX, y: a.targetY, playerName: a.playerName,
+                    // No playerId from the server: the own name -> the own id, so it merges with the report-based ⚔
+                    playerId: me.id != null && a.playerName === me.name ? me.id : undefined,
+                }));
+                this.render();
+            }
+        } catch { /* keep the last list */ } finally {
+            this._busy.alliance = false;
+        }
+    }
+
+    /** Own (report headers) + alliance (server) attacks, for mergeLabels. */
+    _allAttacks() {
+        return [...this.attacks, ...this.allianceAttacks];
     }
 
     /** Own won FG attacks from the report headers (read-only, same route/filter as AttackTracker). */
@@ -297,7 +331,7 @@ export class MapLabels {
             const me = ownPlayer();
             const tw = this.plugins.targetWatcher;
             const merged = mergeLabels(
-                { watches: this.watches, claims: this.claims, attacks: this.attacks },
+                { watches: this.watches, claims: this.claims, attacks: this._allAttacks() },
                 { ownId: me.id, ownCurrentTargetId: tw && tw.running ? tw._currentId : null },
             );
             const world = ClientLib.Data.MainData.GetInstance().get_World();

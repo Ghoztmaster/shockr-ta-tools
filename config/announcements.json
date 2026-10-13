@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.16.0 released — new page 💰 Loot: loot per target coordinate (attacks, total and average loot, players), sortable and filterable, click a target for its individual attacks",
-      "de": "v5.16.0 veröffentlicht — neue Seite 💰 Beute: Beute pro Zielkoordinate (Angriffe, Gesamt- und Durchschnittsbeute, Spieler), sortier- und filterbar, Klick auf ein Ziel zeigt die einzelnen Angriffe",
-      "nl": "v5.16.0 uitgebracht — nieuwe pagina 💰 Loot: loot per target-coördinaat (aanvallen, totale en gemiddelde loot, spelers), sorteer- en filterbaar, klik op een target voor de losse aanvallen"
+      "en": "v5.17.0 released — Map Labels ⚔ now shows the attacks of every alliance member (24 h); keys of players who leave the alliance are revoked automatically",
+      "de": "v5.17.0 veröffentlicht — Map Labels ⚔ zeigt jetzt die Angriffe aller Allianzmitglieder (24 Std.); Keys von Spielern, die die Allianz verlassen, werden automatisch widerrufen",
+      "nl": "v5.17.0 uitgebracht — Map Labels ⚔ toont nu de aanvallen van alle alliance-leden (24 u); keys van spelers die de alliance verlaten worden automatisch ingetrokken"
     },
     "type": "info",
     "active": true

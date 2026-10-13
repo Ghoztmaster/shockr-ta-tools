@@ -264,3 +264,25 @@ def test_get_targets_without_data(env):
     c.post("/api/login", json={"playerName": "GhoztMasters", "apiKey": env["key"]})
     data = c.get("/api/attacks/targets").json()
     assert data["worldId"] is None and data["targets"] == []
+
+
+# ─── Alliance attacks for the userscript (Map Labels ⚔) ─────────────
+
+def test_alliance_endpoint_player_key_24h_no_loot(env):
+    c = env["client"]
+    gh = headers(164, "GhoztMasters", env["key"])
+    c.post("/api/attack", json=[attack(), attack(targetX=86, timestamp=NOW_MS - 25 * 3600 * 1000)], headers=gh)
+    c.post("/api/attack", json=attack(targetX=88, timestamp=NOW_MS - 30_000), headers=headers(200, "OzookerO", env["other"]))
+    # Another alliance (scope) in the same world: never in this alliance's list
+    env["store"].add(AttackPayload(**attack(targetX=99)), 300, "Stranger", "OtherAlliance")
+
+    assert c.get("/api/attacks/alliance", params={"worldId": 477}).status_code == 403            # no key
+    assert c.get("/api/attacks/alliance", params={"worldId": 477},
+                 headers=headers(164, "GhoztMasters", "wrong")).status_code == 403
+    r = c.get("/api/attacks/alliance", params={"worldId": 477}, headers=gh)
+    assert r.status_code == 200
+    data = r.json()["attacks"]
+    assert [(a["playerName"], a["targetX"]) for a in data] == [("OzookerO", 88), ("GhoztMasters", 84)]   # 24 h, newest first
+    assert set(data[0]) == {"playerName", "targetType", "targetLevel", "targetX", "targetY", "timestamp"}
+    assert "loot" not in r.text.lower()
+    assert c.get("/api/attacks/alliance", params={"worldId": 478}, headers=gh).json() == {"attacks": []}

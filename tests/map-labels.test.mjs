@@ -106,6 +106,7 @@ function fakeApi(data) {
             calls.push(`${method} ${p}`);
             if (p.startsWith('/api/target-watch/')) return { targets: data.targets || [] };
             if (p === '/api/watchlist') return { claims: data.claims || [] };
+            if (p.startsWith('/api/attacks/alliance')) return { attacks: data.attacks || [] };
             return null;
         },
     };
@@ -201,6 +202,31 @@ test('own won attacks become ⚔ with the own name; lost/PvP/old reports ignored
     assert.equal(parent.children[0].textContent, '⚔ GhoztMast…');
     p.stop();
     assert.equal(parent.children.length, 0);
+});
+
+test('⚔ of every alliance member from /api/attacks/alliance; own name merges with the own report', async () => {
+    const parent = fakeDom();
+    const now = Date.now();
+    const state = {
+        mode: 'region',
+        objects: { '2:2': { Type: 3, $CampType: 3 }, '6:6': { Type: 2 } },
+        headers: [{ i: 1, t: now - 1000, tp: 2, s: true, ad: { dbn: '3', dbx: 2, dby: 2, dbl: 18 } }],
+    };
+    fakeGame(state);
+    const api = fakeApi({ attacks: [
+        { playerName: 'GhoztMasters', targetType: 'camp', targetLevel: 18, targetX: 2, targetY: 2, timestamp: now - 1000 },
+        { playerName: 'delta3dany', targetType: 'camp', targetLevel: 18, targetX: 2, targetY: 2, timestamp: now - 2000 },
+        { playerName: 'OzookerO', targetType: 'base', targetLevel: 20, targetX: 6, targetY: 6, timestamp: now - 3000 },
+    ] });
+    const p = new mod.MapLabels({ get: (k, d) => d }, api, {});
+    await p.start();
+    await flush();
+    assert.ok(api.calls.includes('GET /api/attacks/alliance?worldId=455'));
+    const texts = parent.children.map(el => el.children.map(c => c.textContent));
+    assert.deepEqual(texts.sort(), [['⚔ OzookerO'], ['⚔ delta3dany', '⚔ GhoztMast…']].sort(),
+        'own attack once (server + report merged), the others from the server');
+    assert.equal(p.statusText(), '👁 0 · 📌 0 · ⚔ 3');
+    p.stop();
 });
 
 test('off the world map: no polling, no labels', async () => {

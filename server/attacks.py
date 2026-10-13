@@ -51,6 +51,9 @@ TUNNEL_RADIUS = 10
 MAX_FUTURE_MS = 3600 * 1000
 MAX_BATCH = 50
 LOOT_MAX = 1e12
+ALLIANCE_WINDOW_MS = 24 * 3600 * 1000
+# The only fields GET /api/attacks/alliance hands out (no loot, no ids)
+ALLIANCE_FIELDS = ("playerName", "targetType", "targetLevel", "targetX", "targetY", "timestamp")
 
 
 class AttackPayload(BaseModel):
@@ -179,6 +182,16 @@ class AttackStore:
             "targets": per_target([_public(r) for r in rows]),
             "players": players,
         }
+
+    def alliance_recent(self, world_id: int, scope: str, since_ms: int) -> list[dict]:
+        """
+        Userscript (Map Labels ⚔, GET /api/attacks/alliance): the attacks of
+        one storage scope (= alliance) from since_ms on, newest first. Only
+        player name, target and time - the loot stays behind the website login.
+        """
+        rows = [r for r in self._load(world_id) if r.get("scope") == scope and r.get("timestamp", 0) >= since_ms]
+        rows.sort(key=lambda r: r["timestamp"], reverse=True)
+        return [{k: r[k] for k in ALLIANCE_FIELDS} for r in rows]
 
     # ─── Internals ───────────────────────────────────────────────────
 

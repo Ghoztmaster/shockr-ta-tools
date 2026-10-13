@@ -227,3 +227,93 @@ def _timestamp(value) -> float:
         return float(value)
     except (TypeError, ValueError):
         return float("-inf")
+
+
+# ─── Auto-revoke: key holders who left the alliance ──────────────────
+#
+# The userscript sends its in-game alliance member list with a scan
+# (allianceMembers on POST /api/scan: first scan batch after login, then once
+# per hour). Per alliance the server keeps each scanner's LATEST list in memory
+# (lost on restart - it fills again within the hour). At most once per hour per
+# alliance it compares the lists with the registered keys of that alliance:
+#
+#   - a key holder counts as "missing" for a scanner when that scanner's list
+#     (at most REPORT_MAX_AGE_S old, sent AFTER the key was issued) lacks them.
+#     The "sent after the key" rule lets a player who comes back and does
+#     /st register again keep the new key; the old lists don't count.
+#   - REVOKE_MIN_SCANNERS (3) different scanners missing them -> key revoked
+#     (removed from player_keys.jsonl, website sessions end with it). Not
+#     restored: a returning player registers again.
+#   - fewer -> only a WARNING, never a revoke, so one broken script can't
+#     throw everybody out.
+#   - the most recent list that mentions the player wins: if it still has
+#     them, nobody is revoked (conflicting lists = no action).
+#   - a list that doesn't contain its own scanner is ignored (broken read).
+
+REVOKE_MIN_SCANNERS = 3
+CHECK_INTERVAL_S = 3600
+REPORT_MAX_AGE_S = 24 * 3600
+MAX_ALLIANCE_MEMBERS = 500
+
+
+class AllianceMember(BaseModel):
+    playerId: int = Field(gt=0)
+    playerName: str = Field(default="", max_length=50)
+
+
+class AllianceMembershipCheck:
+    def __init__(self, clock: Callable[[], float] = time.time,
+                 min_scanners: int = REVOKE_MIN_SCANNERS, interval_s: float = CHECK_INTERVAL_S,
+                 max_age_s: float = REPORT_MAX_AGE_S):
+        self.clock = clock
+        self.min_scanners = min_scanners
+        self.interval_s = interval_s
+        self.max_age_s = max_age_s
+        # alliance id -> scanner playerId -> (received at, member playerIds)
+        self._reports: dict[int, dict[int, tuple[float, frozenset[int]]]] = {}
+        self._last_run: dict[int, float] = {}
+
+    def check_alliance_membership(self, keys: PlayerKeyStore, alliance_id: int, scanner_id: int,
+                                  members: list[AllianceMember]) -> list[int]:
+        """
+        Record one scanner's member list and, when the hourly comparison is
+        due, revoke the keys of players at least min_scanners scanners no
+        longer see. @returns the revoked playerIds (empty when nothing ran).
+        """
+        now = self.clock()
+        ids = frozenset(m.playerId for m in members)
+        if scanner_id not in ids:
+            log.warning("Alliance list from %d ignored: the scanner itself is not in it (%d member(s))",
+                        scanner_id, len(ids))
+            return []
+        self._reports.setdefault(alliance_id, {})[scanner_id] = (now, ids)
+        if now - self._last_run.get(alliance_id, float("-inf")) < self.interval_s:
+            return []
+        self._last_run[alliance_id] = now
+        return self._compare(keys, alliance_id, now)
+
+    def _compare(self, keys: PlayerKeyStore, alliance_id: int, now: float) -> list[int]:
+        reports = {s: r for s, r in self._reports.get(alliance_id, {}).items() if now - r[0] <= self.max_age_s}
+        self._reports[alliance_id] = reports
+        revoked = []
+        for pid, entry in list(keys.players.items()):
+            if entry.get("allianceId") != alliance_id:
+                continue
+            issued = _timestamp(entry.get("createdAt"))
+            missing = [t for s, (t, ids) in reports.items() if pid not in ids and s != pid and t > issued]
+            if not missing:
+                continue
+            name = entry.get("playerName") or str(pid)
+            seen = [t for t, ids in reports.values() if pid in ids]
+            if seen and max(seen) > max(missing):
+                log.warning("%s (%d) not in the alliance list of %d scanner(s), but a newer list still has them — no revoke",
+                            name, pid, len(missing))
+                continue
+            if len(missing) < self.min_scanners:
+                log.warning("%s not in alliance list (reported by %d/%d required scanners)",
+                            name, len(missing), self.min_scanners)
+                continue
+            if keys.revoke(pid):
+                log.info("Key revoked: %s (%d) — no longer in alliance", name, pid)
+                revoked.append(pid)
+        return revoked

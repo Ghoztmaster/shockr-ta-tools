@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+## [5.17.0] — 2026-10-13
+
+### Auto-revoke van keys bij vertrek uit de alliance (server + userscript)
+- Userscript (`lib/api-client.js`): de eerste scan van de eerste scan-batch na het inloggen, en daarna één scan per uur, draagt `allianceMembers` [{playerId, playerName}] uit `get_Alliance().get_MemberData().d`. Telt pas als verstuurd als die scan-request lukte; geen alliance / onleesbaar / leeg = niet meesturen (een lege lijst mag nooit bij de check komen). Omdat scanners pauzeren zolang je online bent, gaat de lijst mee zodra er weer gescand wordt
+- Server (`server/player_keys.py`, `AllianceMembershipCheck.check_alliance_membership()`): per alliance de LAATSTE lijst per scanner in het geheugen (max. 24 u oud); hooguit 1× per uur per alliance vergelijken met de geregistreerde keys van díe alliance. ≥ 3 verschillende scanners zien iemand niet meer → key ingetrokken (`INFO Key revoked: naam (id) — no longer in alliance`), website-sessie vervalt mee; minder → alleen `WARNING naam not in alliance list (reported by N/3 required scanners)`
+- Extra veiligheid (bovenop de werkorder): een lijst zonder de scanner zelf wordt genegeerd (kapotte lezing); is de NIEUWSTE lijst die iets over de speler zegt er een waarin hij nog staat, dan geen revoke; alleen lijsten van NA de huidige key tellen - wie terugkomt en opnieuw `/st register` doet, verliest zijn nieuwe key niet door de oude lijsten
+- `allianceMembers` is optioneel op `POST /api/scan` en wordt NIET in de scan-opslag bewaard; wordt verwerkt vóór de duplicaat-check, zodat ook een dubbele scan de lijst aflevert. Scans zonder het veld: ongewijzigd
+- Tests: `tests/test_auto_revoke.py`, `tests/api-members.test.mjs`
+
+### Publieke alliance-aanvallen voor Map Labels
+- Nieuw endpoint `GET /api/attacks/alliance?worldId=` (zelfde member-auth als scan/watchlist: X-Player-Key + identiteitsheaders; zonder key 403): de gewonnen aanvallen van de EIGEN alliance (opslag-scope) in die wereld, laatste 24 u, nieuwste eerst - alleen `playerName`, `targetType`, `targetLevel`, `targetX`, `targetY`, `timestamp`. Geen loot (die blijft achter de website-login)
+- Map Labels: pollt dit endpoint elke 60 s op de wereldkaart; ⚔ toont nu alle alliance-leden. De eigen aanvallen uit de rapportkoppen (7 dagen) blijven ernaast; een server-regel met de eigen naam krijgt het eigen id, zodat er één ⚔-regel per speler staat
+- nginx: nieuw CORS-blok `location = /shockr/api/attacks/alliance`, zie docs/DEPLOY.md §11
+- Tests: `tests/test_attacks.py`, `tests/map-labels.test.mjs`
+
 ## [5.16.0] — 2026-10-13
 
 ### Loot-logs per target (website + server, geen userscript-wijziging)

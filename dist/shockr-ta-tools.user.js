@@ -4,7 +4,7 @@
 // @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver & wavy for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
-// @version         5.16.0
+// @version         5.17.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // ==/UserScript==
 
@@ -1240,6 +1240,7 @@ var ShockrTools = (() => {
   var SCAN_MIN_INTERVAL_MS = 2e3;
   var RATE_LIMIT_BACKOFF_MS = 5e3;
   var REJECT_NOTIFY_INTERVAL_MS = 6e4;
+  var MEMBERS_INTERVAL_MS = 3600 * 1e3;
   var REJECT_MESSAGES = [
     ["Not a recognized alliance member", "notAMember"],
     ["Not registered", "notRegistered"],
@@ -1259,6 +1260,7 @@ var ShockrTools = (() => {
       this._flushing = null;
       this._gate = null;
       this._heldLogged = false;
+      this._membersSentAt = 0;
     }
     /** Hold the scan queue while gate() returns true (e.g. () => online.isPaused). */
     setSendGate(gate) {
@@ -1403,9 +1405,12 @@ var ShockrTools = (() => {
           this._logHeld();
           break;
         }
-        const result = await this._sendOne(batch[i]);
+        const members = this._membersDue() ? readAllianceMembers() : null;
+        const payload = members ? { ...batch[i], allianceMembers: members } : batch[i];
+        const result = await this._sendOne(payload);
         if (result === true) {
           success++;
+          if (members) this._membersSentAt = Date.now();
         } else if (result === "rateLimited") {
           const rest = batch.slice(i);
           this.queue.unshift(...rest);
@@ -1424,6 +1429,10 @@ var ShockrTools = (() => {
       if (failed > 0) {
         chatMessage(`[ST] ${t("scansFailed", { count: failed })}`);
       }
+    }
+    /** True when the next scan should carry the alliance member list. */
+    _membersDue(now = Date.now()) {
+      return !this._membersSentAt || now - this._membersSentAt >= MEMBERS_INTERVAL_MS;
     }
     /** Wait until the scan slot is free (>= SCAN_MIN_INTERVAL_MS since the previous request). */
     async _paceScan() {
@@ -1561,6 +1570,23 @@ var ShockrTools = (() => {
         worldId3 = m ? Number(m[1]) : 0;
       }
       return { id: id || 0, name: name || "", allianceId: allianceId || 0, worldId: worldId3 };
+    } catch {
+      return null;
+    }
+  }
+  function readAllianceMembers() {
+    try {
+      const alliance = ClientLib.Data.MainData.GetInstance().get_Alliance();
+      if (!alliance || !alliance.get_Id()) return null;
+      const data = alliance.get_MemberData().d;
+      const out = [];
+      for (const key of Object.keys(data || {})) {
+        const m = data[key];
+        const id = Number(m && m.Id || key);
+        if (!Number.isInteger(id) || id <= 0) continue;
+        out.push({ playerId: id, playerName: String(m && m.Name || "").slice(0, 50) });
+      }
+      return out.length ? out : null;
     } catch {
       return null;
     }
@@ -4849,6 +4875,7 @@ var ShockrTools = (() => {
   var WATCH_POLL_MS = 10 * 1e3;
   var CLAIM_POLL_MS = 60 * 1e3;
   var ATTACK_POLL_MS = 60 * 1e3;
+  var ALLIANCE_ATTACK_POLL_MS = 60 * 1e3;
   var RENDER_MS = 2e3;
   var ATTACK_MAX_AGE_MS = 7 * 24 * 3600 * 1e3;
   var NAME_MAX = 10;
@@ -4938,8 +4965,9 @@ var ShockrTools = (() => {
       this.watches = [];
       this.claims = [];
       this.attacks = [];
-      this._last = { watch: 0, claim: 0, attack: 0 };
-      this._busy = { watch: false, claim: false, attack: false };
+      this.allianceAttacks = [];
+      this._last = { watch: 0, claim: 0, attack: 0, alliance: 0 };
+      this._busy = { watch: false, claim: false, attack: false, alliance: false };
       this.labels = /* @__PURE__ */ new Map();
       this._events = [];
       this._timer = null;
@@ -4968,7 +4996,7 @@ var ShockrTools = (() => {
     }
     /** One-line status for `/st status`. */
     statusText() {
-      return `\u{1F441} ${this.watches.length} \xB7 \u{1F4CC} ${this.claims.length} \xB7 \u2694 ${this.attacks.length}`;
+      return `\u{1F441} ${this.watches.length} \xB7 \u{1F4CC} ${this.claims.length} \xB7 \u2694 ${new Set(this._allAttacks().map((a) => `${a.x}:${a.y}:${a.playerId ?? a.playerName}`)).size}`;
     }
     /** Called every second: fires each source when its interval is due. Only on the world map. */
     poll(now = Date.now()) {
@@ -4978,6 +5006,7 @@ var ShockrTools = (() => {
         const configured = !!(this.api && this.api.isConfigured);
         if (configured && now - this._last.watch >= WATCH_POLL_MS) this._fetchWatches(now);
         if (configured && now - this._last.claim >= CLAIM_POLL_MS) this._fetchClaims(now);
+        if (configured && now - this._last.alliance >= ALLIANCE_ATTACK_POLL_MS) this._fetchAllianceAttacks(now);
         if (now - this._last.attack >= ATTACK_POLL_MS) this._readAttacks(now);
       } catch (e) {
         console.warn("[ST] MapLabels: poll failed", e && e.message);
@@ -5022,6 +5051,35 @@ var ShockrTools = (() => {
       } finally {
         this._busy.claim = false;
       }
+    }
+    /** Every alliance member's won attacks of the last 24 h (GET /api/attacks/alliance). */
+    async _fetchAllianceAttacks(now) {
+      if (this._busy.alliance) return;
+      const wid = worldId();
+      if (!wid) return;
+      this._busy.alliance = true;
+      this._last.alliance = now;
+      try {
+        const data = await this.api.request("GET", `/api/attacks/alliance?worldId=${wid}`);
+        if (data && Array.isArray(data.attacks)) {
+          const me = ownPlayer();
+          this.allianceAttacks = data.attacks.map((a) => ({
+            x: a.targetX,
+            y: a.targetY,
+            playerName: a.playerName,
+            // No playerId from the server: the own name -> the own id, so it merges with the report-based ⚔
+            playerId: me.id != null && a.playerName === me.name ? me.id : void 0
+          }));
+          this.render();
+        }
+      } catch {
+      } finally {
+        this._busy.alliance = false;
+      }
+    }
+    /** Own (report headers) + alliance (server) attacks, for mergeLabels. */
+    _allAttacks() {
+      return [...this.attacks, ...this.allianceAttacks];
     }
     /** Own won FG attacks from the report headers (read-only, same route/filter as AttackTracker). */
     _readAttacks(now) {
@@ -5071,7 +5129,7 @@ var ShockrTools = (() => {
         const me = ownPlayer();
         const tw = this.plugins.targetWatcher;
         const merged = mergeLabels(
-          { watches: this.watches, claims: this.claims, attacks: this.attacks },
+          { watches: this.watches, claims: this.claims, attacks: this._allAttacks() },
           { ownId: me.id, ownCurrentTargetId: tw && tw.running ? tw._currentId : null }
         );
         const world = ClientLib.Data.MainData.GetInstance().get_World();
@@ -6001,7 +6059,7 @@ var ShockrTools = (() => {
   };
 
   // lib/main.js
-  var ST_VERSION = "5.16.0";
+  var ST_VERSION = "5.17.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });

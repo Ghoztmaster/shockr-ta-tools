@@ -4,6 +4,8 @@ Data models — strict Pydantic validation on all input.
 import re
 from pydantic import BaseModel, Field, field_validator
 
+from server.player_keys import MAX_ALLIANCE_MEMBERS, AllianceMember
+
 BASE62_PATTERN = re.compile(r'^[0-9A-Za-z.\-]*$')
 
 
@@ -39,6 +41,9 @@ class ScanPayload(BaseModel):
     scanned_by: str = Field(max_length=50)
     version: int = Field(gt=0)
     timestamp: int = Field(gt=0)
+    # 5.17.0, optional: the scanner's in-game alliance member list (first scan
+    # batch after login, then hourly) for the auto-revoke check. Not stored with the scan.
+    allianceMembers: list[AllianceMember] | None = Field(default=None, max_length=MAX_ALLIANCE_MEMBERS)
 
     @field_validator('name', 'owner', 'alliance', 'scanned_by', 'world_name')
     @classmethod
