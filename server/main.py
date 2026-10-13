@@ -484,12 +484,7 @@ async def get_attacks(
     midnight for "today") or else the last `days` days, never more than the
     retention. No worldId: the world with the most recent attack.
     """
-    worlds = attack_store.worlds()
-    world_id = worldId if worldId is not None else (worlds[0] if worlds else None)
-    now_ms = int(time.time() * 1000)
-    floor_ms = now_ms - ATTACK_RETENTION_DAYS * 86400 * 1000
-    since_ms = since if since is not None else now_ms - max(1, min(days, ATTACK_RETENTION_DAYS)) * 86400 * 1000
-    since_ms = max(since_ms, floor_ms)
+    worlds, world_id, now_ms, since_ms = _attack_period(worldId, days, since)
     target_type = (type or "").strip().lower() or None
     if world_id is None:
         return {"worldId": None, "worlds": [], "since": since_ms, "serverTime": now_ms,
@@ -497,6 +492,42 @@ async def get_attacks(
                 "tunnels": [], "attacks": [], "players": []}
     data = attack_store.query(world_id, since_ms, player=(player or "").strip() or None, target_type=target_type)
     return {**data, "worlds": worlds, "serverTime": now_ms}
+
+
+@app.get("/api/attacks/targets", dependencies=[Depends(rate_limit_get), Depends(require_session)])
+async def get_attack_targets(
+    worldId: int | None = None,
+    days: int = 7,
+    since: int | None = None,
+    player: str | None = None,
+    type: str | None = None,
+):
+    """
+    Loot logs (website session): the won attacks grouped per target
+    coordinate - count, total and average loot, players, last attack. Same
+    period/world/player/type rules as GET /api/attacks; no extra storage.
+    """
+    worlds, world_id, now_ms, since_ms = _attack_period(worldId, days, since)
+    target_type = (type or "").strip().lower() or None
+    if world_id is None:
+        return {"worldId": None, "worlds": [], "since": since_ms, "serverTime": now_ms,
+                "targets": [], "players": []}
+    data = attack_store.targets(world_id, since_ms, player=(player or "").strip() or None, target_type=target_type)
+    return {**data, "worlds": worlds, "serverTime": now_ms}
+
+
+def _attack_period(world_id: int | None, days: int, since: int | None) -> tuple[list[int], int | None, int, int]:
+    """
+    (worlds, world, now, since) for the attack dashboards. Period: `since`
+    (ms epoch, e.g. local midnight for "today") or else the last `days` days,
+    never more than the retention. No world: the one with the most recent attack.
+    """
+    worlds = attack_store.worlds()
+    world = world_id if world_id is not None else (worlds[0] if worlds else None)
+    now_ms = int(time.time() * 1000)
+    floor_ms = now_ms - ATTACK_RETENTION_DAYS * 86400 * 1000
+    since_ms = since if since is not None else now_ms - max(1, min(days, ATTACK_RETENTION_DAYS)) * 86400 * 1000
+    return worlds, world, now_ms, max(since_ms, floor_ms)
 
 # ─── WatchList (claims on FG targets, 24 h) ─────────────────────────
 
@@ -638,6 +669,10 @@ async def targets_page(request: Request):
 @app.get("/attacks")
 async def attacks_page(request: Request):
     return page(request, "attacks.html", "login")
+
+@app.get("/loot")
+async def loot_page(request: Request):
+    return page(request, "loot.html", "login")
 
 @app.get("/watchlist")
 async def watchlist_page(request: Request):

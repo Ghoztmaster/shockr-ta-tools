@@ -1,9 +1,9 @@
 {
   "planned": [
     {
-      "en": "v5.16 — Scanner sends buildings: CP/CY/DF columns, loot logs per target",
-      "de": "v5.16 — Scanner sendet Gebäude: CP/CY/DF-Spalten, Beute-Logs pro Ziel",
-      "nl": "v5.16 — Scanner stuurt gebouwen mee: CP/CY/DF-kolommen, loot-logs per target"
+      "en": "Scanner sends buildings: CP/CY/DF columns",
+      "de": "Scanner sendet Gebäude: CP/CY/DF-Spalten",
+      "nl": "Scanner stuurt gebouwen mee: CP/CY/DF-kolommen"
     },
     {
       "en": "Alliance War Dashboard expansion",

@@ -25,6 +25,9 @@ first centre, every position within the radius joins it, the next unassigned
 position starts the next one. Distance is Euclidean (as the game's attack
 range). The label is the attack-weighted mean of the cluster's positions.
 
+Loot logs (per_target, GET /api/attacks/targets): the same records grouped
+per individual target coordinate instead of per tunnel - no extra storage.
+
 The store keeps each world's records in memory after the first read; that
 needs a single uvicorn worker, as in the Dockerfile.
 """
@@ -33,6 +36,7 @@ import logging
 import math
 import os
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
 
@@ -151,14 +155,7 @@ class AttackStore:
         first), totals, the tunnel clusters and the players seen in the period
         (the player dropdown — unaffected by the player/type filter).
         """
-        in_period = [r for r in self._load(world_id) if r.get("timestamp", 0) >= since_ms]
-        players = sorted({r["playerName"] for r in in_period}, key=str.lower)
-        rows = [
-            r for r in in_period
-            if (not player or r["playerName"].lower() == player.lower())
-            and (not target_type or r["targetType"] == target_type)
-        ]
-        rows.sort(key=lambda r: r["timestamp"], reverse=True)
+        players, rows = self._filtered(world_id, since_ms, player, target_type)
         attacks = [_public(r) for r in rows]
         return {
             "worldId": world_id,
@@ -169,7 +166,34 @@ class AttackStore:
             "players": players,
         }
 
+    def targets(self, world_id: int, since_ms: int, player: str | None = None,
+                target_type: str | None = None) -> dict:
+        """
+        Loot logs: the same attacks as query(), grouped per target coordinate
+        (see per_target), plus the players seen in the period (dropdown).
+        """
+        players, rows = self._filtered(world_id, since_ms, player, target_type)
+        return {
+            "worldId": world_id,
+            "since": since_ms,
+            "targets": per_target([_public(r) for r in rows]),
+            "players": players,
+        }
+
     # ─── Internals ───────────────────────────────────────────────────
+
+    def _filtered(self, world_id: int, since_ms: int, player: str | None,
+                  target_type: str | None) -> tuple[list[str], list[dict]]:
+        """(players seen in the period, the period's rows after the player/type filter, newest first)."""
+        in_period = [r for r in self._load(world_id) if r.get("timestamp", 0) >= since_ms]
+        players = sorted({r["playerName"] for r in in_period}, key=str.lower)
+        rows = [
+            r for r in in_period
+            if (not player or r["playerName"].lower() == player.lower())
+            and (not target_type or r["targetType"] == target_type)
+        ]
+        rows.sort(key=lambda r: r["timestamp"], reverse=True)
+        return players, rows
 
     def _file(self, world_id: int) -> Path:
         return self.dir / f"{int(world_id)}.jsonl"
@@ -245,6 +269,56 @@ def cluster_attacks(attacks: list[dict], radius: float = TUNNEL_RADIUS,
         })
     result.sort(key=lambda c: (-c["attacks"], -c["lastAt"]))
     return result
+
+
+def per_target(attacks: list[dict]) -> list[dict]:
+    """
+    Loot logs: one summary per target coordinate (targetX, targetY). Type and
+    level come from the most recent attack on it (a camp can respawn as
+    something else on the same spot); players = unique names, most attacks
+    first. Averages are rounded per attack; avgTotal = tib + crystal + credits
+    per attack. `attackList` (newest first) feeds the page's detail rows.
+    Order: highest avgTotal first (most lucrative on top).
+    """
+    by_pos: dict[tuple[int, int], list[dict]] = {}
+    for a in attacks:
+        by_pos.setdefault((a["targetX"], a["targetY"]), []).append(a)
+
+    result = []
+    for (x, y), rows in by_pos.items():
+        rows = sorted(rows, key=lambda a: a["timestamp"], reverse=True)
+        n = len(rows)
+        counts: dict[str, int] = {}
+        for a in rows:
+            counts[a["playerName"]] = counts.get(a["playerName"], 0) + 1
+        tib = sum(a["lootTib"] for a in rows)
+        cry = sum(a["lootCrystal"] for a in rows)
+        cred = sum(a["lootCredits"] for a in rows)
+        last = rows[0]
+        result.append({
+            "x": x,
+            "y": y,
+            "targetType": last["targetType"],
+            "targetLevel": last["targetLevel"],
+            "attackCount": n,
+            "players": sorted(counts, key=lambda p: (-counts[p], p.lower())),
+            "totalTib": tib,
+            "totalCrystal": cry,
+            "totalCredits": cred,
+            "avgTib": round(tib / n),
+            "avgCrystal": round(cry / n),
+            "avgCredits": round(cred / n),
+            "avgTotal": round((tib + cry + cred) / n),
+            "lastAttack": _iso(last["timestamp"]),
+            "lastAttackMs": last["timestamp"],
+            "attackList": rows,
+        })
+    result.sort(key=lambda t: (-t["avgTotal"], -t["attackCount"], t["x"], t["y"]))
+    return result
+
+
+def _iso(ms: int) -> str:
+    return datetime.fromtimestamp(ms / 1000, tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _same_attack(record: dict, payload: AttackPayload, player_id: int) -> bool:

@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+## [5.16.0] — 2026-10-13
+
+### Loot-logs per target (website + server, geen userscript-wijziging)
+- Nieuw endpoint `GET /api/attacks/targets?worldId=&days=` (website-sessie; ook `since`/`player`/`type` zoals `/api/attacks`): de bestaande gewonnen aanvallen uit `data/attacks/{worldId}.jsonl` gegroepeerd per target-coördinaat - `attackCount`, `players` (uniek, meeste aanvallen eerst), `total*`/`avg*` per grondstof, `avgTotal` (tib + crystal + credits per aanval), `lastAttack` (ISO) + `lastAttackMs`, type/level van de meest recente aanval en `attackList` voor het detail. Geen extra opslag (`AttackStore.targets()` / `per_target()`)
+- Nieuwe pagina `/loot` (💰 Loot, in de navigatie van elke pagina tussen 🗡 Attacks en 📌 WatchList): samenvatting = de totalen van de getoonde tabel, elke kolom sorteerbaar (standaard Gem/aanval aflopend), filters speler / periode (vandaag, 3, 7 dagen; standaard 7) / type / min. aanvallen (≥1-≥10, client-side), klik op een rij = de losse aanvallen. Geen data: "Nog geen aanvallen gelogd". EN/DE/NL
+- `/attacks` en `/api/attacks` inhoudelijk ongewijzigd (alleen de nav-link erbij; de periode-berekening is gedeeld met het nieuwe endpoint via `_attack_period()`)
+- `tests/test_siteinfo.py` leest de versie uit `build.js` i.p.v. een vaste `5.11.0` (faalde al sinds 5.12)
+
 ## [5.15.0] — 2026-10-13
 
 ### Formation Saver (nieuw, `formation-saver`, standaard aan)

@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.15.0 released — new plugins Formation Saver (/st formation save|load|list|delete) and Wavy (Forgotten bases in range, level distribution and waves in the base info panel, distance lines on the world map)",
-      "de": "v5.15.0 veröffentlicht — neue Plugins Formation Saver (/st formation save|load|list|delete) und Wavy (Forgotten-Basen in Reichweite, Level-Verteilung und Wellen im Basis-Infofenster, Entfernungslinien auf der Weltkarte)",
-      "nl": "v5.15.0 uitgebracht — nieuwe plugins Formation Saver (/st formation save|load|list|delete) en Wavy (Forgotten-bases in bereik, level-verdeling en waves in het base-infopaneel, afstandslijnen op de wereldkaart)"
+      "en": "v5.16.0 released — new page 💰 Loot: loot per target coordinate (attacks, total and average loot, players), sortable and filterable, click a target for its individual attacks",
+      "de": "v5.16.0 veröffentlicht — neue Seite 💰 Beute: Beute pro Zielkoordinate (Angriffe, Gesamt- und Durchschnittsbeute, Spieler), sortier- und filterbar, Klick auf ein Ziel zeigt die einzelnen Angriffe",
+      "nl": "v5.16.0 uitgebracht — nieuwe pagina 💰 Loot: loot per target-coördinaat (aanvallen, totale en gemiddelde loot, spelers), sorteer- en filterbaar, klik op een target voor de losse aanvallen"
     },
     "type": "info",
     "active": true

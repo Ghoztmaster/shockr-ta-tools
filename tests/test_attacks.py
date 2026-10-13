@@ -207,3 +207,60 @@ def test_get_without_data(env):
     c.post("/api/login", json={"playerName": "GhoztMasters", "apiKey": env["key"]})
     data = c.get("/api/attacks").json()
     assert data["worldId"] is None and data["tunnels"] == []
+
+
+# ─── Loot logs: per target coordinate ───────────────────────────────
+
+def test_per_target_groups_on_coordinate():
+    s = store_with()
+    s.add(AttackPayload(**attack(timestamp=NOW_MS - 3_600_000)), 164, "GhoztMasters", "SoO")
+    s.add(AttackPayload(**attack(lootTib=150000, lootCrystal=95000, lootCredits=48000, targetLevel=19,
+                                 timestamp=NOW_MS - 60_000)), 200, "delta3dany", "SoO")
+    s.add(AttackPayload(**attack(targetX=90, targetY=310, targetType="camp", targetLevel=20,
+                                 lootTib=500000, lootCrystal=400000, lootCredits=100000)), 164, "GhoztMasters", "SoO")
+    data = s.targets(477, 0)
+    assert data["players"] == ["delta3dany", "GhoztMasters"]
+    # Highest average loot per attack first: the camp (1M) above the outpost (~270k)
+    camp, outpost = data["targets"]
+    assert (camp["x"], camp["y"], camp["attackCount"], camp["avgTotal"]) == (90, 310, 1, 1_000_000)
+    assert (outpost["x"], outpost["y"], outpost["attackCount"]) == (84, 293, 2)
+    assert (outpost["totalTib"], outpost["totalCrystal"], outpost["totalCredits"]) == (270000, 180000, 90000)
+    assert (outpost["avgTib"], outpost["avgCrystal"], outpost["avgCredits"]) == (135000, 90000, 45000)
+    assert outpost["avgTotal"] == 270000
+    # Type/level from the most recent attack; players unique
+    assert (outpost["targetType"], outpost["targetLevel"]) == ("outpost", 19)
+    assert sorted(outpost["players"]) == ["GhoztMasters", "delta3dany"]
+    assert outpost["lastAttackMs"] == NOW_MS - 60_000
+    assert outpost["lastAttack"].endswith("Z") and outpost["lastAttack"].startswith("20")
+    assert [a["playerName"] for a in outpost["attackList"]] == ["delta3dany", "GhoztMasters"]
+
+
+def test_get_targets_endpoint(env):
+    c = env["client"]
+    assert c.get("/api/attacks/targets").status_code == 401
+    assert c.get("/loot", follow_redirects=False).status_code == 303
+    c.post("/api/attack", json=[attack(), attack(targetType="camp", targetX=86, timestamp=NOW_MS - 2 * 86400 * 1000)],
+           headers=headers(164, "GhoztMasters", env["key"]))
+    c.post("/api/attack", json=attack(timestamp=NOW_MS - 30_000), headers=headers(200, "OzookerO", env["other"]))
+    c.post("/api/login", json={"playerName": "GhoztMasters", "apiKey": env["key"]})
+
+    data = c.get("/api/attacks/targets", params={"worldId": 477, "days": 7}).json()
+    assert data["worlds"] == [477] and data["players"] == ["GhoztMasters", "OzookerO"]
+    assert {(t["x"], t["y"]): t["attackCount"] for t in data["targets"]} == {(84, 293): 2, (86, 293): 1}
+    # Summary over the targets equals the per-attack totals of /api/attacks
+    totals = c.get("/api/attacks", params={"worldId": 477, "days": 7}).json()["summary"]
+    assert sum(t["attackCount"] for t in data["targets"]) == totals["attacks"]
+    assert sum(t["totalTib"] for t in data["targets"]) == totals["lootTib"]
+
+    one = c.get("/api/attacks/targets", params={"player": "ozookero"}).json()
+    assert [(t["x"], t["players"]) for t in one["targets"]] == [(84, ["OzookerO"])]
+    assert c.get("/api/attacks/targets", params={"days": 1}).json()["targets"][0]["x"] == 84
+    assert [t["x"] for t in c.get("/api/attacks/targets", params={"type": "camp"}).json()["targets"]] == [86]
+    assert c.get("/loot").status_code == 200
+
+
+def test_get_targets_without_data(env):
+    c = env["client"]
+    c.post("/api/login", json={"playerName": "GhoztMasters", "apiKey": env["key"]})
+    data = c.get("/api/attacks/targets").json()
+    assert data["worldId"] is None and data["targets"] == []

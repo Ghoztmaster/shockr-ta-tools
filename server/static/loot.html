@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en" data-i18n-doctitle="lootPageTitle">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shockr Loot</title>
+<script src="static/i18n.js"></script>
+<script src="static/footer.js"></script>
+<script src="static/announcements.js"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        background: #1a1a1a;
+        color: #ccc;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        font-size: 14px;
+    }
+    a { color: #4fc3f7; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Header */
+    .header {
+        background: #252525;
+        border-bottom: 1px solid #333;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .header h1 { font-size: 18px; color: #e0e0e0; }
+    .nav { font-size: 13px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+
+    /* Filters */
+    .filters {
+        background: #222;
+        padding: 10px 20px;
+        border-bottom: 1px solid #333;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .filters label { color: #999; font-size: 12px; margin-right: 4px; }
+    .filters select {
+        background: #333;
+        color: #ccc;
+        border: 1px solid #444;
+        padding: 4px 8px;
+        font-size: 13px;
+    }
+    .filters button {
+        background: #66bb6a;
+        color: #111;
+        border: none;
+        padding: 5px 14px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+    .filters button:hover { background: #81c784; }
+    .filters .updated { color: #777; font-size: 12px; margin-left: auto; }
+    .filters .updated.error { color: #e57373; }
+
+    .content { padding: 12px 20px; }
+    .summary {
+        background: #222;
+        border: 1px solid #333;
+        border-left: 3px solid #ffd54f;
+        padding: 10px 14px;
+        margin-bottom: 14px;
+        color: #e0e0e0;
+    }
+    .summary .period { color: #999; margin-right: 6px; }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+        background: #2a2a2a;
+        color: #aaa;
+        text-align: left;
+        padding: 6px 8px;
+        border-bottom: 1px solid #444;
+        white-space: nowrap;
+        cursor: pointer;
+        user-select: none;
+    }
+    th:hover { color: #e0e0e0; }
+    th.sorted { color: #ffd54f; }
+    th.num, td.num { text-align: right; }
+    td { padding: 5px 8px; border-bottom: 1px solid #2a2a2a; white-space: nowrap; }
+    tr.target { cursor: pointer; }
+    tr.target:hover td { background: #252525; }
+    tr.target.open td { background: #262626; }
+    td .caret { color: #777; display: inline-block; width: 14px; }
+    td.players { white-space: normal; color: #bbb; }
+    td.avg { color: #ffd54f; }
+    tr.detail > td { background: #1e1e1e; padding: 4px 8px 10px 30px; }
+    tr.detail table { width: auto; min-width: 50%; }
+    tr.detail th { cursor: default; background: #252525; }
+    tr.detail th:hover { color: #aaa; }
+    .type-camp { color: #8bc34a; }
+    .type-outpost { color: #4fc3f7; }
+    .type-base { color: #ff9800; }
+
+    .loading { text-align: center; padding: 40px; color: #666; }
+
+    @media (max-width: 640px) {
+        .header, .filters, .content { padding-left: 12px; padding-right: 12px; }
+        .filters .updated { margin-left: 0; width: 100%; }
+    }
+    /* Website session (session.js) */
+    .user { font-size: 12px; color: #888; display: flex; align-items: center; gap: 6px; }
+    .user strong { color: #e0e0e0; font-weight: normal; }
+    .user form { display: inline; }
+    .user button {
+        background: #444; color: #ccc; border: none; border-radius: 3px;
+        padding: 3px 8px; font-size: 12px; cursor: pointer;
+    }
+    .user button:hover { background: #666; }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1><span data-i18n="lootTitle">💰 Loot per target</span> <span id="worldTitle"></span></h1>
+    <div class="nav">
+        <a href="./" data-i18n="navBases">⚔ Bases</a>
+        <a href="targets" data-i18n="navTargetWatch">🎯 Target Watch</a>
+        <a href="attacks" data-i18n="navAttacks">🗡 Attacks</a>
+        <a href="watchlist" data-i18n="navWatchList">📌 WatchList</a>
+        <a href="info" data-i18n="navInfo">ℹ Info</a>
+        <span class="user" id="userBox"></span>
+        <span class="lang-switch" id="langSwitch"></span>
+    </div>
+</div>
+
+<div class="filters">
+    <div id="worldPicker" style="display:none">
+        <label for="worldSelect" data-i18n="world">World:</label>
+        <select id="worldSelect"></select>
+    </div>
+    <div>
+        <label for="playerSelect" data-i18n="attacksFilterPlayer">Player:</label>
+        <select id="playerSelect"></select>
+    </div>
+    <div>
+        <label for="periodSelect" data-i18n="attacksFilterPeriod">Period:</label>
+        <select id="periodSelect">
+            <option value="today" data-i18n="attacksPeriodToday">Today</option>
+            <option value="3" data-i18n="attacksPeriod3">3 days</option>
+            <option value="7" data-i18n="attacksPeriod7">7 days</option>
+        </select>
+    </div>
+    <div>
+        <label for="typeSelect" data-i18n="filterType">Type:</label>
+        <select id="typeSelect">
+            <option value="" data-i18n="all">All</option>
+            <option value="camp">Camp</option>
+            <option value="outpost">Outpost</option>
+            <option value="base">Base</option>
+        </select>
+    </div>
+    <div>
+        <label for="minSelect" data-i18n="lootFilterMin">Min. attacks:</label>
+        <select id="minSelect">
+            <option value="1">≥1</option>
+            <option value="2">≥2</option>
+            <option value="3">≥3</option>
+            <option value="5">≥5</option>
+            <option value="10">≥10</option>
+        </select>
+    </div>
+    <button onclick="loadTargets()" data-i18n="refresh">↻ Refresh</button>
+    <span class="updated" id="updated"></span>
+</div>
+
+<div class="content">
+    <div class="summary" id="summary" data-i18n="loading">Loading...</div>
+    <div class="table-wrap" id="table"></div>
+</div>
+
+<script src="static/session.js"></script>
+<script>
+const API = '.';
+const REFRESH_MS = 60000;
+const PREFS_KEY = 'st-loot-prefs';
+const MIN_OPTIONS = ['1', '2', '3', '5', '10'];
+
+// Table columns: sort value per target; `asc` = first click sorts ascending
+const COLUMNS = [
+    { key: 'coords', label: () => T('lootColCoords'), value: t => t.x * 10000 + t.y, asc: true },
+    { key: 'type', label: () => T('colType'), value: t => t.targetType, asc: true },
+    { key: 'level', label: () => T('colLevel'), value: t => t.targetLevel, num: true },
+    { key: 'attacks', label: () => T('lootColAttacks'), value: t => t.attackCount, num: true },
+    { key: 'players', label: () => T('lootColPlayers'), value: t => t.players.length, num: true },
+    { key: 'tib', label: () => 'Tib', value: t => t.totalTib, num: true },
+    { key: 'crystal', label: () => 'Crystal', value: t => t.totalCrystal, num: true },
+    { key: 'credits', label: () => 'Credits', value: t => t.totalCredits, num: true },
+    { key: 'avg', label: () => T('lootColAvg'), value: t => t.avgTotal, num: true },
+    { key: 'last', label: () => T('lootColLast'), value: t => t.lastAttackMs, num: true },
+];
+
+const prefs = readPrefs();     // {world, player, period, type, min}
+const sort = { key: 'avg', asc: false };   // default: most lucrative on top
+let data = null;               // last /api/attacks/targets response
+let lastStatus = null;
+const open = new Set();        // expanded targets ("x:y")
+
+async function loadTargets() {
+    const params = new URLSearchParams();
+    if (prefs.world) params.set('worldId', prefs.world);
+    if (prefs.period === 'today') {
+        const midnight = new Date();
+        midnight.setHours(0, 0, 0, 0);
+        params.set('since', String(midnight.getTime()));
+    } else {
+        params.set('days', prefs.period);
+    }
+    if (prefs.player) params.set('player', prefs.player);
+    if (prefs.type) params.set('type', prefs.type);
+    try {
+        const resp = await fetch(`${API}/api/attacks/targets?${params}`, { cache: 'no-store' });
+        if (!resp.ok) throw new Error(`${resp.status} ${resp.statusText}`);
+        data = await resp.json();
+        showStatus({ key: 'updated', vars: { time: new Date().toLocaleTimeString(), s: REFRESH_MS / 1000 }, error: false });
+    } catch (e) {
+        showStatus({ key: 'refreshFailed', vars: { msg: e.message, s: REFRESH_MS / 1000 }, error: true });
+        if (!data) document.getElementById('summary').textContent = T('error', { msg: e.message });
+        return;
+    }
+    render();
+}
+
+function showStatus(status) {
+    lastStatus = status;
+    const el = document.getElementById('updated');
+    el.classList.toggle('error', status.error);
+    el.textContent = T(status.key, status.vars);
+}
+
+/** The targets the table shows: the server's list after the min-attacks filter, sorted. */
+function visibleTargets() {
+    const min = parseInt(prefs.min, 10) || 1;
+    const col = COLUMNS.find(c => c.key === sort.key) || COLUMNS[8];
+    const dir = sort.asc ? 1 : -1;
+    return data.targets
+        .filter(t => t.attackCount >= min)
+        .sort((a, b) => {
+            const va = col.value(a), vb = col.value(b);
+            const cmp = typeof va === 'string' ? va.localeCompare(vb) : va - vb;
+            return cmp * dir || b.avgTotal - a.avgTotal || a.x - b.x || a.y - b.y;
+        });
+}
+
+function render() {
+    if (!data) return;
+    renderPickers();
+    document.getElementById('worldTitle').textContent = data.worldId ? T('worldTitle', { id: data.worldId }) : '';
+
+    const rows = visibleTargets();
+    // Summary = the table's own totals, so the two always agree
+    const sum = k => rows.reduce((s, t) => s + t[k], 0);
+    const attacks = sum('attackCount');
+    const periodKey = { today: 'attacksPeriodToday', 3: 'attacksPeriod3', 7: 'attacksPeriod7' }[prefs.period];
+    const summary = document.getElementById('summary');
+    summary.removeAttribute('data-i18n');   // a later applyI18n() must not put "Loading..." back
+    summary.innerHTML =
+        `<span class="period">${esc(T(periodKey))}:</span>` +
+        esc(T('lootSummary', {
+            attacks: T(attacks === 1 ? 'attacksOne' : 'attacksCount', { n: attacks }),
+            targets: T(rows.length === 1 ? 'lootTargetsOne' : 'lootTargetsCount', { n: rows.length }),
+            tib: fmt(sum('totalTib')), crystal: fmt(sum('totalCrystal')), credits: fmt(sum('totalCredits')),
+        }));
+
+    const box = document.getElementById('table');
+    if (!rows.length) {
+        const filtered = data.targets.length || prefs.player || prefs.type;
+        box.innerHTML = `<div class="loading">${esc(T(filtered ? 'lootNoneFiltered' : 'lootNone'))}</div>`;
+        return;
+    }
+    const head = COLUMNS.map(c => {
+        const sorted = c.key === sort.key;
+        const arrow = sorted ? (sort.asc ? ' ▲' : ' ▼') : '';
+        return `<th class="${c.num ? 'num' : ''}${sorted ? ' sorted' : ''}" data-sort="${c.key}" title="${esc(T('lootSortTip'))}">${esc(c.label())}${arrow}</th>`;
+    }).join('');
+    box.innerHTML = `<table><thead><tr>${head}</tr></thead><tbody>${rows.map(targetHtml).join('')}</tbody></table>`;
+
+    box.querySelectorAll('th[data-sort]').forEach(th => th.addEventListener('click', () => {
+        const col = COLUMNS.find(c => c.key === th.dataset.sort);
+        if (sort.key === col.key) sort.asc = !sort.asc;
+        else { sort.key = col.key; sort.asc = !!col.asc; }
+        render();
+    }));
+    box.querySelectorAll('tr.target').forEach(tr => tr.addEventListener('click', () => {
+        const key = tr.dataset.key;
+        if (open.has(key)) open.delete(key); else open.add(key);
+        render();
+    }));
+}
+
+function targetHtml(t) {
+    const key = `${t.x}:${t.y}`;
+    const expanded = open.has(key);
+    const avgTip = T('lootAvgTip', { tib: fmt(t.avgTib), crystal: fmt(t.avgCrystal), credits: fmt(t.avgCredits) });
+    const row = `<tr class="target${expanded ? ' open' : ''}" data-key="${key}" title="${esc(T('lootToggleDetail'))}">
+        <td><span class="caret">${expanded ? '▾' : '▸'}</span>${t.x}:${t.y}</td>
+        <td><span class="type-${esc(t.targetType)}">${esc(t.targetType)}</span></td>
+        <td class="num">${Math.floor(t.targetLevel)}</td>
+        <td class="num">${t.attackCount}</td>
+        <td class="num" title="${esc(t.players.join(', '))}">${t.players.length}</td>
+        <td class="num">${fmt(t.totalTib)}</td>
+        <td class="num">${fmt(t.totalCrystal)}</td>
+        <td class="num">${fmt(t.totalCredits)}</td>
+        <td class="num avg" title="${esc(avgTip)}">${fmt(t.avgTotal)}</td>
+        <td class="num" title="${esc(new Date(t.lastAttackMs).toLocaleString())}">${esc(ago(t.lastAttackMs))}</td>
+    </tr>`;
+    if (!expanded) return row;
+    return row + `<tr class="detail"><td colspan="${COLUMNS.length}"><table>
+        <thead><tr>
+            <th>${esc(T('attacksColTime'))}</th><th>${esc(T('attacksColPlayer'))}</th>
+            <th class="num">Tib</th><th class="num">Crystal</th><th class="num">Credits</th>
+        </tr></thead>
+        <tbody>${t.attackList.map(a => `<tr>
+            <td>${esc(timeLabel(a.timestamp))}</td>
+            <td>${esc(a.playerName)}</td>
+            <td class="num">${fmt(a.lootTib)}</td>
+            <td class="num">${fmt(a.lootCrystal)}</td>
+            <td class="num">${fmt(a.lootCredits)}</td>
+        </tr>`).join('')}</tbody>
+    </table></td></tr>`;
+}
+
+function renderPickers() {
+    const worlds = data.worlds || [];
+    const picker = document.getElementById('worldPicker');
+    const ws = document.getElementById('worldSelect');
+    picker.style.display = worlds.length > 1 ? '' : 'none';
+    ws.innerHTML = worlds.map(w => `<option value="${w}">${esc(T('attacksWorldOption', { id: w }))}</option>`).join('');
+    if (data.worldId) ws.value = String(data.worldId);
+
+    const ps = document.getElementById('playerSelect');
+    const players = data.players || [];
+    if (prefs.player && !players.includes(prefs.player)) players.push(prefs.player);
+    ps.innerHTML = `<option value="">${esc(T('all'))}</option>` +
+        players.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
+    ps.value = prefs.player || '';
+    document.getElementById('periodSelect').value = prefs.period;
+    document.getElementById('typeSelect').value = prefs.type || '';
+    document.getElementById('minSelect').value = prefs.min;
+}
+
+/** "2h ago" from the server's own clock (the page may run on a skewed one). */
+function ago(ms) {
+    const now = data && data.serverTime ? data.serverTime : Date.now();
+    const min = Math.max(0, Math.floor((now - ms) / 60000));
+    if (min < 1) return T('justNow');
+    if (min < 60) return T('minutesAgo', { n: min });
+    if (min < 1440) return T('hoursAgo', { n: Math.floor(min / 60) });
+    return T('daysAgo', { n: Math.floor(min / 1440) });
+}
+
+/** "08:43" today, otherwise "Mon 08:43" (browser locale). */
+function timeLabel(ms) {
+    const d = new Date(ms);
+    const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return d.toDateString() === new Date().toDateString()
+        ? time
+        : `${d.toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'numeric' })} ${time}`;
+}
+
+/** 2.1M / 890k / 950 */
+function fmt(n) {
+    n = Number(n) || 0;
+    if (n >= 1e9) return (n / 1e9).toFixed(1).replace(/\.0$/, '') + 'G';
+    if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (n >= 1e3) return Math.round(n / 1e3) + 'k';
+    return String(Math.round(n));
+}
+
+function esc(s) {
+    return String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
+}
+
+function readPrefs() {
+    const def = { world: null, player: '', period: '7', type: '', min: '1' };
+    try {
+        const v = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
+        return {
+            ...def, ...v,
+            period: ['today', '3', '7'].includes(String(v.period)) ? String(v.period) : def.period,
+            min: MIN_OPTIONS.includes(String(v.min)) ? String(v.min) : def.min,
+        };
+    } catch { return def; }
+}
+
+function savePrefs() {
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch { /* private mode */ }
+}
+
+function onFilter(field, value) {
+    prefs[field] = value;
+    if (field === 'world') prefs.player = '';
+    savePrefs();
+    if (field === 'min') render();      // client-side filter, no reload
+    else loadTargets();
+}
+
+document.getElementById('worldSelect').addEventListener('change', e => onFilter('world', parseInt(e.target.value, 10) || null));
+document.getElementById('playerSelect').addEventListener('change', e => onFilter('player', e.target.value));
+document.getElementById('periodSelect').addEventListener('change', e => onFilter('period', e.target.value));
+document.getElementById('typeSelect').addEventListener('change', e => onFilter('type', e.target.value));
+document.getElementById('minSelect').addEventListener('change', e => onFilter('min', e.target.value));
+
+document.addEventListener('shockr-lang', () => {
+    if (lastStatus) showStatus(lastStatus);
+    render();
+});
+
+loadTargets();
+setInterval(loadTargets, REFRESH_MS);
+</script>
+</body>
+</html>

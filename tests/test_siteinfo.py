@@ -20,6 +20,8 @@ from server.web_auth import SessionStore
 
 ROOT = Path(__file__).parent.parent
 STATIC = ROOT / "server" / "static"
+# The released version (build.js @version) - config/version.json must follow it
+BUILD_VERSION = re.search(r"const VERSION = '([^']+)'", (ROOT / "build.js").read_text(encoding="utf-8")).group(1)
 
 
 def write(path: Path, obj):
@@ -63,12 +65,12 @@ class TestSiteInfo:
     def test_repo_config_files(self, cfg):
         si = SiteInfo(cfg)
         v = si.version()
-        assert (v["version"], v["date"]) == ("5.11.0", "2026-10-11")
-        assert [c["version"] for c in v["changelog"]] == ["5.11.0", "5.10.0", "5.9.0"]
+        assert v["version"] == BUILD_VERSION, "config/version.json follows the @version bump"
+        assert v["changelog"][0]["version"] == BUILD_VERSION and v["changelog"][0]["date"] == v["date"]
+        assert 1 <= len(v["changelog"]) <= 5, "at most 5 versions"
         for c in v["changelog"]:
             assert set(c["changes"]) == {"en", "de", "nl"}, "changelog translated per language"
-        assert v["changelog"][2]["changes"]["nl"][0] == "API key zichtbaar na register"
-        assert v["changelog"][2]["changes"]["en"][0] == "API key visible after register"
+        assert v["changelog"][0]["changes"]["en"], "the new version lists its changes"
         a = si.announcements()
         assert len(a) == 1 and a[0]["type"] == "info" and set(a[0]["message"]) == {"en", "de", "nl"}
         r = si.roadmap()
@@ -116,13 +118,13 @@ class TestSiteInfo:
 class TestRoutes:
     def test_version_is_public(self, env):
         r = env["client"].get("/api/version")
-        assert r.status_code == 200 and r.json()["version"] == "5.11.0"
+        assert r.status_code == 200 and r.json()["version"] == BUILD_VERSION
 
     def test_info_api_needs_session(self, env):
         assert env["client"].get("/api/info").status_code == 401
         login(env)
         d = env["client"].get("/api/info").json()
-        assert d["version"]["version"] == "5.11.0"
+        assert d["version"]["version"] == BUILD_VERSION
         assert len(d["announcements"]) == 1 and len(d["roadmap"]["planned"]) == 2
 
     def test_info_page_needs_session(self, env):
@@ -149,15 +151,15 @@ class TestRoutes:
 
 
 class TestPages:
-    @pytest.mark.parametrize("name", ["index.html", "targets.html", "attacks.html", "login.html", "info.html"])
+    @pytest.mark.parametrize("name", ["index.html", "targets.html", "attacks.html", "loot.html", "login.html", "info.html"])
     def test_every_page_loads_the_footer(self, name):
         assert '<script src="static/footer.js"></script>' in (STATIC / name).read_text(encoding="utf-8")
 
-    @pytest.mark.parametrize("name", ["index.html", "targets.html", "attacks.html"])
+    @pytest.mark.parametrize("name", ["index.html", "targets.html", "attacks.html", "loot.html"])
     def test_banner_on_data_pages(self, name):
         assert '<script src="static/announcements.js"></script>' in (STATIC / name).read_text(encoding="utf-8")
 
-    @pytest.mark.parametrize("name", ["index.html", "targets.html", "attacks.html"])
+    @pytest.mark.parametrize("name", ["index.html", "targets.html", "attacks.html", "loot.html"])
     def test_nav_links_to_info(self, name):
         assert 'href="info" ' in (STATIC / name).read_text(encoding="utf-8")
 
