@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+## [5.19.0] — 2026-10-13
+
+Puur client-side, geen server-wijziging.
+
+### Movable Menu (nieuw, `movable-menu`, standaard aan)
+- Vervangt SoO MovableMenuOverlay 1.0.9. `plugins/movable-menu.js`
+- **Afwijking van de werkorder-beschrijving, op basis van de broncode van het origineel**: het origineel doet niets met qx-vensters (`qx.ui.window.Window` is in qooxdoo al van zichzelf verplaatsbaar aan de titelbalk). Het maakt de **menu-overlays** (`webfrontend.gui.MenuOverlayWidget`: alliance, mail, forum, …) verplaatsbaar - die centreert het spel altijd. Beide zijn nu gedekt:
+  - Game-vensters (qx Window, klasse `webfrontend.*`): verplaatsbaar gemaakt als het spel dat uit had staan; positie na het slepen per vensterklasse onthouden en bij heropenen hersteld
+  - Menu-overlays: slepen aan de kopstrook (bovenste 40 px, pas vanaf 4 px beweging, dus een klik op een knop in de kop blijft een klik); verschoven met een CSS-transform, waar de qx-layout niet aan komt. Offset per overlay-klasse onthouden
+- Geen game-code gepatcht: het origineel vervangt een geobfusceerde app-methode (regex op de broncode van `switchMenuOverlay`) en `MenuOverlayWidget.prototype.centerPosition`. Shockr scant elke seconde de root/desktop-kinderen en hangt alleen listeners op; uitschakelen haalt alles weg, zet de movable-vlag terug en zet overlays terug op hun plek
+- Nooit aangeraakt: wereldkaart, tooltips, hoofdmenu, en vensters van andere scripts (TABS, MehrStrom - klasse niet `webfrontend.*`)
+- Posities in Shockr's config (localStorage, `MovableMenu.positions`, max 60), geklemd zodat een venster altijd bereikbaar blijft
+- Bij het eerste openen van een venster kan het tot 1 s op de standaardplek staan voordat het naar de onthouden plek springt (de scan); daarna direct
+- Na uitschakelen blijven vensters die het spel zelf al verplaatsbaar maakt gewoon verplaatsbaar (zo levert het spel ze)
+- Niet live geverifieerd: of menu-overlays kinderen van root/desktop zijn, de hoogte van de kopstrook, en welke game-vensters `movable` uit hebben. Tests: `tests/movable-menu.test.mjs` (nagebootste qx)
+
 ## [5.18.1] — 2026-10-13
 
 Alleen userscript, geen server-wijziging.

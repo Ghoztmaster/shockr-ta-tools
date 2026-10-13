@@ -1,7 +1,22 @@
 {
-  "version": "5.18.1",
+  "version": "5.19.0",
   "date": "2026-10-13",
   "changelog": [
+    {
+      "version": "5.19.0",
+      "date": "2026-10-13",
+      "changes": {
+        "en": [
+          "New plugin Movable Menu: drag game windows and menu overlays (alliance, mail, forum, …) by their title bar; the position is remembered per window"
+        ],
+        "de": [
+          "Neues Plugin Movable Menu: Spielfenster und Menü-Overlays (Allianz, Post, Forum, …) an der Titelleiste verschieben; die Position wird pro Fenster gespeichert"
+        ],
+        "nl": [
+          "Nieuwe plugin Movable Menu: game-vensters en menu-overlays (alliance, mail, forum, …) verslepen aan de titelbalk; de positie wordt per venster onthouden"
+        ]
+      }
+    },
     {
       "version": "5.18.1",
       "date": "2026-10-13",
@@ -77,24 +92,6 @@
           "Nieuwe pagina 💰 Loot: gewonnen aanvallen per target-coördinaat — aanvallen, totale en gemiddelde loot, spelers, laatste aanval",
           "Sorteerbaar op elke kolom (standaard: gemiddeld per aanval), filters op speler, periode, type en min. aanvallen",
           "Klik op een target voor de losse aanvallen"
-        ]
-      }
-    },
-    {
-      "version": "5.15.0",
-      "date": "2026-10-13",
-      "changes": {
-        "en": [
-          "New plugin Formation Saver: /st formation save|load|list|delete <name> — attack formations stored in your browser",
-          "New plugin Wavy: Forgotten bases in attack range, level distribution and number of waves in the base info panel, plus distance lines on the world map"
-        ],
-        "de": [
-          "Neues Plugin Formation Saver: /st formation save|load|list|delete <Name> — Angriffsformationen im Browser gespeichert",
-          "Neues Plugin Wavy: Forgotten-Basen in Angriffsreichweite, Level-Verteilung und Anzahl Wellen im Basis-Infofenster, dazu Entfernungslinien auf der Weltkarte"
-        ],
-        "nl": [
-          "Nieuwe plugin Formation Saver: /st formation save|load|list|delete <naam> — aanvalsformaties opgeslagen in je browser",
-          "Nieuwe plugin Wavy: Forgotten-bases in aanvalsbereik, level-verdeling en aantal waves in het base-infopaneel, plus afstandslijnen op de wereldkaart"
         ]
       }
     }

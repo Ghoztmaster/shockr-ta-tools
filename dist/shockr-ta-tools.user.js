@@ -4,7 +4,7 @@
 // @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver & wavy for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
-// @version         5.18.1
+// @version         5.19.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // ==/UserScript==
 
@@ -526,6 +526,8 @@ var ShockrTools = (() => {
       descWavy: "Forgotten attack waves per base: Forgotten bases in range, level distribution, waves + distance lines on the world map",
       descPoiAnalyser: "Alliance POI bonuses: POI labels on the world map (gold = yours), the active bonuses in the base info panel and the real gain/loss of a selected POI",
       descSectorHud: "Sector HUD on the world map: view coordinates + sector, and per sector the POIs held (own green, enemy red, free grey)",
+      descMovableMenu: "Movable menus: drag game windows and menu overlays (alliance, mail, forum, \u2026) by their title bar; the position is remembered per window",
+      movableMenuStatus: "{n} remembered window position(s)",
       poiShort_tib: "Tib",
       poiShort_cry: "Cry",
       poiShort_pow: "Pow",
@@ -746,6 +748,8 @@ var ShockrTools = (() => {
       descWavy: "Forgotten-Angriffswellen pro Basis: Forgotten-Basen in Reichweite, Level-Verteilung, Wellen + Entfernungslinien auf der Weltkarte",
       descPoiAnalyser: "Allianz-POI-Boni: POI-Labels auf der Weltkarte (gold = eure), aktive Boni im Basis-Infofenster und der echte Gewinn/Verlust eines gew\xE4hlten POI",
       descSectorHud: "Sektor-HUD auf der Weltkarte: Ansichtskoordinaten + Sektor, und pro Sektor die gehaltenen POIs (eigene gr\xFCn, feindliche rot, freie grau)",
+      descMovableMenu: "Verschiebbare Men\xFCs: Spielfenster und Men\xFC-Overlays (Allianz, Post, Forum, \u2026) an der Titelleiste verschieben; die Position wird pro Fenster gespeichert",
+      movableMenuStatus: "{n} gespeicherte Fensterposition(en)",
       poiShort_tib: "Tib",
       poiShort_cry: "Kri",
       poiShort_pow: "Str",
@@ -966,6 +970,8 @@ var ShockrTools = (() => {
       descWavy: "Forgotten-aanvalsgolven per base: Forgotten-bases in bereik, level-verdeling, waves + afstandslijnen op de wereldkaart",
       descPoiAnalyser: "Alliance-POI-bonussen: POI-labels op de wereldkaart (goud = van jullie), de actieve bonussen in het base-infopaneel en de echte winst/verlies van een geselecteerde POI",
       descSectorHud: "Sector-HUD op de wereldkaart: kijkco\xF6rdinaten + sector, en per sector de bezette POIs (eigen groen, vijandelijk rood, vrij grijs)",
+      descMovableMenu: "Verplaatsbare menu's: game-vensters en menu-overlays (alliance, mail, forum, \u2026) verslepen aan de titelbalk; de positie wordt per venster onthouden",
+      movableMenuStatus: "{n} onthouden vensterpositie(s)",
       poiShort_tib: "Tib",
       poiShort_cry: "Cry",
       poiShort_pow: "Pow",
@@ -6968,8 +6974,293 @@ var ShockrTools = (() => {
     }
   };
 
+  // plugins/movable-menu.js
+  var SCAN_MS2 = 1e3;
+  var HEADER_PX = 40;
+  var DRAG_THRESHOLD_PX = 4;
+  var MIN_VISIBLE_PX = 80;
+  var MAX_ENTRIES = 60;
+  var STORE_KEY = "MovableMenu.positions";
+  function clampPosition(left, top, w, vw, vh) {
+    const minLeft = -Math.max(0, w - MIN_VISIBLE_PX);
+    const maxLeft = Math.max(0, vw - MIN_VISIBLE_PX);
+    return {
+      left: Math.round(Math.min(Math.max(left, minLeft), maxLeft)),
+      top: Math.round(Math.min(Math.max(top, 0), Math.max(0, vh - 30)))
+    };
+  }
+  function widgetId(w) {
+    const cls = String(w && w.classname || "");
+    if (cls === "webfrontend.gui.OverlayWindow" && typeof w.getCaption === "function") {
+      const cap = String(w.getCaption() || "").replace(/[\d()]/g, "").trim();
+      if (cap) return `${cls}:${cap}`;
+    }
+    return cls;
+  }
+  function domOf(widget) {
+    try {
+      const el = typeof widget.getContainerElement === "function" ? widget.getContainerElement() : widget.getContentElement();
+      return el && el.getDomElement() || null;
+    } catch {
+      return null;
+    }
+  }
+  function windowClass() {
+    try {
+      return qx.ui.window.Window;
+    } catch {
+      return null;
+    }
+  }
+  function overlayClass() {
+    try {
+      return webfrontend.gui.MenuOverlayWidget;
+    } catch {
+      return null;
+    }
+  }
+  var MovableMenu = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descMovableMenu");
+    }
+    constructor(config) {
+      this.name = "MovableMenu";
+      this.config = config;
+      this.running = false;
+      this._timer = null;
+      this._hooked = /* @__PURE__ */ new Set();
+      this._qxListeners = [];
+      this._domListeners = [];
+      this._madeMovable = [];
+      this._shifted = /* @__PURE__ */ new Set();
+      this._attached = /* @__PURE__ */ new Set();
+      this._warned = false;
+    }
+    async start() {
+      this.running = true;
+      this._timer = setInterval(() => this.scan(), SCAN_MS2);
+      this.scan();
+      console.log("[ST] MovableMenu: started");
+    }
+    stop() {
+      this.running = false;
+      if (this._timer) clearInterval(this._timer);
+      this._timer = null;
+      for (const { widget, id } of this._qxListeners) {
+        try {
+          widget.removeListenerById(id);
+        } catch {
+        }
+      }
+      for (const { el, type, fn, capture } of this._domListeners) el.removeEventListener(type, fn, capture);
+      for (const win of this._madeMovable) {
+        try {
+          win.setMovable(false);
+        } catch {
+        }
+      }
+      for (const el of this._shifted) el.style.transform = "";
+      this._qxListeners = [];
+      this._domListeners = [];
+      this._madeMovable = [];
+      this._shifted.clear();
+      this._attached.clear();
+      this._hooked.clear();
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      return t("movableMenuStatus", { n: Object.keys(this._positions()).length });
+    }
+    // ─── Storage ─────────────────────────────────────────────────────
+    _positions() {
+      const p = this.config.get(STORE_KEY, {});
+      return p && typeof p === "object" ? p : {};
+    }
+    _save(id, pos) {
+      const all = this._positions();
+      delete all[id];
+      all[id] = pos;
+      const keys = Object.keys(all);
+      for (const k of keys.slice(0, Math.max(0, keys.length - MAX_ENTRIES))) delete all[k];
+      this.config.set(STORE_KEY, all);
+    }
+    // ─── Scan ────────────────────────────────────────────────────────
+    /** Root + desktop children that are game windows or menu overlays. */
+    candidates() {
+      const out = [];
+      let app;
+      try {
+        app = qx.core.Init.getApplication();
+      } catch {
+        return out;
+      }
+      for (const getter of ["getRoot", "getDesktop"]) {
+        try {
+          const parent = typeof app[getter] === "function" ? app[getter]() : null;
+          if (parent) {
+            for (const c of parent.getChildren()) if (!out.includes(c)) out.push(c);
+          }
+        } catch {
+        }
+      }
+      return out;
+    }
+    scan() {
+      if (!this.running) return;
+      try {
+        const Win = windowClass();
+        const Overlay = overlayClass();
+        for (const w of this.candidates()) {
+          if (this._hooked.has(w)) continue;
+          if (Overlay && w instanceof Overlay) this._hookOverlay(w);
+          else if (Win && w instanceof Win && widgetId(w).startsWith("webfrontend.")) this._hookWindow(w);
+        }
+      } catch (e) {
+        if (!this._warned) {
+          this._warned = true;
+          console.warn("[ST] MovableMenu: scan failed", e && e.message);
+        }
+      }
+    }
+    _listen(widget, type, fn) {
+      const id = widget.addListener(type, fn, this);
+      this._qxListeners.push({ widget, id });
+    }
+    _domListen(el, type, fn, capture = false) {
+      el.addEventListener(type, fn, capture);
+      this._domListeners.push({ el, type, fn, capture });
+    }
+    _viewport() {
+      return { vw: window.innerWidth || 1024, vh: window.innerHeight || 768 };
+    }
+    // ─── qx windows ──────────────────────────────────────────────────
+    _hookWindow(win) {
+      this._hooked.add(win);
+      try {
+        if (typeof win.getMovable === "function" && !win.getMovable()) {
+          win.setMovable(true);
+          this._madeMovable.push(win);
+        }
+      } catch {
+      }
+      this._listen(win, "appear", () => {
+        this._attachWindowDom(win);
+        this._restoreWindow(win);
+        setTimeout(() => this._restoreWindow(win), 0);
+      });
+      if (win.isVisible && win.isVisible()) {
+        this._attachWindowDom(win);
+        this._restoreWindow(win);
+      }
+    }
+    _attachWindowDom(win) {
+      const el = domOf(win);
+      if (!el || this._attached.has(el)) return;
+      this._attached.add(el);
+      this._domListen(el, "mousedown", () => {
+        const start = { ...win.getLayoutProperties() || {} };
+        const up = () => {
+          document.removeEventListener("mouseup", up, true);
+          setTimeout(() => this._saveWindow(win, start), 0);
+        };
+        document.addEventListener("mouseup", up, true);
+      }, true);
+    }
+    _saveWindow(win, start) {
+      if (!this.running) return;
+      const p = win.getLayoutProperties() || {};
+      if (typeof p.left !== "number" || typeof p.top !== "number") return;
+      if (p.left === start.left && p.top === start.top) return;
+      this._save(widgetId(win), { left: p.left, top: p.top });
+    }
+    _restoreWindow(win) {
+      if (!this.running) return;
+      const pos = this._positions()[widgetId(win)];
+      if (!pos || typeof pos.left !== "number") return;
+      const b = win.getBounds && win.getBounds() || {};
+      const { vw, vh } = this._viewport();
+      const c = clampPosition(pos.left, pos.top, b.width || 0, vw, vh);
+      const cur = win.getLayoutProperties() || {};
+      if (cur.left !== c.left || cur.top !== c.top) win.moveTo(c.left, c.top);
+    }
+    // ─── Menu overlays ───────────────────────────────────────────────
+    _hookOverlay(ov) {
+      this._hooked.add(ov);
+      this._listen(ov, "appear", () => {
+        this._attachOverlayDom(ov);
+        this._restoreOverlay(ov);
+      });
+      if (ov.isVisible && ov.isVisible()) {
+        this._attachOverlayDom(ov);
+        this._restoreOverlay(ov);
+      }
+    }
+    _offset(el) {
+      const m = /translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/.exec(el.style.transform || "");
+      return m ? { dx: Number(m[1]), dy: Number(m[2]) } : { dx: 0, dy: 0 };
+    }
+    /** Clamp a translate offset so the overlay stays reachable, then apply it. */
+    _shift(el, dx, dy) {
+      const cur = this._offset(el);
+      const r = el.getBoundingClientRect();
+      const baseLeft = r.left - cur.dx;
+      const baseTop = r.top - cur.dy;
+      const { vw, vh } = this._viewport();
+      const c = clampPosition(baseLeft + dx, baseTop + dy, r.width, vw, vh);
+      const off = { dx: c.left - Math.round(baseLeft), dy: c.top - Math.round(baseTop) };
+      el.style.transform = off.dx || off.dy ? `translate(${off.dx}px, ${off.dy}px)` : "";
+      this._shifted.add(el);
+      return off;
+    }
+    _restoreOverlay(ov) {
+      if (!this.running) return;
+      const el = domOf(ov);
+      const pos = this._positions()[widgetId(ov)];
+      if (el && pos && typeof pos.dx === "number") this._shift(el, pos.dx, pos.dy);
+    }
+    _attachOverlayDom(ov) {
+      const el = domOf(ov);
+      if (!el || this._attached.has(el)) return;
+      this._attached.add(el);
+      this._domListen(el, "mousedown", (e) => {
+        if (!this.running || e.button !== 0) return;
+        const r = el.getBoundingClientRect();
+        if (e.clientY - r.top > HEADER_PX) return;
+        const start = { x: e.clientX, y: e.clientY, ...this._offset(el) };
+        let dragging = false;
+        let off = null;
+        const move = (ev) => {
+          const dx = ev.clientX - start.x;
+          const dy = ev.clientY - start.y;
+          if (!dragging && Math.abs(dx) < DRAG_THRESHOLD_PX && Math.abs(dy) < DRAG_THRESHOLD_PX) return;
+          if (!dragging) {
+            dragging = true;
+            document.body.style.userSelect = "none";
+          }
+          off = this._shift(el, start.dx + dx, start.dy + dy);
+        };
+        const up = () => {
+          document.removeEventListener("mousemove", move, true);
+          document.removeEventListener("mouseup", up, true);
+          if (!dragging) return;
+          document.body.style.userSelect = "";
+          if (off) this._save(widgetId(ov), off);
+          const swallow = (ev) => {
+            ev.stopPropagation();
+            ev.preventDefault();
+          };
+          document.addEventListener("click", swallow, true);
+          setTimeout(() => document.removeEventListener("click", swallow, true), 0);
+        };
+        document.addEventListener("mousemove", move, true);
+        document.addEventListener("mouseup", up, true);
+      }, true);
+    }
+  };
+
   // lib/main.js
-  var ST_VERSION = "5.18.1";
+  var ST_VERSION = "5.19.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -7015,7 +7306,8 @@ var ShockrTools = (() => {
       new FormationSaver(config, cli),
       new Wavy(config),
       new PoiAnalyser(config),
-      new SectorHud(config)
+      new SectorHud(config),
+      new MovableMenu(config)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });
     for (const plugin of plugins) {
