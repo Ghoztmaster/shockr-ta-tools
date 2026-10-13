@@ -7,7 +7,9 @@
  * of every member gets the same bonus, so this plugin does NOT show a
  * per-base bonus - there is none. What it shows:
  *
- *   1. Map labels at every POI in view: "Tib 32" (type + level). Gold = held
+ *   1. Map labels at every POI in view: "Tib 32" (type + level), top-left of
+ *      the cell (CampTracker / Base Info's spot - the game's own name/level
+ *      text sits at the bottom of the cell). Gold = held
  *      by the own alliance (its bonus is active for you), red = another
  *      alliance, grey = free. Tooltip: type, level, score, owner.
  *   2. Info panel of an own / alliance base: section "POI" with the own
@@ -189,7 +191,9 @@ export class PoiAnalyser {
     }
 
     _place(label) {
-        const { left, top } = cellToScreen(label.x, label.y, 0.5, 0.95);
+        // CampTracker / Base Info's spot (top-left of the cell): the game draws
+        // the POI's own name + level at the bottom of the cell.
+        const { left, top } = cellToScreen(label.x, label.y, 0.1, 0.1);
         const view = viewSize();
         if (top < 0 || left < 0 || top > view.height || left > view.width) {
             if (label.el.parentElement) label.el.remove();
@@ -202,9 +206,8 @@ export class PoiAnalyser {
 
     _createElement() {
         const el = document.createElement('div');
-        Object.assign(el.style, {      // Base Info's label style, centred under the cell
+        Object.assign(el.style, {      // Base Info's label style
             position: 'absolute',
-            transform: 'translateX(-50%)',
             pointerEvents: 'none',
             zIndex: '10',
             fontFamily: 'Iosevka Term',

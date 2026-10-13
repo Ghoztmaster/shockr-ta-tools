@@ -4,7 +4,7 @@
 // @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver & wavy for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
-// @version         5.18.0
+// @version         5.18.1
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // ==/UserScript==
 
@@ -6568,7 +6568,7 @@ var ShockrTools = (() => {
       }
     }
     _place(label) {
-      const { left, top } = cellToScreen(label.x, label.y, 0.5, 0.95);
+      const { left, top } = cellToScreen(label.x, label.y, 0.1, 0.1);
       const view = viewSize();
       if (top < 0 || left < 0 || top > view.height || left > view.width) {
         if (label.el.parentElement) label.el.remove();
@@ -6581,9 +6581,8 @@ var ShockrTools = (() => {
     _createElement() {
       const el = document.createElement("div");
       Object.assign(el.style, {
-        // Base Info's label style, centred under the cell
+        // Base Info's label style
         position: "absolute",
-        transform: "translateX(-50%)",
         pointerEvents: "none",
         zIndex: "10",
         fontFamily: "Iosevka Term",
@@ -6970,7 +6969,7 @@ var ShockrTools = (() => {
   };
 
   // lib/main.js
-  var ST_VERSION = "5.18.0";
+  var ST_VERSION = "5.18.1";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });

@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.18.0 released — new plugins POI Analyser (POI labels on the map, alliance POI bonuses, real gain/loss) and Sector HUD (coordinates, sector, POIs per sector); Map Labels no longer shows ⚔ on respawned targets",
-      "de": "v5.18.0 veröffentlicht — neue Plugins POI Analyser (POI-Labels auf der Karte, Allianz-POI-Boni, echter Gewinn/Verlust) und Sector HUD (Koordinaten, Sektor, POIs pro Sektor); Map Labels zeigt kein ⚔ mehr auf neu erschienenen Zielen",
-      "nl": "v5.18.0 uitgebracht — nieuwe plugins POI Analyser (POI-labels op de kaart, alliance-POI-bonussen, echte winst/verlies) en Sector HUD (coördinaten, sector, POIs per sector); Map Labels toont geen ⚔ meer op opnieuw verschenen targets"
+      "en": "v5.18.1 released — POI labels no longer cover the game's POI name/level text. v5.18.0: new plugins POI Analyser (POI labels on the map, alliance POI bonuses, real gain/loss) and Sector HUD (coordinates, sector, POIs per sector); Map Labels no longer shows ⚔ on respawned targets",
+      "de": "v5.18.1 veröffentlicht — POI-Labels verdecken den Namen/Level-Text der POIs nicht mehr. v5.18.0: neue Plugins POI Analyser (POI-Labels auf der Karte, Allianz-POI-Boni, echter Gewinn/Verlust) und Sector HUD (Koordinaten, Sektor, POIs pro Sektor); Map Labels zeigt kein ⚔ mehr auf neu erschienenen Zielen",
+      "nl": "v5.18.1 uitgebracht — POI-labels staan niet meer over de naam/level-tekst van de POI. v5.18.0: nieuwe plugins POI Analyser (POI-labels op de kaart, alliance-POI-bonussen, echte winst/verlies) en Sector HUD (coördinaten, sector, POIs per sector); Map Labels toont geen ⚔ meer op opnieuw verschenen targets"
     },
     "type": "info",
     "active": true

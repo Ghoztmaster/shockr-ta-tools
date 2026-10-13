@@ -1,7 +1,22 @@
 {
-  "version": "5.18.0",
+  "version": "5.18.1",
   "date": "2026-10-13",
   "changelog": [
+    {
+      "version": "5.18.1",
+      "date": "2026-10-13",
+      "changes": {
+        "en": [
+          "Fix POI Analyser: the POI label no longer covers the game's own name/level text (now top-left of the cell, like CampTracker and Base Info)"
+        ],
+        "de": [
+          "Fix POI Analyser: das POI-Label verdeckt nicht mehr den Namen/Level-Text des Spiels (jetzt oben links in der Zelle, wie CampTracker und Base Info)"
+        ],
+        "nl": [
+          "Fix POI Analyser: het POI-label staat niet meer over de eigen naam/level-tekst van het spel (nu linksboven in de cel, zoals CampTracker en Base Info)"
+        ]
+      }
+    },
     {
       "version": "5.18.0",
       "date": "2026-10-13",
@@ -80,27 +95,6 @@
         "nl": [
           "Nieuwe plugin Formation Saver: /st formation save|load|list|delete <naam> — aanvalsformaties opgeslagen in je browser",
           "Nieuwe plugin Wavy: Forgotten-bases in aanvalsbereik, level-verdeling en aantal waves in het base-infopaneel, plus afstandslijnen op de wereldkaart"
-        ]
-      }
-    },
-    {
-      "version": "5.14.0",
-      "date": "2026-10-13",
-      "changes": {
-        "en": [
-          "New plugin Map Labels: 👁 viewing / 📌 claimed / ⚔ attacked labels at Forgotten targets on the world map",
-          "New plugin Tunnel Info: tunnel level, required offense and influence range on the world map",
-          "⚔ shows your own won attacks for now; 👁 of other players can stay up to 10 min"
-        ],
-        "de": [
-          "Neues Plugin Map Labels: 👁 schaut / 📌 reserviert / ⚔ angegriffen an Forgotten-Zielen auf der Weltkarte",
-          "Neues Plugin Tunnel Info: Tunnel-Level, benötigte Offensive und Einflussbereich auf der Weltkarte",
-          "⚔ zeigt vorerst deine eigenen gewonnenen Angriffe; 👁 anderer Spieler kann bis zu 10 Min stehen bleiben"
-        ],
-        "nl": [
-          "Nieuwe plugin Map Labels: 👁 kijkt / 📌 geclaimd / ⚔ aangevallen bij Forgotten-targets op de wereldkaart",
-          "Nieuwe plugin Tunnel Info: tunnel-level, benodigde offense en invloedsbereik op de wereldkaart",
-          "⚔ toont voorlopig je eigen gewonnen aanvallen; 👁 van andere spelers kan tot 10 min blijven staan"
         ]
       }
     }

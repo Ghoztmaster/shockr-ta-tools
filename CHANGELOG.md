@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [5.18.1] — 2026-10-13
+
+Alleen userscript, geen server-wijziging.
+
+### Fix POI Analyser: label over de game-tekst
+- Het POI-label ("Air 23") stond gecentreerd onderin de cel (`cellToScreen(x, y, 0.5, 0.95)`), precies waar het spel de eigen naam/level-tekst van de POI tekent. Nu op de plek van CampTracker en Base Info: linksboven in de cel (`0.1, 0.1`), zonder `translateX(-50%)`. Geen botsing met Base Info (alleen spelerbases) of CampTracker (alleen FG camps/outposts) - een POI deelt nooit een cel met die twee
+- Niet live geverifieerd
+
+### Geen wijziging: Sector HUD
+- Gemeld als "rendert niet", door Wilco ingetrokken ("werkt wel, geen bug")
+
 ## [5.18.0] — 2026-10-13
 
 Puur client-side, geen server-wijziging.
