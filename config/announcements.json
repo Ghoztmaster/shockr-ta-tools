@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.14.0 released — new plugins Map Labels (👁 viewing / 📌 claimed / ⚔ attacked at Forgotten targets) and Tunnel Info (tunnel level, required offense, range) on the world map",
-      "de": "v5.14.0 veröffentlicht — neue Plugins Map Labels (👁 schaut / 📌 reserviert / ⚔ angegriffen an Forgotten-Zielen) und Tunnel Info (Tunnel-Level, benötigte Offensive, Reichweite) auf der Weltkarte",
-      "nl": "v5.14.0 uitgebracht — nieuwe plugins Map Labels (👁 kijkt / 📌 geclaimd / ⚔ aangevallen bij Forgotten-targets) en Tunnel Info (tunnel-level, benodigde offense, bereik) op de wereldkaart"
+      "en": "v5.15.0 released — new plugins Formation Saver (/st formation save|load|list|delete) and Wavy (Forgotten bases in range, level distribution and waves in the base info panel, distance lines on the world map)",
+      "de": "v5.15.0 veröffentlicht — neue Plugins Formation Saver (/st formation save|load|list|delete) und Wavy (Forgotten-Basen in Reichweite, Level-Verteilung und Wellen im Basis-Infofenster, Entfernungslinien auf der Weltkarte)",
+      "nl": "v5.15.0 uitgebracht — nieuwe plugins Formation Saver (/st formation save|load|list|delete) en Wavy (Forgotten-bases in bereik, level-verdeling en waves in het base-infopaneel, afstandslijnen op de wereldkaart)"
     },
     "type": "info",
     "active": true

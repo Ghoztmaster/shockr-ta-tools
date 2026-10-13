@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name            Shockr - Tiberium Alliances Tools
 // @author          Ghozt [SoO] (original: Shockr, fixed by NetquiK [SoO])
-// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels & tunnel info for C&C Tiberium Alliances
+// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver & wavy for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
-// @version         5.14.0
+// @version         5.15.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // ==/UserScript==
 
@@ -508,6 +508,26 @@ var ShockrTools = (() => {
       descMapLabels: "Who is viewing \u{1F441}, has claimed \u{1F4CC} or attacked \u2694 Forgotten targets, on the world map",
       descTunnelInfo: "Tunnel level, required offense and influence range on the world map",
       tunnelInfoTitle: "Tunnel level {level} \xB7 active from offense {required} \xB7 range {range}",
+      descFormationSaver: "Save attack formations by name and load them back (/st formation)",
+      formationUsage: "Usage: /st formation save|load|delete <name> \xB7 /st formation list",
+      formationNotInSetup: "Open the attack setup of a target first",
+      formationNoUnits: "No offense units in this formation",
+      formationSaved: 'Formation "{name}" saved ({count} units)',
+      formationOverwritten: 'Formation "{name}" overwritten ({count} units)',
+      formationLoaded: 'Formation "{name}" loaded: {placed}/{total} units placed',
+      formationMissing: "missing: {units}",
+      formationNotFound: 'No formation "{name}" in this world',
+      formationDeleted: 'Formation "{name}" deleted',
+      formationListEmpty: "No saved formations in this world",
+      formationListHeader: "Saved formations ({count}):",
+      formationListLine: "{count} units \xB7 {base} \xB7 {date}",
+      formationStorageFailed: "Could not save (browser storage unavailable)",
+      helpCmdFormation: "Save/load attack formations",
+      descWavy: "Forgotten attack waves per base: Forgotten bases in range, level distribution, waves + distance lines on the world map",
+      wavyTitle: "Wavy",
+      wavyCount: "Forgotten bases within attack range: {count} ({countW}) \xB7 {waves} waves",
+      wavyCountOne: "Forgotten bases within attack range: {count} ({countW}) \xB7 1 wave",
+      wavyLevels: "Levels: {levels}",
       helpCmdWatch: "Claim the selected FG target (force: claim anyway)",
       helpCmdUnwatch: "Remove your claim on the selected target (all: every claim)",
       watchClaimed: "{type} lvl {level} @ {x}:{y} claimed",
@@ -675,6 +695,26 @@ var ShockrTools = (() => {
       descMapLabels: "Wer Forgotten-Ziele ansieht \u{1F441}, reserviert hat \u{1F4CC} oder angegriffen hat \u2694, auf der Weltkarte",
       descTunnelInfo: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich auf der Weltkarte",
       tunnelInfoTitle: "Tunnel-Level {level} \xB7 aktiv ab Offensive {required} \xB7 Reichweite {range}",
+      descFormationSaver: "Angriffsformationen unter einem Namen speichern und wieder laden (/st formation)",
+      formationUsage: "Verwendung: /st formation save|load|delete <Name> \xB7 /st formation list",
+      formationNotInSetup: "\xD6ffne zuerst die Angriffsaufstellung eines Ziels",
+      formationNoUnits: "Keine Offensiveinheiten in dieser Formation",
+      formationSaved: "Formation \u201E{name}\u201C gespeichert ({count} Einheiten)",
+      formationOverwritten: "Formation \u201E{name}\u201C \xFCberschrieben ({count} Einheiten)",
+      formationLoaded: "Formation \u201E{name}\u201C geladen: {placed}/{total} Einheiten platziert",
+      formationMissing: "fehlt: {units}",
+      formationNotFound: "Keine Formation \u201E{name}\u201C in dieser Welt",
+      formationDeleted: "Formation \u201E{name}\u201C gel\xF6scht",
+      formationListEmpty: "Keine gespeicherten Formationen in dieser Welt",
+      formationListHeader: "Gespeicherte Formationen ({count}):",
+      formationListLine: "{count} Einheiten \xB7 {base} \xB7 {date}",
+      formationStorageFailed: "Speichern fehlgeschlagen (Browserspeicher nicht verf\xFCgbar)",
+      helpCmdFormation: "Angriffsformationen speichern/laden",
+      descWavy: "Forgotten-Angriffswellen pro Basis: Forgotten-Basen in Reichweite, Level-Verteilung, Wellen + Entfernungslinien auf der Weltkarte",
+      wavyTitle: "Wavy",
+      wavyCount: "Forgotten-Basen in Angriffsreichweite: {count} ({countW}) \xB7 {waves} Wellen",
+      wavyCountOne: "Forgotten-Basen in Angriffsreichweite: {count} ({countW}) \xB7 1 Welle",
+      wavyLevels: "Level: {levels}",
       helpCmdWatch: "Ausgew\xE4hltes FG-Ziel reservieren (force: trotzdem reservieren)",
       helpCmdUnwatch: "Deine Reservierung des ausgew\xE4hlten Ziels entfernen (all: alle)",
       watchClaimed: "{type} Lv {level} @ {x}:{y} reserviert",
@@ -842,6 +882,26 @@ var ShockrTools = (() => {
       descMapLabels: "Wie Forgotten-targets bekijkt \u{1F441}, geclaimd heeft \u{1F4CC} of aangevallen heeft \u2694, op de wereldkaart",
       descTunnelInfo: "Tunnel-level, benodigde offense en invloedsbereik op de wereldkaart",
       tunnelInfoTitle: "Tunnel level {level} \xB7 actief vanaf offense {required} \xB7 bereik {range}",
+      descFormationSaver: "Aanvalsformaties op naam opslaan en terugladen (/st formation)",
+      formationUsage: "Gebruik: /st formation save|load|delete <naam> \xB7 /st formation list",
+      formationNotInSetup: "Open eerst het aanvalsscherm van een target",
+      formationNoUnits: "Geen offense-units in deze formatie",
+      formationSaved: 'Formatie "{name}" opgeslagen ({count} units)',
+      formationOverwritten: 'Formatie "{name}" overschreven ({count} units)',
+      formationLoaded: 'Formatie "{name}" geladen: {placed}/{total} units geplaatst',
+      formationMissing: "ontbreekt: {units}",
+      formationNotFound: 'Geen formatie "{name}" in deze wereld',
+      formationDeleted: 'Formatie "{name}" verwijderd',
+      formationListEmpty: "Geen opgeslagen formaties in deze wereld",
+      formationListHeader: "Opgeslagen formaties ({count}):",
+      formationListLine: "{count} units \xB7 {base} \xB7 {date}",
+      formationStorageFailed: "Opslaan mislukt (browseropslag niet beschikbaar)",
+      helpCmdFormation: "Aanvalsformaties opslaan/laden",
+      descWavy: "Forgotten-aanvalsgolven per base: Forgotten-bases in bereik, level-verdeling, waves + afstandslijnen op de wereldkaart",
+      wavyTitle: "Wavy",
+      wavyCount: "Forgotten-bases binnen aanvalsbereik: {count} ({countW}) \xB7 {waves} waves",
+      wavyCountOne: "Forgotten-bases binnen aanvalsbereik: {count} ({countW}) \xB7 1 wave",
+      wavyLevels: "Levels: {levels}",
       helpCmdWatch: "Geselecteerd FG-target claimen (force: toch claimen)",
       helpCmdUnwatch: "Je claim op het geselecteerde target verwijderen (all: alle claims)",
       watchClaimed: "{type} lvl {level} @ {x}:{y} geclaimd",
@@ -1491,16 +1551,16 @@ var ShockrTools = (() => {
         const alliance = md.get_Alliance();
         allianceId = alliance ? alliance.get_Id() : 0;
       }
-      let worldId2 = 0;
+      let worldId3 = 0;
       try {
-        worldId2 = md.get_Server().get_WorldId();
+        worldId3 = md.get_Server().get_WorldId();
       } catch {
       }
-      if (!worldId2) {
+      if (!worldId3) {
         const m = location.pathname.match(/\/(\d+)\/index\.aspx/i);
-        worldId2 = m ? Number(m[1]) : 0;
+        worldId3 = m ? Number(m[1]) : 0;
       }
-      return { id: id || 0, name: name || "", allianceId: allianceId || 0, worldId: worldId2 };
+      return { id: id || 0, name: name || "", allianceId: allianceId || 0, worldId: worldId3 };
     } catch {
       return null;
     }
@@ -1548,7 +1608,8 @@ var ShockrTools = (() => {
     { cmd: "scan", usage: "/st scan", key: "helpCmdScan" },
     { cmd: "scanalliance", usage: "/st scanalliance", key: "helpCmdScanAlliance" },
     { cmd: "watch", usage: "/st watch [force]", key: "helpCmdWatch" },
-    { cmd: "unwatch", usage: "/st unwatch [all]", key: "helpCmdUnwatch" }
+    { cmd: "unwatch", usage: "/st unwatch [all]", key: "helpCmdUnwatch" },
+    { cmd: "formation", usage: "/st formation save|load|list|delete [name]", key: "helpCmdFormation" }
   ];
   var USEFUL_SETTINGS = [
     ["language", "helpSetLanguage"],
@@ -2287,11 +2348,11 @@ var ShockrTools = (() => {
       return panel;
     }
   };
-  function getPlunder(unitId, level, forgotten = true) {
-    const cacheKey = `${unitId}:${level}:${forgotten ? 1 : 0}`;
+  function getPlunder(unitId2, level, forgotten = true) {
+    const cacheKey = `${unitId2}:${level}:${forgotten ? 1 : 0}`;
     if (plunderCache.has(cacheKey)) return plunderCache.get(cacheKey);
     let result = null;
-    const gd = typeof GAMEDATA !== "undefined" && GAMEDATA.units && GAMEDATA.units[unitId];
+    const gd = typeof GAMEDATA !== "undefined" && GAMEDATA.units && GAMEDATA.units[unitId2];
     if (gd && gd.r) {
       const keys = Object.keys(gd.r).filter((k) => gd.r[k] != null).map(Number).sort((a, b) => a - b);
       if (keys.length) {
@@ -3845,15 +3906,15 @@ var ShockrTools = (() => {
     poll() {
       if (!this.running || this._pollBusy || !this.api.isConfigured) return;
       const util = gameUtil();
-      let md, net, worldId2;
+      let md, net, worldId3;
       try {
         md = ClientLib.Data.MainData.GetInstance();
         net = ClientLib.Net.CommunicationManager.GetInstance();
-        worldId2 = Number(md.get_Server().get_WorldId());
+        worldId3 = Number(md.get_Server().get_WorldId());
       } catch {
         return;
       }
-      if (!util || !worldId2 || !this._ensureListener(md, util)) return;
+      if (!util || !worldId3 || !this._ensureListener(md, util)) return;
       this._pollBusy = true;
       try {
         net.SendSimpleCommand(
@@ -3861,7 +3922,7 @@ var ShockrTools = (() => {
           { type: 1, skip: 0, take: HEADER_TAKE, sort: 1, ascending: false },
           util.createEventDelegate(ClientLib.Net.CommandResult, this, (ctx, data) => {
             this._pollBusy = false;
-            this._onHeaders(worldId2, Array.isArray(data) ? data : []);
+            this._onHeaders(worldId3, Array.isArray(data) ? data : []);
           }),
           null
         );
@@ -3871,11 +3932,11 @@ var ShockrTools = (() => {
       }
       this.flush();
     }
-    _onHeaders(worldId2, headers) {
+    _onHeaders(worldId3, headers) {
       if (!this.running) return;
-      const state = loadDone(worldId2);
+      const state = loadDone(worldId3);
       const fresh = headers.filter((h) => isLoggable(h) && h.t > state.cutoff && !state.done.some(([id]) => id === h.i) && !(this._inFlight && this._inFlight.header.i === h.i) && !this._pending.some((p) => p.header.i === h.i)).reverse();
-      for (const h of fresh) this._pending.push({ header: h, worldId: worldId2, attempts: 0 });
+      for (const h of fresh) this._pending.push({ header: h, worldId: worldId3, attempts: 0 });
       this._processNext();
     }
     _ensureListener(md, util) {
@@ -4008,7 +4069,7 @@ var ShockrTools = (() => {
     const ad = h.ad || {};
     return !!CAMP_TYPES[parseInt(ad.dbn, 10)] && Number.isFinite(Number(ad.dbx)) && Number.isFinite(Number(ad.dby)) && typeof h.t === "number";
   }
-  function buildAttack(h, worldId2, loot) {
+  function buildAttack(h, worldId3, loot) {
     if (!isLoggable(h)) return null;
     const ad = h.ad;
     const level = Number(ad.dbl);
@@ -4020,7 +4081,7 @@ var ShockrTools = (() => {
       lootTib: nonNeg(loot.tib),
       lootCrystal: nonNeg(loot.cry),
       lootCredits: nonNeg(loot.credits),
-      worldId: Number(worldId2),
+      worldId: Number(worldId3),
       timestamp: h.t,
       reportId: h.i
     };
@@ -4062,16 +4123,16 @@ var ShockrTools = (() => {
     } catch {
     }
   }
-  function loadDone(worldId2) {
+  function loadDone(worldId3) {
     try {
-      const v = JSON.parse(localStorage.getItem(DONE_KEY_PREFIX + worldId2) || "null");
+      const v = JSON.parse(localStorage.getItem(DONE_KEY_PREFIX + worldId3) || "null");
       if (v && Array.isArray(v.done) && typeof v.cutoff === "number") return v;
     } catch {
     }
     return { cutoff: Date.now() - BACKFILL_DAYS * 86400 * 1e3, done: [] };
   }
-  function markDone(worldId2, id, time) {
-    const state = loadDone(worldId2);
+  function markDone(worldId3, id, time) {
+    const state = loadDone(worldId3);
     if (!state.done.some(([d]) => d === id)) state.done.push([id, time]);
     state.done.sort((a, b) => a[1] - b[1]);
     while (state.done.length > DONE_MAX) {
@@ -4079,7 +4140,7 @@ var ShockrTools = (() => {
       state.cutoff = Math.max(state.cutoff, dropped);
     }
     try {
-      localStorage.setItem(DONE_KEY_PREFIX + worldId2, JSON.stringify(state));
+      localStorage.setItem(DONE_KEY_PREFIX + worldId3, JSON.stringify(state));
     } catch {
     }
   }
@@ -4164,8 +4225,8 @@ var ShockrTools = (() => {
     async unwatch(args = []) {
       if (!this._ready()) return;
       if (String(args[0] || "").toLowerCase() === "all") {
-        const worldId2 = currentWorldId();
-        const result2 = worldId2 && await this.api.request("POST", "/api/watchlist", { action: "unclaim_all", worldId: worldId2 });
+        const worldId3 = currentWorldId();
+        const result2 = worldId3 && await this.api.request("POST", "/api/watchlist", { action: "unclaim_all", worldId: worldId3 });
         if (!result2) {
           say(t("watchFailed"));
           return;
@@ -4217,8 +4278,8 @@ var ShockrTools = (() => {
         this._refreshing = null;
       });
     }
-    async _refresh(worldId2) {
-      const result = await this.api.request("POST", "/api/watchlist", { action: "list", worldId: worldId2 });
+    async _refresh(worldId3) {
+      const result = await this.api.request("POST", "/api/watchlist", { action: "list", worldId: worldId3 });
       this._claimsAt = Date.now();
       if (result && Array.isArray(result.claims)) {
         this._claims = result.claims;
@@ -5336,8 +5397,611 @@ var ShockrTools = (() => {
     }
   };
 
+  // plugins/formation-saver.js
+  var STORAGE_KEY = "st-formations";
+  var NAME_MAX2 = 30;
+  function cleanName(name) {
+    return String(name || "").trim().slice(0, NAME_MAX2);
+  }
+  function loadStore() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const data = raw ? JSON.parse(raw) : {};
+      return data && typeof data === "object" ? data : {};
+    } catch {
+      return {};
+    }
+  }
+  function saveStore(store) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+      return true;
+    } catch (e) {
+      console.warn("[ST] FormationSaver: save failed", e);
+      return false;
+    }
+  }
+  function findFormation(list, name) {
+    const key = cleanName(name).toLowerCase();
+    return (list || []).find((f) => f.name.toLowerCase() === key) || null;
+  }
+  function matchUnits(saved, army) {
+    const used = /* @__PURE__ */ new Set();
+    const moves = [];
+    const missing = [];
+    for (const s of saved) {
+      let best = null;
+      for (const a of army) {
+        if (used.has(a.id) || a.type !== s.type) continue;
+        if (!best || Math.abs(a.level - s.level) < Math.abs(best.level - s.level)) best = a;
+      }
+      if (best) {
+        used.add(best.id);
+        moves.push({ id: best.id, x: s.x, y: s.y, enabled: s.enabled });
+      } else {
+        missing.push({ type: s.type, name: s.name, level: s.level });
+      }
+    }
+    return { moves, missing };
+  }
+  function summarizeMissing(missing) {
+    const counts = /* @__PURE__ */ new Map();
+    for (const m of missing) {
+      const name = m.name || String(m.type);
+      counts.set(name, (counts.get(name) || 0) + 1);
+    }
+    return Array.from(counts, ([name, n]) => `${n}\xD7 ${name}`).join(", ");
+  }
+  function worldId2() {
+    try {
+      return String(ClientLib.Data.MainData.GetInstance().get_Server().get_WorldId());
+    } catch {
+      return null;
+    }
+  }
+  function inCombatSetup() {
+    try {
+      return ClientLib.Vis.VisMain.GetInstance().get_Mode() === ClientLib.Vis.Mode.CombatSetup;
+    } catch {
+      return false;
+    }
+  }
+  function currentFormation() {
+    const cities = ClientLib.Data.MainData.GetInstance().get_Cities();
+    const own = cities.get_CurrentOwnCity();
+    let targetId = 0;
+    try {
+      targetId = cities.get_CurrentForeignCityId();
+    } catch {
+    }
+    if (!targetId) {
+      try {
+        targetId = cities.get_CurrentCity().get_Id();
+      } catch {
+      }
+    }
+    if (!own || !targetId || targetId === own.get_Id()) return null;
+    const formation = own.get_CityArmyFormationsManager().GetFormationByTargetBaseId(targetId);
+    if (!formation) return null;
+    const units = formation.get_ArmyUnits();
+    if (!units || !units.l) return null;
+    return { formation, units: units.l, own };
+  }
+  function unitType(unit) {
+    try {
+      if (typeof unit.get_MdbUnitId === "function") return unit.get_MdbUnitId();
+    } catch {
+    }
+    try {
+      return unit.get_UnitGameData_Obj().i;
+    } catch {
+      return null;
+    }
+  }
+  function unitName(unit) {
+    try {
+      const gd = unit.get_UnitGameData_Obj();
+      return gd.dn || gd.n || String(unitType(unit));
+    } catch {
+      return String(unitType(unit));
+    }
+  }
+  function unitLevel(unit) {
+    try {
+      return Number(unit.get_CurrentLevel()) || 0;
+    } catch {
+      return 0;
+    }
+  }
+  function unitId(unit) {
+    try {
+      return unit.get_Id();
+    } catch {
+      return null;
+    }
+  }
+  function readUnits(units) {
+    return units.map((u) => ({
+      type: unitType(u),
+      name: unitName(u),
+      level: unitLevel(u),
+      x: u.get_CoordX(),
+      y: u.get_CoordY(),
+      enabled: typeof u.get_Enabled === "function" ? !!u.get_Enabled() : true
+    }));
+  }
+  function moveUnit(formation, unit, x, y) {
+    if (typeof unit.MoveBattleUnit === "function") {
+      unit.MoveBattleUnit(x, y);
+    } else if (typeof formation.MoveBattleUnit === "function") {
+      formation.MoveBattleUnit(unit.get_Id(), x, y);
+    }
+  }
+  function applyMoves(formation, units, moves) {
+    const byId = new Map(units.map((u) => [unitId(u), u]));
+    const at = (m) => {
+      const u = byId.get(m.id);
+      return u && u.get_CoordX() === m.x && u.get_CoordY() === m.y;
+    };
+    for (let pass = 0; pass < moves.length + 2; pass++) {
+      let changed = false;
+      for (const m of moves) {
+        if (at(m)) continue;
+        try {
+          moveUnit(formation, byId.get(m.id), m.x, m.y);
+          changed = true;
+        } catch (e) {
+          console.warn("[ST] FormationSaver: move failed", e && e.message);
+        }
+      }
+      if (!changed) break;
+    }
+    for (const m of moves) {
+      const u = byId.get(m.id);
+      if (!u || m.enabled === void 0) continue;
+      try {
+        if (typeof u.set_Enabled === "function") u.set_Enabled(m.enabled);
+      } catch {
+      }
+    }
+    return moves.filter(at).length;
+  }
+  var FormationSaver = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descFormationSaver");
+    }
+    constructor(config, cli) {
+      this.name = "FormationSaver";
+      this.config = config;
+      this.cli = cli;
+      this.running = false;
+    }
+    async start() {
+      this.running = true;
+      this.cli.register("formation", (args) => this.command(args || []));
+      console.log("[ST] FormationSaver: started");
+    }
+    stop() {
+      this.running = false;
+    }
+    /** `/st formation save|load|list|delete [name]` */
+    command(args) {
+      if (!this.running) return;
+      const [action, ...rest] = args;
+      const name = cleanName(rest.join(" "));
+      switch (String(action || "").toLowerCase()) {
+        case "save":
+          return name ? this.save(name) : say2(escapeHtml(t("formationUsage")));
+        case "load":
+          return name ? this.load(name) : say2(escapeHtml(t("formationUsage")));
+        case "delete":
+          return name ? this.remove(name) : say2(escapeHtml(t("formationUsage")));
+        case "list":
+          return this.list();
+        default:
+          return say2(escapeHtml(t("formationUsage")));
+      }
+    }
+    save(name) {
+      const ctx = this._context();
+      if (!ctx) return;
+      const units = readUnits(ctx.units);
+      if (!units.length) return say2(t("formationNoUnits"));
+      const store = loadStore();
+      const list = store[ctx.world] || [];
+      const existing = findFormation(list, name);
+      const entry = { name, base: safeName(ctx.own), units, savedAt: Date.now() };
+      store[ctx.world] = existing ? list.map((f) => f === existing ? entry : f) : [...list, entry];
+      if (!saveStore(store)) return say2(t("formationStorageFailed"));
+      say2(t(existing ? "formationOverwritten" : "formationSaved", { name: escapeHtml(name), count: units.length }));
+    }
+    load(name) {
+      const ctx = this._context();
+      if (!ctx) return;
+      const saved = findFormation(loadStore()[ctx.world], name);
+      if (!saved) return say2(t("formationNotFound", { name: escapeHtml(name) }));
+      const army = ctx.units.map((u) => ({ id: unitId(u), type: unitType(u), level: unitLevel(u) }));
+      const { moves, missing } = matchUnits(saved.units, army);
+      const placed = applyMoves(ctx.formation, ctx.units, moves);
+      const total = saved.units.length;
+      let msg = t("formationLoaded", { name: escapeHtml(saved.name), placed, total });
+      if (missing.length) msg += " \u2014 " + t("formationMissing", { units: escapeHtml(summarizeMissing(missing)) });
+      say2(msg);
+      console.log(`[ST] FormationSaver: loaded "${saved.name}" ${placed}/${total}, missing ${missing.length}`);
+    }
+    list() {
+      const world = worldId2();
+      const list = world && loadStore()[world] || [];
+      if (!list.length) return say2(t("formationListEmpty"));
+      say2(t("formationListHeader", { count: list.length }));
+      for (const f of list) {
+        const date = new Date(f.savedAt).toLocaleString(void 0, { dateStyle: "short", timeStyle: "short" });
+        say2(`${escapeHtml(f.name)} \u2014 ${t("formationListLine", { count: f.units.length, base: escapeHtml(f.base || "?"), date })}`);
+      }
+    }
+    remove(name) {
+      const world = worldId2();
+      if (!world) return;
+      const store = loadStore();
+      const list = store[world] || [];
+      const found = findFormation(list, name);
+      if (!found) return say2(t("formationNotFound", { name: escapeHtml(name) }));
+      store[world] = list.filter((f) => f !== found);
+      if (!saveStore(store)) return say2(t("formationStorageFailed"));
+      say2(t("formationDeleted", { name: escapeHtml(found.name) }));
+    }
+    /** World + formation in the attack setup view, or null after telling the player why. */
+    _context() {
+      const world = worldId2();
+      if (!world || !inCombatSetup()) {
+        say2(t("formationNotInSetup"));
+        return null;
+      }
+      let ctx = null;
+      try {
+        ctx = currentFormation();
+      } catch (e) {
+        console.warn("[ST] FormationSaver: formation not readable", e);
+      }
+      if (!ctx) {
+        say2(t("formationNotInSetup"));
+        return null;
+      }
+      return { ...ctx, world };
+    }
+  };
+  function safeName(city) {
+    try {
+      return city.get_Name();
+    } catch {
+      return "";
+    }
+  }
+  function say2(msg) {
+    chatMessage(`[ST] ${msg}`);
+  }
+
+  // plugins/wavy.js
+  var CACHE_MS = 30 * 1e3;
+  var LINE_RANGE = 50;
+  var LINE_COLOR = "#00bcd4";
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  var FALLBACK = {
+    wavyTitle: "Wavy",
+    wavyCount: "Forgotten bases within attack range: {count} ({countW}) \xB7 {waves} waves",
+    wavyCountOne: "Forgotten bases within attack range: {count} ({countW}) \xB7 1 wave",
+    wavyLevels: "Levels: {levels}"
+  };
+  function tr(key, vars) {
+    const s = t(key, vars);
+    if (s !== key || !(key in FALLBACK)) return s;
+    return FALLBACK[key].replace(/\{(\w+)\}/g, (m, name) => vars && vars[name] !== void 0 ? String(vars[name]) : m);
+  }
+  var STATUS_INFOS = [
+    "RegionCityStatusInfoOwn",
+    "RegionCityStatusInfoAlliance",
+    "RegionCityStatusInfoEnemy",
+    "RegionNPCBaseStatusInfo",
+    "RegionNPCCampStatusInfo",
+    "RegionRuinStatusInfo"
+  ];
+  function wavesFor(count) {
+    if (count <= 21) return 1;
+    if (count <= 31) return 2;
+    if (count <= 41) return 3;
+    if (count <= 51) return 4;
+    return 5;
+  }
+  function formatLevels(levels) {
+    const keys = Object.keys(levels).map(Number).sort((a, b) => b - a);
+    if (!keys.length) return "-";
+    return keys.map((l) => `${levels[l]}\xD7${l}`).join(", ");
+  }
+  function npcBaseType() {
+    try {
+      const v = ClientLib.Data.WorldSector.ObjectType.NPCBase;
+      if (typeof v === "number") return v;
+    } catch {
+    }
+    return 2;
+  }
+  function baseLevel(obj) {
+    if (typeof obj.$Level === "number") return obj.$Level;
+    try {
+      if (typeof obj.get_BaseLevel === "function") return Number(obj.get_BaseLevel());
+    } catch {
+    }
+    return null;
+  }
+  function scanWaves(world, x, y, range) {
+    const type = npcBaseType();
+    const floored = Math.floor(range);
+    const reach = floored + 1;
+    const levels = {};
+    let count = 0;
+    let countW = 0;
+    for (let sx = x - reach; sx <= x + reach; sx++) {
+      for (let sy = y - reach; sy <= y + reach; sy++) {
+        const dist = Math.hypot(x - sx, y - sy);
+        if (dist > range) continue;
+        let obj;
+        try {
+          obj = world.GetObjectFromPosition(sx, sy);
+        } catch {
+          continue;
+        }
+        if (!obj || obj.Type !== type) continue;
+        count++;
+        if (dist <= floored) countW++;
+        const level = baseLevel(obj);
+        if (level !== null && Number.isFinite(level)) levels[level] = (levels[level] || 0) + 1;
+      }
+    }
+    return { count, countW, waves: wavesFor(countW), levels };
+  }
+  function ownBases2() {
+    const out = [];
+    try {
+      for (const c of Object.values(ClientLib.Data.MainData.GetInstance().get_Cities().get_AllCities().d)) {
+        try {
+          out.push({ x: c.get_PosX(), y: c.get_PosY() });
+        } catch {
+        }
+      }
+    } catch {
+    }
+    return out;
+  }
+  function lineTargets(x, y, bases, range = LINE_RANGE) {
+    return bases.filter((b) => !(b.x === x && b.y === y)).map((b) => ({ ...b, dist: Math.hypot(b.x - x, b.y - y) })).filter((b) => b.dist <= range);
+  }
+  var Wavy = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descWavy");
+    }
+    constructor(config) {
+      this.name = "Wavy";
+      this.config = config;
+      this.running = false;
+      this._cache = /* @__PURE__ */ new Map();
+      this._listeners = [];
+      this._panel = null;
+      this._selected = null;
+      this._svg = null;
+      this._events = [];
+      this._warned = false;
+    }
+    async start() {
+      this.running = true;
+      this._hookPanels();
+      try {
+        this._events = attachMapEvents(this, () => this._drawLines(), () => this._drawLines());
+      } catch {
+        this._events = [];
+      }
+      console.log("[ST] Wavy: started");
+    }
+    stop() {
+      this.running = false;
+      for (const { widget, id } of this._listeners) {
+        try {
+          widget.removeListenerById(id);
+        } catch {
+        }
+      }
+      this._listeners = [];
+      if (this._panel) {
+        try {
+          const parent = this._panel.container.getLayoutParent();
+          if (parent) parent.remove(this._panel.container);
+          this._panel.container.dispose();
+        } catch {
+        }
+        this._panel = null;
+      }
+      detachMapEvents(this, this._events);
+      this._events = [];
+      this._selected = null;
+      this._removeSvg();
+      this._cache.clear();
+    }
+    /** Wave info for a position, cached CACHE_MS. */
+    info(x, y, now = Date.now()) {
+      const key = `${x}:${y}`;
+      const hit = this._cache.get(key);
+      if (hit && now - hit.at < CACHE_MS) return hit.result;
+      const md = ClientLib.Data.MainData.GetInstance();
+      const range = Number(md.get_Server().get_MaxAttackDistance());
+      const result = scanWaves(md.get_World(), x, y, range);
+      this._cache.set(key, { at: now, result });
+      if (this._cache.size > 200) this._cache.delete(this._cache.keys().next().value);
+      return result;
+    }
+    // ─── Info panel ──────────────────────────────────────────────────
+    _warn(msg, e) {
+      if (this._warned) return;
+      this._warned = true;
+      console.warn(`[ST] Wavy: ${msg}`, e && e.message ? e.message : "");
+    }
+    _hookPanels() {
+      let region;
+      try {
+        region = webfrontend.gui.region;
+      } catch (e) {
+        this._warn("region info widgets not available \u2014 panel disabled", e);
+        return;
+      }
+      for (const name of STATUS_INFOS) {
+        try {
+          const cls = region && region[name];
+          if (!cls || typeof cls.getInstance !== "function") continue;
+          const widget = cls.getInstance();
+          const appear = widget.addListener("appear", () => this._onAppear(widget), this);
+          const disappear = widget.addListener("disappear", () => this._onDisappear(widget), this);
+          this._listeners.push({ widget, id: appear }, { widget, id: disappear });
+        } catch (e) {
+          this._warn(`could not hook ${name}`, e);
+        }
+      }
+    }
+    /** Position of the object whose info panel is shown: the selection, else the panel's own object. */
+    _panelObject(widget) {
+      try {
+        const sel = ClientLib.Vis.VisMain.GetInstance().get_SelectedObject();
+        if (sel && typeof sel.get_RawX === "function") return { x: sel.get_RawX(), y: sel.get_RawY() };
+      } catch {
+      }
+      try {
+        const parent = widget.getLayoutParent();
+        const obj = parent && typeof parent.getObject === "function" ? parent.getObject() : null;
+        if (obj) return { x: obj.get_RawX(), y: obj.get_RawY() };
+      } catch {
+      }
+      return null;
+    }
+    _onAppear(widget) {
+      if (!this.running) return;
+      try {
+        const pos = this._panelObject(widget);
+        if (!pos) return;
+        const panel = this._ensurePanel();
+        if (!panel) return;
+        const r = this.info(pos.x, pos.y);
+        panel.title.setValue(tr("wavyTitle"));
+        panel.count.setValue(tr(
+          r.waves === 1 ? "wavyCountOne" : "wavyCount",
+          { count: r.count, countW: r.countW, waves: r.waves }
+        ));
+        panel.levels.setValue(tr("wavyLevels", { levels: formatLevels(r.levels) }));
+        widget.add(panel.container);
+        this._selected = pos;
+        this._drawLines();
+      } catch (e) {
+        this._warn("panel update failed", e);
+      }
+    }
+    _onDisappear(widget) {
+      try {
+        if (this._panel && this._panel.container.getLayoutParent() !== widget) return;
+      } catch {
+      }
+      this._selected = null;
+      this._drawLines();
+    }
+    _ensurePanel() {
+      if (this._panel) return this._panel;
+      try {
+        const box = new qx.ui.container.Composite(new qx.ui.layout.VBox()).set({
+          marginTop: 6,
+          textColor: "text-region-tooltip"
+        });
+        const title = new qx.ui.basic.Label("Wavy").set({ font: "font_size_14", textColor: "text-region-value" });
+        const count = new qx.ui.basic.Label("");
+        const levels = new qx.ui.basic.Label("").set({ textColor: "text-region-value" });
+        box.add(title);
+        box.add(count);
+        box.add(levels);
+        this._panel = { container: box, title, count, levels };
+      } catch (e) {
+        this._warn("could not build the panel", e);
+      }
+      return this._panel;
+    }
+    // ─── Distance lines ──────────────────────────────────────────────
+    _removeSvg() {
+      if (this._svg) {
+        try {
+          this._svg.remove();
+        } catch {
+        }
+        this._svg = null;
+      }
+    }
+    /** (Re)draw the lines from the selected object to nearby own bases; never throws. */
+    _drawLines() {
+      if (!this.running) return;
+      try {
+        if (!this._selected || !isWorldMapVisible()) {
+          this._removeSvg();
+          return;
+        }
+        const { x, y } = this._selected;
+        const targets = lineTargets(x, y, ownBases2());
+        if (!targets.length) {
+          this._removeSvg();
+          return;
+        }
+        const view = viewSize();
+        const svg = this._svg || document.createElementNS(SVG_NS, "svg");
+        this._svg = svg;
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        svg.setAttribute("width", String(view.width));
+        svg.setAttribute("height", String(view.height));
+        svg.setAttribute("data-st-wavy", "1");
+        Object.assign(svg.style, {
+          position: "absolute",
+          left: "0px",
+          top: "0px",
+          pointerEvents: "none",
+          zIndex: "9",
+          overflow: "visible"
+        });
+        const from = cellToScreen(x, y);
+        for (const b of targets) {
+          const to = cellToScreen(b.x, b.y);
+          const line = document.createElementNS(SVG_NS, "line");
+          line.setAttribute("x1", String(from.left));
+          line.setAttribute("y1", String(from.top));
+          line.setAttribute("x2", String(to.left));
+          line.setAttribute("y2", String(to.top));
+          line.setAttribute("stroke", LINE_COLOR);
+          line.setAttribute("stroke-width", "2");
+          line.setAttribute("stroke-dasharray", "6 4");
+          svg.appendChild(line);
+          const text = document.createElementNS(SVG_NS, "text");
+          text.setAttribute("x", String((from.left + to.left) / 2));
+          text.setAttribute("y", String((from.top + to.top) / 2));
+          text.setAttribute("fill", LINE_COLOR);
+          text.setAttribute("font-size", "13");
+          text.setAttribute("font-weight", "bold");
+          text.setAttribute("text-anchor", "middle");
+          text.setAttribute("stroke", "rgba(0,0,0,0.8)");
+          text.setAttribute("stroke-width", "3");
+          text.setAttribute("paint-order", "stroke");
+          text.textContent = b.dist.toFixed(1);
+          svg.appendChild(text);
+        }
+        addToMap(svg);
+      } catch (e) {
+        this._warn("drawing distance lines failed", e);
+      }
+    }
+  };
+
   // lib/main.js
-  var ST_VERSION = "5.14.0";
+  var ST_VERSION = "5.15.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -5379,7 +6043,9 @@ var ShockrTools = (() => {
       new BaseInfo(config),
       new AttackRange(config),
       new MapLabels(config, api, { targetWatcher, attackTracker }),
-      new TunnelInfo(config)
+      new TunnelInfo(config),
+      new FormationSaver(config, cli),
+      new Wavy(config)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });
     for (const plugin of plugins) {

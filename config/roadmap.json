@@ -1,11 +1,6 @@
 {
   "planned": [
     {
-      "en": "v5.15 — Formation Saver + Wavy (distance lines, FG targets in range per base, level distribution, waves)",
-      "de": "v5.15 — Formation Saver + Wavy (Entfernungslinien, FG-Ziele in Reichweite pro Basis, Level-Verteilung, Wellen)",
-      "nl": "v5.15 — Formation Saver + Wavy (afstandslijnen, FG-targets in bereik per base, level-verdeling, waves)"
-    },
-    {
       "en": "v5.16 — Scanner sends buildings: CP/CY/DF columns, loot logs per target",
       "de": "v5.16 — Scanner sendet Gebäude: CP/CY/DF-Spalten, Beute-Logs pro Ziel",
       "nl": "v5.16 — Scanner stuurt gebouwen mee: CP/CY/DF-kolommen, loot-logs per target"

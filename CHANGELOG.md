@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+## [5.15.0] — 2026-10-13
+
+### Formation Saver (nieuw, `formation-saver`, standaard aan)
+- Vervangt SoO Formation Saver. `/st formation save <naam>` / `load <naam>` / `list` / `delete <naam>`; alleen in het aanvalsscherm met een target open, alleen offense
+- Opslag in localStorage (`st-formations`), per wereld, naam uniek (hoofdletterongevoelig, max 30 tekens); opnieuw `save` overschrijft. Per unit: type, naam, level, x/y, aan/uit
+- Laden koppelt op TYPE (dichtstbijzijnde level), niet op lijstvolgorde zoals het origineel - zo laadt een formatie ook op een ander target/leger; ontbrekende units worden gemeld ("geladen 12/14, ontbreekt: 2× Predator"). Verplaatsen via `unit.MoveBattleUnit` (terugval `formation.MoveBattleUnit`), meerdere rondes voor ruilen. Nooit InvokeBattle, niets naar de server
+- Tests: `tests/formation-saver.test.mjs`
+
+### Wavy (nieuw, `wavy`, standaard aan)
+- Vervangt TA Wavy. Onderaan het info-paneel van het geselecteerde object (dezelfde zes widgets als TA Wavy): "Forgotten bases within attack range: 34 (31) · 2 waves" + "Levels: 2×31, 2×30, 4×29, 1×28"
+- Telregel van TA Wavy zelf: alleen Forgotten-BASES (geen camps/outposts; een verslagen base is een ruïne en telt niet), euclidisch binnen `get_MaxAttackDistance()`; waves uit het aantal binnen het afgeronde bereik (tussen haakjes): ≤21 → 1, ≤31 → 2, ≤41 → 3, ≤51 → 4, anders 5 - gelijk aan de MehrStrom-drempels. Cache per positie 30 s
+- Afstandslijnen: TA Wavy tekent die niet; eigen ontwerp - zolang een info-paneel open is op de wereldkaart een cyaan stippellijn van het geselecteerde object naar elke eigen base binnen 50 cellen, met de afstand
+- Niet overgenomen: TA Wavy's hook die verdedigingsrapporten als gelezen markeert (Shockr raakt de inbox niet aan) en de verplaats-modus-weergave
+- Tests: `tests/wavy.test.mjs`
+
 ## [5.14.0] — 2026-10-13
 
 ### Map Labels (nieuw, `map-labels`, standaard aan)
