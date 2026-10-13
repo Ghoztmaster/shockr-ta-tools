@@ -1,7 +1,28 @@
 {
-  "version": "5.17.0",
+  "version": "5.18.0",
   "date": "2026-10-13",
   "changelog": [
+    {
+      "version": "5.18.0",
+      "date": "2026-10-13",
+      "changes": {
+        "en": [
+          "New plugin POI Analyser: POI labels on the world map (gold = your alliance), the alliance POI bonuses in the base info panel, real gain/loss of a selected POI",
+          "New plugin Sector HUD: view coordinates + sector, POIs held per sector (own green, enemy red, free grey)",
+          "Fix Map Labels: no ⚔ on a target that respawned as another type or level"
+        ],
+        "de": [
+          "Neues Plugin POI Analyser: POI-Labels auf der Weltkarte (gold = deine Allianz), Allianz-POI-Boni im Basis-Infofenster, echter Gewinn/Verlust eines gewählten POI",
+          "Neues Plugin Sector HUD: Ansichtskoordinaten + Sektor, gehaltene POIs pro Sektor (eigene grün, feindliche rot, freie grau)",
+          "Fix Map Labels: kein ⚔ auf einem Ziel, das als anderer Typ oder Level neu erschienen ist"
+        ],
+        "nl": [
+          "Nieuwe plugin POI Analyser: POI-labels op de wereldkaart (goud = jouw alliance), de alliance-POI-bonussen in het base-infopaneel, echte winst/verlies van een geselecteerde POI",
+          "Nieuwe plugin Sector HUD: kijkcoördinaten + sector, bezette POIs per sector (eigen groen, vijandelijk rood, vrij grijs)",
+          "Fix Map Labels: geen ⚔ meer op een target dat als ander type of level opnieuw is verschenen"
+        ]
+      }
+    },
     {
       "version": "5.17.0",
       "date": "2026-10-13",
@@ -80,27 +101,6 @@
           "Nieuwe plugin Map Labels: 👁 kijkt / 📌 geclaimd / ⚔ aangevallen bij Forgotten-targets op de wereldkaart",
           "Nieuwe plugin Tunnel Info: tunnel-level, benodigde offense en invloedsbereik op de wereldkaart",
           "⚔ toont voorlopig je eigen gewonnen aanvallen; 👁 van andere spelers kan tot 10 min blijven staan"
-        ]
-      }
-    },
-    {
-      "version": "5.13.0",
-      "date": "2026-10-13",
-      "changes": {
-        "en": [
-          "New plugin Base Info: offense/defense level + number (#1, #2…) at player bases on the world map",
-          "New plugin Attack Range: range circle around your own bases on the world map",
-          "Fix: scanners now reliably pause while you are online (/st status shows the scanner state)"
-        ],
-        "de": [
-          "Neues Plugin Base Info: Offensiv-/Defensivlevel + Nummer (#1, #2…) an Spielerbasen auf der Weltkarte",
-          "Neues Plugin Attack Range: Reichweitenkreis um deine eigenen Basen auf der Weltkarte",
-          "Fix: Scanner pausieren jetzt zuverlässig, solange du online bist (/st status zeigt den Scanner-Status)"
-        ],
-        "nl": [
-          "Nieuwe plugin Base Info: offense-/defense-level + nummer (#1, #2…) bij speler-bases op de wereldkaart",
-          "Nieuwe plugin Attack Range: bereikcirkel rond je eigen bases op de wereldkaart",
-          "Fix: scanners pauzeren nu betrouwbaar zolang je online bent (/st status toont de scannerstand)"
         ]
       }
     }

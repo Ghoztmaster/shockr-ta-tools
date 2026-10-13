@@ -2,6 +2,33 @@
 
 ## [Unreleased]
 
+## [5.18.0] — 2026-10-13
+
+Puur client-side, geen server-wijziging.
+
+### Afwijking van de werkorder (met Wilco afgestemd: "game-faithful")
+- POI-bonussen zijn in het spel **alliance-breed** (elke base van elk lid krijgt dezelfde bonus): er bestaat geen bonus per base en geen "base binnen bereik van een POI". De bonus van een ANDERE alliance is client-side niet leesbaar
+- Sectoren hebben in het spel **geen eigenaar**, en `get_World().get_Sectors()` / `get_POIs()` bestaan niet. De originele WarChiefs Sector HUD toont alleen kijkcoördinaten + windrichting-sector
+
+### POI Analyser (nieuw, `poi-analyser`, standaard aan)
+- Vervangt het POI-deel van Info Sticker en Real POI Bonus. Bron: `lib/poi-util.js` (gedeeld met Sector HUD)
+- Label bij elke POI in beeld: "Tib 32" (type + level), goud = eigen alliance (bonus actief), rood = andere alliance, grijs = vrij; tooltip met score en eigenaar. Detail uit het region-visobject (`get_Region().GetObjectFromPosition`, `get_Type/get_Level/get_OwnerAllianceId/Name`), tunnel-uitgangen overgeslagen
+- Infopaneel van een eigen/alliance-base: sectie "POI" met de actieve alliance-bonussen (`get_POITiberiumBonus` … `get_POIDefenseBonus`, rang uit `get_POIRankScore()`); zonder bonus "Geen POI-bonus"
+- Infopaneel van een POI: type, level, score, eigenaar + echte winst/verlies voor de eigen alliance (Real POI Bonus' berekening incl. rang-multiplier, geport; bij rangwissel één alleen-lezen `RankingGetData`, 10 min gecachet)
+
+### Sector HUD (nieuw, `sector-hud`, standaard aan)
+- Vervangt WarChiefs Sector HUD 22.05.04: zelfde plek (links 128 px, boven), "450:620 [NE]", linksklik = coördinaten in de chat, rechtsklik = springen (prompt), sectorformule 1-op-1 geport
+- Erbij: POIs per sector - eigen (volledig, `get_OwnedPOIs()`), vijandelijk en vrij (alleen deze sessie op de kaart gezien; tooltip zegt dat). Groen = eigen alliance houdt de meeste, rood = een andere, grijs = niets bezet. Tweede regel: alle 8 sectoren met het aantal eigen POIs
+- Alleen op de wereldkaart
+
+### Fix Map Labels: ⚔ bij een opnieuw verschenen target
+- Een ⚔ telt alleen nog als het object op die cel nu hetzelfde target is: zelfde type (camp/outpost/base, uit `Type` + `$CampType`) én hetzelfde (afgeronde) level (`$Level`). Een verslagen outpost die als camp of op een ander level terugkomt = nieuw target, geen ⚔. Onleesbaar type/level wordt niet vergeleken (nooit verbergen op ontbrekende data)
+- Eigen aanvallen dragen het type/level nu ook uit het rapport (`dbn`/`dbl`); server-aanvallen hadden ze al
+
+### Niet live geverifieerd
+- De qx-infopanelen (POI-sectie, winst/verlies) en de echte waarden van de POI-getters op de huidige client; de tests draaien tegen een nagebootste client
+- Tests: `tests/poi-sector.test.mjs`, `tests/map-labels.test.mjs`
+
 ## [5.17.0] — 2026-10-13
 
 ### Auto-revoke van keys bij vertrek uit de alliance (server + userscript)

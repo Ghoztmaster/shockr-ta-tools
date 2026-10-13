@@ -4,7 +4,7 @@
 // @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver & wavy for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
-// @version         5.17.0
+// @version         5.18.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // ==/UserScript==
 
@@ -524,6 +524,39 @@ var ShockrTools = (() => {
       formationStorageFailed: "Could not save (browser storage unavailable)",
       helpCmdFormation: "Save/load attack formations",
       descWavy: "Forgotten attack waves per base: Forgotten bases in range, level distribution, waves + distance lines on the world map",
+      descPoiAnalyser: "Alliance POI bonuses: POI labels on the world map (gold = yours), the active bonuses in the base info panel and the real gain/loss of a selected POI",
+      descSectorHud: "Sector HUD on the world map: view coordinates + sector, and per sector the POIs held (own green, enemy red, free grey)",
+      poiShort_tib: "Tib",
+      poiShort_cry: "Cry",
+      poiShort_pow: "Pow",
+      poiShort_inf: "Inf",
+      poiShort_veh: "Veh",
+      poiShort_air: "Air",
+      poiShort_def: "Def",
+      poiName_tib: "Tiberium",
+      poiName_cry: "Crystal",
+      poiName_pow: "Power",
+      poiName_inf: "Infantry",
+      poiName_veh: "Vehicle",
+      poiName_air: "Aircraft",
+      poiName_def: "Resonator (defense)",
+      poiTitle: "POI",
+      poiAllianceBonus: "Alliance POI bonus (all bases):",
+      poiNone: "No POI bonus",
+      poiBonusLine: "{type} {bonus}",
+      poiBonusLineRank: "{type} {bonus} (rank {rank})",
+      poiLabelTitle: "{type} POI level {level} \xB7 score {score} \xB7 {owner}",
+      poiOwnerNone: "not occupied",
+      poiInfoLine: "{type} level {level} \xB7 score {score} \xB7 {owner}",
+      poiRealGain: "Real gain: {value}",
+      poiRealLoss: "Real loss: {value}",
+      poiLoading: "loading\u2026",
+      poiStatus: "{labels} POI label(s) \xB7 {types} bonus type(s) active",
+      sectorHudPoi: "POI {own} own \xB7 {enemy} enemy \xB7 {free} free",
+      sectorHudSeenNote: "Own POIs: complete list. Enemy/free: POIs seen on the map this session.",
+      sectorHudClickNote: "Left click: coordinates into the chat \xB7 right click: jump to coordinates",
+      sectorHudJumpPrompt: "Jump to coordinates (x:y):",
+      sectorHudStatus: "{n} POI(s) seen this session",
       wavyTitle: "Wavy",
       wavyCount: "Forgotten bases within attack range: {count} ({countW}) \xB7 {waves} waves",
       wavyCountOne: "Forgotten bases within attack range: {count} ({countW}) \xB7 1 wave",
@@ -711,6 +744,39 @@ var ShockrTools = (() => {
       formationStorageFailed: "Speichern fehlgeschlagen (Browserspeicher nicht verf\xFCgbar)",
       helpCmdFormation: "Angriffsformationen speichern/laden",
       descWavy: "Forgotten-Angriffswellen pro Basis: Forgotten-Basen in Reichweite, Level-Verteilung, Wellen + Entfernungslinien auf der Weltkarte",
+      descPoiAnalyser: "Allianz-POI-Boni: POI-Labels auf der Weltkarte (gold = eure), aktive Boni im Basis-Infofenster und der echte Gewinn/Verlust eines gew\xE4hlten POI",
+      descSectorHud: "Sektor-HUD auf der Weltkarte: Ansichtskoordinaten + Sektor, und pro Sektor die gehaltenen POIs (eigene gr\xFCn, feindliche rot, freie grau)",
+      poiShort_tib: "Tib",
+      poiShort_cry: "Kri",
+      poiShort_pow: "Str",
+      poiShort_inf: "Inf",
+      poiShort_veh: "Fz",
+      poiShort_air: "Luft",
+      poiShort_def: "Def",
+      poiName_tib: "Tiberium",
+      poiName_cry: "Kristall",
+      poiName_pow: "Strom",
+      poiName_inf: "Infanterie",
+      poiName_veh: "Fahrzeuge",
+      poiName_air: "Luftwaffe",
+      poiName_def: "Resonator (Verteidigung)",
+      poiTitle: "POI",
+      poiAllianceBonus: "Allianz-POI-Bonus (alle Basen):",
+      poiNone: "Kein POI-Bonus",
+      poiBonusLine: "{type} {bonus}",
+      poiBonusLineRank: "{type} {bonus} (Rang {rank})",
+      poiLabelTitle: "{type}-POI Level {level} \xB7 Punkte {score} \xB7 {owner}",
+      poiOwnerNone: "nicht besetzt",
+      poiInfoLine: "{type} Level {level} \xB7 Punkte {score} \xB7 {owner}",
+      poiRealGain: "Echter Gewinn: {value}",
+      poiRealLoss: "Echter Verlust: {value}",
+      poiLoading: "l\xE4dt\u2026",
+      poiStatus: "{labels} POI-Label(s) \xB7 {types} Bonusart(en) aktiv",
+      sectorHudPoi: "POI {own} eigene \xB7 {enemy} feindl. \xB7 {free} frei",
+      sectorHudSeenNote: "Eigene POIs: vollst\xE4ndige Liste. Feindlich/frei: in dieser Sitzung auf der Karte gesehene POIs.",
+      sectorHudClickNote: "Linksklick: Koordinaten in den Chat \xB7 Rechtsklick: zu Koordinaten springen",
+      sectorHudJumpPrompt: "Zu Koordinaten springen (x:y):",
+      sectorHudStatus: "{n} POI(s) in dieser Sitzung gesehen",
       wavyTitle: "Wavy",
       wavyCount: "Forgotten-Basen in Angriffsreichweite: {count} ({countW}) \xB7 {waves} Wellen",
       wavyCountOne: "Forgotten-Basen in Angriffsreichweite: {count} ({countW}) \xB7 1 Welle",
@@ -898,6 +964,39 @@ var ShockrTools = (() => {
       formationStorageFailed: "Opslaan mislukt (browseropslag niet beschikbaar)",
       helpCmdFormation: "Aanvalsformaties opslaan/laden",
       descWavy: "Forgotten-aanvalsgolven per base: Forgotten-bases in bereik, level-verdeling, waves + afstandslijnen op de wereldkaart",
+      descPoiAnalyser: "Alliance-POI-bonussen: POI-labels op de wereldkaart (goud = van jullie), de actieve bonussen in het base-infopaneel en de echte winst/verlies van een geselecteerde POI",
+      descSectorHud: "Sector-HUD op de wereldkaart: kijkco\xF6rdinaten + sector, en per sector de bezette POIs (eigen groen, vijandelijk rood, vrij grijs)",
+      poiShort_tib: "Tib",
+      poiShort_cry: "Cry",
+      poiShort_pow: "Pow",
+      poiShort_inf: "Inf",
+      poiShort_veh: "Veh",
+      poiShort_air: "Air",
+      poiShort_def: "Def",
+      poiName_tib: "Tiberium",
+      poiName_cry: "Crystal",
+      poiName_pow: "Power",
+      poiName_inf: "Infantry",
+      poiName_veh: "Vehicle",
+      poiName_air: "Aircraft",
+      poiName_def: "Resonator (defense)",
+      poiTitle: "POI",
+      poiAllianceBonus: "Alliance-POI-bonus (alle bases):",
+      poiNone: "Geen POI-bonus",
+      poiBonusLine: "{type} {bonus}",
+      poiBonusLineRank: "{type} {bonus} (rang {rank})",
+      poiLabelTitle: "{type}-POI level {level} \xB7 score {score} \xB7 {owner}",
+      poiOwnerNone: "niet bezet",
+      poiInfoLine: "{type} level {level} \xB7 score {score} \xB7 {owner}",
+      poiRealGain: "Echte winst: {value}",
+      poiRealLoss: "Echt verlies: {value}",
+      poiLoading: "laden\u2026",
+      poiStatus: "{labels} POI-label(s) \xB7 {types} bonustype(s) actief",
+      sectorHudPoi: "POI {own} eigen \xB7 {enemy} vijandelijk \xB7 {free} vrij",
+      sectorHudSeenNote: "Eigen POIs: volledige lijst. Vijandelijk/vrij: POIs die je deze sessie op de kaart zag.",
+      sectorHudClickNote: "Linksklik: co\xF6rdinaten in de chat \xB7 rechtsklik: naar co\xF6rdinaten springen",
+      sectorHudJumpPrompt: "Spring naar co\xF6rdinaten (x:y):",
+      sectorHudStatus: "{n} POI(s) gezien deze sessie",
       wavyTitle: "Wavy",
       wavyCount: "Forgotten-bases binnen aanvalsbereik: {count} ({countW}) \xB7 {waves} waves",
       wavyCountOne: "Forgotten-bases binnen aanvalsbereik: {count} ({countW}) \xB7 1 wave",
@@ -4879,6 +4978,7 @@ var ShockrTools = (() => {
   var RENDER_MS = 2e3;
   var ATTACK_MAX_AGE_MS = 7 * 24 * 3600 * 1e3;
   var NAME_MAX = 10;
+  var CAMP_TYPES3 = { 1: "camp", 2: "camp", 3: "outpost", 4: "base" };
   var STATUS = {
     attacked: { rank: 3, icon: "\u2694", color: "#f44336" },
     claimed: { rank: 2, icon: "\u{1F4CC}", color: "#ff9800" },
@@ -4916,6 +5016,27 @@ var ShockrTools = (() => {
       result.set(key, { x, y, lines });
     }
     return result;
+  }
+  function currentTarget(world, x, y) {
+    try {
+      const obj = world.GetObjectFromPosition(x, y);
+      if (!obj) return null;
+      let type = null;
+      if (obj.Type === 2) type = "base";
+      else if (obj.Type === 3 && obj.$CampType !== 0) type = CAMP_TYPES3[obj.$CampType] || null;
+      else return null;
+      const level = typeof obj.$Level === "number" && Number.isFinite(obj.$Level) ? obj.$Level : null;
+      return { type, level };
+    } catch {
+      return null;
+    }
+  }
+  function sameTarget(attack, current) {
+    if (!current) return false;
+    if (attack.targetType && current.type && attack.targetType !== current.type) return false;
+    const a = Number(attack.targetLevel);
+    if (attack.targetLevel != null && Number.isFinite(a) && current.level != null && Math.floor(a) !== Math.floor(current.level)) return false;
+    return true;
   }
   function isFgTarget(world, x, y) {
     try {
@@ -5067,6 +5188,8 @@ var ShockrTools = (() => {
             x: a.targetX,
             y: a.targetY,
             playerName: a.playerName,
+            targetType: a.targetType,
+            targetLevel: a.targetLevel,
             // No playerId from the server: the own name -> the own id, so it merges with the report-based ⚔
             playerId: me.id != null && a.playerName === me.name ? me.id : void 0
           }));
@@ -5111,7 +5234,14 @@ var ShockrTools = (() => {
     }
     _onHeaders(headers, now = Date.now()) {
       const me = ownPlayer();
-      this.attacks = headers.filter((h) => isLoggable(h) && now - h.t <= ATTACK_MAX_AGE_MS).map((h) => ({ x: Number(h.ad.dbx), y: Number(h.ad.dby), playerId: me.id, playerName: me.name }));
+      this.attacks = headers.filter((h) => isLoggable(h) && now - h.t <= ATTACK_MAX_AGE_MS).map((h) => ({
+        x: Number(h.ad.dbx),
+        y: Number(h.ad.dby),
+        playerId: me.id,
+        playerName: me.name,
+        targetType: CAMP_TYPES3[parseInt(h.ad.dbn, 10)] || null,
+        targetLevel: Number.isFinite(Number(h.ad.dbl)) ? Number(h.ad.dbl) : null
+      }));
       this.render();
     }
     _clear() {
@@ -5128,11 +5258,12 @@ var ShockrTools = (() => {
         }
         const me = ownPlayer();
         const tw = this.plugins.targetWatcher;
+        const world = ClientLib.Data.MainData.GetInstance().get_World();
+        const attacks = this._allAttacks().filter((a) => sameTarget(a, currentTarget(world, Math.round(Number(a.x)), Math.round(Number(a.y)))));
         const merged = mergeLabels(
-          { watches: this.watches, claims: this.claims, attacks: this._allAttacks() },
+          { watches: this.watches, claims: this.claims, attacks },
           { ownId: me.id, ownCurrentTargetId: tw && tw.running ? tw._currentId : null }
         );
-        const world = ClientLib.Data.MainData.GetInstance().get_World();
         const keep = /* @__PURE__ */ new Set();
         for (const [key, entry] of merged) {
           if (!entry.lines.length || !isFgTarget(world, entry.x, entry.y)) continue;
@@ -6058,8 +6189,788 @@ var ShockrTools = (() => {
     }
   };
 
+  // lib/poi-util.js
+  var POI_KEYS = {
+    TiberiumBonus: "tib",
+    CrystalBonus: "cry",
+    PowerBonus: "pow",
+    InfanteryBonus: "inf",
+    VehicleBonus: "veh",
+    AirBonus: "air",
+    DefenseBonus: "def"
+  };
+  var KEY_ORDER = ["tib", "cry", "pow", "inf", "veh", "air", "def"];
+  var RESOURCE_KEYS = /* @__PURE__ */ new Set(["tib", "cry", "pow"]);
+  var BONUS_GETTERS = {
+    tib: "get_POITiberiumBonus",
+    cry: "get_POICrystalBonus",
+    pow: "get_POIPowerBonus",
+    inf: "get_POIInfantryBonus",
+    veh: "get_POIVehicleBonus",
+    air: "get_POIAirBonus",
+    def: "get_POIDefenseBonus"
+  };
+  var SECTOR_FALLBACK = ["S", "SW", "W", "NW", "N", "NE", "E", "SE"];
+  var SECTOR_TR = ["south", "southwest", "west", "northwest", "north", "northeast", "east", "southeast"];
+  function fmtNumber(n) {
+    n = Number(n) || 0;
+    const a = Math.abs(n);
+    if (a >= 1e9) return (n / 1e9).toFixed(1).replace(/\.0$/, "") + "G";
+    if (a >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, "") + "M";
+    if (a >= 1e3) return (n / 1e3).toFixed(1).replace(/\.0$/, "") + "k";
+    return String(Math.round(n * 10) / 10);
+  }
+  function fmtBonus(key, value, sign = false) {
+    const s = sign && value > 0 ? "+" : "";
+    return RESOURCE_KEYS.has(key) ? `${s}${fmtNumber(value)}/h` : `${s}${fmtNumber(value)}%`;
+  }
+  function poiKey(poiType) {
+    try {
+      const e = ClientLib.Base.EPOIType;
+      for (const name of Object.keys(POI_KEYS)) if (e[name] === poiType) return POI_KEYS[name];
+    } catch {
+    }
+    return null;
+  }
+  function sectorNo(x, y, worldWidth, worldHeight, sectorCount) {
+    const cx = Math.floor(worldWidth / 2) - x;
+    const cy = y - Math.floor(worldHeight / 2);
+    const a = Math.atan2(cx, cy) * sectorCount / 6.283185307179586 + (sectorCount + 0.5);
+    return Math.floor(a) % sectorCount;
+  }
+  function worldGeometry() {
+    try {
+      const s = ClientLib.Data.MainData.GetInstance().get_Server();
+      const g = { width: s.get_WorldWidth(), height: s.get_WorldHeight(), count: s.get_SectorCount() };
+      return g.width > 0 && g.height > 0 && g.count > 0 ? g : null;
+    } catch {
+      return null;
+    }
+  }
+  function sectorAbbr(i) {
+    try {
+      const name = SECTOR_TR[i];
+      const text = name ? String(qx.core.Init.getApplication().tr(`tnf:${name} abbr`)) : "";
+      if (text && !text.startsWith("tnf:")) return text;
+    } catch {
+    }
+    return SECTOR_FALLBACK[i] || String(i);
+  }
+  function ownAlliance() {
+    try {
+      const a = ClientLib.Data.MainData.GetInstance().get_Alliance();
+      if (!a || typeof a.get_Exists === "function" && !a.get_Exists()) return null;
+      const id = Number(a.get_Id());
+      return id > 0 ? { id, name: String(a.get_Name() || "") } : null;
+    } catch {
+      return null;
+    }
+  }
+  function allianceBonuses() {
+    try {
+      const a = ClientLib.Data.MainData.GetInstance().get_Alliance();
+      if (!ownAlliance()) return null;
+      let ranks = [];
+      try {
+        ranks = a.get_POIRankScore() || [];
+      } catch {
+      }
+      let begin = 0;
+      try {
+        begin = ClientLib.Base.EPOIType.RankedTypeBegin;
+      } catch {
+      }
+      const out = [];
+      for (const [name, key] of Object.entries(POI_KEYS)) {
+        let value = 0;
+        try {
+          value = Number(a[BONUS_GETTERS[key]]()) || 0;
+        } catch {
+        }
+        let rs = null;
+        try {
+          rs = ranks[ClientLib.Base.EPOIType[name] - begin] || null;
+        } catch {
+        }
+        out.push({ key, value, rank: rs ? rs.r : null, score: rs ? rs.s : null });
+      }
+      return out;
+    } catch {
+      return null;
+    }
+  }
+  function ownedPois() {
+    try {
+      const a = ClientLib.Data.MainData.GetInstance().get_Alliance();
+      if (!ownAlliance()) return [];
+      return (a.get_OwnedPOIs() || []).map((p) => ({ x: Number(p.x), y: Number(p.y), level: Number(p.l) }));
+    } catch {
+      return [];
+    }
+  }
+  function poiObjectType() {
+    try {
+      const v = ClientLib.Data.WorldSector.ObjectType.PointOfInterest;
+      if (typeof v === "number") return v;
+    } catch {
+    }
+    return 4;
+  }
+  function poiFromVisObject(obj) {
+    try {
+      if (!obj) return null;
+      const visType = ClientLib.Vis.VisObject.EObjectType.RegionPointOfInterest;
+      if (typeof obj.get_VisObjectType === "function" && obj.get_VisObjectType() !== visType) return null;
+      const worldType = obj.get_Type();
+      let tunnel;
+      try {
+        tunnel = ClientLib.Data.WorldSector.WorldObjectPointOfInterest.EPOIType.TunnelExit;
+      } catch {
+        tunnel = void 0;
+      }
+      if (tunnel !== void 0 && worldType === tunnel) return null;
+      const poiType = ClientLib.Base.PointOfInterestTypes.GetPOITypeFromWorldPOIType(worldType);
+      const key = poiKey(poiType);
+      if (!key) return null;
+      return {
+        key,
+        poiType,
+        level: Number(obj.get_Level()),
+        ownerId: Number(obj.get_OwnerAllianceId()) || 0,
+        ownerName: String(typeof obj.get_OwnerAllianceName === "function" && obj.get_OwnerAllianceName() || "")
+      };
+    } catch {
+      return null;
+    }
+  }
+  function visiblePois() {
+    const md = ClientLib.Data.MainData.GetInstance();
+    const world = md.get_World();
+    const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
+    const gw = region.get_GridWidth();
+    const gh = region.get_GridHeight();
+    const type = poiObjectType();
+    const range = visibleCellRange();
+    const out = [];
+    for (let y = range.minY; y <= range.maxY; y++) {
+      for (let x = range.minX; x <= range.maxX; x++) {
+        try {
+          const w = world.GetObjectFromPosition(x, y);
+          if (!w || w.Type !== type) continue;
+          const poi = poiFromVisObject(region.GetObjectFromPosition(x * gw, y * gh));
+          if (poi) out.push({ x, y, ...poi });
+        } catch {
+        }
+      }
+    }
+    return out;
+  }
+  function poiScore(level) {
+    try {
+      return Number(ClientLib.Base.PointOfInterestTypes.GetScoreByLevel(level)) || 0;
+    } catch {
+      return 0;
+    }
+  }
+  function realPoiDelta(ctx, total) {
+    const { own, ownerIsAlliance, poiScore: ps, rank, score, nextScore, prevScore } = ctx;
+    const current = total(rank, score);
+    if (own) {
+      if (prevScore <= 0 || score - ps >= prevScore) return { kind: "loss", value: current - total(rank, score - ps) };
+      return { kind: "loss", value: null };
+    }
+    if (!score) return { kind: "gain", value: null };
+    if (nextScore <= 0 || rank <= 1) return { kind: "gain", value: total(rank, score + ps) - current };
+    if (ownerIsAlliance) return { kind: "gain", value: null };
+    if (score + ps > nextScore) return { kind: "gain", value: null };
+    if (score + ps < nextScore) return { kind: "gain", value: total(rank, score + ps) - current };
+    return { kind: "gain", value: total(rank - 1, score + ps) - current };
+  }
+  function rankedPoiDelta(ctx, rows, total) {
+    let others = rows.map((r) => ({ a: r.a, pois: Number(r.pois) || 0 }));
+    const isGain = !ctx.own;
+    if (isGain && ctx.poiOwnerId) {
+      const owner = others.find((r) => r.a === ctx.poiOwnerId);
+      if (owner) {
+        owner.pois -= ctx.poiScore;
+        others.sort((a, b) => b.pois - a.pois);
+      }
+    }
+    const newScore = ctx.score + (isGain ? ctx.poiScore : -ctx.poiScore);
+    let i = 0;
+    while (i < others.length && others[i].pois > newScore) i++;
+    const current = total(ctx.rank, ctx.score);
+    const next = total(i + 1, newScore);
+    return { kind: isGain ? "gain" : "loss", value: isGain ? next - current : current - next };
+  }
+  function sectorSummary(pois, ownId, geo) {
+    const out = [];
+    for (let i = 0; i < geo.count; i++) out.push({ sector: i, own: 0, enemy: 0, free: 0, status: "none" });
+    for (const p of pois) {
+      const s = out[sectorNo(p.x, p.y, geo.width, geo.height, geo.count)];
+      if (!s) continue;
+      if (!p.ownerId) s.free++;
+      else if (ownId && p.ownerId === ownId) s.own++;
+      else s.enemy++;
+    }
+    for (const s of out) {
+      if (s.own > 0 && s.own >= s.enemy) s.status = "own";
+      else if (s.enemy > 0) s.status = "enemy";
+    }
+    return out;
+  }
+
+  // plugins/poi-analyser.js
+  var REFRESH_MS4 = 3e3;
+  var RANKING_CACHE_MS = 10 * 60 * 1e3;
+  var COLORS = { own: "#ffc107", enemy: "#ef5350", free: "#bdbdbd" };
+  var BASE_INFOS = ["RegionCityStatusInfoOwn", "RegionCityStatusInfoAlliance"];
+  var POI_INFO = "RegionPointOfInterestStatusInfo";
+  function labelText3(poi) {
+    return `${t(`poiShort_${poi.key}`)} ${Math.floor(poi.level)}`;
+  }
+  function ownerKind(ownerId, ownId) {
+    if (!ownerId) return "free";
+    return ownId && ownerId === ownId ? "own" : "enemy";
+  }
+  function bonusLines(bonuses) {
+    return (bonuses || []).filter((b) => b.value > 0).sort((a, b) => KEY_ORDER.indexOf(a.key) - KEY_ORDER.indexOf(b.key)).map((b) => t(
+      b.rank ? "poiBonusLineRank" : "poiBonusLine",
+      { type: t(`poiName_${b.key}`), bonus: fmtBonus(b.key, b.value, true), rank: b.rank }
+    ));
+  }
+  var PoiAnalyser = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descPoiAnalyser");
+    }
+    constructor(config) {
+      this.name = "PoiAnalyser";
+      this.config = config;
+      this.running = false;
+      this.labels = /* @__PURE__ */ new Map();
+      this._events = [];
+      this._interval = null;
+      this._raf = null;
+      this._listeners = [];
+      this._panel = null;
+      this._rankingCache = {};
+      this._poiPanelKey = null;
+      this._warned = false;
+    }
+    async start() {
+      this.running = true;
+      try {
+        this._events = attachMapEvents(this, () => this._reposition(), () => this._schedule());
+      } catch {
+        this._events = [];
+      }
+      this._interval = setInterval(() => this.update(), REFRESH_MS4);
+      this._hookPanels();
+      this.update();
+      console.log("[ST] PoiAnalyser: started");
+    }
+    stop() {
+      this.running = false;
+      detachMapEvents(this, this._events);
+      this._events = [];
+      if (this._interval) clearInterval(this._interval);
+      if (this._raf) cancelAnimationFrame(this._raf);
+      this._interval = this._raf = null;
+      for (const { widget, id } of this._listeners) {
+        try {
+          widget.removeListenerById(id);
+        } catch {
+        }
+      }
+      this._listeners = [];
+      if (this._panel) {
+        try {
+          const parent = this._panel.container.getLayoutParent();
+          if (parent) parent.remove(this._panel.container);
+          this._panel.container.dispose();
+        } catch {
+        }
+        this._panel = null;
+      }
+      this._poiPanelKey = null;
+      this._clear();
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      const n = (allianceBonuses() || []).filter((b) => b.value > 0).length;
+      return t("poiStatus", { labels: this.labels.size, types: n });
+    }
+    _warn(msg, e) {
+      if (this._warned) return;
+      this._warned = true;
+      console.warn(`[ST] PoiAnalyser: ${msg}`, e && e.message ? e.message : "");
+    }
+    // ─── Map labels ──────────────────────────────────────────────────
+    _schedule() {
+      if (this._raf) return;
+      this._raf = requestAnimationFrame(() => {
+        this._raf = null;
+        this.update();
+      });
+    }
+    _clear() {
+      for (const { el } of this.labels.values()) el.remove();
+      this.labels.clear();
+    }
+    /** Rescan the visible POIs and render their labels; never throws. */
+    update() {
+      if (!this.running) return;
+      try {
+        if (!isWorldMapVisible()) {
+          this._clear();
+          return;
+        }
+        const own = ownAlliance();
+        const keep = /* @__PURE__ */ new Set();
+        for (const poi of visiblePois()) {
+          const key = `${poi.x}:${poi.y}`;
+          keep.add(key);
+          let label = this.labels.get(key);
+          if (!label) {
+            label = { el: this._createElement(), x: poi.x, y: poi.y };
+            this.labels.set(key, label);
+          }
+          const kind = ownerKind(poi.ownerId, own && own.id);
+          label.el.textContent = labelText3(poi);
+          label.el.style.color = COLORS[kind];
+          label.el.title = t("poiLabelTitle", {
+            type: t(`poiName_${poi.key}`),
+            level: Math.floor(poi.level),
+            score: fmtNumber(poiScore(poi.level)),
+            owner: poi.ownerId ? poi.ownerName || `#${poi.ownerId}` : t("poiOwnerNone")
+          });
+          this._place(label);
+        }
+        for (const [key, label] of this.labels) {
+          if (!keep.has(key)) {
+            label.el.remove();
+            this.labels.delete(key);
+          }
+        }
+      } catch (e) {
+        this._warn("update failed", e);
+      }
+    }
+    _reposition() {
+      try {
+        if (!isWorldMapVisible()) {
+          this._clear();
+          return;
+        }
+        for (const label of this.labels.values()) this._place(label);
+      } catch {
+      }
+    }
+    _place(label) {
+      const { left, top } = cellToScreen(label.x, label.y, 0.5, 0.95);
+      const view = viewSize();
+      if (top < 0 || left < 0 || top > view.height || left > view.width) {
+        if (label.el.parentElement) label.el.remove();
+        return;
+      }
+      label.el.style.left = left + "px";
+      label.el.style.top = top + "px";
+      addToMap(label.el);
+    }
+    _createElement() {
+      const el = document.createElement("div");
+      Object.assign(el.style, {
+        // Base Info's label style, centred under the cell
+        position: "absolute",
+        transform: "translateX(-50%)",
+        pointerEvents: "none",
+        zIndex: "10",
+        fontFamily: "Iosevka Term",
+        fontWeight: "bold",
+        fontSize: "12px",
+        padding: "1px 4px",
+        borderRadius: "3px",
+        background: "rgba(0,0,0,0.75)",
+        whiteSpace: "nowrap"
+      });
+      el.setAttribute("data-st-poi", "1");
+      return el;
+    }
+    // ─── Info panel ──────────────────────────────────────────────────
+    _hookPanels() {
+      let region;
+      try {
+        region = webfrontend.gui.region;
+      } catch (e) {
+        this._warn("region info widgets not available \u2014 panel disabled", e);
+        return;
+      }
+      for (const name of [...BASE_INFOS, POI_INFO]) {
+        try {
+          const cls = region && region[name];
+          if (!cls || typeof cls.getInstance !== "function") continue;
+          const widget = cls.getInstance();
+          const id = widget.addListener("appear", () => this._onAppear(widget, name), this);
+          this._listeners.push({ widget, id });
+        } catch (e) {
+          this._warn(`could not hook ${name}`, e);
+        }
+      }
+    }
+    _ensurePanel() {
+      if (this._panel) return this._panel;
+      try {
+        const box = new qx.ui.container.Composite(new qx.ui.layout.VBox()).set({
+          marginTop: 6,
+          textColor: "text-region-tooltip"
+        });
+        const title = new qx.ui.basic.Label("POI").set({ font: "font_size_14", textColor: "text-region-value" });
+        const body = new qx.ui.basic.Label("").set({ rich: true, textColor: COLORS.own });
+        box.add(title);
+        box.add(body);
+        this._panel = { container: box, title, body };
+      } catch (e) {
+        this._warn("could not build the panel", e);
+      }
+      return this._panel;
+    }
+    _setPanel(widget, lines, color = COLORS.own) {
+      const panel = this._ensurePanel();
+      if (!panel) return;
+      panel.title.setValue(t("poiTitle"));
+      panel.body.setValue(lines.map(escape).join("<br>"));
+      panel.body.setTextColor(color);
+      widget.add(panel.container);
+    }
+    _onAppear(widget, name) {
+      if (!this.running) return;
+      try {
+        if (name === POI_INFO) this._showPoi(widget);
+        else this._showBase(widget);
+      } catch (e) {
+        this._warn("panel update failed", e);
+      }
+    }
+    _showBase(widget) {
+      this._poiPanelKey = null;
+      const bonuses = allianceBonuses();
+      if (!bonuses) return;
+      const lines = bonusLines(bonuses);
+      this._setPanel(
+        widget,
+        lines.length ? [t("poiAllianceBonus"), ...lines] : [t("poiNone")],
+        lines.length ? COLORS.own : COLORS.free
+      );
+    }
+    /** The selected POI vis object (selection first, else the panel's own object). */
+    _selectedPoi(widget) {
+      try {
+        const sel = ClientLib.Vis.VisMain.GetInstance().get_SelectedObject();
+        if (sel && poiFromVisObject(sel)) return sel;
+      } catch {
+      }
+      try {
+        const obj = typeof widget.getObject === "function" ? widget.getObject() : null;
+        if (obj && poiFromVisObject(obj)) return obj;
+      } catch {
+      }
+      return null;
+    }
+    _showPoi(widget) {
+      const vis = this._selectedPoi(widget);
+      const poi = vis && poiFromVisObject(vis);
+      if (!poi) return;
+      const own = ownAlliance();
+      const kind = ownerKind(poi.ownerId, own && own.id);
+      const score = poiScore(poi.level);
+      const head = t("poiInfoLine", {
+        type: t(`poiName_${poi.key}`),
+        level: Math.floor(poi.level),
+        score: fmtNumber(score),
+        owner: poi.ownerId ? poi.ownerName || `#${poi.ownerId}` : t("poiOwnerNone")
+      });
+      let key = null;
+      try {
+        key = `${vis.get_RawX()}:${vis.get_RawY()}`;
+      } catch {
+        key = `${poi.key}:${poi.level}:${poi.ownerId}`;
+      }
+      this._poiPanelKey = key;
+      if (!own) {
+        this._setPanel(widget, [head], COLORS[kind]);
+        return;
+      }
+      const ctx = this._deltaContext(poi, own, score);
+      if (!ctx) {
+        this._setPanel(widget, [head], COLORS[kind]);
+        return;
+      }
+      const direct = realPoiDelta(ctx, ctx.total);
+      if (direct.value !== null) {
+        this._setPanel(widget, [head, this._deltaText(poi.key, direct)], COLORS[kind]);
+        return;
+      }
+      this._setPanel(widget, [head, t(direct.kind === "loss" ? "poiRealLoss" : "poiRealGain", { value: t("poiLoading") })], COLORS[kind]);
+      this._fetchRanking(poi.poiType, own.id, (rows) => {
+        if (!this.running || this._poiPanelKey !== key) return;
+        const ranked = rankedPoiDelta({ ...ctx, poiOwnerId: poi.ownerId }, rows, ctx.total);
+        this._setPanel(widget, [head, this._deltaText(poi.key, ranked)], COLORS[kind]);
+      });
+    }
+    _deltaText(key, d) {
+      return t(d.kind === "loss" ? "poiRealLoss" : "poiRealGain", { value: fmtBonus(key, d.value, d.kind === "gain") });
+    }
+    /** Rank/score of the own alliance for this POI type + the game's bonus formula. */
+    _deltaContext(poi, own, score) {
+      try {
+        const md = ClientLib.Data.MainData.GetInstance();
+        const rs = md.get_Alliance().get_POIRankScore()[poi.poiType - ClientLib.Base.EPOIType.RankedTypeBegin];
+        if (!rs) return null;
+        const factor = md.get_Server().get_POIGlobalBonusFactor();
+        const util = ClientLib.Base.PointOfInterestTypes;
+        let noAlliance = 0;
+        try {
+          noAlliance = webfrontend.gui.widgets.AllianceLabel.ESpecialNoAllianceName;
+        } catch {
+        }
+        return {
+          own: poi.ownerId === own.id,
+          ownerIsAlliance: !!poi.ownerId && poi.ownerId !== noAlliance,
+          poiScore: score,
+          rank: rs.r,
+          score: rs.s,
+          nextScore: rs.ns,
+          prevScore: rs.ps,
+          total: (rank, s) => util.GetTotalBonusByType(poi.poiType, rank, s, factor)
+        };
+      } catch {
+        return null;
+      }
+    }
+    /** Other alliances' scores for this POI type (RankingGetData, read-only), cached 10 min. */
+    _fetchRanking(poiType, ownId, done) {
+      const hit = this._rankingCache[poiType];
+      if (hit && hit.expire >= Date.now()) {
+        done(hit.rows);
+        return;
+      }
+      try {
+        const R = ClientLib.Data.Ranking;
+        const E = ClientLib.Base.EPOIType;
+        const rankingType = {
+          [E.TiberiumBonus]: R.ERankingType.BonusTiberium,
+          [E.CrystalBonus]: R.ERankingType.BonusCrystal,
+          [E.PowerBonus]: R.ERankingType.BonusPower,
+          [E.InfanteryBonus]: R.ERankingType.BonusInfantry,
+          [E.VehicleBonus]: R.ERankingType.BonusVehicles,
+          [E.AirBonus]: R.ERankingType.BonusAircraft,
+          [E.DefenseBonus]: R.ERankingType.BonusDefense
+        }[poiType];
+        const sortColumn = {
+          [R.ERankingType.BonusTiberium]: R.ESortColumn.TiberiumScore,
+          [R.ERankingType.BonusCrystal]: R.ESortColumn.CrystalScore,
+          [R.ERankingType.BonusPower]: R.ESortColumn.PowerScore,
+          [R.ERankingType.BonusInfantry]: R.ESortColumn.InfantryScore,
+          [R.ERankingType.BonusVehicles]: R.ESortColumn.VehicleScore,
+          [R.ERankingType.BonusAircraft]: R.ESortColumn.AircraftScore,
+          [R.ERankingType.BonusDefense]: R.ESortColumn.DefenseScore
+        }[rankingType];
+        const lastIndex = Object.keys(ClientLib.Res.ResMain.GetInstance().GetGamedata().poibmbr).length;
+        ClientLib.Net.CommunicationManager.GetInstance().SendSimpleCommand("RankingGetData", {
+          firstIndex: 0,
+          lastIndex,
+          view: R.EViewType.Alliance,
+          rankingType,
+          sortColumn,
+          ascending: true
+        }, webfrontend.phe.cnc.Util.createEventDelegate(ClientLib.Net.CommandResult, this, (ctx, data) => {
+          if (!data || !Array.isArray(data.a)) return;
+          const rows = data.a.filter((r) => r.a !== ownId).map((r) => ({ a: r.a, pois: r.pois || 0 }));
+          this._rankingCache[poiType] = { expire: Date.now() + RANKING_CACHE_MS, rows };
+          done(rows);
+        }), null);
+      } catch (e) {
+        this._warn("RankingGetData failed", e);
+      }
+    }
+  };
+  function escape(s) {
+    return String(s).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+  }
+
+  // plugins/sector-hud.js
+  var TICK_MS = 1e3;
+  var SCAN_MS = 3e3;
+  var STATUS_COLORS = { own: "#66bb6a", enemy: "#ef5350", none: "#9e9e9e" };
+  function viewCenter(region) {
+    const zoom = region.get_ZoomFactor();
+    return {
+      x: Math.floor((region.get_PosX() + region.get_ViewWidth() / 2 / zoom) / region.get_GridWidth() - 0.5),
+      y: Math.floor((region.get_PosY() + region.get_ViewHeight() / 2 / zoom) / region.get_GridHeight() - 0.5)
+    };
+  }
+  function parseCoords(text) {
+    const m = /(\[coords\])?#?(\d{1,4})\D(\d{1,4})/i.exec(String(text || ""));
+    return m ? { x: parseInt(m[2], 10), y: parseInt(m[3], 10) } : null;
+  }
+  var SectorHud = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descSectorHud");
+    }
+    constructor(config) {
+      this.name = "SectorHud";
+      this.config = config;
+      this.running = false;
+      this.seen = /* @__PURE__ */ new Map();
+      this.el = null;
+      this._timer = null;
+      this._lastScan = 0;
+      this._warned = false;
+    }
+    async start() {
+      this.running = true;
+      this._timer = setInterval(() => this.tick(), TICK_MS);
+      this.tick();
+      console.log("[ST] SectorHud: started");
+    }
+    stop() {
+      this.running = false;
+      if (this._timer) clearInterval(this._timer);
+      this._timer = null;
+      if (this.el) {
+        this.el.remove();
+        this.el = null;
+      }
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      return t("sectorHudStatus", { n: this.seen.size });
+    }
+    /** All known POIs: seen on the map + the complete own list (own wins). */
+    knownPois(ownId) {
+      const all = new Map(this.seen);
+      for (const p of ownedPois()) all.set(`${p.x}:${p.y}`, { x: p.x, y: p.y, ownerId: ownId });
+      return [...all.values()];
+    }
+    tick(now = Date.now()) {
+      if (!this.running) return;
+      try {
+        if (!isWorldMapVisible()) {
+          if (this.el) this.el.style.display = "none";
+          return;
+        }
+        if (now - this._lastScan >= SCAN_MS) {
+          this._lastScan = now;
+          for (const p of visiblePois()) this.seen.set(`${p.x}:${p.y}`, { x: p.x, y: p.y, ownerId: p.ownerId });
+        }
+        this.render();
+      } catch (e) {
+        if (!this._warned) {
+          this._warned = true;
+          console.warn("[ST] SectorHud: update failed", e && e.message);
+        }
+      }
+    }
+    render() {
+      const geo = worldGeometry();
+      if (!geo) return;
+      const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
+      const c = viewCenter(region);
+      const here = sectorNo(c.x, c.y, geo.width, geo.height, geo.count);
+      const own = ownAlliance();
+      const summary = sectorSummary(this.knownPois(own && own.id), own && own.id, geo);
+      const cur = summary[here];
+      const el = this._ensureElement();
+      el.style.display = "";
+      el.textContent = "";
+      const line1 = document.createElement("div");
+      const coords = document.createElement("span");
+      coords.textContent = `${c.x}:${c.y} `;
+      const sec = document.createElement("span");
+      sec.textContent = `[${sectorAbbr(here)}]`;
+      sec.style.color = STATUS_COLORS[cur.status];
+      sec.style.fontWeight = "bold";
+      const poi = document.createElement("span");
+      poi.textContent = " \xB7 " + t("sectorHudPoi", { own: cur.own, enemy: cur.enemy, free: cur.free });
+      line1.append(coords, sec, poi);
+      const line2 = document.createElement("div");
+      line2.style.marginTop = "1px";
+      for (const s of summary) {
+        const chip = document.createElement("span");
+        chip.textContent = `${sectorAbbr(s.sector)} ${s.own}`;
+        chip.style.color = STATUS_COLORS[s.status];
+        chip.style.marginRight = "6px";
+        if (s.sector === here) chip.style.textDecoration = "underline";
+        line2.appendChild(chip);
+      }
+      el.append(line1, line2);
+      el.title = [
+        ...summary.map((s) => `${sectorAbbr(s.sector)}: ${t("sectorHudPoi", { own: s.own, enemy: s.enemy, free: s.free })}`),
+        t("sectorHudSeenNote"),
+        t("sectorHudClickNote")
+      ].join("\n");
+    }
+    _ensureElement() {
+      if (this.el) return this.el;
+      const el = document.createElement("div");
+      Object.assign(el.style, {
+        // WarChiefs' spot: desktop left 128, top 0
+        position: "fixed",
+        left: "128px",
+        top: "0px",
+        zIndex: "100000",
+        padding: "2px 8px",
+        background: "rgba(0,0,0,0.75)",
+        borderRadius: "0 0 4px 4px",
+        color: "#ffffff",
+        fontFamily: "Iosevka Term, monospace",
+        fontSize: "11px",
+        lineHeight: "1.35",
+        cursor: "pointer",
+        userSelect: "none",
+        whiteSpace: "nowrap"
+      });
+      el.setAttribute("data-st-sectorhud", "1");
+      el.addEventListener("mousedown", (e) => {
+        if (e.button === 0) this._pasteCoords();
+        if (e.button === 2) this._jumpCoords();
+      });
+      el.addEventListener("contextmenu", (e) => e.preventDefault());
+      document.body.appendChild(el);
+      this.el = el;
+      return el;
+    }
+    /** Left click: "[coords]x:y[/coords]" into the chat input at the cursor (WarChiefs' paste_Coords). */
+    _pasteCoords() {
+      try {
+        const c = viewCenter(ClientLib.Vis.VisMain.GetInstance().get_Region());
+        const input = qx.core.Init.getApplication().getChat().getChatWidget().getEditable();
+        const dom = input.getContentElement().getDomElement();
+        const value = dom.value || "";
+        input.setValue([
+          value.substring(0, dom.selectionStart),
+          `[coords]${c.x}:${c.y}[/coords]`,
+          value.substring(dom.selectionEnd)
+        ].join(" "));
+      } catch (e) {
+        console.warn("[ST] SectorHud: paste coords failed", e && e.message);
+      }
+    }
+    /** Right click: ask for coordinates and centre the map there (WarChiefs' jump_Coords). */
+    _jumpCoords() {
+      try {
+        const c = parseCoords(window.prompt(t("sectorHudJumpPrompt")));
+        if (c) ClientLib.Vis.VisMain.GetInstance().get_Region().CenterGridPosition(c.x, c.y);
+      } catch (e) {
+        console.warn("[ST] SectorHud: jump failed", e && e.message);
+      }
+    }
+  };
+
   // lib/main.js
-  var ST_VERSION = "5.17.0";
+  var ST_VERSION = "5.18.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -6103,7 +7014,9 @@ var ShockrTools = (() => {
       new MapLabels(config, api, { targetWatcher, attackTracker }),
       new TunnelInfo(config),
       new FormationSaver(config, cli),
-      new Wavy(config)
+      new Wavy(config),
+      new PoiAnalyser(config),
+      new SectorHud(config)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });
     for (const plugin of plugins) {

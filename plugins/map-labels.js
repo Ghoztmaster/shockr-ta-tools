@@ -32,6 +32,12 @@
  *         MarkReportsAsRead/DeleteReports. The server list carries no
  *         playerId: an entry with the own name is matched to the own id, so
  *         the two sources give one ⚔ line, not two.
+ *         RESPAWN (5.18.0): a ⚔ only shows while the object at that cell is
+ *         still the target that was attacked - same type (camp / outpost /
+ *         base) AND same level (whole number). A defeated outpost that
+ *         respawns as a camp (or as another level) on the same coordinates is
+ *         a new target: no ⚔. When the current type/level can't be read, the
+ *         check is skipped for that field (never hides on missing data).
  *
  * Polling and rendering only while the world map is shown. Label font: the
  * CampTracker font, at 0.6 × its fontsize (min 11 px) — CampTracker's size is
@@ -53,6 +59,8 @@ const ALLIANCE_ATTACK_POLL_MS = 60 * 1000;
 const RENDER_MS = 2000;
 const ATTACK_MAX_AGE_MS = 7 * 24 * 3600 * 1000;
 const NAME_MAX = 10;
+/** ENPCCampType (report h.ad.dbn / world object $CampType) → target type, as AttackTracker. */
+const CAMP_TYPES = { 1: 'camp', 2: 'camp', 3: 'outpost', 4: 'base' };
 
 export const STATUS = {
     attacked: { rank: 3, icon: '⚔', color: '#f44336' },
@@ -106,6 +114,38 @@ export function mergeLabels(data, own = {}) {
         result.set(key, { x, y, lines });
     }
     return result;
+}
+
+/**
+ * Type + level of the Forgotten target at (x, y) now: {type, level} (either
+ * may be null when unknown), or null when there is no Forgotten target.
+ */
+export function currentTarget(world, x, y) {
+    try {
+        const obj = world.GetObjectFromPosition(x, y);
+        if (!obj) return null;
+        let type = null;
+        if (obj.Type === 2) type = 'base';
+        else if (obj.Type === 3 && obj.$CampType !== 0) type = CAMP_TYPES[obj.$CampType] || null;
+        else return null;
+        const level = typeof obj.$Level === 'number' && Number.isFinite(obj.$Level) ? obj.$Level : null;
+        return { type, level };
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * True when an attack still belongs to the target at its cell: same type and
+ * same (whole) level. A field that is unknown on either side is not compared.
+ */
+export function sameTarget(attack, current) {
+    if (!current) return false;
+    if (attack.targetType && current.type && attack.targetType !== current.type) return false;
+    const a = Number(attack.targetLevel);
+    if (attack.targetLevel != null && Number.isFinite(a) && current.level != null
+        && Math.floor(a) !== Math.floor(current.level)) return false;
+    return true;
 }
 
 /** True when the world object at (x, y) is a live Forgotten target (Type 2, or Type 3 not destroyed). */
@@ -265,6 +305,7 @@ export class MapLabels {
                 const me = ownPlayer();
                 this.allianceAttacks = data.attacks.map(a => ({
                     x: a.targetX, y: a.targetY, playerName: a.playerName,
+                    targetType: a.targetType, targetLevel: a.targetLevel,
                     // No playerId from the server: the own name -> the own id, so it merges with the report-based ⚔
                     playerId: me.id != null && a.playerName === me.name ? me.id : undefined,
                 }));
@@ -311,7 +352,11 @@ export class MapLabels {
         const me = ownPlayer();
         this.attacks = headers
             .filter(h => isLoggable(h) && now - h.t <= ATTACK_MAX_AGE_MS)
-            .map(h => ({ x: Number(h.ad.dbx), y: Number(h.ad.dby), playerId: me.id, playerName: me.name }));
+            .map(h => ({
+                x: Number(h.ad.dbx), y: Number(h.ad.dby), playerId: me.id, playerName: me.name,
+                targetType: CAMP_TYPES[parseInt(h.ad.dbn, 10)] || null,
+                targetLevel: Number.isFinite(Number(h.ad.dbl)) ? Number(h.ad.dbl) : null,
+            }));
         this.render();
     }
 
@@ -330,11 +375,14 @@ export class MapLabels {
             }
             const me = ownPlayer();
             const tw = this.plugins.targetWatcher;
+            const world = ClientLib.Data.MainData.GetInstance().get_World();
+            // Respawn check: an attack on a target that has since been replaced (other type/level) drops out
+            const attacks = this._allAttacks().filter(a =>
+                sameTarget(a, currentTarget(world, Math.round(Number(a.x)), Math.round(Number(a.y)))));
             const merged = mergeLabels(
-                { watches: this.watches, claims: this.claims, attacks: this._allAttacks() },
+                { watches: this.watches, claims: this.claims, attacks },
                 { ownId: me.id, ownCurrentTargetId: tw && tw.running ? tw._currentId : null },
             );
-            const world = ClientLib.Data.MainData.GetInstance().get_World();
             const keep = new Set();
             for (const [key, entry] of merged) {
                 if (!entry.lines.length || !isFgTarget(world, entry.x, entry.y)) continue;

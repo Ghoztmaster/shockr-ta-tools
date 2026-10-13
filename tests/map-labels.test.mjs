@@ -13,7 +13,7 @@ const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 async function load() {
     const out = await esbuild.build({
         stdin: {
-            contents: `export { MapLabels, mergeLabels, truncateName, isFgTarget } from './plugins/map-labels.js';`,
+            contents: `export { MapLabels, mergeLabels, truncateName, isFgTarget, currentTarget, sameTarget } from './plugins/map-labels.js';`,
             resolveDir: root,
         },
         bundle: true, format: 'esm', write: false,
@@ -214,8 +214,8 @@ test('⚔ of every alliance member from /api/attacks/alliance; own name merges w
     };
     fakeGame(state);
     const api = fakeApi({ attacks: [
-        { playerName: 'GhoztMasters', targetType: 'camp', targetLevel: 18, targetX: 2, targetY: 2, timestamp: now - 1000 },
-        { playerName: 'delta3dany', targetType: 'camp', targetLevel: 18, targetX: 2, targetY: 2, timestamp: now - 2000 },
+        { playerName: 'GhoztMasters', targetType: 'outpost', targetLevel: 18, targetX: 2, targetY: 2, timestamp: now - 1000 },
+        { playerName: 'delta3dany', targetType: 'outpost', targetLevel: 18, targetX: 2, targetY: 2, timestamp: now - 2000 },
         { playerName: 'OzookerO', targetType: 'base', targetLevel: 20, targetX: 6, targetY: 6, timestamp: now - 3000 },
     ] });
     const p = new mod.MapLabels({ get: (k, d) => d }, api, {});
@@ -227,6 +227,57 @@ test('⚔ of every alliance member from /api/attacks/alliance; own name merges w
         'own attack once (server + report merged), the others from the server');
     assert.equal(p.statusText(), '👁 0 · 📌 0 · ⚔ 3');
     p.stop();
+});
+
+test('sameTarget / currentTarget: respawned target (other type or level) is a new target', () => {
+    const objects = {
+        '1:1': { Type: 3, $CampType: 3, $Level: 18 },   // outpost 18
+        '2:2': { Type: 3, $CampType: 2, $Level: 18 },   // camp 18
+        '3:3': { Type: 2, $Level: 25 },                 // base 25
+        '4:4': { Type: 3, $CampType: 0, $Level: 18 },   // destroyed
+        '5:5': { Type: 3, $CampType: 3 },               // level not readable
+    };
+    const world = { GetObjectFromPosition: (x, y) => objects[`${x}:${y}`] || null };
+    assert.deepEqual(mod.currentTarget(world, 1, 1), { type: 'outpost', level: 18 });
+    assert.deepEqual(mod.currentTarget(world, 3, 3), { type: 'base', level: 25 });
+    assert.equal(mod.currentTarget(world, 4, 4), null);
+    assert.equal(mod.currentTarget(world, 9, 9), null);
+    const outpost18 = { targetType: 'outpost', targetLevel: 18.4 };
+    assert.equal(mod.sameTarget(outpost18, mod.currentTarget(world, 1, 1)), true);
+    assert.equal(mod.sameTarget(outpost18, mod.currentTarget(world, 2, 2)), false, 'outpost -> camp: new target');
+    assert.equal(mod.sameTarget({ targetType: 'outpost', targetLevel: 17 }, mod.currentTarget(world, 1, 1)), false, 'other level');
+    assert.equal(mod.sameTarget(outpost18, mod.currentTarget(world, 5, 5)), true, 'unknown level: not compared');
+    assert.equal(mod.sameTarget({ x: 1, y: 1 }, mod.currentTarget(world, 1, 1)), true, 'old entry without type/level');
+    assert.equal(mod.sameTarget(outpost18, null), false);
+});
+
+test('render: ⚔ of a defeated outpost is gone once a camp respawns on the same cell', async () => {
+    const parent = fakeDom();
+    const now = Date.now();
+    const state = {
+        mode: 'region',
+        objects: { '2:2': { Type: 3, $CampType: 3, $Level: 18 } },
+        headers: [{ i: 1, t: now - 1000, tp: 2, s: true, ad: { dbn: '3', dbx: 2, dby: 2, dbl: 18 } }],
+    };
+    fakeGame(state);
+    const api = fakeApi({ attacks: [
+        { playerName: 'delta3dany', targetType: 'outpost', targetLevel: 18, targetX: 2, targetY: 2, timestamp: now - 2000 },
+    ] });
+    const p = new mod.MapLabels({ get: (k, d) => d }, api, {});
+    try {
+        await p.start();
+        await flush();
+        assert.equal(parent.children.length, 1);
+        assert.equal(parent.children[0].children.length, 2, 'own + delta3dany on the outpost');
+        state.objects['2:2'] = { Type: 3, $CampType: 2, $Level: 18 };   // respawned as a camp
+        p.render();
+        assert.equal(parent.children.length, 0, 'no ⚔ on the new camp');
+        state.objects['2:2'] = { Type: 3, $CampType: 3, $Level: 21 };   // respawned as another outpost level
+        p.render();
+        assert.equal(parent.children.length, 0, 'no ⚔ on the new outpost');
+    } finally {
+        p.stop();
+    }
 });
 
 test('off the world map: no polling, no labels', async () => {
