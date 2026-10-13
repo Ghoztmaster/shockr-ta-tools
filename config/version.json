@@ -1,7 +1,28 @@
 {
-  "version": "5.12.1",
-  "date": "2026-10-12",
+  "version": "5.13.0",
+  "date": "2026-10-13",
   "changelog": [
+    {
+      "version": "5.13.0",
+      "date": "2026-10-13",
+      "changes": {
+        "en": [
+          "New plugin Base Info: offense/defense level + number (#1, #2…) at player bases on the world map",
+          "New plugin Attack Range: range circle around your own bases on the world map",
+          "Fix: scanners now reliably pause while you are online (/st status shows the scanner state)"
+        ],
+        "de": [
+          "Neues Plugin Base Info: Offensiv-/Defensivlevel + Nummer (#1, #2…) an Spielerbasen auf der Weltkarte",
+          "Neues Plugin Attack Range: Reichweitenkreis um deine eigenen Basen auf der Weltkarte",
+          "Fix: Scanner pausieren jetzt zuverlässig, solange du online bist (/st status zeigt den Scanner-Status)"
+        ],
+        "nl": [
+          "Nieuwe plugin Base Info: offense-/defense-level + nummer (#1, #2…) bij speler-bases op de wereldkaart",
+          "Nieuwe plugin Attack Range: bereikcirkel rond je eigen bases op de wereldkaart",
+          "Fix: scanners pauzeren nu betrouwbaar zolang je online bent (/st status toont de scannerstand)"
+        ]
+      }
+    },
     {
       "version": "5.12.1",
       "date": "2026-10-12",
@@ -68,24 +89,6 @@
         "nl": [
           "WatchList: FG-targets claimen met /st watch (24 uur, weg na een gewonnen aanval)",
           "📌 WatchList-pagina"
-        ]
-      }
-    },
-    {
-      "version": "5.10.0",
-      "date": "2026-10-11",
-      "changes": {
-        "en": [
-          "Alliance Attack Tracker",
-          "dist/ in the repo"
-        ],
-        "de": [
-          "Alliance Attack Tracker",
-          "dist/ im Repo"
-        ],
-        "nl": [
-          "Alliance Attack Tracker",
-          "dist/ in repo"
         ]
       }
     }

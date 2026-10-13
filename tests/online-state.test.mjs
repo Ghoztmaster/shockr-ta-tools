@@ -268,3 +268,41 @@ for (const Name of ['LayoutScanner', 'AllianceScanner']) {
         });
     }
 }
+
+// 5.13.0: the watch refreshes the member data itself (every 3rd poll) and reports its state.
+test('OnlineStateWatch: refreshes member data on start and every 3rd poll; describe()', () => {
+    let refreshes = 0;
+    let state = 1;
+    const log = captureLog();
+    const w = new mod.OnlineStateWatch(() => state, () => { refreshes++; });
+    assert.equal(w.describe(), 'stopped');
+    w.start();
+    try {
+        assert.equal(refreshes, 1);
+        assert.equal(w.describe(), 'paused');
+        w._tick(); w._tick();
+        assert.equal(refreshes, 1);
+        w._tick();
+        assert.equal(refreshes, 2);
+        state = 2;
+        w._tick();
+        assert.equal(w.describe(), 'active');
+        state = null;
+        w._tick();
+        assert.equal(w.describe(), 'unknown');
+    } finally {
+        w.stop();
+        log.restore();
+    }
+    assert.ok(log.lines.some(l => l.startsWith('[ST] Scanner paused (player online)')));
+    assert.ok(log.lines.some(l => l.startsWith('[ST] Scanner resumed')));
+});
+
+test('main.js starts the online watch before the plugins', async () => {
+    const fs = await import('node:fs');
+    const src = fs.readFileSync(path.join(root, 'lib/main.js'), 'utf8');
+    const startAt = src.indexOf('online.start()');
+    assert.ok(startAt > 0);
+    assert.ok(startAt < src.indexOf('await plugin.start()'));
+    assert.equal(src.indexOf('online.start()', startAt + 1), -1);
+});

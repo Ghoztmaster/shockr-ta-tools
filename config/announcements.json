@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.12.1 released — scanner pause also holds the send queue (no scans sent while you are online, buffered scans go out on resume); TargetWatcher on by default for new installs",
-      "de": "v5.12.1 veröffentlicht — Scanner-Pause hält auch die Sendewarteschlange an (keine Scans, solange du online bist; gepufferte Scans gehen nach dem Fortsetzen raus); TargetWatcher bei Neuinstallationen standardmäßig an",
-      "nl": "v5.12.1 uitgebracht — scanner-pauze houdt ook de verzendwachtrij vast (geen scans zolang je online bent, gebufferde scans gaan uit bij hervatten); TargetWatcher standaard aan bij nieuwe installaties"
+      "en": "v5.13.0 released — new plugins Base Info (off/def level + number at player bases) and Attack Range (range circle around your bases); scanners now reliably pause while you are online",
+      "de": "v5.13.0 veröffentlicht — neue Plugins Base Info (Off-/Def-Level + Nummer an Spielerbasen) und Attack Range (Reichweitenkreis um deine Basen); Scanner pausieren jetzt zuverlässig, solange du online bist",
+      "nl": "v5.13.0 uitgebracht — nieuwe plugins Base Info (off/def-level + nummer bij speler-bases) en Attack Range (bereikcirkel rond je bases); scanners pauzeren nu betrouwbaar zolang je online bent"
     },
     "type": "info",
     "active": true

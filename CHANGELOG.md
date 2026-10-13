@@ -2,6 +2,30 @@
 
 ## [Unreleased]
 
+## [5.13.0] — 2026-10-13
+
+### Scanner-pauze bij online: twee gaten gedicht
+- Melding: LayoutScanner/AllianceScanner pauzeerden niet bij OnlineState 1. De bedrading (`lib/online-state.js`, send-gate uit 5.12.1) bestond wel; twee zwakke plekken:
+  - De eigen OnlineState komt uit `alliance.get_MemberData()`, die alleen vers is na `RefreshMemberData()` - en die riep alleen PlayerStatus aan. Met PlayerStatus uit bleef de stand op de waarde van bij het inloggen staan. De watcher ververst nu zelf elke 30 s (elke 3e poll)
+  - `online.start()` stond helemaal aan het eind van de startup, na alle plugins en CLI-commando's; gooide daar iets, dan draaide de watcher nooit (= nooit gepauzeerd). Hij start nu direct na het aanmaken, vóór de plugins
+- `/st status` toont een regel met de scannerstand (gepauzeerd / actief / status niet leesbaar / bewaking draait niet) - voor de live-controle
+- Console ongewijzigd: `[ST] Scanner paused (player online)` / `[ST] Scanner resumed (...)`. Tests: `tests/online-state.test.mjs`
+- NIET live geverifieerd: of één van deze twee de oorzaak was; controleer met `/st status` terwijl je online bent
+
+### Base Info (nieuw, `base-info`, standaard aan)
+- Vervangt "CENTER DRIVEN Base Info": bij speler-bases op de wereldkaart een label `#2 23.4/21.0` (nummer per speler, offense/defense)
+- Off/def via `city.get_LvlOffense()`/`get_LvlDefense()` - die bestaan alleen voor bases die de client geladen heeft (eigen bases; andere zodra je ze één keer selecteert). Anders alleen het nummer
+- Nummering: stad-id oplopend; eigen bases uit de volledige stedenlijst, andere spelers over de bases die deze sessie in beeld zijn geweest
+- Tests: `tests/base-info.test.mjs`
+
+### Attack Range (nieuw, `attack-range`, standaard aan)
+- Vervangt "TA Attack Range": een gestippelde cirkel rond elke eigen base op de wereldkaart
+- Straal = `get_Server().get_MaxAttackDistance()` (euclidisch, zelfde maat als de camp-tracker/scanners). Afwijking van de werkorder: die noemde een straal "op basis van het offense-level", maar het aanvalsbereik is in TA een serverconstante, niet offense-afhankelijk
+- Tests: `tests/attack-range.test.mjs`
+
+### Gedeeld
+- `lib/map-overlay.js`: wereldkaart-overlayhelpers (zichtbaar bereik, cel → scherm, events). CampTracker is bewust niet omgezet
+
 ## [5.12.1] — 2026-10-12
 
 ### Scanner-pauze houdt ook de verzendwachtrij vast

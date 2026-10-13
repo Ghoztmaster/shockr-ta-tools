@@ -1,14 +1,24 @@
 {
   "planned": [
     {
+      "en": "v5.14 — Map labels (👁 viewing / 📌 claimed / ⚔ attacked) on FG targets + Tunnel Info overlay",
+      "de": "v5.14 — Kartenlabels (👁 schaut / 📌 reserviert / ⚔ angegriffen) an FG-Zielen + Tunnel-Info-Overlay",
+      "nl": "v5.14 — Kaartlabels (👁 kijkt / 📌 geclaimd / ⚔ aangevallen) bij FG-targets + Tunnel Info overlay"
+    },
+    {
+      "en": "v5.15 — Formation Saver + distance lines on the world map",
+      "de": "v5.15 — Formation Saver + Entfernungslinien auf der Weltkarte",
+      "nl": "v5.15 — Formation Saver + afstandslijnen op de wereldkaart"
+    },
+    {
+      "en": "v5.16 — Scanner sends buildings: CP/CY/DF columns, loot logs per target",
+      "de": "v5.16 — Scanner sendet Gebäude: CP/CY/DF-Spalten, Beute-Logs pro Ziel",
+      "nl": "v5.16 — Scanner stuurt gebouwen mee: CP/CY/DF-kolommen, loot-logs per target"
+    },
+    {
       "en": "Alliance War Dashboard expansion",
       "de": "Alliance War Dashboard Erweiterung",
       "nl": "Alliance War Dashboard uitbreiding"
-    },
-    {
-      "en": "Base detail: CP/CY/DF columns",
-      "de": "Base-Detail: CP/CY/DF Spalten",
-      "nl": "Base-detail: CP/CY/DF kolommen"
     }
   ],
   "ideas": [

@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name            Shockr - Tiberium Alliances Tools
 // @author          Ghozt [SoO] (original: Shockr, fixed by NetquiK [SoO])
-// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker & watchlist for C&C Tiberium Alliances
+// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info & attack range for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
-// @version         5.12.1
+// @version         5.13.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // ==/UserScript==
 
@@ -497,6 +497,14 @@ var ShockrTools = (() => {
       attackTrackerStatus: "{count} attack(s) logged this session, {queued} waiting to be sent",
       attackTrackerStatusNoServer: "no server configured (api.url / /st register)",
       descWatchList: "Claim Forgotten targets you intend to attack (/st watch) \u2014 visible to the alliance",
+      descBaseInfo: "Offense/defense level + number (#1, #2\u2026) at player bases on the world map",
+      descAttackRange: "Attack range circle around your own bases on the world map",
+      baseInfoTitle: "Offense {off} \xB7 Defense {def}",
+      baseInfoUnknown: "Levels unknown \u2014 select the base once to load them",
+      scannerPausePaused: "Scanners: paused (you are online)",
+      scannerPauseActive: "Scanners: active (you are away/offline)",
+      scannerPauseUnknown: "Scanners: online status not readable \u2014 not paused",
+      scannerPauseStopped: "Scanners: online watch not running",
       helpCmdWatch: "Claim the selected FG target (force: claim anyway)",
       helpCmdUnwatch: "Remove your claim on the selected target (all: every claim)",
       watchClaimed: "{type} lvl {level} @ {x}:{y} claimed",
@@ -653,6 +661,14 @@ var ShockrTools = (() => {
       attackTrackerStatus: "{count} Angriff(e) in dieser Sitzung gemeldet, {queued} warten auf Versand",
       attackTrackerStatusNoServer: "kein Server eingerichtet (api.url / /st register)",
       descWatchList: "Forgotten-Ziele reservieren, die du angreifen willst (/st watch) \u2014 f\xFCr die Allianz sichtbar",
+      descBaseInfo: "Offensiv-/Defensivlevel + Nummer (#1, #2\u2026) an Spielerbasen auf der Weltkarte",
+      descAttackRange: "Angriffsreichweite als Kreis um deine eigenen Basen auf der Weltkarte",
+      baseInfoTitle: "Offensive {off} \xB7 Defensive {def}",
+      baseInfoUnknown: "Level unbekannt \u2014 Basis einmal ausw\xE4hlen, um sie zu laden",
+      scannerPausePaused: "Scanner: pausiert (du bist online)",
+      scannerPauseActive: "Scanner: aktiv (du bist abwesend/offline)",
+      scannerPauseUnknown: "Scanner: Online-Status nicht lesbar \u2014 nicht pausiert",
+      scannerPauseStopped: "Scanner: Online-\xDCberwachung l\xE4uft nicht",
       helpCmdWatch: "Ausgew\xE4hltes FG-Ziel reservieren (force: trotzdem reservieren)",
       helpCmdUnwatch: "Deine Reservierung des ausgew\xE4hlten Ziels entfernen (all: alle)",
       watchClaimed: "{type} Lv {level} @ {x}:{y} reserviert",
@@ -809,6 +825,14 @@ var ShockrTools = (() => {
       attackTrackerStatus: "{count} aanval(len) gemeld deze sessie, {queued} wachten op verzenden",
       attackTrackerStatusNoServer: "geen server ingesteld (api.url / /st register)",
       descWatchList: "Forgotten-targets claimen die je wilt aanvallen (/st watch) \u2014 zichtbaar voor de alliance",
+      descBaseInfo: "Offense-/defense-level + nummer (#1, #2\u2026) bij speler-bases op de wereldkaart",
+      descAttackRange: "Aanvalsbereik als cirkel rond je eigen bases op de wereldkaart",
+      baseInfoTitle: "Offense {off} \xB7 Defense {def}",
+      baseInfoUnknown: "Levels onbekend \u2014 selecteer de base \xE9\xE9n keer om ze te laden",
+      scannerPausePaused: "Scanners: gepauzeerd (je bent online)",
+      scannerPauseActive: "Scanners: actief (je bent away/offline)",
+      scannerPauseUnknown: "Scanners: online-status niet leesbaar \u2014 niet gepauzeerd",
+      scannerPauseStopped: "Scanners: online-bewaking draait niet",
       helpCmdWatch: "Geselecteerd FG-target claimen (force: toch claimen)",
       helpCmdUnwatch: "Je claim op het geselecteerde target verwijderen (all: alle claims)",
       watchClaimed: "{type} lvl {level} @ {x}:{y} geclaimd",
@@ -1016,6 +1040,7 @@ var ShockrTools = (() => {
   // lib/online-state.js
   var POLL_MS = 1e4;
   var ONLINE = 1;
+  var REFRESH_EVERY_POLLS = 3;
   var STATE_NAMES = { 0: "offline", 1: "online", 2: "away", 3: "hidden" };
   function ownPlayerId(player) {
     if (!player) return null;
@@ -1028,6 +1053,15 @@ var ShockrTools = (() => {
     }
     const id = Number(player.id);
     return id > 0 ? id : null;
+  }
+  function refreshMemberData() {
+    try {
+      const alliance = ClientLib.Data.MainData.GetInstance().get_Alliance();
+      if (alliance && alliance.get_Id() > 0 && typeof alliance.RefreshMemberData === "function") {
+        alliance.RefreshMemberData();
+      }
+    } catch {
+    }
   }
   function readOwnOnlineState() {
     let md;
@@ -1056,8 +1090,10 @@ var ShockrTools = (() => {
     return null;
   }
   var OnlineStateWatch = class {
-    constructor(read = readOwnOnlineState) {
+    constructor(read = readOwnOnlineState, refresh = refreshMemberData) {
       this._read = read;
+      this._refresh = refresh;
+      this._polls = 0;
       this.state = null;
       this.paused = false;
       this._interval = null;
@@ -1066,8 +1102,14 @@ var ShockrTools = (() => {
     }
     start() {
       if (this._interval) return;
+      this._refresh();
       this.check();
-      this._interval = setInterval(() => this.check(), POLL_MS);
+      this._interval = setInterval(() => this._tick(), POLL_MS);
+    }
+    _tick() {
+      this._polls++;
+      if (this._polls % REFRESH_EVERY_POLLS === 0) this._refresh();
+      this.check();
     }
     stop() {
       if (this._interval) {
@@ -1078,6 +1120,16 @@ var ShockrTools = (() => {
     /** Register a callback for 'pause' or 'resume'. */
     on(event, fn) {
       if (this.listeners[event]) this.listeners[event].push(fn);
+    }
+    /** True once start() ran (for /st status). */
+    get started() {
+      return this._interval !== null;
+    }
+    /** 'paused' | 'active' | 'unknown' | 'stopped' — for /st status. */
+    describe() {
+      if (!this.started) return "stopped";
+      if (this.state === null) return "unknown";
+      return this.paused ? "paused" : "active";
     }
     /** True while the player is Online — scanners start no new scan. */
     get isPaused() {
@@ -4309,8 +4361,422 @@ var ShockrTools = (() => {
     console.log(text.replace(/<[^>]*>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'"));
   }
 
+  // lib/map-overlay.js
+  function isWorldMapVisible() {
+    try {
+      const vis = ClientLib.Vis.VisMain.GetInstance();
+      return vis.get_Mode() === ClientLib.Vis.Mode.Region;
+    } catch {
+      return false;
+    }
+  }
+  function cellToScreen(x, y, fx = 0.5, fy = 0.5) {
+    const visMain = ClientLib.Vis.VisMain.GetInstance();
+    const region = visMain.get_Region();
+    return {
+      left: visMain.ScreenPosFromWorldPosX((x + fx) * region.get_GridWidth()),
+      top: visMain.ScreenPosFromWorldPosY((y + fy) * region.get_GridHeight())
+    };
+  }
+  function viewSize() {
+    const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
+    return { width: region.get_ViewWidth(), height: region.get_ViewHeight() };
+  }
+  function visibleCellRange(margin = 1, maxCells = 80) {
+    const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
+    const gw = region.get_GridWidth();
+    const gh = region.get_GridHeight();
+    const zoom = region.get_ZoomFactor() || 1;
+    const x0 = region.get_PosX() / gw;
+    const y0 = region.get_PosY() / gh;
+    const w = Math.min(region.get_ViewWidth() / zoom / gw, maxCells);
+    const h = Math.min(region.get_ViewHeight() / zoom / gh, maxCells);
+    return {
+      minX: Math.floor(x0) - margin,
+      minY: Math.floor(y0) - margin,
+      maxX: Math.ceil(x0 + w) + margin,
+      maxY: Math.ceil(y0 + h) + margin
+    };
+  }
+  function addToMap(el) {
+    try {
+      const canvas = document.querySelector("canvas");
+      if (canvas && canvas.parentElement && el.parentElement !== canvas.parentElement) {
+        canvas.parentElement.appendChild(el);
+      }
+    } catch {
+    }
+  }
+  function attachMapEvents(owner, onMove, onData) {
+    const events = [];
+    const attach = (source, name, type, cb) => {
+      try {
+        webfrontend.phe.cnc.Util.attachNetEvent(source, name, type, owner, cb);
+        events.push({ source, name, type, cb });
+      } catch {
+      }
+    };
+    const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
+    attach(region, "PositionChange", ClientLib.Vis.PositionChange, onMove);
+    attach(region, "ZoomFactorChange", ClientLib.Vis.ZoomFactorChange, onMove);
+    attach(region, "SectorUpdated", ClientLib.Vis.Region.SectorUpdated, onData);
+    attach(ClientLib.Data.MainData.GetInstance().get_Cities(), "Change", ClientLib.Data.CitiesChange, onData);
+    return events;
+  }
+  function detachMapEvents(owner, events) {
+    for (const ev of events) {
+      try {
+        webfrontend.phe.cnc.Util.detachNetEvent(ev.source, ev.name, ev.type, owner, ev.cb);
+      } catch {
+      }
+    }
+  }
+  function cityObjectType() {
+    try {
+      const t2 = ClientLib.Data.WorldSector.ObjectType.City;
+      if (typeof t2 === "number") return t2;
+    } catch {
+    }
+    return 1;
+  }
+
+  // plugins/base-info.js
+  var REFRESH_MS = 2e3;
+  var OWN_COLOR2 = "#00bcd4";
+  var OTHER_COLOR = "#ffcc80";
+  function labelText(number, levels) {
+    if (!levels) return `#${number}`;
+    return `#${number} ${levels.off.toFixed(1)}/${levels.def.toFixed(1)}`;
+  }
+  function baseNumber(ids, id) {
+    const sorted = Array.from(ids).sort((a, b) => a - b);
+    return sorted.indexOf(id) + 1;
+  }
+  var BaseInfo = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descBaseInfo");
+    }
+    constructor(config) {
+      this.name = "BaseInfo";
+      this.config = config;
+      this.running = false;
+      this.labels = /* @__PURE__ */ new Map();
+      this.levels = /* @__PURE__ */ new Map();
+      this.seen = /* @__PURE__ */ new Map();
+      this._events = [];
+      this._interval = null;
+      this._raf = null;
+    }
+    async start() {
+      this.running = true;
+      this._events = attachMapEvents(this, () => this._reposition(), () => this._schedule());
+      this._interval = setInterval(() => this.update(), REFRESH_MS);
+      this.update();
+      console.log("[ST] BaseInfo: started");
+    }
+    stop() {
+      this.running = false;
+      detachMapEvents(this, this._events);
+      this._events = [];
+      if (this._interval) {
+        clearInterval(this._interval);
+        this._interval = null;
+      }
+      if (this._raf) {
+        cancelAnimationFrame(this._raf);
+        this._raf = null;
+      }
+      this._clear();
+    }
+    _schedule() {
+      if (this._raf) return;
+      this._raf = requestAnimationFrame(() => {
+        this._raf = null;
+        this.update();
+      });
+    }
+    _clear() {
+      for (const { el } of this.labels.values()) el.remove();
+      this.labels.clear();
+    }
+    /**
+     * Player bases in view with number and levels.
+     * @returns {Array<{id, x, y, own, number, levels}>}
+     */
+    collect() {
+      const md = ClientLib.Data.MainData.GetInstance();
+      const world = md.get_World();
+      const cities = md.get_Cities();
+      const cityType = cityObjectType();
+      let ownPlayerId2 = null;
+      try {
+        ownPlayerId2 = md.get_Player().id;
+      } catch {
+      }
+      let ownIds = [];
+      try {
+        ownIds = Object.values(cities.get_AllCities().d).map((c) => c.get_Id());
+      } catch {
+      }
+      const range = visibleCellRange();
+      const found = [];
+      for (let y = range.minY; y <= range.maxY; y++) {
+        for (let x = range.minX; x <= range.maxX; x++) {
+          try {
+            const obj = world.GetObjectFromPosition(x, y);
+            if (!obj || obj.Type !== cityType) continue;
+            if (typeof obj.$Id === "undefined") continue;
+            const id = obj.$Id;
+            const playerId = obj.$PlayerId;
+            const own = ownIds.includes(id) || ownPlayerId2 !== null && playerId === ownPlayerId2;
+            if (!own) {
+              if (!this.seen.has(playerId)) this.seen.set(playerId, /* @__PURE__ */ new Set());
+              this.seen.get(playerId).add(id);
+            }
+            found.push({ id, x, y, own, playerId });
+          } catch {
+          }
+        }
+      }
+      for (const base of found) {
+        base.number = base.own ? baseNumber(ownIds.includes(base.id) ? ownIds : [...ownIds, base.id], base.id) : baseNumber(this.seen.get(base.playerId), base.id);
+        this._readLevels(cities, base.id);
+        base.levels = this.levels.get(base.id) || null;
+      }
+      return found;
+    }
+    _readLevels(cities, id) {
+      try {
+        const city = cities.GetCity(id);
+        if (!city) return;
+        const off = Number(city.get_LvlOffense());
+        const def = Number(city.get_LvlDefense());
+        if (off > 0) this.levels.set(id, { off, def: def > 0 ? def : 0 });
+      } catch {
+      }
+    }
+    /** Rescan and render; never throws. */
+    update() {
+      if (!this.running) return;
+      try {
+        if (!isWorldMapVisible()) {
+          this._clear();
+          return;
+        }
+        const bases = this.collect();
+        const keep = /* @__PURE__ */ new Set();
+        for (const base of bases) {
+          keep.add(base.id);
+          let label = this.labels.get(base.id);
+          if (!label) {
+            label = { el: this._createElement(), x: base.x, y: base.y };
+            this.labels.set(base.id, label);
+          }
+          label.x = base.x;
+          label.y = base.y;
+          const el = label.el;
+          el.textContent = labelText(base.number, base.levels);
+          el.style.color = base.own ? OWN_COLOR2 : OTHER_COLOR;
+          el.title = base.levels ? t("baseInfoTitle", { off: base.levels.off.toFixed(2), def: base.levels.def.toFixed(2) }) : t("baseInfoUnknown");
+          this._place(label);
+        }
+        for (const [id, label] of this.labels) {
+          if (!keep.has(id)) {
+            label.el.remove();
+            this.labels.delete(id);
+          }
+        }
+      } catch (e) {
+        console.warn("[ST] BaseInfo: update failed", e);
+      }
+    }
+    _reposition() {
+      try {
+        if (!isWorldMapVisible()) {
+          this._clear();
+          return;
+        }
+        for (const label of this.labels.values()) this._place(label);
+      } catch {
+      }
+    }
+    _place(label) {
+      const { left, top } = cellToScreen(label.x, label.y, 0.1, 0.1);
+      const view = viewSize();
+      if (top < 0 || left < 0 || top > view.height || left > view.width) {
+        if (label.el.parentElement) label.el.remove();
+        return;
+      }
+      label.el.style.left = left + "px";
+      label.el.style.top = top + "px";
+      addToMap(label.el);
+    }
+    _createElement() {
+      const el = document.createElement("div");
+      Object.assign(el.style, {
+        position: "absolute",
+        pointerEvents: "none",
+        zIndex: "10",
+        fontFamily: "Iosevka Term",
+        fontWeight: "bold",
+        fontSize: "12px",
+        padding: "1px 4px",
+        borderRadius: "3px",
+        background: "rgba(0,0,0,0.75)",
+        whiteSpace: "nowrap"
+      });
+      el.setAttribute("data-st-baseinfo", "1");
+      return el;
+    }
+  };
+
+  // plugins/attack-range.js
+  var REFRESH_MS2 = 2e3;
+  function ownBases() {
+    const out = [];
+    try {
+      const all = ClientLib.Data.MainData.GetInstance().get_Cities().get_AllCities().d;
+      for (const city of Object.values(all)) {
+        try {
+          out.push({ id: city.get_Id(), x: city.get_PosX(), y: city.get_PosY() });
+        } catch {
+        }
+      }
+    } catch {
+    }
+    return out;
+  }
+  function attackRange() {
+    try {
+      const r = Number(ClientLib.Data.MainData.GetInstance().get_Server().get_MaxAttackDistance());
+      return r > 0 ? r : null;
+    } catch {
+      return null;
+    }
+  }
+  function circleBox(x, y, range) {
+    const c = cellToScreen(x, y, 0.5, 0.5);
+    const e = cellToScreen(x + range, y + range, 0.5, 0.5);
+    const rx = Math.abs(e.left - c.left);
+    const ry = Math.abs(e.top - c.top);
+    return { left: c.left - rx, top: c.top - ry, width: 2 * rx, height: 2 * ry };
+  }
+  var AttackRange = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descAttackRange");
+    }
+    constructor(config) {
+      this.name = "AttackRange";
+      this.config = config;
+      this.defaultEnabled = true;
+      this.running = false;
+      this.circles = /* @__PURE__ */ new Map();
+      this._events = [];
+      this._interval = null;
+      this._range = null;
+      this._onMove = () => this._reposition();
+      this._onData = () => this._update();
+    }
+    async start() {
+      this.running = true;
+      this._range = attackRange();
+      try {
+        this._events = attachMapEvents(this, this._onMove, this._onData);
+      } catch {
+        this._events = [];
+      }
+      this._interval = setInterval(() => this._update(), REFRESH_MS2);
+      this._update();
+      console.log(`[ST] AttackRange: started (range ${this._range ?? "?"})`);
+    }
+    stop() {
+      this.running = false;
+      detachMapEvents(this, this._events);
+      this._events = [];
+      if (this._interval) {
+        clearInterval(this._interval);
+        this._interval = null;
+      }
+      for (const [, c] of this.circles) c.el.remove();
+      this.circles.clear();
+    }
+    /** Sync the circle set with the own bases, then position them. */
+    _update() {
+      if (!this.running) return;
+      try {
+        if (!this._range) this._range = attackRange();
+        const bases = ownBases();
+        const keep = /* @__PURE__ */ new Set();
+        for (const b of bases) {
+          keep.add(b.id);
+          const existing = this.circles.get(b.id);
+          if (existing) {
+            existing.x = b.x;
+            existing.y = b.y;
+          } else {
+            this.circles.set(b.id, { el: this._createEl(), x: b.x, y: b.y });
+          }
+        }
+        for (const [id, c] of this.circles) {
+          if (!keep.has(id)) {
+            c.el.remove();
+            this.circles.delete(id);
+          }
+        }
+        this._reposition();
+      } catch (e) {
+        console.warn("[ST] AttackRange: update failed", e);
+      }
+    }
+    _createEl() {
+      const el = document.createElement("div");
+      Object.assign(el.style, {
+        position: "absolute",
+        pointerEvents: "none",
+        zIndex: "9",
+        borderRadius: "50%",
+        border: "2px dashed rgba(255,152,0,0.85)",
+        background: "rgba(255,152,0,0.06)",
+        boxSizing: "border-box"
+      });
+      el.className = "st-attack-range";
+      return el;
+    }
+    /** Position every circle; hide all off the world map or off-screen. */
+    _reposition() {
+      if (!this.running) return;
+      try {
+        const visible = isWorldMapVisible() && this._range;
+        const view = visible ? viewSize() : null;
+        for (const [, c] of this.circles) {
+          if (!visible) {
+            if (c.el.parentElement) c.el.remove();
+            continue;
+          }
+          const box = circleBox(c.x, c.y, this._range);
+          const offScreen = box.left + box.width < 0 || box.top + box.height < 0 || box.left > view.width || box.top > view.height;
+          if (offScreen) {
+            if (c.el.parentElement) c.el.remove();
+            continue;
+          }
+          Object.assign(c.el.style, {
+            left: box.left + "px",
+            top: box.top + "px",
+            width: box.width + "px",
+            height: box.height + "px"
+          });
+          if (!c.el.parentElement) addToMap(c.el);
+        }
+      } catch (e) {
+        console.warn("[ST] AttackRange: reposition failed", e);
+      }
+    }
+  };
+
   // lib/main.js
-  var ST_VERSION = "5.12.1";
+  var ST_VERSION = "5.13.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -4333,6 +4799,7 @@ var ShockrTools = (() => {
     const api = new ApiClient(config);
     api.setSendGate(() => online.isPaused);
     online.on("resume", () => api.resumeQueue());
+    online.start();
     const attackTracker = new AttackTracker(config, api);
     const watchList = new WatchList(config, cli, api);
     attackTracker.onUnclaimed = (claim) => watchList.notifyDefeated(claim);
@@ -4346,7 +4813,9 @@ var ShockrTools = (() => {
       new UpgradeCalc(config),
       new TargetWatcher(config, api),
       attackTracker,
-      watchList
+      watchList,
+      new BaseInfo(config),
+      new AttackRange(config)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });
     for (const plugin of plugins) {
@@ -4391,6 +4860,8 @@ var ShockrTools = (() => {
       }
       const reg = { player: "registerStatusOn", shared: "registerStatusShared", none: "registerStatusOff" };
       chatMessage(`[ST] ${t(reg[api.registration])}`);
+      const pause = { paused: "scannerPausePaused", active: "scannerPauseActive", unknown: "scannerPauseUnknown", stopped: "scannerPauseStopped" };
+      chatMessage(`[ST] ${t(pause[online.describe()])}`);
     });
     const registerPanel = new RegisterPanel(async (code) => {
       const result = await api.enroll(code);
@@ -4412,7 +4883,6 @@ var ShockrTools = (() => {
     });
     cli.start();
     idle.start();
-    online.start();
     fixUnload();
     chatMessage(`[ST] ${t("loaded", { version: ST_VERSION, active: plugins.filter((p) => p.running).length, total: plugins.length })}`);
     console.log(`[ST] v${ST_VERSION} ready`);
