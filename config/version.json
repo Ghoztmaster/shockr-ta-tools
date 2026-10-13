@@ -1,7 +1,25 @@
 {
-  "version": "5.19.0",
+  "version": "5.20.0",
   "date": "2026-10-13",
   "changelog": [
+    {
+      "version": "5.20.0",
+      "date": "2026-10-13",
+      "changes": {
+        "en": [
+          "New plugin Transfer All: one button in the resource-transfer panel pulls all tiberium and crystal from your other bases into the open base (tick the box first: shows the cost)",
+          "Respects free storage and your credits; a full resource or an unaffordable base is skipped"
+        ],
+        "de": [
+          "Neues Plugin Transfer All: ein Knopf im Ressourcen-Transferfenster holt alles Tiberium und Kristall aus deinen anderen Basen in die offene Basis (erst das Kästchen anhaken: zeigt die Kosten)",
+          "Beachtet freien Lagerplatz und deine Credits; volle Ressourcen oder zu teure Basen werden übersprungen"
+        ],
+        "nl": [
+          "Nieuwe plugin Transfer All: één knop in het resource-transferpaneel haalt alle tiberium en crystal uit je andere bases naar de open base (eerst het vakje aanvinken: toont de kosten)",
+          "Houdt rekening met vrije opslag en je credits; een volle resource of een te dure base wordt overgeslagen"
+        ]
+      }
+    },
     {
       "version": "5.19.0",
       "date": "2026-10-13",
@@ -71,27 +89,6 @@
           "Map Labels: ⚔ toont nu de gewonnen aanvallen van alle alliance-leden (laatste 24 u), niet alleen je eigen",
           "Keys van spelers die de alliance verlaten worden automatisch ingetrokken (bevestigd door minstens 3 scanners)",
           "Terug in de alliance? Registreer opnieuw met /st register"
-        ]
-      }
-    },
-    {
-      "version": "5.16.0",
-      "date": "2026-10-13",
-      "changes": {
-        "en": [
-          "New page 💰 Loot: won attacks per target coordinate — attacks, total and average loot, players, last attack",
-          "Sortable on every column (default: average per attack), filters for player, period, type and min. attacks",
-          "Click a target for its individual attacks"
-        ],
-        "de": [
-          "Neue Seite 💰 Beute: gewonnene Angriffe pro Zielkoordinate — Angriffe, Gesamt- und Durchschnittsbeute, Spieler, letzter Angriff",
-          "Nach jeder Spalte sortierbar (Standard: Durchschnitt pro Angriff), Filter für Spieler, Zeitraum, Typ und min. Angriffe",
-          "Klick auf ein Ziel zeigt die einzelnen Angriffe"
-        ],
-        "nl": [
-          "Nieuwe pagina 💰 Loot: gewonnen aanvallen per target-coördinaat — aanvallen, totale en gemiddelde loot, spelers, laatste aanval",
-          "Sorteerbaar op elke kolom (standaard: gemiddeld per aanval), filters op speler, periode, type en min. aanvallen",
-          "Klik op een target voor de losse aanvallen"
         ]
       }
     }

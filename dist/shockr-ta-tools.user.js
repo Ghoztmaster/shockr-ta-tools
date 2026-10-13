@@ -4,7 +4,7 @@
 // @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver & wavy for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
-// @version         5.19.0
+// @version         5.20.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // ==/UserScript==
 
@@ -528,6 +528,14 @@ var ShockrTools = (() => {
       descSectorHud: "Sector HUD on the world map: view coordinates + sector, and per sector the POIs held (own green, enemy red, free grey)",
       descMovableMenu: "Movable menus: drag game windows and menu overlays (alliance, mail, forum, \u2026) by their title bar; the position is remembered per window",
       movableMenuStatus: "{n} remembered window position(s)",
+      descTransferAll: "Transfer All in the resource-transfer panel: pulls all tiberium and crystal from your other bases into the open base in one click (tick the box first: shows the cost)",
+      transferAllButton: "Transfer All",
+      transferAllTooltip: "Pull all tiberium and crystal from your other bases into this base",
+      transferAllCheckTooltip: "Tick to show the total transfer cost and enable Transfer All",
+      transferAllCost: "Cost: {cost}",
+      transferAllSkippedFull: "{res} skipped (storage full)",
+      transferAllSkippedCredits: "{n} base(s) skipped (not enough credits)",
+      transferAllFailed: "{n} transfer(s) refused",
       poiShort_tib: "Tib",
       poiShort_cry: "Cry",
       poiShort_pow: "Pow",
@@ -750,6 +758,14 @@ var ShockrTools = (() => {
       descSectorHud: "Sektor-HUD auf der Weltkarte: Ansichtskoordinaten + Sektor, und pro Sektor die gehaltenen POIs (eigene gr\xFCn, feindliche rot, freie grau)",
       descMovableMenu: "Verschiebbare Men\xFCs: Spielfenster und Men\xFC-Overlays (Allianz, Post, Forum, \u2026) an der Titelleiste verschieben; die Position wird pro Fenster gespeichert",
       movableMenuStatus: "{n} gespeicherte Fensterposition(en)",
+      descTransferAll: "Alles transferieren im Ressourcen-Transferfenster: holt mit einem Klick alles Tiberium und Kristall aus deinen anderen Basen in die offene Basis (erst das K\xE4stchen anhaken: zeigt die Kosten)",
+      transferAllButton: "Alles holen",
+      transferAllTooltip: "Alles Tiberium und Kristall aus deinen anderen Basen in diese Basis holen",
+      transferAllCheckTooltip: "Anhaken zeigt die gesamten Transferkosten und aktiviert den Knopf",
+      transferAllCost: "Kosten: {cost}",
+      transferAllSkippedFull: "{res} \xFCbersprungen (Lager voll)",
+      transferAllSkippedCredits: "{n} Basis/Basen \xFCbersprungen (nicht genug Credits)",
+      transferAllFailed: "{n} Transfer(s) abgelehnt",
       poiShort_tib: "Tib",
       poiShort_cry: "Kri",
       poiShort_pow: "Str",
@@ -972,6 +988,14 @@ var ShockrTools = (() => {
       descSectorHud: "Sector-HUD op de wereldkaart: kijkco\xF6rdinaten + sector, en per sector de bezette POIs (eigen groen, vijandelijk rood, vrij grijs)",
       descMovableMenu: "Verplaatsbare menu's: game-vensters en menu-overlays (alliance, mail, forum, \u2026) verslepen aan de titelbalk; de positie wordt per venster onthouden",
       movableMenuStatus: "{n} onthouden vensterpositie(s)",
+      descTransferAll: "Alles overzetten in het resource-transferpaneel: haalt met \xE9\xE9n klik alle tiberium en crystal uit je andere bases naar de open base (eerst het vakje aanvinken: toont de kosten)",
+      transferAllButton: "Alles halen",
+      transferAllTooltip: "Alle tiberium en crystal uit je andere bases naar deze base halen",
+      transferAllCheckTooltip: "Aanvinken toont de totale transferkosten en zet de knop aan",
+      transferAllCost: "Kosten: {cost}",
+      transferAllSkippedFull: "{res} overgeslagen (opslag vol)",
+      transferAllSkippedCredits: "{n} base(s) overgeslagen (niet genoeg credits)",
+      transferAllFailed: "{n} transfer(s) geweigerd",
       poiShort_tib: "Tib",
       poiShort_cry: "Cry",
       poiShort_pow: "Pow",
@@ -7259,8 +7283,245 @@ var ShockrTools = (() => {
     }
   };
 
+  // plugins/transfer-all.js
+  var COST_OK = "#ffffff";
+  var COST_TOO_HIGH = "#ef5350";
+  function resourceTypes() {
+    const e = ClientLib.Base.EResourceType;
+    return [{ key: "tib", type: e.Tiberium }, { key: "cry", type: e.Crystal }];
+  }
+  function tradeOk(city) {
+    try {
+      return city.CanTrade() === ClientLib.Data.ETradeError.None;
+    } catch {
+      return false;
+    }
+  }
+  function freeStorage(city, type) {
+    try {
+      const max = Number(city.GetResourceMaxStorage(type));
+      if (!(max > 0)) return Infinity;
+      return Math.max(0, Math.floor(max - Number(city.GetResourceCount(type))));
+    } catch {
+      return Infinity;
+    }
+  }
+  function planTransfers(target, sources, credits2) {
+    const items = [];
+    const skippedFull = [];
+    let skippedCredits = 0;
+    let left = Number(credits2);
+    if (!Number.isFinite(left)) left = Infinity;
+    if (!tradeOk(target)) return { items, skippedFull, skippedCredits, cost: 0 };
+    for (const { key, type } of resourceTypes()) {
+      let free = freeStorage(target, type);
+      if (free <= 0) {
+        skippedFull.push(key);
+        continue;
+      }
+      for (const source of sources) {
+        if (free <= 0) break;
+        if (source === target || !tradeOk(source)) continue;
+        const amount = Math.min(Math.floor(Number(source.GetResourceCount(type)) || 0), free);
+        if (amount <= 0) continue;
+        const cost = Number(source.CalculateTradeCostToCoord(target.get_PosX(), target.get_PosY(), amount)) || 0;
+        if (cost > left) {
+          skippedCredits++;
+          continue;
+        }
+        left -= cost;
+        free -= amount;
+        items.push({ source, type, key, amount, cost });
+      }
+    }
+    return { items, skippedFull, skippedCredits, cost: items.reduce((s, i) => s + i.cost, 0) };
+  }
+  function ownCities() {
+    const cities = ClientLib.Data.MainData.GetInstance().get_Cities();
+    return { target: cities.get_CurrentOwnCity(), all: Object.values(cities.get_AllCities().d) };
+  }
+  function credits() {
+    try {
+      return ClientLib.Data.MainData.GetInstance().get_Player().GetCreditsCount();
+    } catch {
+      return Infinity;
+    }
+  }
+  function fmt4(n) {
+    try {
+      return String(phe.cnc.gui.util.Numbers.formatNumbersCompactAfterMillion(n));
+    } catch {
+      return fmtNumber(n);
+    }
+  }
+  var TransferAll = class _TransferAll {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descTransferAll");
+    }
+    constructor(config) {
+      this.name = "TransferAll";
+      this.config = config;
+      this.running = false;
+      this.busy = false;
+      this._widgets = null;
+      this._listeners = [];
+      this._timer = null;
+    }
+    async start() {
+      this.running = true;
+      if (!this._install()) {
+        let tries = 0;
+        this._timer = setInterval(() => {
+          if (this._install() || ++tries >= 30) {
+            clearInterval(this._timer);
+            this._timer = null;
+            if (!this._widgets) console.warn("[ST] TransferAll: transfer panel not found \u2014 no button");
+          }
+        }, 2e3);
+      }
+      console.log("[ST] TransferAll: started");
+    }
+    stop() {
+      this.running = false;
+      if (this._timer) clearInterval(this._timer);
+      this._timer = null;
+      for (const { widget, id } of this._listeners) {
+        try {
+          widget.removeListenerById(id);
+        } catch {
+        }
+      }
+      this._listeners = [];
+      if (this._widgets) {
+        const { container, button, check, cost } = this._widgets;
+        for (const w of [button, check, cost]) {
+          try {
+            container.remove(w);
+            w.dispose();
+          } catch {
+          }
+        }
+        this._widgets = null;
+      }
+    }
+    /** The overlay's container the original adds its button to, or null. */
+    static findContainer() {
+      try {
+        const overlay = webfrontend.gui.trade.TradeOverlay.getInstance();
+        const parts = overlay.getLayoutChildren()[13].getLayoutChildren()[1].getLayout()._getLayoutChildren();
+        const container = parts[3];
+        return container && typeof container.add === "function" ? { overlay, container } : null;
+      } catch {
+        return null;
+      }
+    }
+    _install() {
+      if (this._widgets || !this.running) return !!this._widgets;
+      const found = _TransferAll.findContainer();
+      if (!found) return false;
+      const { overlay, container } = found;
+      const button = new webfrontend.ui.SoundButton(t("transferAllButton")).set({
+        width: 90,
+        enabled: false,
+        toolTipText: t("transferAllTooltip")
+      });
+      const check = new qx.ui.form.CheckBox("");
+      check.setToolTipText(t("transferAllCheckTooltip"));
+      const cost = new qx.ui.basic.Label("").set({ textColor: COST_OK });
+      const on = (widget, type, fn) => this._listeners.push({ widget, id: widget.addListener(type, fn, this) });
+      on(check, "changeValue", () => this._onCheck());
+      on(button, "click", () => this.transfer());
+      on(overlay, "appear", () => check.setValue(false));
+      container.add(button, { right: 2, top: 100 });
+      container.add(check, { right: 96, top: 104 });
+      container.add(cost, { right: 2, top: 126 });
+      this._widgets = { container, button, check, cost };
+      return true;
+    }
+    /** Checkbox: show the cost of transferring everything, arm the button. */
+    _onCheck() {
+      const { button, check, cost } = this._widgets;
+      const armed = !!check.getValue();
+      button.setEnabled(armed && !this.busy);
+      if (!armed) {
+        cost.setValue("");
+        return;
+      }
+      try {
+        const { target, all } = ownCities();
+        const plan = planTransfers(target, all, Infinity);
+        cost.setValue(t("transferAllCost", { cost: fmt4(plan.cost) }));
+        cost.setTextColor(plan.cost > credits() ? COST_TOO_HIGH : COST_OK);
+      } catch (e) {
+        cost.setValue("");
+        console.warn("[ST] TransferAll: cost calculation failed", e && e.message);
+      }
+    }
+    /** Send the plan's SelfTrade commands one by one. */
+    async transfer() {
+      if (this.busy) return;
+      let target;
+      let plan;
+      try {
+        const c = ownCities();
+        target = c.target;
+        plan = planTransfers(target, c.all, credits());
+      } catch (e) {
+        console.warn("[ST] TransferAll: transfer failed", e && e.message);
+        return;
+      }
+      this.busy = true;
+      if (this._widgets) {
+        this._widgets.check.setValue(false);
+        this._widgets.button.setEnabled(false);
+      }
+      const done = { tib: 0, cry: 0 };
+      let failed = 0;
+      for (const item of plan.items) {
+        let ok = await this._send(target, item);
+        if (!ok) ok = await this._send(target, item);
+        if (ok) done[item.key] += item.amount;
+        else failed++;
+      }
+      this.busy = false;
+      const name = String(target.get_Name());
+      const skipped = [
+        ...plan.skippedFull.map((k) => t("transferAllSkippedFull", { res: t(`poiShort_${k}`) })),
+        ...plan.skippedCredits ? [t("transferAllSkippedCredits", { n: plan.skippedCredits })] : [],
+        ...failed ? [t("transferAllFailed", { n: failed })] : []
+      ];
+      if (done.tib || done.cry) {
+        console.log(`[ST] Transferred all resources to ${name} (tib ${fmtNumber(done.tib)}, cry ${fmtNumber(done.cry)})` + (skipped.length ? ` \u2014 ${skipped.join(", ")}` : ""));
+      } else {
+        console.log(`[ST] TransferAll: nothing transferred to ${name}` + (skipped.length ? ` \u2014 ${skipped.join(", ")}` : ""));
+      }
+      return { done, failed, skippedFull: plan.skippedFull, skippedCredits: plan.skippedCredits };
+    }
+    /** One SelfTrade; resolves true when the server answered 0 (ok). */
+    _send(target, item) {
+      return new Promise((resolve) => {
+        try {
+          ClientLib.Net.CommunicationManager.GetInstance().SendCommand("SelfTrade", {
+            targetCityId: target.get_Id(),
+            sourceCityId: item.source.get_Id(),
+            resourceType: item.type,
+            amount: item.amount
+          }, phe.cnc.Util.createEventDelegate(
+            ClientLib.Net.CommandResult,
+            this,
+            (ctx, result) => resolve(Number(result) === 0)
+          ), null, true);
+        } catch (e) {
+          console.warn("[ST] TransferAll: SelfTrade failed", e && e.message);
+          resolve(false);
+        }
+      });
+    }
+  };
+
   // lib/main.js
-  var ST_VERSION = "5.19.0";
+  var ST_VERSION = "5.20.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -7307,7 +7568,8 @@ var ShockrTools = (() => {
       new Wavy(config),
       new PoiAnalyser(config),
       new SectorHud(config),
-      new MovableMenu(config)
+      new MovableMenu(config),
+      new TransferAll(config)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });
     for (const plugin of plugins) {

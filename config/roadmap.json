@@ -1,14 +1,19 @@
 {
   "planned": [
     {
-      "en": "Scanner sends buildings: CP/CY/DF columns",
-      "de": "Scanner sendet Gebäude: CP/CY/DF-Spalten",
-      "nl": "Scanner stuurt gebouwen mee: CP/CY/DF-kolommen"
+      "en": "v5.21.0 — Loot Summary + Info (replaces: MHTools Loot Summary)",
+      "de": "v5.21.0 — Loot Summary + Info (ersetzt: MHTools Loot Summary)",
+      "nl": "v5.21.0 — Loot Summary + Info (vervangt: MHTools Loot Summary)"
     },
     {
-      "en": "Alliance War Dashboard expansion",
-      "de": "Alliance War Dashboard Erweiterung",
-      "nl": "Alliance War Dashboard uitbreiding"
+      "en": "v5.22.0 — Chat Helper (replaces: Chat Helper Enhanced)",
+      "de": "v5.22.0 — Chat Helper (ersetzt: Chat Helper Enhanced)",
+      "nl": "v5.22.0 — Chat Helper (vervangt: Chat Helper Enhanced)"
+    },
+    {
+      "en": "v5.23.0 — PvP Alert Status (replaces: CENTER DRIVEN PvP Alert Status)",
+      "de": "v5.23.0 — PvP Alert Status (ersetzt: CENTER DRIVEN PvP Alert Status)",
+      "nl": "v5.23.0 — PvP Alert Status (vervangt: CENTER DRIVEN PvP Alert Status)"
     }
   ],
   "ideas": [

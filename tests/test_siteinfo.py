@@ -22,6 +22,8 @@ ROOT = Path(__file__).parent.parent
 STATIC = ROOT / "server" / "static"
 # The released version (build.js @version) - config/version.json must follow it
 BUILD_VERSION = re.search(r"const VERSION = '([^']+)'", (ROOT / "build.js").read_text(encoding="utf-8")).group(1)
+# The repo roadmap as written (item counts change with every roadmap edit)
+ROADMAP = json.loads((ROOT / "config" / "roadmap.json").read_text(encoding="utf-8"))
 
 
 def write(path: Path, obj):
@@ -74,7 +76,9 @@ class TestSiteInfo:
         a = si.announcements()
         assert len(a) == 1 and a[0]["type"] == "info" and set(a[0]["message"]) == {"en", "de", "nl"}
         r = si.roadmap()
-        assert len(r["planned"]) == 2 and len(r["ideas"]) == 2
+        assert r["planned"] and r == ROADMAP
+        for item in r["planned"] + r["ideas"]:
+            assert set(item) == {"en", "de", "nl"}, "roadmap translated per language"
 
     def test_changes_are_picked_up_without_restart(self, cfg):
         si = SiteInfo(cfg)
@@ -125,7 +129,7 @@ class TestRoutes:
         login(env)
         d = env["client"].get("/api/info").json()
         assert d["version"]["version"] == BUILD_VERSION
-        assert len(d["announcements"]) == 1 and len(d["roadmap"]["planned"]) == 2
+        assert len(d["announcements"]) == 1 and d["roadmap"] == ROADMAP
 
     def test_info_page_needs_session(self, env):
         r = env["client"].get("/info", follow_redirects=False)

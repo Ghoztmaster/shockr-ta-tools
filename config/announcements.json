@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.19.0 released — new plugin Movable Menu: drag game windows and menu overlays (alliance, mail, forum, …) by their title bar, the position is remembered per window",
-      "de": "v5.19.0 veröffentlicht — neues Plugin Movable Menu: Spielfenster und Menü-Overlays (Allianz, Post, Forum, …) an der Titelleiste verschieben, die Position wird pro Fenster gespeichert",
-      "nl": "v5.19.0 uitgebracht — nieuwe plugin Movable Menu: game-vensters en menu-overlays (alliance, mail, forum, …) verslepen aan de titelbalk, de positie wordt per venster onthouden"
+      "en": "v5.20.0 released — new plugin Transfer All: one click pulls all tiberium and crystal from your other bases into the open base (resource-transfer panel)",
+      "de": "v5.20.0 veröffentlicht — neues Plugin Transfer All: ein Klick holt alles Tiberium und Kristall aus deinen anderen Basen in die offene Basis (Ressourcen-Transferfenster)",
+      "nl": "v5.20.0 uitgebracht — nieuwe plugin Transfer All: één klik haalt alle tiberium en crystal uit je andere bases naar de open base (resource-transferpaneel)"
     },
     "type": "info",
     "active": true

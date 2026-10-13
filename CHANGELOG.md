@@ -2,6 +2,26 @@
 
 ## [Unreleased]
 
+## [5.20.0] — 2026-10-13
+
+Geen server-wijziging. Deploy op de VPS volgens de nieuwe staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Transfer All (nieuw, `transfer-all`, standaard aan)
+- Vervangt Tiberium Alliances Transfer All Resources 1.6.2 (KRS_L). `plugins/transfer-all.js`
+- **Afwijking van de werkorder, met Wilco afgestemd**: het transferpaneel van het spel haalt resources UIT je andere bases NAAR de open base, en credits zijn in het spel per speler (niet per base) - die zijn niet over te zetten, ze betalen alleen de transferkosten. Het origineel haalt de geselecteerde resource (tib OF crystal) uit alle andere bases. Shockr haalt tiberium EN crystal in één klik
+- Veiligheid zoals het origineel: een vinkje naast de knop; aanvinken toont de totale kosten (rood als je credits tekortschieten) en zet de knop aan; na elke transfer gaat het vinkje weer uit. Geen dialoog. De kostenregel is een eigen label - het origineel schreef in het kostenlabel van het spel
+- Limieten (het origineel stuurde alles en liet de server weigeren): per resource begrensd op de vrije opslag van de open base (`GetResourceMaxStorage - GetResourceCount`), vol = die resource overgeslagen; een base waarvan de transfer meer kost dan de resterende credits wordt overgeslagen; alleen bases waar `CanTrade()` aan beide kanten `None` is; een geweigerde `SelfTrade` krijgt één herhaling en wordt dan overgeslagen (regel van het origineel)
+- Spel-API: `SendCommand("SelfTrade", {targetCityId, sourceCityId, resourceType, amount})` en `CalculateTradeCostToCoord` - precies wat het origineel gebruikt. Console: `[ST] Transferred all resources to <base> (tib …, cry …)` plus wat er overgeslagen is
+- Knop op de plek van het origineel (zelfde kindpad in `TradeOverlay`); niet gevonden = één waarschuwing, geen knop. De eigen transferknoppen van het spel blijven ongemoeid
+- Niet live geverifieerd: het kindpad in de huidige client, de knop/vinkje-posities, en `GetResourceMaxStorage` (onleesbaar = geen begrenzing, de server beslist). Tests: `tests/transfer-all.test.mjs`
+
+### Roadmap
+- `config/roadmap.json` vervangen door de huidige Shockr-roadmap (gepland v5.20.0-v5.23.0, ideeën incl. Sector progress en POI Analyser / Real POI Bonus). De twee oude items (MehrStrom-scanner, Alliance War Dashboard) zijn eruit
+- `tests/test_siteinfo.py` vergelijkt de roadmap nu met het bestand zelf in plaats van een vast aantal items
+
+### Deploy-regel
+- Staande regel in `CLAUDE.md`: config-bestanden alleen in de repo bewerken, nooit op de VPS; elke release deployen met `git pull && docker compose build --no-cache && docker compose up -d`
+
 ## [5.19.0] — 2026-10-13
 
 Puur client-side, geen server-wijziging.
