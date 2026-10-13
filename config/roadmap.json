@@ -1,14 +1,9 @@
 {
   "planned": [
     {
-      "en": "v5.14 — Map labels (👁 viewing / 📌 claimed / ⚔ attacked) on FG targets + Tunnel Info overlay",
-      "de": "v5.14 — Kartenlabels (👁 schaut / 📌 reserviert / ⚔ angegriffen) an FG-Zielen + Tunnel-Info-Overlay",
-      "nl": "v5.14 — Kaartlabels (👁 kijkt / 📌 geclaimd / ⚔ aangevallen) bij FG-targets + Tunnel Info overlay"
-    },
-    {
-      "en": "v5.15 — Formation Saver + distance lines on the world map",
-      "de": "v5.15 — Formation Saver + Entfernungslinien auf der Weltkarte",
-      "nl": "v5.15 — Formation Saver + afstandslijnen op de wereldkaart"
+      "en": "v5.15 — Formation Saver + Wavy (distance lines, FG targets in range per base, level distribution, waves)",
+      "de": "v5.15 — Formation Saver + Wavy (Entfernungslinien, FG-Ziele in Reichweite pro Basis, Level-Verteilung, Wellen)",
+      "nl": "v5.15 — Formation Saver + Wavy (afstandslijnen, FG-targets in bereik per base, level-verdeling, waves)"
     },
     {
       "en": "v5.16 — Scanner sends buildings: CP/CY/DF columns, loot logs per target",

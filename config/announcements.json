@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.13.0 released — new plugins Base Info (off/def level + number at player bases) and Attack Range (range circle around your bases); scanners now reliably pause while you are online",
-      "de": "v5.13.0 veröffentlicht — neue Plugins Base Info (Off-/Def-Level + Nummer an Spielerbasen) und Attack Range (Reichweitenkreis um deine Basen); Scanner pausieren jetzt zuverlässig, solange du online bist",
-      "nl": "v5.13.0 uitgebracht — nieuwe plugins Base Info (off/def-level + nummer bij speler-bases) en Attack Range (bereikcirkel rond je bases); scanners pauzeren nu betrouwbaar zolang je online bent"
+      "en": "v5.14.0 released — new plugins Map Labels (👁 viewing / 📌 claimed / ⚔ attacked at Forgotten targets) and Tunnel Info (tunnel level, required offense, range) on the world map",
+      "de": "v5.14.0 veröffentlicht — neue Plugins Map Labels (👁 schaut / 📌 reserviert / ⚔ angegriffen an Forgotten-Zielen) und Tunnel Info (Tunnel-Level, benötigte Offensive, Reichweite) auf der Weltkarte",
+      "nl": "v5.14.0 uitgebracht — nieuwe plugins Map Labels (👁 kijkt / 📌 geclaimd / ⚔ aangevallen bij Forgotten-targets) en Tunnel Info (tunnel-level, benodigde offense, bereik) op de wereldkaart"
     },
     "type": "info",
     "active": true

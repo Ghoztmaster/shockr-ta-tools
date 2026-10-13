@@ -2,6 +2,27 @@
 
 ## [Unreleased]
 
+## [5.14.0] — 2026-10-13
+
+### Map Labels (nieuw, `map-labels`, standaard aan)
+- Labels bij Forgotten-targets (camp/outpost/base) op de wereldkaart: 👁 kijkt (geel), 📌 geclaimd (oranje), ⚔ aangevallen (rood) + spelernaam (> 10 tekens → 9 + …). Per speler alleen de hoogste status (⚔ > 📌 > 👁), meerdere spelers onder elkaar. Gecentreerd onder het target, dus niet over het CampTracker-bolletje (linksboven); font = CampTracker-font × 0,6 (min 11 px) - de volle CampTracker-grootte was te breed voor namen
+- Alleen waar het wereldobject nog een Forgotten-target is (Type 2, of Type 3 met `$CampType` ≠ 0) - verdwijnt het target, dan verdwijnen de labels. Nooit op speler-bases. Pollen en tekenen alleen op de wereldkaart
+- Bronnen, allemaal bestaand (geen server-wijziging):
+  - 👁 `GET /api/target-watch/{worldId}` elke 10 s (de werkorder noemde `POST action list` - die bestaat niet; dit is de bestaande route met spelerauth). Eigen 👁 alleen zolang TargetWatcher dat target nog in beeld heeft (`_currentId`, alleen gelezen) → weg zodra je de base verlaat
+  - 📌 `POST /api/watchlist {action:"list"}` elke 60 s
+  - ⚔ de eigen rapportkoppen (`GetReportHeaderAll`, alleen lezen, filter `isLoggable` uit AttackTracker), laatste 7 dagen, elke 60 s
+- **Beperkingen t.o.v. de werkorder**: 👁 van ANDERE spelers blijft tot 10 min staan (TargetWatcher meldt één keer per base-view, de server bewaart 10 min - "binnen 10-15 s weg" kan alleen met een heartbeat/unwatch op de server). ⚔ van ANDERE spelers ontbreekt: de alliance-aanvallen staan alleen achter `GET /api/attacks`, en die vraagt een website-sessie. Beide vragen een server-wijziging die de werkorder uitsloot
+- Tests: `tests/map-labels.test.mjs`
+
+### Tunnel Info (nieuw, `tunnel-info`, standaard aan)
+- Vervangt TA Tunnel Info: bij elke tunnel in beeld (`RegionPointOfInterest`, `get_Type() === 0`) een label `T42 · ≥39` (level, offense nodig = level − `get_POIActivationLevelDifference()`) en een gestippelde cirkel van het invloedsbereik. Groen als je sterkste eigen offense het haalt, anders rood (TA Tunnel Info vergeleek met de base die je verplaatst; buiten de verplaats-modus is dat er niet)
+- Bereik uit de `[tir]N[/tir]`-tag in de alliance-aankondiging, anders 6 - zoals TA Tunnel Info
+- **Niet gebouwd**: "welke target-levels de tunnel spawnt" - dat zit niet in de client-data die TA Tunnel Info leest en er is geen getter voor bekend; niet geschat
+- Tests: `tests/tunnel-info.test.mjs`
+
+### Overig
+- `main.js` houdt de TargetWatcher als benoemde instantie bij (Map Labels leest hem); TargetWatcher zelf ongewijzigd
+
 ## [5.13.0] — 2026-10-13
 
 ### Scanner-pauze bij online: twee gaten gedicht

@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name            Shockr - Tiberium Alliances Tools
 // @author          Ghozt [SoO] (original: Shockr, fixed by NetquiK [SoO])
-// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info & attack range for C&C Tiberium Alliances
+// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels & tunnel info for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
-// @version         5.13.0
+// @version         5.14.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // ==/UserScript==
 
@@ -505,6 +505,9 @@ var ShockrTools = (() => {
       scannerPauseActive: "Scanners: active (you are away/offline)",
       scannerPauseUnknown: "Scanners: online status not readable \u2014 not paused",
       scannerPauseStopped: "Scanners: online watch not running",
+      descMapLabels: "Who is viewing \u{1F441}, has claimed \u{1F4CC} or attacked \u2694 Forgotten targets, on the world map",
+      descTunnelInfo: "Tunnel level, required offense and influence range on the world map",
+      tunnelInfoTitle: "Tunnel level {level} \xB7 active from offense {required} \xB7 range {range}",
       helpCmdWatch: "Claim the selected FG target (force: claim anyway)",
       helpCmdUnwatch: "Remove your claim on the selected target (all: every claim)",
       watchClaimed: "{type} lvl {level} @ {x}:{y} claimed",
@@ -669,6 +672,9 @@ var ShockrTools = (() => {
       scannerPauseActive: "Scanner: aktiv (du bist abwesend/offline)",
       scannerPauseUnknown: "Scanner: Online-Status nicht lesbar \u2014 nicht pausiert",
       scannerPauseStopped: "Scanner: Online-\xDCberwachung l\xE4uft nicht",
+      descMapLabels: "Wer Forgotten-Ziele ansieht \u{1F441}, reserviert hat \u{1F4CC} oder angegriffen hat \u2694, auf der Weltkarte",
+      descTunnelInfo: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich auf der Weltkarte",
+      tunnelInfoTitle: "Tunnel-Level {level} \xB7 aktiv ab Offensive {required} \xB7 Reichweite {range}",
       helpCmdWatch: "Ausgew\xE4hltes FG-Ziel reservieren (force: trotzdem reservieren)",
       helpCmdUnwatch: "Deine Reservierung des ausgew\xE4hlten Ziels entfernen (all: alle)",
       watchClaimed: "{type} Lv {level} @ {x}:{y} reserviert",
@@ -833,6 +839,9 @@ var ShockrTools = (() => {
       scannerPauseActive: "Scanners: actief (je bent away/offline)",
       scannerPauseUnknown: "Scanners: online-status niet leesbaar \u2014 niet gepauzeerd",
       scannerPauseStopped: "Scanners: online-bewaking draait niet",
+      descMapLabels: "Wie Forgotten-targets bekijkt \u{1F441}, geclaimd heeft \u{1F4CC} of aangevallen heeft \u2694, op de wereldkaart",
+      descTunnelInfo: "Tunnel-level, benodigde offense en invloedsbereik op de wereldkaart",
+      tunnelInfoTitle: "Tunnel level {level} \xB7 actief vanaf offense {required} \xB7 bereik {range}",
       helpCmdWatch: "Geselecteerd FG-target claimen (force: toch claimen)",
       helpCmdUnwatch: "Je claim op het geselecteerde target verwijderen (all: alle claims)",
       watchClaimed: "{type} lvl {level} @ {x}:{y} geclaimd",
@@ -1482,16 +1491,16 @@ var ShockrTools = (() => {
         const alliance = md.get_Alliance();
         allianceId = alliance ? alliance.get_Id() : 0;
       }
-      let worldId = 0;
+      let worldId2 = 0;
       try {
-        worldId = md.get_Server().get_WorldId();
+        worldId2 = md.get_Server().get_WorldId();
       } catch {
       }
-      if (!worldId) {
+      if (!worldId2) {
         const m = location.pathname.match(/\/(\d+)\/index\.aspx/i);
-        worldId = m ? Number(m[1]) : 0;
+        worldId2 = m ? Number(m[1]) : 0;
       }
-      return { id: id || 0, name: name || "", allianceId: allianceId || 0, worldId };
+      return { id: id || 0, name: name || "", allianceId: allianceId || 0, worldId: worldId2 };
     } catch {
       return null;
     }
@@ -3836,15 +3845,15 @@ var ShockrTools = (() => {
     poll() {
       if (!this.running || this._pollBusy || !this.api.isConfigured) return;
       const util = gameUtil();
-      let md, net, worldId;
+      let md, net, worldId2;
       try {
         md = ClientLib.Data.MainData.GetInstance();
         net = ClientLib.Net.CommunicationManager.GetInstance();
-        worldId = Number(md.get_Server().get_WorldId());
+        worldId2 = Number(md.get_Server().get_WorldId());
       } catch {
         return;
       }
-      if (!util || !worldId || !this._ensureListener(md, util)) return;
+      if (!util || !worldId2 || !this._ensureListener(md, util)) return;
       this._pollBusy = true;
       try {
         net.SendSimpleCommand(
@@ -3852,7 +3861,7 @@ var ShockrTools = (() => {
           { type: 1, skip: 0, take: HEADER_TAKE, sort: 1, ascending: false },
           util.createEventDelegate(ClientLib.Net.CommandResult, this, (ctx, data) => {
             this._pollBusy = false;
-            this._onHeaders(worldId, Array.isArray(data) ? data : []);
+            this._onHeaders(worldId2, Array.isArray(data) ? data : []);
           }),
           null
         );
@@ -3862,11 +3871,11 @@ var ShockrTools = (() => {
       }
       this.flush();
     }
-    _onHeaders(worldId, headers) {
+    _onHeaders(worldId2, headers) {
       if (!this.running) return;
-      const state = loadDone(worldId);
+      const state = loadDone(worldId2);
       const fresh = headers.filter((h) => isLoggable(h) && h.t > state.cutoff && !state.done.some(([id]) => id === h.i) && !(this._inFlight && this._inFlight.header.i === h.i) && !this._pending.some((p) => p.header.i === h.i)).reverse();
-      for (const h of fresh) this._pending.push({ header: h, worldId, attempts: 0 });
+      for (const h of fresh) this._pending.push({ header: h, worldId: worldId2, attempts: 0 });
       this._processNext();
     }
     _ensureListener(md, util) {
@@ -3999,7 +4008,7 @@ var ShockrTools = (() => {
     const ad = h.ad || {};
     return !!CAMP_TYPES[parseInt(ad.dbn, 10)] && Number.isFinite(Number(ad.dbx)) && Number.isFinite(Number(ad.dby)) && typeof h.t === "number";
   }
-  function buildAttack(h, worldId, loot) {
+  function buildAttack(h, worldId2, loot) {
     if (!isLoggable(h)) return null;
     const ad = h.ad;
     const level = Number(ad.dbl);
@@ -4011,7 +4020,7 @@ var ShockrTools = (() => {
       lootTib: nonNeg(loot.tib),
       lootCrystal: nonNeg(loot.cry),
       lootCredits: nonNeg(loot.credits),
-      worldId: Number(worldId),
+      worldId: Number(worldId2),
       timestamp: h.t,
       reportId: h.i
     };
@@ -4053,16 +4062,16 @@ var ShockrTools = (() => {
     } catch {
     }
   }
-  function loadDone(worldId) {
+  function loadDone(worldId2) {
     try {
-      const v = JSON.parse(localStorage.getItem(DONE_KEY_PREFIX + worldId) || "null");
+      const v = JSON.parse(localStorage.getItem(DONE_KEY_PREFIX + worldId2) || "null");
       if (v && Array.isArray(v.done) && typeof v.cutoff === "number") return v;
     } catch {
     }
     return { cutoff: Date.now() - BACKFILL_DAYS * 86400 * 1e3, done: [] };
   }
-  function markDone(worldId, id, time) {
-    const state = loadDone(worldId);
+  function markDone(worldId2, id, time) {
+    const state = loadDone(worldId2);
     if (!state.done.some(([d]) => d === id)) state.done.push([id, time]);
     state.done.sort((a, b) => a[1] - b[1]);
     while (state.done.length > DONE_MAX) {
@@ -4070,7 +4079,7 @@ var ShockrTools = (() => {
       state.cutoff = Math.max(state.cutoff, dropped);
     }
     try {
-      localStorage.setItem(DONE_KEY_PREFIX + worldId, JSON.stringify(state));
+      localStorage.setItem(DONE_KEY_PREFIX + worldId2, JSON.stringify(state));
     } catch {
     }
   }
@@ -4155,8 +4164,8 @@ var ShockrTools = (() => {
     async unwatch(args = []) {
       if (!this._ready()) return;
       if (String(args[0] || "").toLowerCase() === "all") {
-        const worldId = currentWorldId();
-        const result2 = worldId && await this.api.request("POST", "/api/watchlist", { action: "unclaim_all", worldId });
+        const worldId2 = currentWorldId();
+        const result2 = worldId2 && await this.api.request("POST", "/api/watchlist", { action: "unclaim_all", worldId: worldId2 });
         if (!result2) {
           say(t("watchFailed"));
           return;
@@ -4208,8 +4217,8 @@ var ShockrTools = (() => {
         this._refreshing = null;
       });
     }
-    async _refresh(worldId) {
-      const result = await this.api.request("POST", "/api/watchlist", { action: "list", worldId });
+    async _refresh(worldId2) {
+      const result = await this.api.request("POST", "/api/watchlist", { action: "list", worldId: worldId2 });
       this._claimsAt = Date.now();
       if (result && Array.isArray(result.claims)) {
         this._claims = result.claims;
@@ -4775,8 +4784,560 @@ var ShockrTools = (() => {
     }
   };
 
+  // plugins/map-labels.js
+  var WATCH_POLL_MS = 10 * 1e3;
+  var CLAIM_POLL_MS = 60 * 1e3;
+  var ATTACK_POLL_MS = 60 * 1e3;
+  var RENDER_MS = 2e3;
+  var ATTACK_MAX_AGE_MS = 7 * 24 * 3600 * 1e3;
+  var NAME_MAX = 10;
+  var STATUS = {
+    attacked: { rank: 3, icon: "\u2694", color: "#f44336" },
+    claimed: { rank: 2, icon: "\u{1F4CC}", color: "#ff9800" },
+    viewing: { rank: 1, icon: "\u{1F441}", color: "#ffeb3b" }
+  };
+  function truncateName(name) {
+    const s = String(name || "?");
+    return s.length > NAME_MAX ? s.slice(0, NAME_MAX - 1) + "\u2026" : s;
+  }
+  function mergeLabels(data, own = {}) {
+    const out = /* @__PURE__ */ new Map();
+    const add = (entry, status) => {
+      const x = Math.round(Number(entry.x));
+      const y = Math.round(Number(entry.y));
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+      const key = `${x}:${y}`;
+      if (!out.has(key)) out.set(key, { x, y, players: /* @__PURE__ */ new Map() });
+      const players = out.get(key).players;
+      const pid = String(entry.playerId ?? entry.playerName);
+      const known = players.get(pid);
+      if (!known || STATUS[status].rank > STATUS[known.status].rank) {
+        players.set(pid, { status, playerId: entry.playerId, playerName: entry.playerName || "?" });
+      }
+    };
+    for (const w of data.watches || []) {
+      const isOwn = own.ownId != null && Number(w.playerId) === Number(own.ownId);
+      if (isOwn && Number(own.ownCurrentTargetId) !== Number(w.targetId)) continue;
+      add(w, "viewing");
+    }
+    for (const c of data.claims || []) add(c, "claimed");
+    for (const a of data.attacks || []) add(a, "attacked");
+    const result = /* @__PURE__ */ new Map();
+    for (const [key, { x, y, players }] of out) {
+      const lines = [...players.values()].sort((a, b) => STATUS[b.status].rank - STATUS[a.status].rank || String(a.playerName).localeCompare(String(b.playerName)));
+      result.set(key, { x, y, lines });
+    }
+    return result;
+  }
+  function isFgTarget(world, x, y) {
+    try {
+      const obj = world.GetObjectFromPosition(x, y);
+      if (!obj) return false;
+      if (obj.Type === 2) return true;
+      if (obj.Type === 3) return obj.$CampType !== 0;
+      return false;
+    } catch {
+      return false;
+    }
+  }
+  function ownPlayer() {
+    try {
+      const p = ClientLib.Data.MainData.GetInstance().get_Player();
+      const id = Number(typeof p.get_Id === "function" ? p.get_Id() : p.id) || null;
+      const name = String((typeof p.get_Name === "function" ? p.get_Name() : p.name) || "");
+      return { id, name };
+    } catch {
+      return { id: null, name: "" };
+    }
+  }
+  function worldId() {
+    try {
+      return Number(ClientLib.Data.MainData.GetInstance().get_Server().get_WorldId()) || null;
+    } catch {
+      return null;
+    }
+  }
+  function gameUtil2() {
+    if (typeof webfrontend !== "undefined" && webfrontend.phe && webfrontend.phe.cnc && webfrontend.phe.cnc.Util) return webfrontend.phe.cnc.Util;
+    if (typeof phe !== "undefined" && phe.cnc && phe.cnc.Util) return phe.cnc.Util;
+    return null;
+  }
+  var ANSWER_TIMEOUT_MS2 = 15 * 1e3;
+  var MapLabels = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descMapLabels");
+    }
+    constructor(config, apiClient, plugins = {}) {
+      this.name = "MapLabels";
+      this.config = config;
+      this.api = apiClient;
+      this.plugins = plugins || {};
+      this.running = false;
+      this.watches = [];
+      this.claims = [];
+      this.attacks = [];
+      this._last = { watch: 0, claim: 0, attack: 0 };
+      this._busy = { watch: false, claim: false, attack: false };
+      this.labels = /* @__PURE__ */ new Map();
+      this._events = [];
+      this._timer = null;
+      this._renderTimer = null;
+    }
+    async start() {
+      this.running = true;
+      try {
+        this._events = attachMapEvents(this, () => this._reposition(), () => this.render());
+      } catch {
+        this._events = [];
+      }
+      this._timer = setInterval(() => this.poll(), 1e3);
+      this._renderTimer = setInterval(() => this.render(), RENDER_MS);
+      this.poll();
+      console.log("[ST] MapLabels: started");
+    }
+    stop() {
+      this.running = false;
+      detachMapEvents(this, this._events);
+      this._events = [];
+      if (this._timer) clearInterval(this._timer);
+      if (this._renderTimer) clearInterval(this._renderTimer);
+      this._timer = this._renderTimer = null;
+      this._clear();
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      return `\u{1F441} ${this.watches.length} \xB7 \u{1F4CC} ${this.claims.length} \xB7 \u2694 ${this.attacks.length}`;
+    }
+    /** Called every second: fires each source when its interval is due. Only on the world map. */
+    poll(now = Date.now()) {
+      if (!this.running) return;
+      try {
+        if (!isWorldMapVisible()) return;
+        const configured = !!(this.api && this.api.isConfigured);
+        if (configured && now - this._last.watch >= WATCH_POLL_MS) this._fetchWatches(now);
+        if (configured && now - this._last.claim >= CLAIM_POLL_MS) this._fetchClaims(now);
+        if (now - this._last.attack >= ATTACK_POLL_MS) this._readAttacks(now);
+      } catch (e) {
+        console.warn("[ST] MapLabels: poll failed", e && e.message);
+      }
+    }
+    async _fetchWatches(now) {
+      if (this._busy.watch) return;
+      const wid = worldId();
+      if (!wid) return;
+      this._busy.watch = true;
+      this._last.watch = now;
+      try {
+        const data = await this.api.request("GET", `/api/target-watch/${wid}`);
+        if (data && Array.isArray(data.targets)) {
+          const list = [];
+          for (const tg of data.targets) {
+            for (const w of tg.watchers || []) {
+              list.push({ x: tg.targetX, y: tg.targetY, targetId: tg.targetId, playerId: w.playerId, playerName: w.playerName });
+            }
+          }
+          this.watches = list;
+          this.render();
+        }
+      } catch {
+      } finally {
+        this._busy.watch = false;
+      }
+    }
+    async _fetchClaims(now) {
+      if (this._busy.claim) return;
+      const wid = worldId();
+      if (!wid) return;
+      this._busy.claim = true;
+      this._last.claim = now;
+      try {
+        const data = await this.api.request("POST", "/api/watchlist", { action: "list", worldId: wid });
+        if (data && Array.isArray(data.claims)) {
+          this.claims = data.claims.map((c) => ({ x: c.targetX, y: c.targetY, playerId: c.playerId, playerName: c.playerName }));
+          this.render();
+        }
+      } catch {
+      } finally {
+        this._busy.claim = false;
+      }
+    }
+    /** Own won FG attacks from the report headers (read-only, same route/filter as AttackTracker). */
+    _readAttacks(now) {
+      if (this._busy.attack && now - this._last.attack < ANSWER_TIMEOUT_MS2) return;
+      const util = gameUtil2();
+      if (!util) return;
+      let net;
+      try {
+        net = ClientLib.Net.CommunicationManager.GetInstance();
+      } catch {
+        return;
+      }
+      this._busy.attack = true;
+      this._last.attack = now;
+      try {
+        net.SendSimpleCommand(
+          "GetReportHeaderAll",
+          { type: 1, skip: 0, take: 50, sort: 1, ascending: false },
+          util.createEventDelegate(ClientLib.Net.CommandResult, this, (ctx, data) => {
+            this._busy.attack = false;
+            this._onHeaders(Array.isArray(data) ? data : []);
+          }),
+          null
+        );
+      } catch (e) {
+        this._busy.attack = false;
+        console.warn("[ST] MapLabels: GetReportHeaderAll failed", e && e.message);
+      }
+    }
+    _onHeaders(headers, now = Date.now()) {
+      const me = ownPlayer();
+      this.attacks = headers.filter((h) => isLoggable(h) && now - h.t <= ATTACK_MAX_AGE_MS).map((h) => ({ x: Number(h.ad.dbx), y: Number(h.ad.dby), playerId: me.id, playerName: me.name }));
+      this.render();
+    }
+    _clear() {
+      for (const { el } of this.labels.values()) el.remove();
+      this.labels.clear();
+    }
+    /** Rebuild the labels from the current data; never throws. */
+    render() {
+      if (!this.running) return;
+      try {
+        if (!isWorldMapVisible()) {
+          this._clear();
+          return;
+        }
+        const me = ownPlayer();
+        const tw = this.plugins.targetWatcher;
+        const merged = mergeLabels(
+          { watches: this.watches, claims: this.claims, attacks: this.attacks },
+          { ownId: me.id, ownCurrentTargetId: tw && tw.running ? tw._currentId : null }
+        );
+        const world = ClientLib.Data.MainData.GetInstance().get_World();
+        const keep = /* @__PURE__ */ new Set();
+        for (const [key, entry] of merged) {
+          if (!entry.lines.length || !isFgTarget(world, entry.x, entry.y)) continue;
+          keep.add(key);
+          let label = this.labels.get(key);
+          if (!label) {
+            label = { el: this._createElement(), x: entry.x, y: entry.y };
+            this.labels.set(key, label);
+          }
+          this._fill(label.el, entry.lines);
+          this._place(label);
+        }
+        for (const [key, label] of this.labels) {
+          if (!keep.has(key)) {
+            label.el.remove();
+            this.labels.delete(key);
+          }
+        }
+      } catch (e) {
+        console.warn("[ST] MapLabels: render failed", e && e.message);
+      }
+    }
+    _fill(el, lines) {
+      el.textContent = "";
+      for (const line of lines) {
+        const st = STATUS[line.status];
+        const row = document.createElement("div");
+        row.textContent = `${st.icon} ${truncateName(line.playerName)}`;
+        row.style.color = st.color;
+        el.appendChild(row);
+      }
+      el.title = lines.map((l) => `${STATUS[l.status].icon} ${l.playerName}`).join("\n");
+    }
+    _reposition() {
+      try {
+        if (!isWorldMapVisible()) {
+          this._clear();
+          return;
+        }
+        for (const label of this.labels.values()) this._place(label);
+      } catch {
+      }
+    }
+    _place(label) {
+      const { left, top } = cellToScreen(label.x, label.y, 0.5, 0.95);
+      const view = viewSize();
+      if (top < 0 || left < 0 || top > view.height || left > view.width) {
+        if (label.el.parentElement) label.el.remove();
+        return;
+      }
+      label.el.style.left = left + "px";
+      label.el.style.top = top + "px";
+      addToMap(label.el);
+    }
+    _createElement() {
+      const size = Math.max(11, Math.round(Number(this.config ? this.config.get("camptracker.fontsize", 20) : 20) * 0.6));
+      const el = document.createElement("div");
+      Object.assign(el.style, {
+        position: "absolute",
+        transform: "translateX(-50%)",
+        pointerEvents: "none",
+        zIndex: "10",
+        fontFamily: this.config ? this.config.get("camptracker.font", "Iosevka Term") : "Iosevka Term",
+        fontWeight: "bold",
+        fontSize: size + "px",
+        lineHeight: "1.15",
+        padding: "1px 4px",
+        borderRadius: "3px",
+        background: "rgba(0,0,0,0.7)",
+        whiteSpace: "nowrap"
+      });
+      el.setAttribute("data-st-maplabel", "1");
+      return el;
+    }
+  };
+
+  // plugins/tunnel-info.js
+  var REFRESH_MS3 = 2e3;
+  var DEFAULT_INFLUENCE_RANGE = 6;
+  var COLOR_ACTIVE = "#06ff00";
+  var COLOR_BLOCKED = "#ff3600";
+  var TIR_TAG = /\[tir\]([0-9])\[\/tir\]/;
+  function parseInfluenceRange(announcement) {
+    const m = typeof announcement === "string" ? announcement.match(TIR_TAG) : null;
+    const n = m ? parseInt(m[1], 10) : NaN;
+    return n > 0 ? n : DEFAULT_INFLUENCE_RANGE;
+  }
+  function requiredOffense(level, activationDiff) {
+    return level - (Number(activationDiff) || 0);
+  }
+  function labelText2(level, required) {
+    return `T${fmt3(level)} \xB7 \u2265${fmt3(required)}`;
+  }
+  function tunnelColor(offense, required) {
+    return offense >= required ? COLOR_ACTIVE : COLOR_BLOCKED;
+  }
+  function fmt3(n) {
+    return Number.isInteger(n) ? String(n) : n.toFixed(1);
+  }
+  function rgba(hex, a) {
+    const v = parseInt(hex.slice(1), 16);
+    return `rgba(${v >> 16 & 255},${v >> 8 & 255},${v & 255},${a})`;
+  }
+  function circleBox2(x, y, range) {
+    const c = cellToScreen(x, y, 0.5, 0.5);
+    const e = cellToScreen(x + range, y + range, 0.5, 0.5);
+    const rx = Math.abs(e.left - c.left);
+    const ry = Math.abs(e.top - c.top);
+    return { left: c.left - rx, top: c.top - ry, width: 2 * rx, height: 2 * ry };
+  }
+  function readInfluenceRange() {
+    try {
+      return parseInfluenceRange(ClientLib.Data.MainData.GetInstance().get_Alliance().get_Announcement());
+    } catch {
+      return DEFAULT_INFLUENCE_RANGE;
+    }
+  }
+  function readActivationDiff() {
+    try {
+      return Number(ClientLib.Data.MainData.GetInstance().get_Server().get_POIActivationLevelDifference()) || 0;
+    } catch {
+      return 0;
+    }
+  }
+  function maxOwnOffense() {
+    let max = 0;
+    try {
+      const all = ClientLib.Data.MainData.GetInstance().get_Cities().get_AllCities().d;
+      for (const city of Object.values(all)) {
+        try {
+          const off = Number(city.get_LvlOffense());
+          if (off > max) max = off;
+        } catch {
+        }
+      }
+    } catch {
+    }
+    return max;
+  }
+  var TunnelInfo = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descTunnelInfo");
+    }
+    constructor(config) {
+      this.name = "TunnelInfo";
+      this.config = config;
+      this.running = false;
+      this.tunnels = /* @__PURE__ */ new Map();
+      this._events = [];
+      this._interval = null;
+      this._raf = null;
+    }
+    async start() {
+      this.running = true;
+      try {
+        this._events = attachMapEvents(this, () => this._reposition(), () => this._schedule());
+      } catch {
+        this._events = [];
+      }
+      this._interval = setInterval(() => this.update(), REFRESH_MS3);
+      this.update();
+      console.log("[ST] TunnelInfo: started");
+    }
+    stop() {
+      this.running = false;
+      detachMapEvents(this, this._events);
+      this._events = [];
+      if (this._interval) {
+        clearInterval(this._interval);
+        this._interval = null;
+      }
+      if (this._raf) {
+        cancelAnimationFrame(this._raf);
+        this._raf = null;
+      }
+      this._clear();
+    }
+    _schedule() {
+      if (this._raf) return;
+      this._raf = requestAnimationFrame(() => {
+        this._raf = null;
+        this.update();
+      });
+    }
+    _clear() {
+      for (const tn of this.tunnels.values()) {
+        tn.label.remove();
+        tn.circle.remove();
+      }
+      this.tunnels.clear();
+    }
+    /** Tunnels in the visible cell range: [{x, y, level}]. */
+    collect() {
+      const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
+      const gw = region.get_GridWidth();
+      const gh = region.get_GridHeight();
+      const poiType = ClientLib.Vis.VisObject.EObjectType.RegionPointOfInterest;
+      const range = visibleCellRange();
+      const found = /* @__PURE__ */ new Map();
+      for (let y = range.minY; y <= range.maxY; y++) {
+        for (let x = range.minX; x <= range.maxX; x++) {
+          try {
+            const obj = region.GetObjectFromPosition(x * gw, y * gh);
+            if (!obj || obj.get_VisObjectType() !== poiType || obj.get_Type() !== 0) continue;
+            const tx = obj.get_RawX();
+            const ty = obj.get_RawY();
+            const key = `${tx}:${ty}`;
+            if (!found.has(key)) found.set(key, { x: tx, y: ty, level: Number(obj.get_Level()) });
+          } catch {
+          }
+        }
+      }
+      return Array.from(found.entries());
+    }
+    /** Rescan and render; never throws. */
+    update() {
+      if (!this.running) return;
+      try {
+        if (!isWorldMapVisible()) {
+          this._clear();
+          return;
+        }
+        const influence = readInfluenceRange();
+        const diff = readActivationDiff();
+        const offense = maxOwnOffense();
+        const keep = /* @__PURE__ */ new Set();
+        for (const [key, tunnel] of this.collect()) {
+          keep.add(key);
+          let tn = this.tunnels.get(key);
+          if (!tn) {
+            tn = { label: this._createLabel(), circle: this._createCircle(), x: tunnel.x, y: tunnel.y };
+            this.tunnels.set(key, tn);
+          }
+          const required = requiredOffense(tunnel.level, diff);
+          const color = tunnelColor(offense, required);
+          tn.range = influence;
+          tn.label.textContent = labelText2(tunnel.level, required);
+          tn.label.style.color = color;
+          tn.label.title = t("tunnelInfoTitle", { level: fmt3(tunnel.level), required: fmt3(required), range: influence });
+          tn.circle.style.borderColor = rgba(color, 0.6);
+          tn.circle.style.background = rgba(color, 0.05);
+          this._place(tn);
+        }
+        for (const [key, tn] of this.tunnels) {
+          if (!keep.has(key)) {
+            tn.label.remove();
+            tn.circle.remove();
+            this.tunnels.delete(key);
+          }
+        }
+      } catch (e) {
+        console.warn("[ST] TunnelInfo: update failed", e);
+      }
+    }
+    _reposition() {
+      try {
+        if (!isWorldMapVisible()) {
+          this._clear();
+          return;
+        }
+        for (const tn of this.tunnels.values()) this._place(tn);
+      } catch {
+      }
+    }
+    _place(tn) {
+      const view = viewSize();
+      const pos = cellToScreen(tn.x, tn.y, 0.1, 0.1);
+      const labelOn = !(pos.top < 0 || pos.left < 0 || pos.top > view.height || pos.left > view.width);
+      if (labelOn) {
+        tn.label.style.left = pos.left + "px";
+        tn.label.style.top = pos.top + "px";
+        addToMap(tn.label);
+      } else if (tn.label.parentElement) {
+        tn.label.remove();
+      }
+      if (!labelOn || !(tn.range > 0)) {
+        if (tn.circle.parentElement) tn.circle.remove();
+        return;
+      }
+      const box = circleBox2(tn.x, tn.y, tn.range);
+      Object.assign(tn.circle.style, {
+        left: box.left + "px",
+        top: box.top + "px",
+        width: box.width + "px",
+        height: box.height + "px"
+      });
+      addToMap(tn.circle);
+    }
+    _createLabel() {
+      const el = document.createElement("div");
+      Object.assign(el.style, {
+        position: "absolute",
+        pointerEvents: "none",
+        zIndex: "10",
+        fontFamily: "Iosevka Term",
+        fontWeight: "bold",
+        fontSize: "12px",
+        padding: "1px 4px",
+        borderRadius: "3px",
+        background: "rgba(0,0,0,0.75)",
+        whiteSpace: "nowrap"
+      });
+      el.className = "st-tunnel-info";
+      return el;
+    }
+    _createCircle() {
+      const el = document.createElement("div");
+      Object.assign(el.style, {
+        position: "absolute",
+        pointerEvents: "none",
+        zIndex: "8",
+        borderRadius: "50%",
+        borderWidth: "2px",
+        borderStyle: "dashed",
+        boxSizing: "border-box"
+      });
+      el.className = "st-tunnel-range";
+      return el;
+    }
+  };
+
   // lib/main.js
-  var ST_VERSION = "5.13.0";
+  var ST_VERSION = "5.14.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -4802,6 +5363,7 @@ var ShockrTools = (() => {
     online.start();
     const attackTracker = new AttackTracker(config, api);
     const watchList = new WatchList(config, cli, api);
+    const targetWatcher = new TargetWatcher(config, api);
     attackTracker.onUnclaimed = (claim) => watchList.notifyDefeated(claim);
     const plugins = [
       new CampTracker(config, cli),
@@ -4811,11 +5373,13 @@ var ShockrTools = (() => {
       new AllianceScanner(config, cli, api, idle, online),
       new RepairGuard(config),
       new UpgradeCalc(config),
-      new TargetWatcher(config, api),
+      targetWatcher,
       attackTracker,
       watchList,
       new BaseInfo(config),
-      new AttackRange(config)
+      new AttackRange(config),
+      new MapLabels(config, api, { targetWatcher, attackTracker }),
+      new TunnelInfo(config)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });
     for (const plugin of plugins) {
