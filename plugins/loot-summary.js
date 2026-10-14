@@ -207,6 +207,7 @@ export class LootSummary {
         this._history = { total: [], ratio: [] };
         this._seen = new Set();        // "x:y" already in the history
         this._warned = false;
+        this._mtNoted = false;         // MaelstromTools loot table seen (logged once)
     }
 
     async start() {
@@ -336,8 +337,33 @@ export class LootSummary {
         return null;
     }
 
+    /**
+     * MaelstromTools with "Show lootable resources" wraps onCitiesChange of
+     * these widgets (__MTCity_NPCCamp / __MTCity_NPCBase) and draws the same
+     * table in the same panel - ours would show it twice, so we step aside.
+     */
+    _maelstromLoot() {
+        try {
+            const region = webfrontend.gui.region;
+            return !!(region.RegionNPCBaseStatusInfo.prototype.__MTCity_NPCBase
+                || region.RegionNPCCampStatusInfo.prototype.__MTCity_NPCCamp);
+        } catch {
+            return false;
+        }
+    }
+
     _onAppear(widget) {
         if (!this.running) return;
+        if (this._maelstromLoot()) {
+            if (!this._mtNoted) {
+                this._mtNoted = true;
+                console.log('[ST] LootSummary: MaelstromTools loot table active — Shockr panel skipped (turn off "Show lootable resources" in MaelstromTools to use this one)');
+            }
+            if (this._grid && this._grid.getLayoutParent()) this._grid.getLayoutParent().remove(this._grid);
+            this._shown = null;
+            this._clearTimer();
+            return;
+        }
         const sel = this._selected();
         this._shown = sel ? { widget, sel, tries: 0 } : null;
         if (sel) this._render();
