@@ -4,7 +4,7 @@
 // @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver, wavy, loot summary & chat helper for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
-// @version         5.22.0
+// @version         5.22.1
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // ==/UserScript==
 
@@ -357,7 +357,7 @@ var ShockrTools = (() => {
       unknownPlugin: "Unknown plugin. Available: {names}",
       pluginEnabledMsg: "{name} enabled",
       pluginDisabledMsg: "{name} disabled",
-      pluginUsage: "Usage: /st plugin enable|disable <name>",
+      pluginUsage: "Usage: /st plugin list|enable|disable <name>",
       statusHeader: "Shockr Tools v{version} \u2014 status",
       pluginEnabled: "on",
       pluginDisabled: "off",
@@ -370,6 +370,7 @@ var ShockrTools = (() => {
       // ── Help ──
       helpHeader: "Shockr Tools v{version} \u2014 Commands",
       helpPlugins: "Plugins",
+      helpPluginList: "show all plugins (on/off)",
       helpEnable: "Enable a plugin",
       helpDisable: "Disable a plugin",
       helpAvailablePlugins: "Available plugins:",
@@ -538,6 +539,8 @@ var ShockrTools = (() => {
       transferAllFailed: "{n} transfer(s) refused",
       descChatHelper: "Chat Helper: coordinates and urls in chat, mail and forum are tagged automatically ([coords] = clickable), Alt shortcuts for BB codes ([player], [alliance], [b], [i], [u], [s]) and a contact list for /whisper \u2014 type /chelp in the chat",
       chatHelperStatus: "{n} contact(s)",
+      chatHelperHooked: "chat input hooked",
+      chatHelperNotHooked: "chat input NOT found",
       chatHelperUrlPrompt: "Website (syntax: google.com or www.google.com)",
       chatHelperAddConfirm: "Add {name} to your contacts list?\n\nYou can see your contacts by typing /list",
       chatHelperAdded: "{name} added to your contacts",
@@ -629,7 +632,7 @@ var ShockrTools = (() => {
       unknownPlugin: "Unbekanntes Plugin. Verf\xFCgbar: {names}",
       pluginEnabledMsg: "{name} aktiviert",
       pluginDisabledMsg: "{name} deaktiviert",
-      pluginUsage: "Verwendung: /st plugin enable|disable <name>",
+      pluginUsage: "Verwendung: /st plugin list|enable|disable <name>",
       statusHeader: "Shockr Tools v{version} \u2014 Status",
       pluginEnabled: "an",
       pluginDisabled: "aus",
@@ -640,6 +643,7 @@ var ShockrTools = (() => {
       unknownCommand: "Unbekannter Befehl: {cmd}. Tippe /st help",
       helpHeader: "Shockr Tools v{version} \u2014 Befehle",
       helpPlugins: "Plugins",
+      helpPluginList: "alle Plugins anzeigen (an/aus)",
       helpEnable: "Plugin aktivieren",
       helpDisable: "Plugin deaktivieren",
       helpAvailablePlugins: "Verf\xFCgbare Plugins:",
@@ -797,6 +801,8 @@ var ShockrTools = (() => {
       transferAllFailed: "{n} Transfer(s) abgelehnt",
       descChatHelper: "Chat Helper: Koordinaten und URLs in Chat, Post und Forum werden automatisch getaggt ([coords] = anklickbar), Alt-K\xFCrzel f\xFCr BB-Codes ([player], [alliance], [b], [i], [u], [s]) und eine Kontaktliste f\xFCr /whisper \u2014 tippe /chelp im Chat",
       chatHelperStatus: "{n} Kontakt(e)",
+      chatHelperHooked: "Chat-Eingabe verbunden",
+      chatHelperNotHooked: "Chat-Eingabe NICHT gefunden",
       chatHelperUrlPrompt: "Webseite (Syntax: google.com oder www.google.com)",
       chatHelperAddConfirm: "{name} zu deiner Kontaktliste hinzuf\xFCgen?\n\nDeine Kontakte siehst du mit /list",
       chatHelperAdded: "{name} zu deinen Kontakten hinzugef\xFCgt",
@@ -888,7 +894,7 @@ var ShockrTools = (() => {
       unknownPlugin: "Onbekende plugin. Beschikbaar: {names}",
       pluginEnabledMsg: "{name} aangezet",
       pluginDisabledMsg: "{name} uitgezet",
-      pluginUsage: "Gebruik: /st plugin enable|disable <naam>",
+      pluginUsage: "Gebruik: /st plugin list|enable|disable <naam>",
       statusHeader: "Shockr Tools v{version} \u2014 status",
       pluginEnabled: "aan",
       pluginDisabled: "uit",
@@ -899,6 +905,7 @@ var ShockrTools = (() => {
       unknownCommand: "Onbekend commando: {cmd}. Typ /st help",
       helpHeader: "Shockr Tools v{version} \u2014 Commando's",
       helpPlugins: "Plugins",
+      helpPluginList: "toon alle plugins (aan/uit)",
       helpEnable: "Plugin aanzetten",
       helpDisable: "Plugin uitzetten",
       helpAvailablePlugins: "Beschikbare plugins:",
@@ -1056,6 +1063,8 @@ var ShockrTools = (() => {
       transferAllFailed: "{n} transfer(s) geweigerd",
       descChatHelper: "Chat Helper: co\xF6rdinaten en urls in chat, mail en forum worden automatisch getagd ([coords] = klikbaar), Alt-sneltoetsen voor BB-codes ([player], [alliance], [b], [i], [u], [s]) en een contactlijst voor /whisper \u2014 typ /chelp in de chat",
       chatHelperStatus: "{n} contact(en)",
+      chatHelperHooked: "chat-invoer gekoppeld",
+      chatHelperNotHooked: "chat-invoer NIET gevonden",
       chatHelperUrlPrompt: "Website (syntax: google.com of www.google.com)",
       chatHelperAddConfirm: "{name} aan je contactlijst toevoegen?\n\nJe contacten zie je met /list",
       chatHelperAdded: "{name} toegevoegd aan je contacten",
@@ -1865,6 +1874,7 @@ var ShockrTools = (() => {
     const sections = [{
       title: t("helpPlugins"),
       rows: [
+        ["/st plugin list", t("helpPluginList")],
         ["/st plugin enable <name>", t("helpEnable")],
         ["/st plugin disable <name>", t("helpDisable")]
       ],
@@ -8101,6 +8111,43 @@ var ShockrTools = (() => {
   function isTextInput(el) {
     return !!el && (el.type === "text" || el.type === "textarea");
   }
+  function isSpace(e) {
+    return e.keyCode === 32 || e.key === " ";
+  }
+  function isEnter(e) {
+    return e.keyCode === 13 || e.key === "Enter";
+  }
+  function findChatInput() {
+    try {
+      const widget = qx.core.Init.getApplication().getChat().getChatWidget().getEditable();
+      const el = widget.getContentElement().getDomElement();
+      return el ? { widget, el } : null;
+    } catch {
+      return null;
+    }
+  }
+  function setFieldValue(el, value, widget) {
+    let w = widget || null;
+    if (!w) {
+      try {
+        w = qx.ui.core.Widget.getWidgetByElement(el);
+      } catch {
+        w = null;
+      }
+    }
+    if (w && typeof w.setValue === "function") {
+      try {
+        const own = w.getContentElement && w.getContentElement().getDomElement();
+        if (own === el) {
+          w.setValue(value);
+          if (el.value !== value) el.value = value;
+          return;
+        }
+      } catch {
+      }
+    }
+    el.value = value;
+  }
   var ChatHelper = class {
     /** Short description for `/st help`. */
     get description() {
@@ -8113,33 +8160,89 @@ var ShockrTools = (() => {
       this.contacts = [];
       this._declined = /* @__PURE__ */ new Set();
       this._timer = null;
+      this._chat = null;
+      this._hookTimer = null;
+      this._warned = false;
       this._onKeyUp = this._onKeyUp.bind(this);
       this._onKeyDown = this._onKeyDown.bind(this);
       this._onEnterCapture = this._onEnterCapture.bind(this);
+      this._onWinKeyUp = (e) => {
+        if (!this._isChat(e.target)) this._onKeyUp(e);
+      };
+      this._onWinKeyDown = (e) => {
+        if (this._isChat(e.target)) return;
+        this._onEnterCapture(e);
+        this._onKeyDown(e);
+      };
     }
     async start() {
       this.contacts = loadContacts();
-      document.addEventListener("keyup", this._onKeyUp);
-      document.addEventListener("keydown", this._onKeyDown);
-      document.addEventListener("keydown", this._onEnterCapture, true);
       this.running = true;
+      window.addEventListener("keyup", this._onWinKeyUp, true);
+      window.addEventListener("keydown", this._onWinKeyDown, true);
+      this._hookChat();
+      this._hookTimer = setInterval(() => this._hookChat(), 2e3);
     }
     stop() {
-      document.removeEventListener("keyup", this._onKeyUp);
-      document.removeEventListener("keydown", this._onKeyDown);
-      document.removeEventListener("keydown", this._onEnterCapture, true);
+      window.removeEventListener("keyup", this._onWinKeyUp, true);
+      window.removeEventListener("keydown", this._onWinKeyDown, true);
+      this._unhookChat();
+      clearInterval(this._hookTimer);
+      this._hookTimer = null;
       clearTimeout(this._timer);
       this._timer = null;
       this.running = false;
     }
     statusText() {
-      return t("chatHelperStatus", { n: this.contacts.length });
+      const hook = t(this._chat ? "chatHelperHooked" : "chatHelperNotHooked");
+      return `${t("chatHelperStatus", { n: this.contacts.length })} \xB7 ${hook}`;
+    }
+    _isChat(el) {
+      return !!this._chat && el === this._chat.el;
+    }
+    _hookChat() {
+      if (!this.running) return;
+      const found = findChatInput();
+      if (found && this._chat && found.el === this._chat.el) return;
+      this._unhookChat();
+      if (!found) {
+        if (!this._warned) {
+          this._warned = true;
+          console.warn("[ST] ChatHelper: chat input not found yet \u2014 retrying every 2 s");
+        }
+        return;
+      }
+      const { el } = found;
+      el.addEventListener("keyup", this._onKeyUp);
+      el.addEventListener("keydown", this._onEnterCapture);
+      el.addEventListener("keydown", this._onKeyDown);
+      try {
+        el.setAttribute("data-st-chathelper", "chat");
+      } catch {
+      }
+      this._chat = found;
+      console.log(`[ST] ChatHelper: chat input hooked (<${String(el.tagName).toLowerCase()} type=${el.type}>)`);
+    }
+    _unhookChat() {
+      if (!this._chat) return;
+      const { el } = this._chat;
+      el.removeEventListener("keyup", this._onKeyUp);
+      el.removeEventListener("keydown", this._onEnterCapture);
+      el.removeEventListener("keydown", this._onKeyDown);
+      try {
+        el.removeAttribute("data-st-chathelper");
+      } catch {
+      }
+      this._chat = null;
+    }
+    _set(el, value) {
+      setFieldValue(el, value, this._isChat(el) ? this._chat.widget : null);
     }
     // ── keyboard ──
     _onKeyUp(e) {
       const el = e.target;
       if (!isTextInput(el) || el.value === "" || el.value.startsWith(ST_PREFIX)) return;
-      if (e.keyCode === 32) {
+      if (isSpace(e)) {
         if (this._runCommand(el, el.value)) return;
         this._applyAutoTag(el);
       }
@@ -8148,7 +8251,7 @@ var ShockrTools = (() => {
     }
     /** Enter on a chat line with a chat-helper command: handle it, never send it. */
     _onEnterCapture(e) {
-      if (e.keyCode !== 13) return;
+      if (!isEnter(e)) return;
       const el = e.target;
       if (!el || el.type !== "text" || !el.value || el.value.startsWith(ST_PREFIX)) return;
       const c = parseCommand(el.value);
@@ -8161,7 +8264,7 @@ var ShockrTools = (() => {
     _onKeyDown(e) {
       const el = e.target;
       if (!isTextInput(el)) return;
-      if (e.keyCode === 13) {
+      if (isEnter(e)) {
         if (el.type === "textarea" && el.value !== "") this._applyAutoTag(el);
         return;
       }
@@ -8174,19 +8277,19 @@ var ShockrTools = (() => {
       };
       if (kc === 49 && el.type === "textarea") {
         const st = el.scrollTop;
-        el.value = autoTag(el.value);
+        this._set(el, autoTag(el.value));
         el.scrollTop = st;
         this._caret(el, 0);
       } else if (kc === 50) {
         const url = prompt(t("chatHelperUrlPrompt"), "");
-        if (url !== null) el.value += "[url]" + url + "[/url]";
+        if (url !== null) this._set(el, el.value + "[url]" + url + "[/url]");
       } else if (kc === 80 || kc === 51) {
         wrap("[player]");
       } else if (kc === 65 || kc === 52) {
         wrap("[alliance]");
       } else if (kc === 48) {
         const st = el.scrollTop;
-        el.value = clearTags(el.value);
+        this._set(el, clearTags(el.value));
         el.scrollTop = st;
       } else if (kc === 66) {
         wrap("[b]");
@@ -8200,13 +8303,13 @@ var ShockrTools = (() => {
     }
     _applyAutoTag(el) {
       const tagged = autoTag(el.value);
-      if (tagged !== el.value) el.value = tagged;
+      if (tagged !== el.value) this._set(el, tagged);
     }
     _wrap(el, tag) {
       const st = el.scrollTop;
       const r = wrapTag(tag, el.value, el.selectionStart, el.selectionEnd);
       if (!r) return;
-      el.value = r.value;
+      this._set(el, r.value);
       this._caret(el, r.caret);
       if (el.type === "textarea") el.scrollTop = st;
     }
@@ -8223,7 +8326,7 @@ var ShockrTools = (() => {
       if (e.altGraphKey || e.ctrlKey || e.altKey || !(e.keyCode > 47 && e.keyCode < 91)) return;
       const r = completeWhisper(el.value, this.contacts);
       if (!r) return;
-      el.value = r.value;
+      this._set(el, r.value);
       try {
         el.setSelectionRange(r.selStart, r.selEnd, "forward");
       } catch {
@@ -8244,7 +8347,7 @@ var ShockrTools = (() => {
         }
         return false;
       }
-      el.value = "";
+      this._set(el, "");
       if (c.cmd === "help") this._showHelp();
       else if (c.cmd === "list") this._list();
       else if (c.cmd === "add") {
@@ -8291,7 +8394,7 @@ var ShockrTools = (() => {
   };
 
   // lib/main.js
-  var ST_VERSION = "5.22.0";
+  var ST_VERSION = "5.22.1";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -8361,6 +8464,12 @@ var ShockrTools = (() => {
     cli.register("plugin", (args) => {
       const [action, name] = args;
       const norm = (s) => (s || "").toLowerCase().replace(/[-_]/g, "");
+      if (action === "list") {
+        for (const p of plugins) {
+          chatMessage(`[ST] ${kebab(p.name)}: ${t(p.running ? "pluginEnabled" : "pluginDisabled")}`);
+        }
+        return;
+      }
       const plugin = plugins.find((p) => norm(p.name) === norm(name));
       if (!plugin) {
         chatMessage(`[ST] ${t("unknownPlugin", { names: plugins.map((p) => p.name).join(", ") })}`);

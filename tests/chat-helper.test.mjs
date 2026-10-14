@@ -119,69 +119,133 @@ test('sortContacts is case-insensitive', () => {
     assert.deepEqual(mod.sortContacts(['bob', 'Ann', 'Carl']), ['Ann', 'bob', 'Carl']);
 });
 
-// ── plugin: listeners, /st untouched, disable restores ──
+// ── plugin: chat hook on the element, window capture for the rest ──
 
-function setupDom() {
-    const listeners = [];
-    globalThis.document = {
-        addEventListener: (type, fn, cap) => listeners.push({ type, fn, cap: !!cap }),
-        removeEventListener: (type, fn, cap) => {
-            const i = listeners.findIndex(l => l.type === type && l.fn === fn && l.cap === !!cap);
-            if (i >= 0) listeners.splice(i, 1);
+/** A DOM-ish node with its own listener list. */
+function node(value, type = 'text') {
+    const ls = [];
+    const attrs = {};
+    return {
+        type, value, tagName: type === 'textarea' ? 'TEXTAREA' : 'INPUT',
+        selectionStart: value.length, selectionEnd: value.length, scrollTop: 0,
+        focus() {}, setSelectionRange(a, b) { this.selectionStart = a; this.selectionEnd = b; },
+        addEventListener: (t, fn, cap) => ls.push({ t, fn, cap: !!cap }),
+        removeEventListener: (t, fn, cap) => {
+            const i = ls.findIndex(l => l.t === t && l.fn === fn && l.cap === !!cap);
+            if (i >= 0) ls.splice(i, 1);
         },
+        setAttribute: (k, v) => { attrs[k] = v; },
+        removeAttribute: (k) => { delete attrs[k]; },
+        attrs, ls,
     };
-    return listeners;
 }
 
-function fire(listeners, type, ev) {
-    for (const l of listeners.filter(x => x.type === type)) l.fn(ev);
+/** window + qx with a chat widget whose editable is `chatEl` (null = no chat yet). */
+function setupGame(chatEl) {
+    const win = node('');
+    globalThis.window = win;
+    const setValues = [];
+    const editable = {
+        getContentElement: () => ({ getDomElement: () => chatEl }),
+        setValue(v) { setValues.push(v); chatEl.value = v; },
+    };
+    globalThis.qx = {
+        core: { Init: { getApplication: () => ({ getChat: () => ({ getChatWidget: () => ({ getEditable: () => editable }) }) }) } },
+        ui: { core: { Widget: { getWidgetByElement: () => null } } },
+    };
+    return { win, setValues };
 }
 
-function input(value, type = 'text') {
-    return { type, value, selectionStart: value.length, selectionEnd: value.length, scrollTop: 0, focus() {}, setSelectionRange(s, e) { this.selectionStart = s; this.selectionEnd = e; } };
+/** Fire on the element (target phase) and on window capture, as a browser would. */
+function fire(game, el, type, ev) {
+    ev = { target: el, preventDefault() { ev.prevented = true; }, stopPropagation() {}, ...ev };
+    for (const l of game.win.ls.filter(x => x.t === type && x.cap)) l.fn(ev);
+    for (const l of el.ls.filter(x => x.t === type)) l.fn(ev);
+    return ev;
 }
 
 const config = { get: (k, d) => d };
 
-test('/st lines are never touched (space, Enter, auto-tag)', async () => {
+test('chat input is hooked on the element and marked', async () => {
     fakeStorage();
-    const listeners = setupDom();
+    const chat = node('');
+    const game = setupGame(chat);
     const p = new mod.ChatHelper(config);
     await p.start();
-    const el = input('/st config set api.url https://x.example.com ');
-    let prevented = false;
-    fire(listeners, 'keyup', { target: el, keyCode: 32 });
-    fire(listeners, 'keydown', { target: el, keyCode: 13, preventDefault() { prevented = true; }, stopPropagation() {} });
-    assert.equal(el.value, '/st config set api.url https://x.example.com ');
-    assert.equal(prevented, false);
+    assert.equal(chat.attrs['data-st-chathelper'], 'chat');
+    assert.ok(chat.ls.some(l => l.t === 'keyup'));
+    p.stop();
+    assert.equal(chat.ls.length, 0);
+    assert.equal(game.win.ls.length, 0);
+    assert.equal(chat.attrs['data-st-chathelper'], undefined);
+});
+
+test('840:293 + space in the chat is tagged through the qx widget', async () => {
+    fakeStorage();
+    const chat = node('840:293 ');
+    const game = setupGame(chat);
+    const p = new mod.ChatHelper(config);
+    await p.start();
+    fire(game, chat, 'keyup', { keyCode: 32, key: ' ' });
+    assert.equal(chat.value, '[coords]840:293[/coords] ');
+    assert.deepEqual(game.setValues, ['[coords]840:293[/coords] ']);
     p.stop();
 });
 
-test('space in chat tags coords; disable removes every listener', async () => {
+test('chat is handled once (window capture skips the hooked element)', async () => {
     fakeStorage();
-    const listeners = setupDom();
+    const chat = node('hi Bob');
+    const game = setupGame(chat);
     const p = new mod.ChatHelper(config);
     await p.start();
-    assert.equal(listeners.length, 3);
-    const el = input('go 840:293 ');
-    fire(listeners, 'keyup', { target: el, keyCode: 32 });
-    assert.equal(el.value, 'go [coords]840:293[/coords] ');
+    fire(game, chat, 'keydown', { keyCode: 66, altKey: true });
+    assert.equal(chat.value, 'hi [b]Bob[/b]');           // not [b][b]Bob[/b][/b]
     p.stop();
-    assert.equal(listeners.length, 0);
-    assert.equal(p.running, false);
 });
 
-test('Alt+b wraps the word, Alt+0 clears', async () => {
+test('chat input that appears later is hooked by the retry', async (t) => {
     fakeStorage();
-    const listeners = setupDom();
+    t.mock.timers.enable({ apis: ['setInterval'] });
+    const chat = node('');
+    const game = setupGame(null);
+    let real = null;
+    globalThis.qx.core.Init.getApplication = () => ({ getChat: () => ({ getChatWidget: () => ({ getEditable: () => ({
+        getContentElement: () => ({ getDomElement: () => real }), setValue(v) { real.value = v; },
+    }) }) }) });
     const p = new mod.ChatHelper(config);
     await p.start();
-    const el = input('hi Bob');
-    let prevented = false;
-    fire(listeners, 'keydown', { target: el, keyCode: 66, altKey: true, preventDefault() { prevented = true; } });
-    assert.equal(el.value, 'hi [b]Bob[/b]');
-    assert.equal(prevented, true);
-    fire(listeners, 'keydown', { target: el, keyCode: 48, altKey: true, preventDefault() {} });
-    assert.equal(el.value, 'hi Bob');
+    assert.match(p.statusText(), /NOT/);
+    real = chat;
+    t.mock.timers.tick(2000);
+    assert.equal(chat.attrs['data-st-chathelper'], 'chat');
+    p.stop();
+    void game;
+});
+
+test('/st lines are never touched (space, Enter)', async () => {
+    fakeStorage();
+    const chat = node('/st config set api.url https://x.example.com ');
+    const game = setupGame(chat);
+    const p = new mod.ChatHelper(config);
+    await p.start();
+    fire(game, chat, 'keyup', { keyCode: 32 });
+    const ev = fire(game, chat, 'keydown', { keyCode: 13 });
+    assert.equal(chat.value, '/st config set api.url https://x.example.com ');
+    assert.ok(!ev.prevented);
+    assert.deepEqual(game.setValues, []);
+    p.stop();
+});
+
+test('mail textarea (not the chat) is tagged on Enter via window capture', async () => {
+    fakeStorage();
+    const chat = node('');
+    const game = setupGame(chat);
+    const mail = node('meet at 840:293', 'textarea');
+    const p = new mod.ChatHelper(config);
+    await p.start();
+    fire(game, mail, 'keydown', { keyCode: 13 });
+    assert.equal(mail.value, 'meet at [coords]840:293[/coords]');
+    fire(game, mail, 'keydown', { keyCode: 48, altKey: true });
+    assert.equal(mail.value, 'meet at 840:293');
     p.stop();
 });

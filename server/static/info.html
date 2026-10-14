@@ -39,6 +39,29 @@
     .user button:hover { background: #666; }
 
     .content { max-width: 960px; margin: 0 auto; padding: 16px 20px; }
+    /* Two columns: the existing info left, the command reference card right;
+       below 900px they stack (commands under the info). */
+    .content.columns {
+        max-width: 1360px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
+        gap: 0 16px;
+        align-items: start;
+    }
+    .col-main, .col-side { min-width: 0; }
+    @media (max-width: 900px) {
+        .content.columns { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    /* Command reference card */
+    dl.cmds { display: grid; grid-template-columns: max-content 1fr; gap: 5px 10px; font-size: 13px; }
+    dl.cmds dt code { word-break: normal; white-space: nowrap; }
+    dl.cmds dd { color: #ccc; }
+    @media (max-width: 420px) {
+        dl.cmds { grid-template-columns: minmax(0, 1fr); gap: 0; }
+        dl.cmds dt code { white-space: normal; word-break: break-all; }
+        dl.cmds dd { margin-bottom: 6px; color: #999; }
+    }
     section {
         background: #222;
         border: 1px solid #333;
@@ -116,7 +139,8 @@
     </div>
 </div>
 
-<div class="content">
+<div class="content columns">
+<div class="col-main">
     <!-- 2. Announcements (config/announcements.json) - top of the page -->
     <section id="secAnnouncements">
         <h2 data-i18n="infoAnnouncementsTitle">📢 Announcements</h2>
@@ -168,10 +192,53 @@
     </section>
 </div>
 
+<!-- 7. Command reference card (second column; commands stay English, descriptions i18n) -->
+<aside class="col-side">
+    <section id="secCommands">
+        <h2 data-i18n="infoCmdTitle">⌨ Commands</h2>
+        <p class="muted" style="margin-bottom:8px" data-i18n="infoCmdIntro"></p>
+        <h3 data-i18n="infoCmdCommands">Commands</h3>
+        <dl class="cmds" id="cmdList"></dl>
+        <h3 data-i18n="infoCmdSettings">Useful settings</h3>
+        <dl class="cmds" id="setList"></dl>
+    </section>
+</aside>
+</div>
+
 <script src="static/session.js"></script>
 <script>
 const INSTALL_STEPS = 9;
 const TROUBLE_ROWS = 11;
+// [command (English, it is typed literally), description key]
+const COMMANDS = [
+    ['/st help', 'infoCmdHelp'],
+    ['/st plugin list', 'infoCmdPluginList'],
+    ['/st plugin enable <name>', 'infoCmdPluginEnable'],
+    ['/st plugin disable <name>', 'infoCmdPluginDisable'],
+    ['/st config set <key> <value>', 'infoCmdConfigSet'],
+    ['/st config get <key>', 'infoCmdConfigGet'],
+    ['/st config list', 'infoCmdConfigList'],
+    ['/st register', 'infoCmdRegister'],
+    ['/st status', 'infoCmdStatus'],
+    ['/st version', 'infoCmdVersion'],
+    ['/st watch', 'infoCmdWatch'],
+    ['/st watch force', 'infoCmdWatchForce'],
+    ['/st unwatch', 'infoCmdUnwatch'],
+    ['/st unwatch all', 'infoCmdUnwatchAll'],
+    ['/st scan', 'infoCmdScan'],
+    ['/st scanalliance', 'infoCmdScanAlliance'],
+    ['/st formation save <name>', 'infoCmdFormationSave'],
+    ['/st formation load <name>', 'infoCmdFormationLoad'],
+    ['/st formation list', 'infoCmdFormationList'],
+    ['/st formation delete <name>', 'infoCmdFormationDelete'],
+    ['/st plunder', 'infoCmdPlunder'],
+];
+const SETTINGS = [
+    ['language', 'infoSetLanguage'],
+    ['colors', 'infoSetColors'],
+    ['api.url', 'infoSetApiUrl'],
+    ['api.playerkey', 'infoSetPlayerKey'],
+];
 let info = null;
 let loadError = null;
 
@@ -205,6 +272,15 @@ function renderStatic() {
         const tr = document.createElement('tr');
         tr.append(el('td', '', T('infoTrouble' + i + 'P')), el('td', '', T('infoTrouble' + i + 'S')));
         tb.appendChild(tr);
+    }
+    for (const [id, rows] of [['cmdList', COMMANDS], ['setList', SETTINGS]]) {
+        const dl = document.getElementById(id);
+        dl.textContent = '';
+        for (const [cmd, key] of rows) {
+            const dt = el('dt');
+            dt.appendChild(el('code', '', cmd));
+            dl.append(dt, el('dd', '', T(key)));
+        }
     }
 }
 

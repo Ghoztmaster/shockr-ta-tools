@@ -1,7 +1,28 @@
 {
-  "version": "5.22.0",
+  "version": "5.22.1",
   "date": "2026-10-14",
   "changelog": [
+    {
+      "version": "5.22.1",
+      "date": "2026-10-14",
+      "changes": {
+        "en": [
+          "Info page: second column with all /st commands and useful settings as a reference card",
+          "New: /st plugin list shows every plugin with on/off",
+          "Fix Chat Helper: now hooks the chat input itself - coordinates and urls are tagged in the live game"
+        ],
+        "de": [
+          "Info-Seite: zweite Spalte mit allen /st-Befehlen und nützlichen Einstellungen als Referenzkarte",
+          "Neu: /st plugin list zeigt jedes Plugin mit an/aus",
+          "Fix Chat Helper: hängt sich jetzt direkt an die Chat-Eingabe - Koordinaten und URLs werden im Spiel getaggt"
+        ],
+        "nl": [
+          "Info-pagina: tweede kolom met alle /st-commando’s en nuttige instellingen als referentiekaart",
+          "Nieuw: /st plugin list toont elke plugin met aan/uit",
+          "Fix Chat Helper: koppelt nu direct aan de chat-invoer - coördinaten en urls worden in de game getagd"
+        ]
+      }
+    },
     {
       "version": "5.22.0",
       "date": "2026-10-14",
@@ -68,21 +89,6 @@
         ],
         "nl": [
           "Nieuwe plugin Movable Menu: game-vensters en menu-overlays (alliance, mail, forum, …) verslepen aan de titelbalk; de positie wordt per venster onthouden"
-        ]
-      }
-    },
-    {
-      "version": "5.18.1",
-      "date": "2026-10-13",
-      "changes": {
-        "en": [
-          "Fix POI Analyser: the POI label no longer covers the game's own name/level text (now top-left of the cell, like CampTracker and Base Info)"
-        ],
-        "de": [
-          "Fix POI Analyser: das POI-Label verdeckt nicht mehr den Namen/Level-Text des Spiels (jetzt oben links in der Zelle, wie CampTracker und Base Info)"
-        ],
-        "nl": [
-          "Fix POI Analyser: het POI-label staat niet meer over de eigen naam/level-tekst van het spel (nu linksboven in de cel, zoals CampTracker en Base Info)"
         ]
       }
     }

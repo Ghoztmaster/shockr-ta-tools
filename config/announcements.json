@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.22.0 released — new plugin Chat Helper: coordinates and urls in chat, mail and forum are tagged automatically (clickable coordinates), Alt shortcuts for BB codes and a /whisper contact list - type /chelp in the chat",
-      "de": "v5.22.0 veröffentlicht — neues Plugin Chat Helper: Koordinaten und URLs in Chat, Post und Forum werden automatisch getaggt (anklickbare Koordinaten), Alt-Kürzel für BB-Codes und eine /whisper-Kontaktliste - tippe /chelp im Chat",
-      "nl": "v5.22.0 uitgebracht — nieuwe plugin Chat Helper: coördinaten en urls in chat, mail en forum worden automatisch getagd (klikbare coördinaten), Alt-sneltoetsen voor BB-codes en een /whisper-contactlijst - typ /chelp in de chat"
+      "en": "v5.22.1 released — the info page now has a command reference card with every /st command, plus new /st plugin list. v5.22.0 brought Chat Helper: clickable coordinates in chat, Alt shortcuts for BB codes and a /whisper contact list - type /chelp",
+      "de": "v5.22.1 veröffentlicht — die Info-Seite hat jetzt eine Referenzkarte mit allen /st-Befehlen, plus neu /st plugin list. v5.22.0 brachte Chat Helper: anklickbare Koordinaten im Chat, Alt-Kürzel für BB-Codes und eine /whisper-Kontaktliste - tippe /chelp",
+      "nl": "v5.22.1 uitgebracht — de info-pagina heeft nu een referentiekaart met alle /st-commando’s, plus nieuw /st plugin list. v5.22.0 bracht Chat Helper: klikbare coördinaten in de chat, Alt-sneltoetsen voor BB-codes en een /whisper-contactlijst - typ /chelp"
     },
     "type": "info",
     "active": true

@@ -25,9 +25,17 @@
  * (the old 'myContacts' string is migrated the same way the original did).
  *
  * Differences from the original, on purpose:
- *   - No document.onkeydown/onkeyup overwrite: addEventListener (keyup and
- *     keydown on document, Enter commands in the capture phase), all removed
- *     by stop() — `/st plugin disable chat-helper` leaves the chat untouched.
+ *   - No document.onkeydown/onkeyup overwrite. The chat input is found the
+ *     way lib/cli.js finds it (getChat().getChatWidget().getEditable() →
+ *     content element → DOM element) and gets its listeners ON THE ELEMENT,
+ *     re-hooked every 2 s if the game re-creates it; it carries
+ *     data-st-chathelper="chat" while hooked. Other text boxes (mail, forum)
+ *     via window listeners in the capture phase. 5.22.0 listened on document
+ *     (bubble phase) only and did nothing live; most likely the game's qooxdoo
+ *     key handling sits in between (not verified). All removed by stop() — `/st plugin disable
+ *     chat-helper` leaves the chat untouched.
+ *   - Values are written through the qx widget's setValue() (as
+ *     TA_Coords_Button writes the chat), so the widget and DOM stay in sync.
  *   - A line starting with /st is never touched: Shockr's own command handler
  *     (lib/cli.js) owns it (auto-tagging would turn `/st config set api.url
  *     https://…` into a [url] tag).
@@ -175,6 +183,48 @@ function isTextInput(el) {
     return !!el && (el.type === 'text' || el.type === 'textarea');
 }
 
+function isSpace(e) {
+    return e.keyCode === 32 || e.key === ' ';
+}
+
+function isEnter(e) {
+    return e.keyCode === 13 || e.key === 'Enter';
+}
+
+/** The game's chat input: {widget, el} (the route lib/cli.js uses), or null. */
+export function findChatInput() {
+    try {
+        const widget = qx.core.Init.getApplication().getChat().getChatWidget().getEditable();
+        const el = widget.getContentElement().getDomElement();
+        return el ? { widget, el } : null;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Write a text box's value. A qooxdoo field (the chat input, mail, forum) gets
+ * it through its widget's setValue() - the way TA_Coords_Button writes the
+ * chat - so the widget's own value stays in sync with the DOM; else the DOM.
+ */
+export function setFieldValue(el, value, widget) {
+    let w = widget || null;
+    if (!w) {
+        try { w = qx.ui.core.Widget.getWidgetByElement(el); } catch { w = null; }
+    }
+    if (w && typeof w.setValue === 'function') {
+        try {
+            const own = w.getContentElement && w.getContentElement().getDomElement();
+            if (own === el) {
+                w.setValue(value);
+                if (el.value !== value) el.value = value;
+                return;
+            }
+        } catch { /* fall through to the DOM */ }
+    }
+    el.value = value;
+}
+
 // ─── Plugin ──────────────────────────────────────────────────────────
 
 export class ChatHelper {
@@ -188,30 +238,86 @@ export class ChatHelper {
         this.contacts = [];
         this._declined = new Set();     // whisper names the player said "no" to this session
         this._timer = null;
+        this._chat = null;              // {widget, el} the chat listeners sit on
+        this._hookTimer = null;
+        this._warned = false;
         this._onKeyUp = this._onKeyUp.bind(this);
         this._onKeyDown = this._onKeyDown.bind(this);
         this._onEnterCapture = this._onEnterCapture.bind(this);
+        this._onWinKeyUp = (e) => { if (!this._isChat(e.target)) this._onKeyUp(e); };
+        this._onWinKeyDown = (e) => {
+            if (this._isChat(e.target)) return;
+            this._onEnterCapture(e);
+            this._onKeyDown(e);
+        };
     }
 
     async start() {
         this.contacts = loadContacts();
-        document.addEventListener('keyup', this._onKeyUp);
-        document.addEventListener('keydown', this._onKeyDown);
-        document.addEventListener('keydown', this._onEnterCapture, true);
         this.running = true;
+        // Mail/forum/other text boxes: window capture phase, so the game's own
+        // (qooxdoo) key handling cannot swallow the event first.
+        window.addEventListener('keyup', this._onWinKeyUp, true);
+        window.addEventListener('keydown', this._onWinKeyDown, true);
+        // The chat input: listeners on the element itself (like lib/cli.js),
+        // re-hooked when the game re-creates it; checked every 2 s.
+        this._hookChat();
+        this._hookTimer = setInterval(() => this._hookChat(), 2000);
     }
 
     stop() {
-        document.removeEventListener('keyup', this._onKeyUp);
-        document.removeEventListener('keydown', this._onKeyDown);
-        document.removeEventListener('keydown', this._onEnterCapture, true);
+        window.removeEventListener('keyup', this._onWinKeyUp, true);
+        window.removeEventListener('keydown', this._onWinKeyDown, true);
+        this._unhookChat();
+        clearInterval(this._hookTimer);
+        this._hookTimer = null;
         clearTimeout(this._timer);
         this._timer = null;
         this.running = false;
     }
 
     statusText() {
-        return t('chatHelperStatus', { n: this.contacts.length });
+        const hook = t(this._chat ? 'chatHelperHooked' : 'chatHelperNotHooked');
+        return `${t('chatHelperStatus', { n: this.contacts.length })} · ${hook}`;
+    }
+
+    _isChat(el) {
+        return !!this._chat && el === this._chat.el;
+    }
+
+    _hookChat() {
+        if (!this.running) return;
+        const found = findChatInput();
+        if (found && this._chat && found.el === this._chat.el) return;
+        this._unhookChat();
+        if (!found) {
+            if (!this._warned) {
+                this._warned = true;
+                console.warn('[ST] ChatHelper: chat input not found yet — retrying every 2 s');
+            }
+            return;
+        }
+        const { el } = found;
+        el.addEventListener('keyup', this._onKeyUp);
+        el.addEventListener('keydown', this._onEnterCapture);
+        el.addEventListener('keydown', this._onKeyDown);
+        try { el.setAttribute('data-st-chathelper', 'chat'); } catch { /* ignore */ }
+        this._chat = found;
+        console.log(`[ST] ChatHelper: chat input hooked (<${String(el.tagName).toLowerCase()} type=${el.type}>)`);
+    }
+
+    _unhookChat() {
+        if (!this._chat) return;
+        const { el } = this._chat;
+        el.removeEventListener('keyup', this._onKeyUp);
+        el.removeEventListener('keydown', this._onEnterCapture);
+        el.removeEventListener('keydown', this._onKeyDown);
+        try { el.removeAttribute('data-st-chathelper'); } catch { /* ignore */ }
+        this._chat = null;
+    }
+
+    _set(el, value) {
+        setFieldValue(el, value, this._isChat(el) ? this._chat.widget : null);
     }
 
     // ── keyboard ──
@@ -219,7 +325,7 @@ export class ChatHelper {
     _onKeyUp(e) {
         const el = e.target;
         if (!isTextInput(el) || el.value === '' || el.value.startsWith(ST_PREFIX)) return;
-        if (e.keyCode === 32) {
+        if (isSpace(e)) {
             if (this._runCommand(el, el.value)) return;
             this._applyAutoTag(el);
         }
@@ -229,7 +335,7 @@ export class ChatHelper {
 
     /** Enter on a chat line with a chat-helper command: handle it, never send it. */
     _onEnterCapture(e) {
-        if (e.keyCode !== 13) return;
+        if (!isEnter(e)) return;
         const el = e.target;
         if (!el || el.type !== 'text' || !el.value || el.value.startsWith(ST_PREFIX)) return;
         const c = parseCommand(el.value);
@@ -243,7 +349,7 @@ export class ChatHelper {
     _onKeyDown(e) {
         const el = e.target;
         if (!isTextInput(el)) return;
-        if (e.keyCode === 13) {
+        if (isEnter(e)) {
             // mail / forum: tag on Enter (chat lines are tagged on space)
             if (el.type === 'textarea' && el.value !== '') this._applyAutoTag(el);
             return;
@@ -257,19 +363,19 @@ export class ChatHelper {
         };
         if (kc === 49 && el.type === 'textarea') {             // Alt+1
             const st = el.scrollTop;
-            el.value = autoTag(el.value);
+            this._set(el, autoTag(el.value));
             el.scrollTop = st;
             this._caret(el, 0);
         } else if (kc === 50) {                                 // Alt+2
             const url = prompt(t('chatHelperUrlPrompt'), '');
-            if (url !== null) el.value += '[url]' + url + '[/url]';
+            if (url !== null) this._set(el, el.value + '[url]' + url + '[/url]');
         } else if (kc === 80 || kc === 51) {                    // Alt+p / Alt+3
             wrap('[player]');
         } else if (kc === 65 || kc === 52) {                    // Alt+a / Alt+4
             wrap('[alliance]');
         } else if (kc === 48) {                                 // Alt+0
             const st = el.scrollTop;
-            el.value = clearTags(el.value);
+            this._set(el, clearTags(el.value));
             el.scrollTop = st;
         } else if (kc === 66) {
             wrap('[b]');
@@ -284,14 +390,14 @@ export class ChatHelper {
 
     _applyAutoTag(el) {
         const tagged = autoTag(el.value);
-        if (tagged !== el.value) el.value = tagged;
+        if (tagged !== el.value) this._set(el, tagged);
     }
 
     _wrap(el, tag) {
         const st = el.scrollTop;
         const r = wrapTag(tag, el.value, el.selectionStart, el.selectionEnd);
         if (!r) return;
-        el.value = r.value;
+        this._set(el, r.value);
         this._caret(el, r.caret);
         if (el.type === 'textarea') el.scrollTop = st;
     }
@@ -309,7 +415,7 @@ export class ChatHelper {
         if (e.altGraphKey || e.ctrlKey || e.altKey || !(e.keyCode > 47 && e.keyCode < 91)) return;
         const r = completeWhisper(el.value, this.contacts);
         if (!r) return;
-        el.value = r.value;
+        this._set(el, r.value);
         try { el.setSelectionRange(r.selStart, r.selEnd, 'forward'); } catch { /* ignore */ }
     }
 
@@ -330,7 +436,7 @@ export class ChatHelper {
             }
             return false;
         }
-        el.value = '';
+        this._set(el, '');
         if (c.cmd === 'help') this._showHelp();
         else if (c.cmd === 'list') this._list();
         else if (c.cmd === 'add') {

@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+## [5.22.1] — 2026-10-14
+
+Userscript + statische info-pagina (geen API-wijziging). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Info-pagina: commando-referentiekaart
+- `server/static/info.html`: tweede kolom (`aside.col-side`, sectie "⌨ Commands") naast de bestaande inhoud, zelfde sectiestijl. Commando's en instellingen als `<code>` (Engels, letterlijk te typen), beschrijvingen via i18n (`infoCmd*`/`infoSet*` in `server/static/i18n.js`, EN/DE/NL). Desktop: `grid` 1fr + 320-400 px; onder 900 px onder elkaar (kaart onder de info), onder 420 px staat elke beschrijving onder zijn commando. Bestaande secties ongewijzigd
+- **`/st plugin list` bestond nog niet** (de `plugin`-handler kende alleen enable/disable en gaf de usage-regel) - toegevoegd in `lib/main.js`: één regel per plugin `<naam>: aan/uit`, namen met koppelteken zoals `/st help`. Ook in `/st help` (`helpPluginList`) en de usage-regel. `lib/cli.js` ongewijzigd
+
+### Fix Chat Helper: deed niets in de live game
+- Live (5.22.0): plugin aan, maar `840:293` + spatie werd niet getagd. 5.22.0 luisterde alleen op `document` (bubble-fase) en schreef direct in de DOM. Oorzaak niet live vastgesteld - vermoedelijk vangt de qooxdoo-toetsafhandeling van het spel de events eerder af, en/of houdt het qx-veld zijn eigen waarde bij
+- Nu: de chat-invoer via dezelfde route als `/st` (`lib/cli.js`: `getChat().getChatWidget().getEditable()` → content element → DOM-element), listeners OP dat element, elke 2 s opnieuw gekoppeld als het spel het element vervangt; gemarkeerd met `data-st-chathelper="chat"` zolang gekoppeld. Console: `[ST] ChatHelper: chat input hooked (<input type=text>)`, of één waarschuwing zolang hij niet gevonden wordt. `/st status` toont "chat-invoer gekoppeld / NIET gevonden"
+- Schrijven via `setValue()` van het qx-widget (zoals TA_Coords_Button de chat vult), zodat widget en DOM gelijk blijven
+- Mail/forum en andere tekstvakken: `window`-listeners in de capture-fase (vóór de afhandeling van het spel); het gekoppelde chatelement slaan die over, zodat niets dubbel gebeurt
+- `[data-st-chathelper]` was in 5.22.0 altijd 0: de plugin maakte toen geen DOM-elementen en zette nergens een markering. Dat zegt dus niets over 5.22.0; vanaf nu is 1 = gekoppeld
+- Tests: `tests/chat-helper.test.mjs` (nagebootst qx-chatwidget: koppelen, later verschijnend element, tagging via setValue, geen dubbele afhandeling, `/st` onaangeroerd, mail via window capture)
+
 ## [5.22.0] — 2026-10-14
 
 Puur client-side, geen server-wijziging. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
@@ -20,7 +36,7 @@ Puur client-side, geen server-wijziging. Deploy op de VPS volgens de staande reg
 
 ## [5.21.0] — 2026-10-14
 
-Puur client-side, geen server-wijziging. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+Userscript + statische info-pagina (geen API-wijziging). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
 
 ### Loot Summary (nieuw, `loot-summary`, standaard aan)
 - Vervangt MHTools Tiberium Alliances Available Loot Summary + Info 1.8.3.9. `plugins/loot-summary.js`
