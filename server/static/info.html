@@ -39,8 +39,9 @@
     .user button:hover { background: #666; }
 
     .content { max-width: 960px; margin: 0 auto; padding: 16px 20px; }
-    /* Two columns: the existing info left, the command reference card right;
-       below 900px they stack (commands under the info). */
+    /* Two columns: the existing info left, the command reference card and the
+       plugin list right; below 900px they stack in one column, with the plugin
+       list between the changelog and the roadmap (order below). */
     .content.columns {
         max-width: 1360px;
         display: grid;
@@ -50,8 +51,41 @@
     }
     .col-main, .col-side { min-width: 0; }
     @media (max-width: 900px) {
-        .content.columns { grid-template-columns: minmax(0, 1fr); }
+        .content.columns { display: flex; flex-direction: column; align-items: stretch; }
+        .col-main, .col-side { display: contents; }
+        #secAnnouncements { order: 1; }
+        #secVersion { order: 2; }
+        #secPlugins { order: 3; }
+        #secRoadmap { order: 4; }
+        #secInstall { order: 5; }
+        #secTrouble { order: 6; }
+        #secContact { order: 7; }
+        #secCommands { order: 8; }
     }
+
+    /* Plugin list: one <details> per plugin, collapsed = name + short text + default status */
+    .plugins details { border-bottom: 1px solid #2e2e2e; }
+    .plugins details:last-child { border-bottom: none; }
+    .plugins summary {
+        list-style: none; cursor: pointer; padding: 6px 2px;
+        display: flex; gap: 6px; align-items: baseline; font-size: 13px;
+    }
+    .plugins summary::-webkit-details-marker { display: none; }
+    .plugins summary::before { content: '▶'; color: #777; font-size: 10px; flex: none; width: 10px; }
+    .plugins details[open] > summary::before { content: '▼'; }
+    .plugins summary:hover { background: #262626; }
+    .plugins .pl-text { flex: 1; min-width: 0; }
+    .plugins .pl-name { color: #e0e0e0; }
+    .plugins .pl-short { color: #999; }
+    .plugins .pl-state {
+        flex: none; font-size: 11px; padding: 0 6px; border-radius: 3px;
+        border: 1px solid #555; color: #999;
+    }
+    .plugins .pl-state.on { border-color: #4caf50; color: #81c784; }
+    .plugins .pl-body { padding: 2px 4px 10px 18px; font-size: 13px; line-height: 1.45; }
+    .plugins .pl-body p { margin-bottom: 4px; }
+    .plugins .pl-body .pl-label { color: #888; }
+    .plugins .pl-body code { word-break: normal; white-space: nowrap; }
 
     /* Command reference card */
     dl.cmds { display: grid; grid-template-columns: max-content 1fr; gap: 5px 10px; font-size: 13px; }
@@ -202,6 +236,13 @@
         <h3 data-i18n="infoCmdSettings">Useful settings</h3>
         <dl class="cmds" id="setList"></dl>
     </section>
+
+    <!-- 8. Plugins (config/plugins.json) - right column under the commands -->
+    <section id="secPlugins">
+        <h2 data-i18n="infoPluginsTitle">🔌 Plugins</h2>
+        <p class="muted" style="margin-bottom:8px" data-i18n="infoPluginsIntro"></p>
+        <div id="plugins" class="muted"></div>
+    </section>
 </aside>
 </div>
 
@@ -346,11 +387,49 @@ function renderRoadmap() {
     }
 }
 
+// Expanded plugins survive a re-render (language switch, reload of the data).
+const openPlugins = new Set();
+
+function renderPlugins() {
+    const box = document.getElementById('plugins');
+    box.textContent = '';
+    const list = (info && info.plugins) || [];
+    if (!list.length) {
+        box.className = 'muted';
+        box.textContent = loadError ? T('error', { msg: loadError }) : (info ? T('infoPluginsEmpty') : T('loading'));
+        return;
+    }
+    box.className = 'plugins';
+    for (const p of list) {
+        const d = el('details');
+        d.open = openPlugins.has(p.slug);
+        d.addEventListener('toggle', () => { d.open ? openPlugins.add(p.slug) : openPlugins.delete(p.slug); });
+        const sum = el('summary');
+        const text = el('span', 'pl-text');
+        text.append(el('span', 'pl-name', p.name), el('span', 'pl-short', ' — ' + pick(p.short)));
+        const state = el('span', 'pl-state' + (p.defaultEnabled ? ' on' : ''), T(p.defaultEnabled ? 'infoPluginOn' : 'infoPluginOff'));
+        state.title = T('infoPluginDefaultTip');
+        sum.append(text, state);
+        const body = el('div', 'pl-body');
+        if (p.long) body.appendChild(el('p', '', pick(p.long)));
+        const rep = el('p');
+        rep.append(el('span', 'pl-label', T('infoPluginReplaces') + ': '), document.createTextNode(p.replaces || '—'));
+        const cmd = el('p');
+        cmd.append(el('span', 'pl-label', T('infoPluginToggle') + ': '),
+                   el('code', '', '/st plugin enable ' + p.slug), document.createTextNode(' / '),
+                   el('code', '', '/st plugin disable ' + p.slug));
+        body.append(rep, cmd);
+        d.append(sum, body);
+        box.appendChild(d);
+    }
+}
+
 function renderAll() {
     renderStatic();
     renderAnnouncements();
     renderVersion();
     renderRoadmap();
+    renderPlugins();
 }
 
 async function loadInfo() {
@@ -365,7 +444,7 @@ async function loadInfo() {
     renderAll();
 }
 
-// No data-i18n on the three data boxes: applyI18n (on DOMContentLoaded and on
+// No data-i18n on the four data boxes: applyI18n (on DOMContentLoaded and on
 // a language switch) would overwrite rendered content with "Loading...".
 document.addEventListener('shockr-lang', renderAll);
 renderAll();

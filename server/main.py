@@ -633,7 +633,7 @@ async def health():
     return {"status": "ok", "keys_loaded": len(key_store.keys), "player_keys": len(player_keys.players)}
 
 # ─── Site info (/info page + version footer) ────────────────────────
-# config/version.json, announcements.json, roadmap.json - re-read on change,
+# config/version.json, announcements.json, roadmap.json, plugins.json - re-read on change,
 # no restart (server/siteinfo.py).
 
 @app.get("/api/version", dependencies=[Depends(rate_limit_get)])
@@ -655,6 +655,7 @@ async def get_info():
         "version": site_info.version(),
         "announcements": site_info.announcements(),
         "roadmap": site_info.roadmap(),
+        "plugins": site_info.plugins(),
     }
 
 # ─── Pages (website session; no session -> login) ──────────────────

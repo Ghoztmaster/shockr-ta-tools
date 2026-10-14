@@ -24,6 +24,11 @@ STATIC = ROOT / "server" / "static"
 BUILD_VERSION = re.search(r"const VERSION = '([^']+)'", (ROOT / "build.js").read_text(encoding="utf-8")).group(1)
 # The repo roadmap as written (item counts change with every roadmap edit)
 ROADMAP = json.loads((ROOT / "config" / "roadmap.json").read_text(encoding="utf-8"))
+# Plugins started by lib/main.js, in order: config/plugins.json must list exactly these
+MAIN_JS = (ROOT / "lib" / "main.js").read_text(encoding="utf-8")
+_PLUGINS_ARRAY = re.search(r"const plugins = \[(.*?)\];", MAIN_JS, re.S).group(1)
+_VAR_CLASS = dict(re.findall(r"const (\w+) = new (\w+)\(", MAIN_JS))
+PLUGIN_NAMES = [m[0] or _VAR_CLASS[m[1]] for m in re.findall(r"^\s+(?:new (\w+)\(|(\w+),)", _PLUGINS_ARRAY, re.M)]
 
 
 def write(path: Path, obj):
@@ -39,7 +44,7 @@ write.n = 0
 
 @pytest.fixture
 def cfg(tmp_path):
-    for name in ("version.json", "announcements.json", "roadmap.json"):
+    for name in ("version.json", "announcements.json", "roadmap.json", "plugins.json"):
         shutil.copy(ROOT / "config" / name, tmp_path / name)
     return tmp_path
 
@@ -76,9 +81,30 @@ class TestSiteInfo:
         a = si.announcements()
         assert len(a) == 1 and a[0]["type"] == "info" and set(a[0]["message"]) == {"en", "de", "nl"}
         r = si.roadmap()
-        assert r["planned"] and r == ROADMAP
+        assert r == ROADMAP, "an empty planned list is valid"
         for item in r["planned"] + r["ideas"]:
             assert set(item) == {"en", "de", "nl"}, "roadmap translated per language"
+
+    def test_repo_plugins_file(self, cfg):
+        plugins = SiteInfo(cfg).plugins()
+        assert [p["name"] for p in plugins] == PLUGIN_NAMES, "same plugins and order as lib/main.js"
+        off = {"RepairGuard", "UpgradeCalc"}   # the only plugins with defaultEnabled = false
+        for p in plugins:
+            kebab = re.sub(r"([a-z0-9])([A-Z])", r"\1-\2", p["name"]).lower()
+            assert p["slug"] == kebab, "slug = what /st plugin list shows"
+            assert p["defaultEnabled"] == (p["name"] not in off), p["name"]
+            assert set(p["short"]) == {"en", "de", "nl"} and set(p["long"]) == {"en", "de", "nl"}, p["name"]
+
+    def test_plugins_file_is_reread_and_cleaned(self, cfg):
+        si = SiteInfo(cfg)
+        write(cfg / "plugins.json", [
+            {"name": "A", "short": {"en": "a"}, "replaces": "", "defaultEnabled": False},
+            {"name": "", "short": {"en": "no name"}},
+            {"name": "B"},
+            "junk",
+        ])
+        assert si.plugins() == [{"name": "A", "slug": "a", "defaultEnabled": False, "replaces": None,
+                                 "short": {"en": "a"}, "long": None}]
 
     def test_changes_are_picked_up_without_restart(self, cfg):
         si = SiteInfo(cfg)
@@ -187,7 +213,7 @@ class TestI18n:
             assert info <= k[lang], (lang, info - k[lang])
         for i in range(1, 10):
             assert f"infoInstall{i}Html" in info
-        for i in range(1, 12):
+        for i in range(1, 13):
             assert f"infoTrouble{i}P" in info and f"infoTrouble{i}S" in info
         for key in ("infoBugTitle", "infoBugIntro", "infoBug1", "infoBug2", "infoBug3Html", "infoContact"):
             assert key in info

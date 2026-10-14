@@ -1,11 +1,13 @@
 """Site info for the /info page and the version footer on every page.
 
-Three JSON files in the config directory, edited by hand on the server:
+Four JSON files in the config directory (edited in the repo, deployed with git pull):
 
 - version.json        {"version", "date", "changelog": [{"version", "date",
                                        "changes": {"en": [...], "de": [...], "nl": [...]}}]}
 - announcements.json  [{"message": {"en", "de", "nl"}, "type": "info|warning|update", "active": bool}]
 - roadmap.json        {"planned": [{"en", "de", "nl"}], "ideas": [...]}
+- plugins.json        [{"name", "slug", "defaultEnabled", "replaces": str|null,
+                        "short": {"en", "de", "nl"}, "long": {"en", "de", "nl"}}]
 
 Each file is re-read when its mtime changes (no restart needed). A missing or
 broken file never breaks a page: it yields an empty value and one log line
@@ -79,6 +81,7 @@ class SiteInfo:
         self.version_file = JsonFile(config_dir / "version.json", {})
         self.announcements_file = JsonFile(config_dir / "announcements.json", [])
         self.roadmap_file = JsonFile(config_dir / "roadmap.json", {})
+        self.plugins_file = JsonFile(config_dir / "plugins.json", [])
 
     def version(self) -> dict:
         v = self.version_file.get()
@@ -114,3 +117,20 @@ class SiteInfo:
         raw = raw if isinstance(raw, dict) else {}
         return {key: [t for t in (_texts(i) for i in (raw.get(key) or [])) if t]
                 for key in ("planned", "ideas")}
+
+    def plugins(self) -> list[dict]:
+        """Plugin list for the info page; entries without a name or a short
+        text are skipped, the slug falls back to the name in lower case."""
+        raw = self.plugins_file.get()
+        out = []
+        for p in raw if isinstance(raw, list) else []:
+            if not isinstance(p, dict) or not isinstance(p.get("name"), str) or not p["name"].strip():
+                continue
+            short = _texts(p.get("short"))
+            if not short:
+                continue
+            slug = p.get("slug") if isinstance(p.get("slug"), str) and p["slug"].strip() else p["name"].lower()
+            replaces = p.get("replaces") if isinstance(p.get("replaces"), str) and p["replaces"].strip() else None
+            out.append({"name": p["name"], "slug": slug, "defaultEnabled": p.get("defaultEnabled") is not False,
+                        "replaces": replaces, "short": short, "long": _texts(p.get("long"))})
+        return out

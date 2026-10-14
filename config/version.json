@@ -1,7 +1,28 @@
 {
-  "version": "5.23.0",
+  "version": "5.23.2",
   "date": "2026-10-14",
   "changelog": [
+    {
+      "version": "5.23.2",
+      "date": "2026-10-14",
+      "changes": {
+        "en": [
+          "Info page: new Plugins section - every plugin with a short description, default on/off, which old script it replaces and the command to switch it on or off (click to expand)",
+          "Loot Summary: no more double loot table on Forgotten targets when MaelstromTools shows its own loot table (Shockr steps aside)",
+          "Troubleshooting: double loot table → turn off \"Show lootable resources\" in MaelstromTools"
+        ],
+        "de": [
+          "Info-Seite: neuer Bereich Plugins - jedes Plugin mit Kurzbeschreibung, Standard an/aus, welches alte Script es ersetzt und dem Befehl zum Ein- und Ausschalten (zum Aufklappen anklicken)",
+          "Loot Summary: keine doppelte Loot-Tabelle mehr bei Forgotten-Zielen, wenn MaelstromTools seine eigene Loot-Tabelle zeigt (Shockr tritt zurück)",
+          "Fehlerbehebung: doppelte Loot-Tabelle → \"Show lootable resources\" in MaelstromTools ausschalten"
+        ],
+        "nl": [
+          "Info-pagina: nieuwe sectie Plugins - elke plugin met een korte beschrijving, standaard aan/uit, welk oud script hij vervangt en het commando om hem aan of uit te zetten (klik om uit te klappen)",
+          "Loot Summary: geen dubbele loot-tabel meer bij Forgotten-targets als MaelstromTools zijn eigen loot-tabel toont (Shockr stapt opzij)",
+          "Problemen oplossen: dubbele loot-tabel → zet \"Show lootable resources\" uit in MaelstromTools"
+        ]
+      }
+    },
     {
       "version": "5.23.0",
       "date": "2026-10-14",
@@ -74,24 +95,6 @@
         "nl": [
           "Nieuwe plugin Loot Summary: selecteer een Forgotten camp, outpost of base op de wereldkaart en het infopaneel toont de plunderbare research, tiberium, crystal, credits en het totaal",
           "Per CP en voor de 2e en 3e aanval, plus de mogelijke aanvallen vanaf je huidige base (beschikbare CP)"
-        ]
-      }
-    },
-    {
-      "version": "5.20.0",
-      "date": "2026-10-13",
-      "changes": {
-        "en": [
-          "New plugin Transfer All: one button in the resource-transfer panel pulls all tiberium and crystal from your other bases into the open base (tick the box first: shows the cost)",
-          "Respects free storage and your credits; a full resource or an unaffordable base is skipped"
-        ],
-        "de": [
-          "Neues Plugin Transfer All: ein Knopf im Ressourcen-Transferfenster holt alles Tiberium und Kristall aus deinen anderen Basen in die offene Basis (erst das Kästchen anhaken: zeigt die Kosten)",
-          "Beachtet freien Lagerplatz und deine Credits; volle Ressourcen oder zu teure Basen werden übersprungen"
-        ],
-        "nl": [
-          "Nieuwe plugin Transfer All: één knop in het resource-transferpaneel haalt alle tiberium en crystal uit je andere bases naar de open base (eerst het vakje aanvinken: toont de kosten)",
-          "Houdt rekening met vrije opslag en je credits; een volle resource of een te dure base wordt overgeslagen"
         ]
       }
     }

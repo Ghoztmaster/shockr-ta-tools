@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+## [5.23.2] — 2026-10-14
+
+Userscript + server (nieuwe `config/plugins.json`, `/api/info` geeft `plugins` mee). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Info-pagina: sectie 🔌 Plugins
+- Nieuw `config/plugins.json`: alle 23 plugins met `name`, `slug` (= wat `/st plugin list` toont), `defaultEnabled`, `replaces` (oud script of `null`) en `short`/`long` in EN/DE/NL. Wordt net als de andere config-bestanden opnieuw gelezen bij wijziging (`server/siteinfo.py`, geen restart)
+- Per plugin een uitklapbare rij (`<details>`): ingeklapt naam + korte beschrijving + standaard aan/uit; uitgeklapt de uitgebreide beschrijving, "Vervangt: …" of "—" en `/st plugin enable|disable <slug>`. Uitgeklapte rijen blijven open bij een taalwissel
+- Desktop: rechterkolom onder de commando's. Mobiel (< 900 px): één kolom, Plugins tussen de changelog en de roadmap
+- Test: `config/plugins.json` moet precies de plugins uit `lib/main.js` bevatten, in dezelfde volgorde, met slug = kebab-naam en de juiste standaardstatus
+
+### Fix LootSummary: dubbele loot-tabel
+- Oorzaak: MaelstromTools met "Show lootable resources" tekent dezelfde tabel (LootSummary heeft die layout overgenomen) in dezelfde FG-infopanelen. LootSummary zelf voegt maar één grid toe
+- LootSummary herkent de MaelstromTools-wrapper (`__MTCity_NPCBase` / `__MTCity_NPCCamp` op `RegionNPCBaseStatusInfo` / `RegionNPCCampStatusInfo`) en toont dan niets, met één console-regel. Shockr-versie gebruiken: "Show lootable resources" uitzetten in MaelstromTools
+- Troubleshooting-rij 12 op de info-pagina met die oplossing
+
 ## [5.23.0] — 2026-10-14
 
 Alleen userscript (geen API-wijziging). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
