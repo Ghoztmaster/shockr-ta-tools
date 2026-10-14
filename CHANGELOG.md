@@ -2,6 +2,26 @@
 
 ## [Unreleased]
 
+## [5.21.0] — 2026-10-14
+
+Puur client-side, geen server-wijziging. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Loot Summary (nieuw, `loot-summary`, standaard aan)
+- Vervangt MHTools Tiberium Alliances Available Loot Summary + Info 1.8.3.9. `plugins/loot-summary.js`
+- Sectie "Loot" onderaan het info-paneel van een geselecteerd Forgotten camp / outpost / base (`RegionNPCCampStatusInfo` / `RegionNPCBaseStatusInfo`, zelfde plek als Wavy): tib / crystal / credits (k/M), totaal (+ research points als > 0), type + level, CP-kosten vanaf je dichtstbijzijnde base, loot/CP
+- Spelerbases krijgen geen sectie: die widgets worden niet gehookt, en een stad met spelerfactie wordt overgeslagen
+- **Afwijking van de werkorder**: `get_LootTiberium()` e.d. bestaan niet in de client. De loot-berekening is 1-op-1 overgenomen uit de broncode van MHTools 1.8.3.9 (`getBypass` / `loadBase` / `getLoots` / `calcResources`):
+  - target = `get_Cities().get_CurrentCity()`; nog niet geladen zolang die, `get_CityBuildingsData()` of `get_CityUnitsData()` null is, of de gebouwen-collectie `c === 0` heeft
+  - de (geobfusceerde) collecties gebouwen / verdediging / aanval gevonden zoals MHTools: het `{c, d}`-object waarvan het eerste element `get_UnitLevelRepairRequirements()` heeft; geen `GetUnitGroupType` = gebouwen, `GetUnitGroupType()` truthy = aanval, anders verdediging. Eenmalig gezocht in een eigen base. Anders dan MHTools wordt `ClientLib.Data.City.prototype` niet gepatcht
+  - loot = voor elk gebouw en elke verdedigingsunit (aanval telt niet): `get_HitpointsPercent() × Count` over `get_UnitLevelRepairRequirements()`, per `EResourceType` (1 tib, 2 crystal, 3 credits, 6 research)
+- MHTools rekent opnieuw in `onCitiesChange` van het widget (overschrijft die methode); Shockr luistert naar hetzelfde Cities-`Change`-event, zonder het widget te patchen. Tot de data er is: "laden…"
+- Niet uit MHTools (uit de werkorder): totaal (tib + crystal + credits), CP vanaf de dichtstbijzijnde eigen base (`city.CalculateAttackCommandPointCostToCoord(x, y)`), loot/CP en de kleur - vergeleken met de targets die je deze sessie bekeek (max 30): bovenste derde groen, onderste derde rood, anders wit; neutraal tot er 3 bekend zijn
+- KillInfo (`/st plunder`, per-unit tabel in eigen paneel) ongewijzigd
+- Niet live geverifieerd: de collectie-detectie in de huidige client, het laadmoment van de target-data, `CalculateAttackCommandPointCostToCoord` en de volgorde met de Wavy-sectie. Tests: `tests/loot-summary.test.mjs`
+
+### Roadmap
+- v5.21.0 uit `planned` in `config/roadmap.json`
+
 ## [5.20.0] — 2026-10-13
 
 Geen server-wijziging. Deploy op de VPS volgens de nieuwe staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
@@ -16,7 +36,7 @@ Geen server-wijziging. Deploy op de VPS volgens de nieuwe staande regel: `git pu
 - Niet live geverifieerd: het kindpad in de huidige client, de knop/vinkje-posities, en `GetResourceMaxStorage` (onleesbaar = geen begrenzing, de server beslist). Tests: `tests/transfer-all.test.mjs`
 
 ### Roadmap
-- `config/roadmap.json` vervangen door de huidige Shockr-roadmap (gepland v5.20.0-v5.23.0, ideeën incl. Sector progress en POI Analyser / Real POI Bonus). De twee oude items (MehrStrom-scanner, Alliance War Dashboard) zijn eruit
+- `config/roadmap.json` vervangen door de huidige Shockr-roadmap (gepland v5.21.0-v5.23.0, ideeën: Resource overflow alarm en Loot efficiency dashboard; v5.20.0 zelf, Sector progress en POI Analyser / Real POI Bonus staan er niet in - die zijn geleverd). De twee oude items (MehrStrom-scanner, Alliance War Dashboard) zijn eruit
 - `tests/test_siteinfo.py` vergelijkt de roadmap nu met het bestand zelf in plaats van een vast aantal items
 
 ### Deploy-regel

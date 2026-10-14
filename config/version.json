@@ -1,7 +1,25 @@
 {
-  "version": "5.20.0",
-  "date": "2026-10-13",
+  "version": "5.21.0",
+  "date": "2026-10-14",
   "changelog": [
+    {
+      "version": "5.21.0",
+      "date": "2026-10-14",
+      "changes": {
+        "en": [
+          "New plugin Loot Summary: select a Forgotten camp, outpost or base on the world map and the info panel shows the available tiberium, crystal and credits plus the total",
+          "With the CP cost from your nearest base and the loot per CP (green = high, red = low compared with the targets you looked at)"
+        ],
+        "de": [
+          "Neues Plugin Loot Summary: wähle ein Forgotten-Camp, einen Außenposten oder eine Basis auf der Weltkarte und das Infofenster zeigt verfügbares Tiberium, Kristall und Credits plus die Summe",
+          "Mit den KP-Kosten ab deiner nächsten Basis und der Beute pro KP (grün = hoch, rot = niedrig im Vergleich zu angesehenen Zielen)"
+        ],
+        "nl": [
+          "Nieuwe plugin Loot Summary: selecteer een Forgotten camp, outpost of base op de wereldkaart en het infopaneel toont de beschikbare tiberium, crystal en credits plus het totaal",
+          "Met de CP-kosten vanaf je dichtstbijzijnde base en de loot per CP (groen = hoog, rood = laag t.o.v. de targets die je bekeek)"
+        ]
+      }
+    },
     {
       "version": "5.20.0",
       "date": "2026-10-13",
@@ -68,27 +86,6 @@
           "Nieuwe plugin POI Analyser: POI-labels op de wereldkaart (goud = jouw alliance), de alliance-POI-bonussen in het base-infopaneel, echte winst/verlies van een geselecteerde POI",
           "Nieuwe plugin Sector HUD: kijkcoördinaten + sector, bezette POIs per sector (eigen groen, vijandelijk rood, vrij grijs)",
           "Fix Map Labels: geen ⚔ meer op een target dat als ander type of level opnieuw is verschenen"
-        ]
-      }
-    },
-    {
-      "version": "5.17.0",
-      "date": "2026-10-13",
-      "changes": {
-        "en": [
-          "Map Labels: ⚔ now shows the won attacks of every alliance member (last 24 h), not only your own",
-          "Keys of players who left the alliance are revoked automatically (confirmed by at least 3 scanners)",
-          "Back in the alliance? Register again with /st register"
-        ],
-        "de": [
-          "Map Labels: ⚔ zeigt jetzt die gewonnenen Angriffe aller Allianzmitglieder (letzte 24 Std.), nicht nur deine eigenen",
-          "Keys von Spielern, die die Allianz verlassen haben, werden automatisch widerrufen (bestätigt von mindestens 3 Scannern)",
-          "Wieder in der Allianz? Mit /st register neu registrieren"
-        ],
-        "nl": [
-          "Map Labels: ⚔ toont nu de gewonnen aanvallen van alle alliance-leden (laatste 24 u), niet alleen je eigen",
-          "Keys van spelers die de alliance verlaten worden automatisch ingetrokken (bevestigd door minstens 3 scanners)",
-          "Terug in de alliance? Registreer opnieuw met /st register"
         ]
       }
     }

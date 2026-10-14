@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name            Shockr - Tiberium Alliances Tools
 // @author          Ghozt [SoO] (original: Shockr, fixed by NetquiK [SoO])
-// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver & wavy for C&C Tiberium Alliances
+// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver, wavy & loot summary for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
-// @version         5.20.0
+// @version         5.21.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // ==/UserScript==
 
@@ -536,6 +536,21 @@ var ShockrTools = (() => {
       transferAllSkippedFull: "{res} skipped (storage full)",
       transferAllSkippedCredits: "{n} base(s) skipped (not enough credits)",
       transferAllFailed: "{n} transfer(s) refused",
+      descLootSummary: "Loot Summary in the info panel of a Forgotten camp/outpost/base: available tiberium, crystal and credits, CP cost from your nearest base and loot per CP (green = high, red = low vs. targets you looked at)",
+      lootTitle: "Loot",
+      lootLoading: "Loading base data\u2026",
+      lootTib: "Tib",
+      lootCry: "Cry",
+      lootCred: "Credits",
+      lootTotal: "Total {total}",
+      lootRp: "Research {rp}",
+      lootLevel: "level {level}",
+      lootCp: "{cp} CP from {base} ({dist} fields)",
+      lootPerCp: "Loot/CP {ratio}",
+      lootType_camp: "Camp",
+      lootType_outpost: "Outpost",
+      lootType_base: "Forgotten base",
+      lootStatus: "{n} target(s) inspected",
       poiShort_tib: "Tib",
       poiShort_cry: "Cry",
       poiShort_pow: "Pow",
@@ -766,6 +781,21 @@ var ShockrTools = (() => {
       transferAllSkippedFull: "{res} \xFCbersprungen (Lager voll)",
       transferAllSkippedCredits: "{n} Basis/Basen \xFCbersprungen (nicht genug Credits)",
       transferAllFailed: "{n} Transfer(s) abgelehnt",
+      descLootSummary: "Beute-\xDCbersicht im Infofenster eines Forgotten-Camps/-Au\xDFenpostens/-Basis: verf\xFCgbares Tiberium, Kristall und Credits, KP-Kosten ab deiner n\xE4chsten Basis und Beute pro KP (gr\xFCn = hoch, rot = niedrig gg\xFC. angesehenen Zielen)",
+      lootTitle: "Beute",
+      lootLoading: "Basisdaten werden geladen\u2026",
+      lootTib: "Tib",
+      lootCry: "Kri",
+      lootCred: "Credits",
+      lootTotal: "Gesamt {total}",
+      lootRp: "Forschung {rp}",
+      lootLevel: "Level {level}",
+      lootCp: "{cp} KP ab {base} ({dist} Felder)",
+      lootPerCp: "Beute/KP {ratio}",
+      lootType_camp: "Camp",
+      lootType_outpost: "Au\xDFenposten",
+      lootType_base: "Forgotten-Basis",
+      lootStatus: "{n} Ziel(e) angesehen",
       poiShort_tib: "Tib",
       poiShort_cry: "Kri",
       poiShort_pow: "Str",
@@ -996,6 +1026,21 @@ var ShockrTools = (() => {
       transferAllSkippedFull: "{res} overgeslagen (opslag vol)",
       transferAllSkippedCredits: "{n} base(s) overgeslagen (niet genoeg credits)",
       transferAllFailed: "{n} transfer(s) geweigerd",
+      descLootSummary: "Loot-overzicht in het infopaneel van een Forgotten camp/outpost/base: beschikbare tiberium, crystal en credits, CP-kosten vanaf je dichtstbijzijnde base en loot per CP (groen = hoog, rood = laag t.o.v. bekeken targets)",
+      lootTitle: "Loot",
+      lootLoading: "Basegegevens laden\u2026",
+      lootTib: "Tib",
+      lootCry: "Cry",
+      lootCred: "Credits",
+      lootTotal: "Totaal {total}",
+      lootRp: "Research {rp}",
+      lootLevel: "level {level}",
+      lootCp: "{cp} CP vanaf {base} ({dist} velden)",
+      lootPerCp: "Loot/CP {ratio}",
+      lootType_camp: "Camp",
+      lootType_outpost: "Outpost",
+      lootType_base: "Forgotten base",
+      lootStatus: "{n} target(s) bekeken",
       poiShort_tib: "Tib",
       poiShort_cry: "Cry",
       poiShort_pow: "Pow",
@@ -7520,8 +7565,329 @@ var ShockrTools = (() => {
     }
   };
 
+  // plugins/loot-summary.js
+  var STATUS_INFOS2 = ["RegionNPCBaseStatusInfo", "RegionNPCCampStatusInfo"];
+  var HISTORY_MAX = 30;
+  var COLORS2 = { high: "#8bc34a", low: "#ef5350", mid: "#ffffff", muted: "#bdbdbd" };
+  var CAMP_TYPES4 = { 1: "camp", 2: "camp", 3: "outpost", 4: "base" };
+  var LOOT_TYPES = { 1: "tib", 2: "cry", 3: "cred", 6: "rp" };
+  function getLoots(ul, r = {}) {
+    for (const j in ul.d) {
+      const u = ul.d[j];
+      const p = u.get_HitpointsPercent();
+      const cl = u.get_UnitLevelRepairRequirements();
+      for (const i in cl) {
+        const c = cl[i];
+        if (typeof c !== "object") continue;
+        const k = LOOT_TYPES[c.Type] === void 0 ? c.Type : LOOT_TYPES[c.Type];
+        if (r[k] === void 0) r[k] = 0;
+        r[k] += p * c.Count;
+      }
+    }
+    return r;
+  }
+  function calcLoot(buildings, defences) {
+    const loot = { rp: 0, tib: 0, cry: 0, cred: 0 };
+    getLoots(buildings, loot);
+    if (defences) getLoots(defences, loot);
+    loot.total = loot.tib + loot.cry + loot.cred;
+    return loot;
+  }
+  function findCollectionKeys(city, keys = {}) {
+    const scan = (obj) => {
+      for (const k in obj) {
+        const o = obj[k];
+        if (o === null || typeof o !== "object") continue;
+        if (typeof o.c === "undefined") continue;
+        if (o.c === 0) continue;
+        if (typeof o.d === "undefined") continue;
+        const ks = Object.keys(o.d);
+        if (ks.length !== o.c) continue;
+        const u = o.d[ks[0]];
+        if (typeof u !== "object") continue;
+        if (typeof u.get_UnitLevelRepairRequirements !== "function") continue;
+        if (typeof u.GetUnitGroupType === "undefined") keys.buildings = k;
+        else if (u.GetUnitGroupType()) keys.offences = k;
+        else keys.defences = k;
+      }
+    };
+    scan(city.get_CityBuildingsData());
+    scan(city.get_CityUnitsData());
+    return keys;
+  }
+  function lootPerCp(total, cp) {
+    return cp > 0 ? total / cp : null;
+  }
+  function rankColor(value, history) {
+    if (value === null || history.length < 3) return "mid";
+    const below = history.filter((v) => v < value).length;
+    const share = below / (history.length - 1 || 1);
+    if (share >= 2 / 3) return "high";
+    if (share <= 1 / 3) return "low";
+    return "mid";
+  }
+  function nearestOwnBase(x, y, cities) {
+    let best = null;
+    for (const c of cities) {
+      try {
+        const dist = Math.hypot(c.get_PosX() - x, c.get_PosY() - y);
+        if (!best || dist < best.dist) best = { city: c, name: c.get_Name(), dist };
+      } catch {
+      }
+    }
+    return best;
+  }
+  var LootSummary = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descLootSummary");
+    }
+    constructor(config) {
+      this.name = "LootSummary";
+      this.config = config;
+      this.running = false;
+      this._listeners = [];
+      this._citiesHooked = false;
+      this._panel = null;
+      this._keys = null;
+      this._shown = null;
+      this._history = { total: [], ratio: [] };
+      this._seen = /* @__PURE__ */ new Set();
+      this._warned = false;
+    }
+    async start() {
+      this.running = true;
+      this._hookPanels();
+      try {
+        webfrontend.phe.cnc.Util.attachNetEvent(
+          ClientLib.Data.MainData.GetInstance().get_Cities(),
+          "Change",
+          ClientLib.Data.CitiesChange,
+          this,
+          this._onCitiesChange
+        );
+        this._citiesHooked = true;
+      } catch (e) {
+        this._warn("could not listen to city changes", e);
+      }
+      console.log("[ST] LootSummary: started");
+    }
+    stop() {
+      this.running = false;
+      if (this._citiesHooked) {
+        try {
+          webfrontend.phe.cnc.Util.detachNetEvent(
+            ClientLib.Data.MainData.GetInstance().get_Cities(),
+            "Change",
+            ClientLib.Data.CitiesChange,
+            this,
+            this._onCitiesChange
+          );
+        } catch {
+        }
+        this._citiesHooked = false;
+      }
+      for (const { widget, id } of this._listeners) {
+        try {
+          widget.removeListenerById(id);
+        } catch {
+        }
+      }
+      this._listeners = [];
+      if (this._panel) {
+        try {
+          const parent = this._panel.container.getLayoutParent();
+          if (parent) parent.remove(this._panel.container);
+          this._panel.container.dispose();
+        } catch {
+        }
+        this._panel = null;
+      }
+      this._shown = null;
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      return t("lootStatus", { n: this._seen.size });
+    }
+    _warn(msg, e) {
+      if (this._warned) return;
+      this._warned = true;
+      console.warn(`[ST] LootSummary: ${msg}`, e && e.message ? e.message : "");
+    }
+    // ─── Info panel ──────────────────────────────────────────────────
+    _hookPanels() {
+      let region;
+      try {
+        region = webfrontend.gui.region;
+      } catch (e) {
+        this._warn("region info widgets not available \u2014 panel disabled", e);
+        return;
+      }
+      for (const name of STATUS_INFOS2) {
+        try {
+          const cls = region && region[name];
+          if (!cls || typeof cls.getInstance !== "function") continue;
+          const widget = cls.getInstance();
+          const appear = widget.addListener("appear", () => this._onAppear(widget), this);
+          const disappear = widget.addListener("disappear", () => this._onDisappear(widget), this);
+          this._listeners.push({ widget, id: appear }, { widget, id: disappear });
+        } catch (e) {
+          this._warn(`could not hook ${name}`, e);
+        }
+      }
+    }
+    _ensurePanel() {
+      if (this._panel) return this._panel;
+      try {
+        const box = new qx.ui.container.Composite(new qx.ui.layout.VBox()).set({
+          marginTop: 6,
+          textColor: "text-region-tooltip"
+        });
+        const title = new qx.ui.basic.Label("Loot").set({ font: "font_size_14", textColor: "text-region-value" });
+        const res = new qx.ui.basic.Label("").set({ rich: true });
+        const total = new qx.ui.basic.Label("").set({ rich: true });
+        const info = new qx.ui.basic.Label("").set({ textColor: "text-region-value" });
+        const ratio = new qx.ui.basic.Label("").set({ rich: true });
+        for (const w of [title, res, total, info, ratio]) box.add(w);
+        this._panel = { container: box, title, res, total, info, ratio };
+      } catch (e) {
+        this._warn("could not build the panel", e);
+      }
+      return this._panel;
+    }
+    /** The selected vis object's position + id, or null. */
+    _selected() {
+      try {
+        const sel = ClientLib.Vis.VisMain.GetInstance().get_SelectedObject();
+        if (sel && typeof sel.get_RawX === "function") {
+          return { x: sel.get_RawX(), y: sel.get_RawY(), id: typeof sel.get_Id === "function" ? sel.get_Id() : null };
+        }
+      } catch {
+      }
+      return null;
+    }
+    _onAppear(widget) {
+      if (!this.running) return;
+      const sel = this._selected();
+      this._shown = sel ? { widget, sel } : null;
+      if (sel) this._render();
+    }
+    _onDisappear(widget) {
+      if (this._shown && this._shown.widget === widget) this._shown = null;
+    }
+    /** MHTools recomputes on every city change; the target's data arrives that way. */
+    _onCitiesChange() {
+      if (this.running && this._shown) this._render();
+    }
+    _render() {
+      const { widget, sel } = this._shown;
+      try {
+        const panel = this._ensurePanel();
+        if (!panel) return;
+        panel.title.setValue(t("lootTitle"));
+        const target = this._target(sel);
+        if (target) this._fill(panel, sel, target);
+        else this._setLoading(panel);
+        widget.add(panel.container);
+      } catch (e) {
+        this._warn("panel update failed", e);
+      }
+    }
+    _setLoading(panel) {
+      panel.res.setValue(escape2(t("lootLoading")));
+      panel.res.setTextColor(COLORS2.muted);
+      for (const l of [panel.total, panel.info, panel.ratio]) l.setValue("");
+    }
+    /** MHTools getBypass/loadBypass: collection keys from an own base, once all three are found. */
+    _collectionKeys() {
+      if (this._keys) return this._keys;
+      try {
+        for (const c of Object.values(ClientLib.Data.MainData.GetInstance().get_Cities().get_AllCities().d)) {
+          const keys = findCollectionKeys(c);
+          if (keys.buildings && keys.defences && keys.offences) {
+            this._keys = keys;
+            break;
+          }
+        }
+      } catch (e) {
+        this._warn("could not find the building/unit collections", e);
+      }
+      return this._keys;
+    }
+    /** Loot data of the selected target ({loot, level, type}), or null while it is not loaded (MHTools loadBase). */
+    _target(sel) {
+      const keys = this._collectionKeys();
+      if (!keys) return null;
+      const md = ClientLib.Data.MainData.GetInstance();
+      const cities = md.get_Cities();
+      const ec = cities.get_CurrentCity();
+      if (ec === null || ec === void 0) return null;
+      if (sel.id !== null && cities.get_CurrentCityId() !== sel.id) return null;
+      if (ec.get_CityBuildingsData() === null) return null;
+      if (ec.get_CityUnitsData() === null) return null;
+      const buildings = ec.get_CityBuildingsData()[keys.buildings];
+      const defences = ec.get_CityUnitsData()[keys.defences];
+      if (!buildings || buildings.c === 0) return null;
+      const loot = calcLoot(buildings, defences);
+      let level = null;
+      try {
+        level = Math.floor(ec.get_LvlBase());
+      } catch {
+      }
+      let type = "base";
+      try {
+        const obj = md.get_World().GetObjectFromPosition(sel.x, sel.y);
+        if (obj && obj.Type === 3) type = CAMP_TYPES4[obj.$CampType] || "camp";
+        if (level === null && obj && typeof obj.$Level === "number") level = Math.floor(obj.$Level);
+      } catch {
+      }
+      return { loot, level, type };
+    }
+    _fill(panel, sel, { loot, level, type }) {
+      const res = [
+        `<span style="color:#8bc34a">${escape2(t("lootTib"))} ${fmtNumber(loot.tib)}</span>`,
+        `<span style="color:#42a5f5">${escape2(t("lootCry"))} ${fmtNumber(loot.cry)}</span>`,
+        `<span style="color:#ffc107">${escape2(t("lootCred"))} ${fmtNumber(loot.cred)}</span>`
+      ].join(" \xB7 ");
+      panel.res.setValue(res);
+      panel.res.setTextColor(COLORS2.mid);
+      let cp = null;
+      let from = null;
+      try {
+        const cities = Object.values(ClientLib.Data.MainData.GetInstance().get_Cities().get_AllCities().d);
+        from = nearestOwnBase(sel.x, sel.y, cities);
+        if (from) cp = Number(from.city.CalculateAttackCommandPointCostToCoord(sel.x, sel.y));
+        if (!Number.isFinite(cp)) cp = null;
+      } catch {
+        cp = null;
+      }
+      const ratio = lootPerCp(loot.total, cp);
+      const key = `${sel.x}:${sel.y}`;
+      if (!this._seen.has(key)) {
+        this._seen.add(key);
+        this._history.total.push(loot.total);
+        if (ratio !== null) this._history.ratio.push(ratio);
+        for (const k of ["total", "ratio"]) {
+          if (this._history[k].length > HISTORY_MAX) this._history[k].shift();
+        }
+      }
+      let totalLine = escape2(t("lootTotal", { total: fmtNumber(loot.total) }));
+      if (loot.rp > 0) totalLine += ` \xB7 ${escape2(t("lootRp", { rp: fmtNumber(loot.rp) }))}`;
+      panel.total.setValue(`<b>${totalLine}</b>`);
+      panel.total.setTextColor(COLORS2[rankColor(loot.total, this._history.total)]);
+      const typeName = t(`lootType_${type}`);
+      const head = level !== null ? `${typeName} ${t("lootLevel", { level })}` : typeName;
+      panel.info.setValue(from && cp !== null ? `${head} \xB7 ${t("lootCp", { cp, base: from.name, dist: from.dist.toFixed(1) })}` : head);
+      panel.ratio.setValue(ratio !== null ? `<b>${escape2(t("lootPerCp", { ratio: fmtNumber(ratio) }))}</b>` : "");
+      panel.ratio.setTextColor(COLORS2[rankColor(ratio, this._history.ratio)]);
+    }
+  };
+  function escape2(s) {
+    return String(s).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+  }
+
   // lib/main.js
-  var ST_VERSION = "5.20.0";
+  var ST_VERSION = "5.21.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -7569,7 +7935,8 @@ var ShockrTools = (() => {
       new PoiAnalyser(config),
       new SectorHud(config),
       new MovableMenu(config),
-      new TransferAll(config)
+      new TransferAll(config),
+      new LootSummary(config)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });
     for (const plugin of plugins) {

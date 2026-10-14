@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.20.0 released — new plugin Transfer All: one click pulls all tiberium and crystal from your other bases into the open base (resource-transfer panel)",
-      "de": "v5.20.0 veröffentlicht — neues Plugin Transfer All: ein Klick holt alles Tiberium und Kristall aus deinen anderen Basen in die offene Basis (Ressourcen-Transferfenster)",
-      "nl": "v5.20.0 uitgebracht — nieuwe plugin Transfer All: één klik haalt alle tiberium en crystal uit je andere bases naar de open base (resource-transferpaneel)"
+      "en": "v5.21.0 released — new plugin Loot Summary: available tiberium, crystal and credits, CP cost and loot per CP of a Forgotten target, right in the info panel on the world map",
+      "de": "v5.21.0 veröffentlicht — neues Plugin Loot Summary: verfügbares Tiberium, Kristall und Credits, KP-Kosten und Beute pro KP eines Forgotten-Ziels, direkt im Infofenster auf der Weltkarte",
+      "nl": "v5.21.0 uitgebracht — nieuwe plugin Loot Summary: beschikbare tiberium, crystal en credits, CP-kosten en loot per CP van een Forgotten-target, direct in het infopaneel op de wereldkaart"
     },
     "type": "info",
     "active": true
