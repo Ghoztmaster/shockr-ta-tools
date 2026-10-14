@@ -8,17 +8,23 @@ Puur client-side, geen server-wijziging. Deploy op de VPS volgens de staande reg
 
 ### Loot Summary (nieuw, `loot-summary`, standaard aan)
 - Vervangt MHTools Tiberium Alliances Available Loot Summary + Info 1.8.3.9. `plugins/loot-summary.js`
-- Sectie "Loot" onderaan het info-paneel van een geselecteerd Forgotten camp / outpost / base (`RegionNPCCampStatusInfo` / `RegionNPCBaseStatusInfo`, zelfde plek als Wavy): tib / crystal / credits (k/M), totaal (+ research points als > 0), type + level, CP-kosten vanaf je dichtstbijzijnde base, loot/CP
+- Tabel onderaan het info-paneel van een geselecteerd Forgotten camp / outpost / base (`RegionNPCCampStatusInfo` / `RegionNPCBaseStatusInfo`, zelfde plek als Wavy), **layout van MaelstromTools** (`updateLoot` / `createResourceLabels` - het overzicht dat naast MHTools in het spel staat): qx `Grid(5, 5)`, witte tekst, icoon vóór elke waarde, kolommen Research · Tiberium · Crystal · Credits · Som (iconen `ui/common/icn_res_research/tiberium/chrystal/dollar.png` + `icn_build_slots.png` via `FileManager.GetPhysicalPath`, 20×20). Rijen:
+  - `Possible attacks from this base (available CP): N` = `floor(get_Player().GetCommandPointCount() / CP)`
+  - `Lootable resources:` (vet), `per CP:` (waarde / CP), `2nd run:` (/ 2×CP), `3rd run:` (/ 3×CP) - vet alleen bij modifier ≤ 1, zoals Maelstrom
+  - CP = `get_CurrentOwnCity().CalculateAttackCommandPointCostToCoord(x, y)` (huidige eigen base, zoals Maelstrom - niet meer de dichtstbijzijnde)
+  - buiten aanvalsbereik van de huidige base: `Target out of range, no resource calculation possible`; tijdens laden: `Calculating resources...`
+  - getallen met de eigen formatter van het spel (`formatNumbersCompact`), zoals Maelstrom
+  - Shockr-extra (werkorder): regel `11 CP from <base>`, en de Som van `Lootable resources` en `per CP` groen/rood t.o.v. de targets die je deze sessie bekeek (max 30; neutraal tot er 3 bekend zijn)
 - Spelerbases krijgen geen sectie: die info-widgets worden niet gehookt
-- **Afwijking van de werkorder**: `get_LootTiberium()` e.d. bestaan niet in de client. De loot-formule komt uit de broncode van MHTools 1.8.3.9 (`getLoots` / `calcResources` / `loadBase`):
+- **Afwijking van de werkorder**: `get_LootTiberium()` e.d. bestaan niet in de client. De loot-formule is identiek in MHTools (`getLoots`) en MaelstromTools (`getResourcesPart`):
   - loot = voor elk gebouw en elke verdedigingsunit (aanval telt niet): `get_HitpointsPercent() × Count` over `get_UnitLevelRepairRequirements()`, per `EResourceType` (1 tib, 2 crystal, 3 credits, 6 research)
+  - **Totaal = research + tib + crystal + credits** (Maelstrom `Total`). Eerdere build telde research niet mee - dat was het enige echte verschil in de vergelijking (329.2k vs 218.4k). De vier losse waarden waren al gelijk: in het origineel staat het icoon vóór het getal en is de eerste kolom Research (110.8k), niet Tiberium
   - target = `get_Cities().get_CurrentCity()`; null tot het spel de selectie geladen heeft, en hij moet op de geselecteerde positie staan (anders is het nog het vorige target)
-- Lijsten lezen - **niet** via MHTools' key-zoektocht: in de huidige client staan de `{c, d}`-lijsten op het city-object zelf, en `get_CityBuildingsData()` bevat alleen een telling (`{c: 3, d: {2: 1, 5: 2, 29: 5}}`, live gemeten). Daarom vond de eerste versie niets:
+- Lijsten lezen - **niet** via MHTools' key-zoektocht: in de huidige client staan de `{c, d}`-lijsten op het city-object zelf, en `get_CityBuildingsData()` bevat alleen een telling (`{c: 3, d: {2: 1, 5: 2, 29: 5}}`, live gemeten):
   - verdediging: `get_CityUnitsData().get_DefenseUnits()` (publieke getter, live geverifieerd in MehrStrom), anders de gepatchte `$DefenseUnits`
   - gebouwen: `city.get_Buildings()` als die bestaat, anders MHTools' regel (eerste element heeft `get_UnitLevelRepairRequirements()` en geen `GetUnitGroupType`) op de velden van het city-object zelf, daarna op `get_CityBuildingsData()`
-  - geen zoektocht meer in een eigen base, geen patch op `ClientLib.Data.City.prototype`
-- MHTools rekent opnieuw in `onCitiesChange` van het widget (overschrijft die methode); Shockr luistert naar hetzelfde Cities-`Change`-event, zonder het widget te patchen, en kijkt daarnaast elke 500 ms opnieuw (max 10 s) zolang er "laden…" staat
-- Niet uit MHTools (uit de werkorder): totaal (tib + crystal + credits), CP vanaf de dichtstbijzijnde eigen base (`city.CalculateAttackCommandPointCostToCoord(x, y)`), loot/CP en de kleur - vergeleken met de targets die je deze sessie bekeek (max 30): bovenste derde groen, onderste derde rood, anders wit; neutraal tot er 3 bekend zijn
+  - geen patch op `ClientLib.Data.City.prototype`
+- MHTools rekent opnieuw in `onCitiesChange` van het widget (overschrijft die methode); Shockr luistert naar hetzelfde Cities-`Change`-event, zonder het widget te patchen, en kijkt daarnaast elke 500 ms opnieuw (max 10 s) zolang er "Calculating resources..." staat
 - KillInfo (`/st plunder`, per-unit tabel in eigen paneel) ongewijzigd
 - Niet live geverifieerd: de gebouwen-lijst op het city-object (welke van de 7 `{c, d}`-velden), `get_UnitLevelRepairRequirements()` op FG-gebouwen en -units, `CalculateAttackCommandPointCostToCoord` en de volgorde met de Wavy-sectie. Tests: `tests/loot-summary.test.mjs`
 

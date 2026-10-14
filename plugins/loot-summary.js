@@ -1,44 +1,46 @@
 /**
- * loot-summary.js — available loot of a Forgotten target in the region info
- * panel, before the attack (replaces MHTools Tiberium Alliances Available
- * Loot Summary + Info 1.8.3.9).
+ * loot-summary.js — lootable resources of a Forgotten target in the region
+ * info panel, before the attack (replaces MHTools Tiberium Alliances Available
+ * Loot Summary + Info 1.8.3.9; the table is MaelstromTools' loot overview).
  *
  * In the info panel of a selected Forgotten camp / outpost / base on the world
  * map (RegionNPCCampStatusInfo / RegionNPCBaseStatusInfo - player bases use
  * other widgets, so they never get the section), appended at the bottom like
- * Wavy and POI Analyser:
+ * Wavy and POI Analyser. Layout = MaelstromTools updateLoot /
+ * createResourceLabels: a qx Grid(5, 5), white text, icon before each value,
+ * columns Tiberium · Crystal · Credits · Research · Sum, values in MHTools'
+ * on-screen assignment (see COLUMNS):
  *
- *   Loot
- *   Tib 1.2M · Cry 640k · Credits 85k
- *   Total 1.9M  (+ Research 12k when > 0)
- *   Outpost level 31 · 9 CP from <own base> (7.2 fields)
- *   Loot/CP 211k
+ *   Possible attacks from this base (available CP): 14
+ *   Lootable resources:  [T] 110.8k [C] 97,981 [$] 91,039 [R] 29,341 [Σ] 329.2k   (bold)
+ *   per CP:              [T] 10,073 ...                                     (bold only at 1 CP)
+ *   2nd run:             value / (2 × CP)
+ *   3rd run:             value / (3 × CP)
+ *   11 CP from <current base>                                               (Shockr extra)
  *
- * Loot formula from MHTools (getLoots / calcResources):
- *   - per building and defence unit (offence is not counted):
- *       p = u.get_HitpointsPercent()                 (0-1)
- *       for c of u.get_UnitLevelRepairRequirements(): loot[c.Type] += p * c.Count
- *     EResourceType 1 = Tiberium, 2 = Crystal, 3 = Credits (Gold), 6 = Research
- *   - target city = get_Cities().get_CurrentCity() (MHTools loadBase); null
- *     until the game has loaded the selection, and it must sit at the
- *     selected position (else it is still the previous target)
- * Reading the lists (not MHTools' key search: in the current client the
- * {c, d} lists sit on the city object, get_CityBuildingsData() holds a count
- * summary):
- *   - defence: get_CityUnitsData().get_DefenseUnits() (public getter,
- *     verified live in MehrStrom), else the patched $DefenseUnits
- *   - buildings: city.get_Buildings() when present, else MHTools' rule (first
- *     entry has get_UnitLevelRepairRequirements and no GetUnitGroupType) on
- *     the city's own fields, then on get_CityBuildingsData()
- * MHTools recomputes in the widget's onCitiesChange; Shockr listens to the
- * same Cities Change event (no widget patch) and also re-checks every 500 ms
- * (max 10 s) while the panel says "loading".
+ * Out of attack range of the current own base: "Target out of range, no
+ * resource calculation possible" (MaelstromTools LoadState -1).
  *
- * Not in MHTools (from the work order): total = tib + cry + credits; CP from
- * the own base nearest to the target, city.CalculateAttackCommandPointCostToCoord;
- * loot/CP; colour of total and loot/CP compared with the targets inspected
- * this session (top third green, bottom third red, else neutral; neutral
- * until 3 targets are known).
+ * Loot formula, identical in MHTools (getLoots) and MaelstromTools
+ * (getResourcesPart): per building and defence unit (offence not counted)
+ *   loot[c.Type] += c.Count * u.get_HitpointsPercent()  for c of u.get_UnitLevelRepairRequirements()
+ * EResourceType 1 = Tiberium, 2 = Crystal, 3 = Gold (credits), 6 = Research.
+ * Total = Research + Tiberium + Crystal + Credits (MaelstromTools "Total").
+ * CP = get_CurrentOwnCity().CalculateAttackCommandPointCostToCoord(x, y);
+ * possible attacks = floor(get_Player().GetCommandPointCount() / CP).
+ * Numbers: the game's formatNumbersCompact (as MaelstromTools).
+ *
+ * Reading the lists (current client): target = get_Cities().get_CurrentCity()
+ * at the selected position; defence via get_CityUnitsData().get_DefenseUnits()
+ * (else the patched $DefenseUnits); buildings via city.get_Buildings() when it
+ * exists, else MHTools' rule (first entry has get_UnitLevelRepairRequirements
+ * and no GetUnitGroupType) on the city's own {c, d} fields, then on
+ * get_CityBuildingsData(). Recomputed on the Cities Change event (MHTools:
+ * onCitiesChange) and every 500 ms (max 10 s) while calculating.
+ *
+ * Shockr extra (work order): the Sum of "Lootable resources" and "per CP" is
+ * green / red vs. the targets inspected this session (top / bottom third;
+ * neutral until 3 are known).
  *
  * KillInfo (/st plunder) is untouched: that is the per-unit breakdown in its
  * own panel; this is the summary in the game's info panel.
@@ -51,10 +53,24 @@ const HISTORY_MAX = 30;
 const RETRY_MS = 500;
 const RETRY_MAX = 20;
 export const COLORS = { high: '#8bc34a', low: '#ef5350', mid: '#ffffff', muted: '#bdbdbd' };
-/** ENPCCampType (world object $CampType) → target type, as Map Labels. */
-const CAMP_TYPES = { 1: 'camp', 2: 'camp', 3: 'outpost', 4: 'base' };
 /** MHTools' EResourceType translation (getLoots): 1 Tiberium, 2 Crystal, 3 Gold (credits), 6 ResearchPoints. */
 const LOOT_TYPES = { 1: 'tib', 2: 'cry', 3: 'cred', 6: 'rp' };
+/**
+ * Columns as MHTools shows them in the game (work order: identical output to
+ * MHTools, whatever the "correct" EResourceType mapping is): icons Tiberium ·
+ * Crystal · Credits · Research, filled with MHTools' lootArray in its own
+ * index order [RP, T, C, G] (calcResources: 0 = type 6, 1 = type 1, 2 = type 2,
+ * 3 = type 3). So the tib icon shows MHTools' lootArray[0] (live: 110.8k on
+ * the comparison camp, the value under MHTools' tib icon). key = loot field
+ * shown, icon = column icon; total on the right.
+ */
+export const COLUMNS = [
+    { key: 'rp', icon: 'ui/common/icn_res_tiberium.png' },
+    { key: 'tib', icon: 'ui/common/icn_res_chrystal.png' },
+    { key: 'cry', icon: 'ui/common/icn_res_dollar.png' },
+    { key: 'cred', icon: 'ui/common/icn_res_research_mission.png' },
+    { key: 'total', icon: 'ui/common/icn_build_slots.png' },
+];
 
 /**
  * MHTools getLoots: add p * Count of every repair requirement of every
@@ -76,13 +92,31 @@ export function getLoots(ul, r = {}) {
     return r;
 }
 
-/** MHTools calcResources: loot of the buildings + defence units (offence not counted). */
+/** Loot of the buildings + defence units (offence not counted); total incl. research (MaelstromTools). */
 export function calcLoot(buildings, defences) {
     const loot = { rp: 0, tib: 0, cry: 0, cred: 0 };
     if (buildings) getLoots(buildings, loot);
     if (defences) getLoots(defences, loot);
-    loot.total = loot.tib + loot.cry + loot.cred;
+    loot.total = loot.rp + loot.tib + loot.cry + loot.cred;
     return loot;
+}
+
+/**
+ * MaelstromTools' rows: [label key, divisor, bold]. Divisor = Modifier
+ * (1, CP, 2 CP, 3 CP); bold when Modifier <= 1. Without a CP cost only the
+ * loot row.
+ */
+export function lootRows(cp) {
+    const rows = [['lootLootable', 1, true]];
+    if (cp > 0) {
+        rows.push(['lootPerCpRow', cp, cp <= 1], ['loot2nd', 2 * cp, false], ['loot3rd', 3 * cp, false]);
+    }
+    return rows;
+}
+
+/** MaelstromTools: floor(available CP / CP needed), null without a CP cost. */
+export function possibleAttacks(available, cp) {
+    return cp > 0 && Number.isFinite(available) ? Math.floor(available / cp) : null;
 }
 
 /** Defence units of a city: the public get_DefenseUnits() (MehrStrom-verified), else the patched $DefenseUnits. */
@@ -139,11 +173,6 @@ export function buildingList(city) {
     return null;
 }
 
-/** Loot per CP, null when the CP cost is unknown or 0. */
-export function lootPerCp(total, cp) {
-    return cp > 0 ? total / cp : null;
-}
-
 /** 'high' (top third) / 'low' (bottom third) / 'mid' of value among history; 'mid' with < 3 values. */
 export function rankColor(value, history) {
     if (value === null || history.length < 3) return 'mid';
@@ -154,16 +183,11 @@ export function rankColor(value, history) {
     return 'mid';
 }
 
-/** Nearest own base to (x, y): {city, name, dist}, or null. */
-export function nearestOwnBase(x, y, cities) {
-    let best = null;
-    for (const c of cities) {
-        try {
-            const dist = Math.hypot(c.get_PosX() - x, c.get_PosY() - y);
-            if (!best || dist < best.dist) best = { city: c, name: c.get_Name(), dist };
-        } catch { /* skip */ }
-    }
-    return best;
+/** The game's compact number format (MaelstromTools FormatNumbersCompact), else Shockr's. */
+export function compact(v) {
+    try { return webfrontend.phe.cnc.gui.util.Numbers.formatNumbersCompact(v); } catch { /* older client */ }
+    try { return webfrontend.gui.Util.formatNumbersCompact(v); } catch { /* none */ }
+    return fmtNumber(v);
 }
 
 export class LootSummary {
@@ -176,9 +200,10 @@ export class LootSummary {
         this.running = false;
         this._listeners = [];          // {widget, id}
         this._citiesHooked = false;
-        this._panel = null;            // qx container + labels
-        this._timer = null;            // fallback re-check while loading
-        this._shown = null;            // {widget, sel} of the open panel
+        this._grid = null;             // qx Grid container
+        this._icons = null;            // key -> physical image path
+        this._timer = null;            // fallback re-check while calculating
+        this._shown = null;            // {widget, sel, tries} of the open panel
         this._history = { total: [], ratio: [] };
         this._seen = new Set();        // "x:y" already in the history
         this._warned = false;
@@ -210,13 +235,13 @@ export class LootSummary {
             try { widget.removeListenerById(id); } catch { /* ignore */ }
         }
         this._listeners = [];
-        if (this._panel) {
+        if (this._grid) {
             try {
-                const parent = this._panel.container.getLayoutParent();
-                if (parent) parent.remove(this._panel.container);
-                this._panel.container.dispose();
+                const parent = this._grid.getLayoutParent();
+                if (parent) parent.remove(this._grid);
+                this._grid.dispose();
             } catch { /* ignore */ }
-            this._panel = null;
+            this._grid = null;
         }
         this._shown = null;
         this._clearTimer();
@@ -262,32 +287,51 @@ export class LootSummary {
         }
     }
 
-    _ensurePanel() {
-        if (this._panel) return this._panel;
+    /** MaelstromTools' loot widget: Composite with Grid(5, 5), white text. */
+    _ensureGrid() {
+        if (this._grid) return this._grid;
         try {
-            const box = new qx.ui.container.Composite(new qx.ui.layout.VBox()).set({
-                marginTop: 6, textColor: 'text-region-tooltip',
-            });
-            const title = new qx.ui.basic.Label('Loot').set({ font: 'font_size_14', textColor: 'text-region-value' });
-            const res = new qx.ui.basic.Label('').set({ rich: true });
-            const total = new qx.ui.basic.Label('').set({ rich: true });
-            const info = new qx.ui.basic.Label('').set({ textColor: 'text-region-value' });
-            const ratio = new qx.ui.basic.Label('').set({ rich: true });
-            for (const w of [title, res, total, info, ratio]) box.add(w);
-            this._panel = { container: box, title, res, total, info, ratio };
+            this._grid = new qx.ui.container.Composite(new qx.ui.layout.Grid(5, 5)).set({ marginTop: 6 });
+            this._grid.setTextColor('white');
         } catch (e) {
             this._warn('could not build the panel', e);
         }
-        return this._panel;
+        return this._grid;
     }
 
-    /** The selected vis object's position + id, or null. */
+    /** MaelstromTools Util.addLabel. */
+    _label(grid, row, column, value, { width, align, bold, color, colSpan } = {}) {
+        const label = new qx.ui.basic.Label().set({ value: String(value) });
+        if (width) label.setWidth(width);
+        if (align) label.setTextAlign(align);
+        if (color) label.setTextColor(color);
+        if (bold) label.setFont('bold');
+        grid.add(label, { row, column, colSpan: colSpan || 1 });
+        return label;
+    }
+
+    /** MaelstromTools Util.getImage + addImage: 20x20, scaled. */
+    _image(grid, row, column, key) {
+        if (!this._icons) {
+            this._icons = {};
+            try {
+                const fm = ClientLib.File.FileManager.GetInstance();
+                for (const c of COLUMNS) this._icons[c.key] = fm.GetPhysicalPath(c.icon);
+            } catch { /* no icons */ }
+        }
+        if (!this._icons[key]) return;
+        const image = new qx.ui.basic.Image(this._icons[key]);
+        image.setScale(true);
+        image.setWidth(20);
+        image.setHeight(20);
+        grid.add(image, { row, column });
+    }
+
+    /** The selected vis object's position, or null. */
     _selected() {
         try {
             const sel = ClientLib.Vis.VisMain.GetInstance().get_SelectedObject();
-            if (sel && typeof sel.get_RawX === 'function') {
-                return { x: sel.get_RawX(), y: sel.get_RawY(), id: typeof sel.get_Id === 'function' ? sel.get_Id() : null };
-            }
+            if (sel && typeof sel.get_RawX === 'function') return { x: sel.get_RawX(), y: sel.get_RawY() };
         } catch { /* nothing selected */ }
         return null;
     }
@@ -316,38 +360,50 @@ export class LootSummary {
         const shown = this._shown;
         const { widget, sel } = shown;
         try {
-            const panel = this._ensurePanel();
-            if (!panel) return;
-            panel.title.setValue(t('lootTitle'));
-            const target = this._target(sel);
-            if (target) {
-                this._fill(panel, sel, target);
+            const grid = this._ensureGrid();
+            if (!grid) return;
+            grid.removeAll();
+            const own = this._ownCity();
+            if (own && !this._inRange(own, sel)) {
+                this._label(grid, 1, 1, t('lootOutOfRange'), { bold: true, colSpan: 11 });
             } else {
-                this._setLoading(panel);
-                // fallback when no Cities Change event follows: re-check every RETRY_MS, max RETRY_MAX times
-                if (shown.tries++ < RETRY_MAX) {
-                    this._timer = setTimeout(() => {
-                        this._timer = null;
-                        if (this.running && this._shown === shown) this._render();
-                    }, RETRY_MS);
+                const target = this._target(sel);
+                if (target) {
+                    this._fill(grid, sel, target, own);
+                } else {
+                    this._label(grid, 1, 1, t('lootCalculating'), { bold: true, colSpan: 11 });
+                    // fallback when no Cities Change event follows: re-check every RETRY_MS, max RETRY_MAX times
+                    if (shown.tries++ < RETRY_MAX) {
+                        this._timer = setTimeout(() => {
+                            this._timer = null;
+                            if (this.running && this._shown === shown) this._render();
+                        }, RETRY_MS);
+                    }
                 }
             }
-            widget.add(panel.container);   // a qx widget has one parent: this moves it
+            widget.add(grid);   // a qx widget has one parent: this moves it
         } catch (e) {
             this._warn('panel update failed', e);
         }
     }
 
-    _setLoading(panel) {
-        panel.res.setValue(escape(t('lootLoading')));
-        panel.res.setTextColor(COLORS.muted);
-        for (const l of [panel.total, panel.info, panel.ratio]) l.setValue('');
+    _ownCity() {
+        try { return ClientLib.Data.MainData.GetInstance().get_Cities().get_CurrentOwnCity() || null; } catch { return null; }
     }
 
-    /** Loot data of the selected target ({loot, level, type}), or null while it is not loaded (MHTools loadBase). */
+    /** MaelstromTools: distance from the current own base <= get_MaxAttackDistance(). */
+    _inRange(own, sel) {
+        try {
+            const dist = Math.hypot(own.get_PosX() - sel.x, own.get_PosY() - sel.y);
+            return dist <= Number(ClientLib.Data.MainData.GetInstance().get_Server().get_MaxAttackDistance());
+        } catch {
+            return true;
+        }
+    }
+
+    /** Loot of the selected target, or null while it is not loaded. */
     _target(sel) {
-        const md = ClientLib.Data.MainData.GetInstance();
-        const ec = md.get_Cities().get_CurrentCity();   // null/undefined until the game has loaded the selection
+        const ec = ClientLib.Data.MainData.GetInstance().get_Cities().get_CurrentCity();   // null until loaded
         if (!ec) return null;
         try {
             // still the previous target: wait for the selected one
@@ -358,36 +414,17 @@ export class LootSummary {
         const defences = defenceUnits(ec);
         if (!buildings && !defences) return null;       // data not there yet
         const loot = calcLoot(buildings, defences);
-        let level = null;
-        try { level = Math.floor(ec.get_LvlBase()); } catch { /* from the world object */ }
-        let type = 'base';
-        try {
-            const obj = md.get_World().GetObjectFromPosition(sel.x, sel.y);
-            if (obj && obj.Type === 3) type = CAMP_TYPES[obj.$CampType] || 'camp';
-            if (level === null && obj && typeof obj.$Level === 'number') level = Math.floor(obj.$Level);
-        } catch { /* keep 'base' */ }
-        return { loot, level, type };
+        return loot.total > 0 ? loot : null;            // MaelstromTools LoadState: Factor > 0
     }
 
-    _fill(panel, sel, { loot, level, type }) {
-        const res = [
-            `<span style="color:#8bc34a">${escape(t('lootTib'))} ${fmtNumber(loot.tib)}</span>`,
-            `<span style="color:#42a5f5">${escape(t('lootCry'))} ${fmtNumber(loot.cry)}</span>`,
-            `<span style="color:#ffc107">${escape(t('lootCred'))} ${fmtNumber(loot.cred)}</span>`,
-        ].join(' · ');
-        panel.res.setValue(res);
-        panel.res.setTextColor(COLORS.mid);
-
+    _fill(grid, sel, loot, own) {
         let cp = null;
-        let from = null;
         try {
-            const cities = Object.values(ClientLib.Data.MainData.GetInstance().get_Cities().get_AllCities().d);
-            from = nearestOwnBase(sel.x, sel.y, cities);
-            if (from) cp = Number(from.city.CalculateAttackCommandPointCostToCoord(sel.x, sel.y));
+            cp = Number(own.CalculateAttackCommandPointCostToCoord(sel.x, sel.y));
             if (!Number.isFinite(cp)) cp = null;
         } catch { cp = null; }
-        const ratio = lootPerCp(loot.total, cp);
 
+        const ratio = cp > 0 ? loot.total / cp : null;
         const key = `${sel.x}:${sel.y}`;
         if (!this._seen.has(key)) {
             this._seen.add(key);
@@ -398,22 +435,29 @@ export class LootSummary {
             }
         }
 
-        let totalLine = escape(t('lootTotal', { total: fmtNumber(loot.total) }));
-        if (loot.rp > 0) totalLine += ` · ${escape(t('lootRp', { rp: fmtNumber(loot.rp) }))}`;
-        panel.total.setValue(`<b>${totalLine}</b>`);
-        panel.total.setTextColor(COLORS[rankColor(loot.total, this._history.total)]);
-
-        const typeName = t(`lootType_${type}`);
-        const head = level !== null ? `${typeName} ${t('lootLevel', { level })}` : typeName;
-        panel.info.setValue(from && cp !== null
-            ? `${head} · ${t('lootCp', { cp, base: from.name, dist: from.dist.toFixed(1) })}`
-            : head);
-
-        panel.ratio.setValue(ratio !== null ? `<b>${escape(t('lootPerCp', { ratio: fmtNumber(ratio) }))}</b>` : '');
-        panel.ratio.setTextColor(COLORS[rankColor(ratio, this._history.ratio)]);
+        let row = 1;
+        let available = NaN;
+        try { available = Number(ClientLib.Data.MainData.GetInstance().get_Player().GetCommandPointCount()); } catch { /* unknown */ }
+        const attacks = possibleAttacks(available, cp);
+        if (attacks !== null) {
+            this._label(grid, ++row, 1, `${t('lootPossibleAttacks')}: ${attacks}`, { align: 'left', bold: true, colSpan: 9 });
+        }
+        for (const [labelKey, div, bold] of lootRows(cp)) {
+            row++;
+            let col = 1;
+            this._label(grid, row, col++, `${t(labelKey)}:`, { bold });
+            for (const c of COLUMNS) {
+                this._image(grid, row, col++, c.key);
+                let color;
+                if (c.key === 'total' && div === 1) color = COLORS[rankColor(loot.total, this._history.total)];
+                if (c.key === 'total' && div === cp) color = COLORS[rankColor(ratio, this._history.ratio)];
+                this._label(grid, row, col++, compact(loot[c.key] / div), { width: 50, align: 'right', bold, color });
+            }
+        }
+        if (cp !== null) {
+            let base = '';
+            try { base = own.get_Name(); } catch { /* unnamed */ }
+            this._label(grid, ++row, 1, t('lootCpFrom', { cp, base }), { color: COLORS.muted, colSpan: 11 });
+        }
     }
-}
-
-function escape(s) {
-    return String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
 }

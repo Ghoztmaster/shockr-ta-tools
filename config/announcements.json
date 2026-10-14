@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.21.0 released — new plugin Loot Summary: available tiberium, crystal and credits, CP cost and loot per CP of a Forgotten target, right in the info panel on the world map",
-      "de": "v5.21.0 veröffentlicht — neues Plugin Loot Summary: verfügbares Tiberium, Kristall und Credits, KP-Kosten und Beute pro KP eines Forgotten-Ziels, direkt im Infofenster auf der Weltkarte",
-      "nl": "v5.21.0 uitgebracht — nieuwe plugin Loot Summary: beschikbare tiberium, crystal en credits, CP-kosten en loot per CP van een Forgotten-target, direct in het infopaneel op de wereldkaart"
+      "en": "v5.21.0 released — new plugin Loot Summary: lootable research, tiberium, crystal and credits of a Forgotten target, per CP and per run, right in the info panel on the world map",
+      "de": "v5.21.0 veröffentlicht — neues Plugin Loot Summary: plünderbare Forschung, Tiberium, Kristall und Credits eines Forgotten-Ziels, pro KP und pro Angriff, direkt im Infofenster auf der Weltkarte",
+      "nl": "v5.21.0 uitgebracht — nieuwe plugin Loot Summary: plunderbare research, tiberium, crystal en credits van een Forgotten-target, per CP en per aanval, direct in het infopaneel op de wereldkaart"
     },
     "type": "info",
     "active": true

@@ -7,16 +7,16 @@
       "date": "2026-10-14",
       "changes": {
         "en": [
-          "New plugin Loot Summary: select a Forgotten camp, outpost or base on the world map and the info panel shows the available tiberium, crystal and credits plus the total",
-          "With the CP cost from your nearest base and the loot per CP (green = high, red = low compared with the targets you looked at)"
+          "New plugin Loot Summary: select a Forgotten camp, outpost or base on the world map and the info panel shows the lootable research, tiberium, crystal, credits and total",
+          "Per CP and for the 2nd and 3rd run, plus the possible attacks from your current base (available CP)"
         ],
         "de": [
-          "Neues Plugin Loot Summary: wähle ein Forgotten-Camp, einen Außenposten oder eine Basis auf der Weltkarte und das Infofenster zeigt verfügbares Tiberium, Kristall und Credits plus die Summe",
-          "Mit den KP-Kosten ab deiner nächsten Basis und der Beute pro KP (grün = hoch, rot = niedrig im Vergleich zu angesehenen Zielen)"
+          "Neues Plugin Loot Summary: wähle ein Forgotten-Camp, einen Außenposten oder eine Basis auf der Weltkarte und das Infofenster zeigt plünderbare Forschung, Tiberium, Kristall, Credits und Summe",
+          "Pro KP und für den 2. und 3. Angriff, plus die möglichen Angriffe von deiner aktuellen Basis (verfügbare KP)"
         ],
         "nl": [
-          "Nieuwe plugin Loot Summary: selecteer een Forgotten camp, outpost of base op de wereldkaart en het infopaneel toont de beschikbare tiberium, crystal en credits plus het totaal",
-          "Met de CP-kosten vanaf je dichtstbijzijnde base en de loot per CP (groen = hoog, rood = laag t.o.v. de targets die je bekeek)"
+          "Nieuwe plugin Loot Summary: selecteer een Forgotten camp, outpost of base op de wereldkaart en het infopaneel toont de plunderbare research, tiberium, crystal, credits en het totaal",
+          "Per CP en voor de 2e en 3e aanval, plus de mogelijke aanvallen vanaf je huidige base (beschikbare CP)"
         ]
       }
     },

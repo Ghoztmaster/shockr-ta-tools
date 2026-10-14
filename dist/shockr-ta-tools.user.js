@@ -536,20 +536,15 @@ var ShockrTools = (() => {
       transferAllSkippedFull: "{res} skipped (storage full)",
       transferAllSkippedCredits: "{n} base(s) skipped (not enough credits)",
       transferAllFailed: "{n} transfer(s) refused",
-      descLootSummary: "Loot Summary in the info panel of a Forgotten camp/outpost/base: available tiberium, crystal and credits, CP cost from your nearest base and loot per CP (green = high, red = low vs. targets you looked at)",
-      lootTitle: "Loot",
-      lootLoading: "Loading base data\u2026",
-      lootTib: "Tib",
-      lootCry: "Cry",
-      lootCred: "Credits",
-      lootTotal: "Total {total}",
-      lootRp: "Research {rp}",
-      lootLevel: "level {level}",
-      lootCp: "{cp} CP from {base} ({dist} fields)",
-      lootPerCp: "Loot/CP {ratio}",
-      lootType_camp: "Camp",
-      lootType_outpost: "Outpost",
-      lootType_base: "Forgotten base",
+      descLootSummary: "Loot Summary in the info panel of a Forgotten camp/outpost/base: lootable research, tiberium, crystal, credits and total, per CP and for the 2nd/3rd run, and the possible attacks from your current base",
+      lootPossibleAttacks: "Possible attacks from this base (available CP)",
+      lootLootable: "Lootable resources",
+      lootPerCpRow: "per CP",
+      loot2nd: "2nd run",
+      loot3rd: "3rd run",
+      lootCalculating: "Calculating resources...",
+      lootOutOfRange: "Target out of range, no resource calculation possible",
+      lootCpFrom: "{cp} CP from {base}",
       lootStatus: "{n} target(s) inspected",
       poiShort_tib: "Tib",
       poiShort_cry: "Cry",
@@ -781,20 +776,15 @@ var ShockrTools = (() => {
       transferAllSkippedFull: "{res} \xFCbersprungen (Lager voll)",
       transferAllSkippedCredits: "{n} Basis/Basen \xFCbersprungen (nicht genug Credits)",
       transferAllFailed: "{n} Transfer(s) abgelehnt",
-      descLootSummary: "Beute-\xDCbersicht im Infofenster eines Forgotten-Camps/-Au\xDFenpostens/-Basis: verf\xFCgbares Tiberium, Kristall und Credits, KP-Kosten ab deiner n\xE4chsten Basis und Beute pro KP (gr\xFCn = hoch, rot = niedrig gg\xFC. angesehenen Zielen)",
-      lootTitle: "Beute",
-      lootLoading: "Basisdaten werden geladen\u2026",
-      lootTib: "Tib",
-      lootCry: "Kri",
-      lootCred: "Credits",
-      lootTotal: "Gesamt {total}",
-      lootRp: "Forschung {rp}",
-      lootLevel: "Level {level}",
-      lootCp: "{cp} KP ab {base} ({dist} Felder)",
-      lootPerCp: "Beute/KP {ratio}",
-      lootType_camp: "Camp",
-      lootType_outpost: "Au\xDFenposten",
-      lootType_base: "Forgotten-Basis",
+      descLootSummary: "Beute-\xDCbersicht im Infofenster eines Forgotten-Camps/-Au\xDFenpostens/-Basis: pl\xFCnderbare Forschung, Tiberium, Kristall, Credits und Summe, pro KP und f\xFCr den 2./3. Angriff, und die m\xF6glichen Angriffe von deiner aktuellen Basis",
+      lootPossibleAttacks: "M\xF6gliche Angriffe (verf\xFCgbare KP)",
+      lootLootable: "Pl\xFCnderbare Ressourcen",
+      lootPerCpRow: "pro KP",
+      loot2nd: "2. Angriff",
+      loot3rd: "3. Angriff",
+      lootCalculating: "Ressourcen werden berechnet...",
+      lootOutOfRange: "Ziel au\xDFer Reichweite, keine Ressourcenberechnung m\xF6glich",
+      lootCpFrom: "{cp} KP ab {base}",
       lootStatus: "{n} Ziel(e) angesehen",
       poiShort_tib: "Tib",
       poiShort_cry: "Kri",
@@ -1026,20 +1016,15 @@ var ShockrTools = (() => {
       transferAllSkippedFull: "{res} overgeslagen (opslag vol)",
       transferAllSkippedCredits: "{n} base(s) overgeslagen (niet genoeg credits)",
       transferAllFailed: "{n} transfer(s) geweigerd",
-      descLootSummary: "Loot-overzicht in het infopaneel van een Forgotten camp/outpost/base: beschikbare tiberium, crystal en credits, CP-kosten vanaf je dichtstbijzijnde base en loot per CP (groen = hoog, rood = laag t.o.v. bekeken targets)",
-      lootTitle: "Loot",
-      lootLoading: "Basegegevens laden\u2026",
-      lootTib: "Tib",
-      lootCry: "Cry",
-      lootCred: "Credits",
-      lootTotal: "Totaal {total}",
-      lootRp: "Research {rp}",
-      lootLevel: "level {level}",
-      lootCp: "{cp} CP vanaf {base} ({dist} velden)",
-      lootPerCp: "Loot/CP {ratio}",
-      lootType_camp: "Camp",
-      lootType_outpost: "Outpost",
-      lootType_base: "Forgotten base",
+      descLootSummary: "Loot-overzicht in het infopaneel van een Forgotten camp/outpost/base: plunderbare research, tiberium, crystal, credits en totaal, per CP en voor de 2e/3e aanval, en de mogelijke aanvallen vanaf je huidige base",
+      lootPossibleAttacks: "Mogelijke aanvallen vanaf deze base (beschikbare CP)",
+      lootLootable: "Plunderbare resources",
+      lootPerCpRow: "per CP",
+      loot2nd: "2e aanval",
+      loot3rd: "3e aanval",
+      lootCalculating: "Resources worden berekend...",
+      lootOutOfRange: "Target buiten bereik, geen resource-berekening mogelijk",
+      lootCpFrom: "{cp} CP vanaf {base}",
       lootStatus: "{n} target(s) bekeken",
       poiShort_tib: "Tib",
       poiShort_cry: "Cry",
@@ -7571,8 +7556,14 @@ var ShockrTools = (() => {
   var RETRY_MS = 500;
   var RETRY_MAX = 20;
   var COLORS2 = { high: "#8bc34a", low: "#ef5350", mid: "#ffffff", muted: "#bdbdbd" };
-  var CAMP_TYPES4 = { 1: "camp", 2: "camp", 3: "outpost", 4: "base" };
   var LOOT_TYPES = { 1: "tib", 2: "cry", 3: "cred", 6: "rp" };
+  var COLUMNS = [
+    { key: "rp", icon: "ui/common/icn_res_tiberium.png" },
+    { key: "tib", icon: "ui/common/icn_res_chrystal.png" },
+    { key: "cry", icon: "ui/common/icn_res_dollar.png" },
+    { key: "cred", icon: "ui/common/icn_res_research_mission.png" },
+    { key: "total", icon: "ui/common/icn_build_slots.png" }
+  ];
   function getLoots(ul, r = {}) {
     for (const j in ul.d) {
       const u = ul.d[j];
@@ -7592,8 +7583,18 @@ var ShockrTools = (() => {
     const loot = { rp: 0, tib: 0, cry: 0, cred: 0 };
     if (buildings) getLoots(buildings, loot);
     if (defences) getLoots(defences, loot);
-    loot.total = loot.tib + loot.cry + loot.cred;
+    loot.total = loot.rp + loot.tib + loot.cry + loot.cred;
     return loot;
+  }
+  function lootRows(cp) {
+    const rows = [["lootLootable", 1, true]];
+    if (cp > 0) {
+      rows.push(["lootPerCpRow", cp, cp <= 1], ["loot2nd", 2 * cp, false], ["loot3rd", 3 * cp, false]);
+    }
+    return rows;
+  }
+  function possibleAttacks(available, cp) {
+    return cp > 0 && Number.isFinite(available) ? Math.floor(available / cp) : null;
   }
   function defenceUnits(city) {
     const ud = city.get_CityUnitsData();
@@ -7642,9 +7643,6 @@ var ShockrTools = (() => {
     }
     return null;
   }
-  function lootPerCp(total, cp) {
-    return cp > 0 ? total / cp : null;
-  }
   function rankColor(value, history) {
     if (value === null || history.length < 3) return "mid";
     const below = history.filter((v) => v < value).length;
@@ -7653,16 +7651,16 @@ var ShockrTools = (() => {
     if (share <= 1 / 3) return "low";
     return "mid";
   }
-  function nearestOwnBase(x, y, cities) {
-    let best = null;
-    for (const c of cities) {
-      try {
-        const dist = Math.hypot(c.get_PosX() - x, c.get_PosY() - y);
-        if (!best || dist < best.dist) best = { city: c, name: c.get_Name(), dist };
-      } catch {
-      }
+  function compact(v) {
+    try {
+      return webfrontend.phe.cnc.gui.util.Numbers.formatNumbersCompact(v);
+    } catch {
     }
-    return best;
+    try {
+      return webfrontend.gui.Util.formatNumbersCompact(v);
+    } catch {
+    }
+    return fmtNumber(v);
   }
   var LootSummary = class {
     /** Short description for `/st help`. */
@@ -7675,7 +7673,8 @@ var ShockrTools = (() => {
       this.running = false;
       this._listeners = [];
       this._citiesHooked = false;
-      this._panel = null;
+      this._grid = null;
+      this._icons = null;
       this._timer = null;
       this._shown = null;
       this._history = { total: [], ratio: [] };
@@ -7721,14 +7720,14 @@ var ShockrTools = (() => {
         }
       }
       this._listeners = [];
-      if (this._panel) {
+      if (this._grid) {
         try {
-          const parent = this._panel.container.getLayoutParent();
-          if (parent) parent.remove(this._panel.container);
-          this._panel.container.dispose();
+          const parent = this._grid.getLayoutParent();
+          if (parent) parent.remove(this._grid);
+          this._grid.dispose();
         } catch {
         }
-        this._panel = null;
+        this._grid = null;
       }
       this._shown = null;
       this._clearTimer();
@@ -7768,32 +7767,49 @@ var ShockrTools = (() => {
         }
       }
     }
-    _ensurePanel() {
-      if (this._panel) return this._panel;
+    /** MaelstromTools' loot widget: Composite with Grid(5, 5), white text. */
+    _ensureGrid() {
+      if (this._grid) return this._grid;
       try {
-        const box = new qx.ui.container.Composite(new qx.ui.layout.VBox()).set({
-          marginTop: 6,
-          textColor: "text-region-tooltip"
-        });
-        const title = new qx.ui.basic.Label("Loot").set({ font: "font_size_14", textColor: "text-region-value" });
-        const res = new qx.ui.basic.Label("").set({ rich: true });
-        const total = new qx.ui.basic.Label("").set({ rich: true });
-        const info = new qx.ui.basic.Label("").set({ textColor: "text-region-value" });
-        const ratio = new qx.ui.basic.Label("").set({ rich: true });
-        for (const w of [title, res, total, info, ratio]) box.add(w);
-        this._panel = { container: box, title, res, total, info, ratio };
+        this._grid = new qx.ui.container.Composite(new qx.ui.layout.Grid(5, 5)).set({ marginTop: 6 });
+        this._grid.setTextColor("white");
       } catch (e) {
         this._warn("could not build the panel", e);
       }
-      return this._panel;
+      return this._grid;
     }
-    /** The selected vis object's position + id, or null. */
+    /** MaelstromTools Util.addLabel. */
+    _label(grid, row, column, value, { width, align, bold, color, colSpan } = {}) {
+      const label = new qx.ui.basic.Label().set({ value: String(value) });
+      if (width) label.setWidth(width);
+      if (align) label.setTextAlign(align);
+      if (color) label.setTextColor(color);
+      if (bold) label.setFont("bold");
+      grid.add(label, { row, column, colSpan: colSpan || 1 });
+      return label;
+    }
+    /** MaelstromTools Util.getImage + addImage: 20x20, scaled. */
+    _image(grid, row, column, key) {
+      if (!this._icons) {
+        this._icons = {};
+        try {
+          const fm = ClientLib.File.FileManager.GetInstance();
+          for (const c of COLUMNS) this._icons[c.key] = fm.GetPhysicalPath(c.icon);
+        } catch {
+        }
+      }
+      if (!this._icons[key]) return;
+      const image = new qx.ui.basic.Image(this._icons[key]);
+      image.setScale(true);
+      image.setWidth(20);
+      image.setHeight(20);
+      grid.add(image, { row, column });
+    }
+    /** The selected vis object's position, or null. */
     _selected() {
       try {
         const sel = ClientLib.Vis.VisMain.GetInstance().get_SelectedObject();
-        if (sel && typeof sel.get_RawX === "function") {
-          return { x: sel.get_RawX(), y: sel.get_RawY(), id: typeof sel.get_Id === "function" ? sel.get_Id() : null };
-        }
+        if (sel && typeof sel.get_RawX === "function") return { x: sel.get_RawX(), y: sel.get_RawY() };
       } catch {
       }
       return null;
@@ -7819,35 +7835,50 @@ var ShockrTools = (() => {
       const shown = this._shown;
       const { widget, sel } = shown;
       try {
-        const panel = this._ensurePanel();
-        if (!panel) return;
-        panel.title.setValue(t("lootTitle"));
-        const target = this._target(sel);
-        if (target) {
-          this._fill(panel, sel, target);
+        const grid = this._ensureGrid();
+        if (!grid) return;
+        grid.removeAll();
+        const own = this._ownCity();
+        if (own && !this._inRange(own, sel)) {
+          this._label(grid, 1, 1, t("lootOutOfRange"), { bold: true, colSpan: 11 });
         } else {
-          this._setLoading(panel);
-          if (shown.tries++ < RETRY_MAX) {
-            this._timer = setTimeout(() => {
-              this._timer = null;
-              if (this.running && this._shown === shown) this._render();
-            }, RETRY_MS);
+          const target = this._target(sel);
+          if (target) {
+            this._fill(grid, sel, target, own);
+          } else {
+            this._label(grid, 1, 1, t("lootCalculating"), { bold: true, colSpan: 11 });
+            if (shown.tries++ < RETRY_MAX) {
+              this._timer = setTimeout(() => {
+                this._timer = null;
+                if (this.running && this._shown === shown) this._render();
+              }, RETRY_MS);
+            }
           }
         }
-        widget.add(panel.container);
+        widget.add(grid);
       } catch (e) {
         this._warn("panel update failed", e);
       }
     }
-    _setLoading(panel) {
-      panel.res.setValue(escape2(t("lootLoading")));
-      panel.res.setTextColor(COLORS2.muted);
-      for (const l of [panel.total, panel.info, panel.ratio]) l.setValue("");
+    _ownCity() {
+      try {
+        return ClientLib.Data.MainData.GetInstance().get_Cities().get_CurrentOwnCity() || null;
+      } catch {
+        return null;
+      }
     }
-    /** Loot data of the selected target ({loot, level, type}), or null while it is not loaded (MHTools loadBase). */
+    /** MaelstromTools: distance from the current own base <= get_MaxAttackDistance(). */
+    _inRange(own, sel) {
+      try {
+        const dist = Math.hypot(own.get_PosX() - sel.x, own.get_PosY() - sel.y);
+        return dist <= Number(ClientLib.Data.MainData.GetInstance().get_Server().get_MaxAttackDistance());
+      } catch {
+        return true;
+      }
+    }
+    /** Loot of the selected target, or null while it is not loaded. */
     _target(sel) {
-      const md = ClientLib.Data.MainData.GetInstance();
-      const ec = md.get_Cities().get_CurrentCity();
+      const ec = ClientLib.Data.MainData.GetInstance().get_Cities().get_CurrentCity();
       if (!ec) return null;
       try {
         if (ec.get_PosX() !== sel.x || ec.get_PosY() !== sel.y) return null;
@@ -7858,39 +7889,17 @@ var ShockrTools = (() => {
       const defences = defenceUnits(ec);
       if (!buildings && !defences) return null;
       const loot = calcLoot(buildings, defences);
-      let level = null;
-      try {
-        level = Math.floor(ec.get_LvlBase());
-      } catch {
-      }
-      let type = "base";
-      try {
-        const obj = md.get_World().GetObjectFromPosition(sel.x, sel.y);
-        if (obj && obj.Type === 3) type = CAMP_TYPES4[obj.$CampType] || "camp";
-        if (level === null && obj && typeof obj.$Level === "number") level = Math.floor(obj.$Level);
-      } catch {
-      }
-      return { loot, level, type };
+      return loot.total > 0 ? loot : null;
     }
-    _fill(panel, sel, { loot, level, type }) {
-      const res = [
-        `<span style="color:#8bc34a">${escape2(t("lootTib"))} ${fmtNumber(loot.tib)}</span>`,
-        `<span style="color:#42a5f5">${escape2(t("lootCry"))} ${fmtNumber(loot.cry)}</span>`,
-        `<span style="color:#ffc107">${escape2(t("lootCred"))} ${fmtNumber(loot.cred)}</span>`
-      ].join(" \xB7 ");
-      panel.res.setValue(res);
-      panel.res.setTextColor(COLORS2.mid);
+    _fill(grid, sel, loot, own) {
       let cp = null;
-      let from = null;
       try {
-        const cities = Object.values(ClientLib.Data.MainData.GetInstance().get_Cities().get_AllCities().d);
-        from = nearestOwnBase(sel.x, sel.y, cities);
-        if (from) cp = Number(from.city.CalculateAttackCommandPointCostToCoord(sel.x, sel.y));
+        cp = Number(own.CalculateAttackCommandPointCostToCoord(sel.x, sel.y));
         if (!Number.isFinite(cp)) cp = null;
       } catch {
         cp = null;
       }
-      const ratio = lootPerCp(loot.total, cp);
+      const ratio = cp > 0 ? loot.total / cp : null;
       const key = `${sel.x}:${sel.y}`;
       if (!this._seen.has(key)) {
         this._seen.add(key);
@@ -7900,20 +7909,38 @@ var ShockrTools = (() => {
           if (this._history[k].length > HISTORY_MAX) this._history[k].shift();
         }
       }
-      let totalLine = escape2(t("lootTotal", { total: fmtNumber(loot.total) }));
-      if (loot.rp > 0) totalLine += ` \xB7 ${escape2(t("lootRp", { rp: fmtNumber(loot.rp) }))}`;
-      panel.total.setValue(`<b>${totalLine}</b>`);
-      panel.total.setTextColor(COLORS2[rankColor(loot.total, this._history.total)]);
-      const typeName = t(`lootType_${type}`);
-      const head = level !== null ? `${typeName} ${t("lootLevel", { level })}` : typeName;
-      panel.info.setValue(from && cp !== null ? `${head} \xB7 ${t("lootCp", { cp, base: from.name, dist: from.dist.toFixed(1) })}` : head);
-      panel.ratio.setValue(ratio !== null ? `<b>${escape2(t("lootPerCp", { ratio: fmtNumber(ratio) }))}</b>` : "");
-      panel.ratio.setTextColor(COLORS2[rankColor(ratio, this._history.ratio)]);
+      let row = 1;
+      let available = NaN;
+      try {
+        available = Number(ClientLib.Data.MainData.GetInstance().get_Player().GetCommandPointCount());
+      } catch {
+      }
+      const attacks = possibleAttacks(available, cp);
+      if (attacks !== null) {
+        this._label(grid, ++row, 1, `${t("lootPossibleAttacks")}: ${attacks}`, { align: "left", bold: true, colSpan: 9 });
+      }
+      for (const [labelKey, div, bold] of lootRows(cp)) {
+        row++;
+        let col = 1;
+        this._label(grid, row, col++, `${t(labelKey)}:`, { bold });
+        for (const c of COLUMNS) {
+          this._image(grid, row, col++, c.key);
+          let color;
+          if (c.key === "total" && div === 1) color = COLORS2[rankColor(loot.total, this._history.total)];
+          if (c.key === "total" && div === cp) color = COLORS2[rankColor(ratio, this._history.ratio)];
+          this._label(grid, row, col++, compact(loot[c.key] / div), { width: 50, align: "right", bold, color });
+        }
+      }
+      if (cp !== null) {
+        let base = "";
+        try {
+          base = own.get_Name();
+        } catch {
+        }
+        this._label(grid, ++row, 1, t("lootCpFrom", { cp, base }), { color: COLORS2.muted, colSpan: 11 });
+      }
     }
   };
-  function escape2(s) {
-    return String(s).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
-  }
 
   // lib/main.js
   var ST_VERSION = "5.21.0";
