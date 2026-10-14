@@ -1,7 +1,25 @@
 {
-  "version": "5.21.0",
+  "version": "5.22.0",
   "date": "2026-10-14",
   "changelog": [
+    {
+      "version": "5.22.0",
+      "date": "2026-10-14",
+      "changes": {
+        "en": [
+          "New plugin Chat Helper: coordinates (123:456) and urls in chat, mail and forum are tagged automatically, so coordinates become clickable",
+          "Alt shortcuts for [player], [alliance], [b], [i], [u], [s] (Alt+0 removes tags) and a contact list for /whisper with name completion - type /chelp in the chat"
+        ],
+        "de": [
+          "Neues Plugin Chat Helper: Koordinaten (123:456) und URLs in Chat, Post und Forum werden automatisch getaggt, Koordinaten werden so anklickbar",
+          "Alt-Kürzel für [player], [alliance], [b], [i], [u], [s] (Alt+0 entfernt Tags) und eine Kontaktliste für /whisper mit Namensergänzung - tippe /chelp im Chat"
+        ],
+        "nl": [
+          "Nieuwe plugin Chat Helper: coördinaten (123:456) en urls in chat, mail en forum worden automatisch getagd, zodat coördinaten klikbaar worden",
+          "Alt-sneltoetsen voor [player], [alliance], [b], [i], [u], [s] (Alt+0 haalt tags weg) en een contactlijst voor /whisper met naam-aanvulling - typ /chelp in de chat"
+        ]
+      }
+    },
     {
       "version": "5.21.0",
       "date": "2026-10-14",
@@ -65,27 +83,6 @@
         ],
         "nl": [
           "Fix POI Analyser: het POI-label staat niet meer over de eigen naam/level-tekst van het spel (nu linksboven in de cel, zoals CampTracker en Base Info)"
-        ]
-      }
-    },
-    {
-      "version": "5.18.0",
-      "date": "2026-10-13",
-      "changes": {
-        "en": [
-          "New plugin POI Analyser: POI labels on the world map (gold = your alliance), the alliance POI bonuses in the base info panel, real gain/loss of a selected POI",
-          "New plugin Sector HUD: view coordinates + sector, POIs held per sector (own green, enemy red, free grey)",
-          "Fix Map Labels: no ⚔ on a target that respawned as another type or level"
-        ],
-        "de": [
-          "Neues Plugin POI Analyser: POI-Labels auf der Weltkarte (gold = deine Allianz), Allianz-POI-Boni im Basis-Infofenster, echter Gewinn/Verlust eines gewählten POI",
-          "Neues Plugin Sector HUD: Ansichtskoordinaten + Sektor, gehaltene POIs pro Sektor (eigene grün, feindliche rot, freie grau)",
-          "Fix Map Labels: kein ⚔ auf einem Ziel, das als anderer Typ oder Level neu erschienen ist"
-        ],
-        "nl": [
-          "Nieuwe plugin POI Analyser: POI-labels op de wereldkaart (goud = jouw alliance), de alliance-POI-bonussen in het base-infopaneel, echte winst/verlies van een geselecteerde POI",
-          "Nieuwe plugin Sector HUD: kijkcoördinaten + sector, bezette POIs per sector (eigen groen, vijandelijk rood, vrij grijs)",
-          "Fix Map Labels: geen ⚔ meer op een target dat als ander type of level opnieuw is verschenen"
         ]
       }
     }

@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name            Shockr - Tiberium Alliances Tools
 // @author          Ghozt [SoO] (original: Shockr, fixed by NetquiK [SoO])
-// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver, wavy & loot summary for C&C Tiberium Alliances
+// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver, wavy, loot summary & chat helper for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
-// @version         5.21.0
+// @version         5.22.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // ==/UserScript==
 
@@ -536,6 +536,25 @@ var ShockrTools = (() => {
       transferAllSkippedFull: "{res} skipped (storage full)",
       transferAllSkippedCredits: "{n} base(s) skipped (not enough credits)",
       transferAllFailed: "{n} transfer(s) refused",
+      descChatHelper: "Chat Helper: coordinates and urls in chat, mail and forum are tagged automatically ([coords] = clickable), Alt shortcuts for BB codes ([player], [alliance], [b], [i], [u], [s]) and a contact list for /whisper \u2014 type /chelp in the chat",
+      chatHelperStatus: "{n} contact(s)",
+      chatHelperUrlPrompt: "Website (syntax: google.com or www.google.com)",
+      chatHelperAddConfirm: "Add {name} to your contacts list?\n\nYou can see your contacts by typing /list",
+      chatHelperAdded: "{name} added to your contacts",
+      chatHelperAlready: "{name} is already in your contacts list",
+      chatHelperNotInList: "{name} is not in your contacts list",
+      chatHelperDelConfirm: "Really delete {name} from your contacts?",
+      chatHelperDelAllConfirm: "Really delete ALL your contacts?",
+      chatHelperDeleted: "{name} deleted from your contacts",
+      chatHelperDeletedAll: "All contacts deleted",
+      chatHelperEmptyPrompt: "Your contacts list is empty.\n\nType a name here to add a contact:",
+      chatHelperListHeader: "{n} contact(s):",
+      chatHelperHelp1: "Chat Helper \u2014 space in the chat tags coordinates (123:456) and urls before sending; Enter does it in mail/forum.",
+      chatHelperHelp2: "Alt+1: tag coordinates/urls in a message or forum post \xB7 Alt+2: insert a url \xB7 Alt+0: remove all tags",
+      chatHelperHelp3: "Alt+p or Alt+3: [player] \xB7 Alt+a or Alt+4: [alliance] \xB7 Alt+b bold \xB7 Alt+i italic \xB7 Alt+u underline \xB7 Alt+s strikethrough",
+      chatHelperHelp4: "Tags go around the selection, or around the word at the cursor; in an empty box or after a space an empty pair is inserted.",
+      chatHelperHelp5: "Shorthands: [p]name[/p] \u2192 [player], [a]name[/a] \u2192 [alliance]",
+      chatHelperHelp6: 'Contacts: /list or /contacts \xB7 /add <name> \xB7 /del <name> \xB7 /del all \u2014 "/whisper <first letters>" completes a contact',
       descLootSummary: "Loot Summary in the info panel of a Forgotten camp/outpost/base: lootable research, tiberium, crystal, credits and total, per CP and for the 2nd/3rd run, and the possible attacks from your current base",
       lootPossibleAttacks: "Possible attacks from this base (available CP)",
       lootLootable: "Lootable resources",
@@ -776,6 +795,25 @@ var ShockrTools = (() => {
       transferAllSkippedFull: "{res} \xFCbersprungen (Lager voll)",
       transferAllSkippedCredits: "{n} Basis/Basen \xFCbersprungen (nicht genug Credits)",
       transferAllFailed: "{n} Transfer(s) abgelehnt",
+      descChatHelper: "Chat Helper: Koordinaten und URLs in Chat, Post und Forum werden automatisch getaggt ([coords] = anklickbar), Alt-K\xFCrzel f\xFCr BB-Codes ([player], [alliance], [b], [i], [u], [s]) und eine Kontaktliste f\xFCr /whisper \u2014 tippe /chelp im Chat",
+      chatHelperStatus: "{n} Kontakt(e)",
+      chatHelperUrlPrompt: "Webseite (Syntax: google.com oder www.google.com)",
+      chatHelperAddConfirm: "{name} zu deiner Kontaktliste hinzuf\xFCgen?\n\nDeine Kontakte siehst du mit /list",
+      chatHelperAdded: "{name} zu deinen Kontakten hinzugef\xFCgt",
+      chatHelperAlready: "{name} ist schon in deiner Kontaktliste",
+      chatHelperNotInList: "{name} ist nicht in deiner Kontaktliste",
+      chatHelperDelConfirm: "{name} wirklich aus deinen Kontakten l\xF6schen?",
+      chatHelperDelAllConfirm: "Wirklich ALLE Kontakte l\xF6schen?",
+      chatHelperDeleted: "{name} aus deinen Kontakten gel\xF6scht",
+      chatHelperDeletedAll: "Alle Kontakte gel\xF6scht",
+      chatHelperEmptyPrompt: "Deine Kontaktliste ist leer.\n\nGib hier einen Namen ein, um einen Kontakt hinzuzuf\xFCgen:",
+      chatHelperListHeader: "{n} Kontakt(e):",
+      chatHelperHelp1: "Chat Helper \u2014 Leertaste im Chat taggt Koordinaten (123:456) und URLs vor dem Senden; Enter tut das in Post/Forum.",
+      chatHelperHelp2: "Alt+1: Koordinaten/URLs in Nachricht oder Forumsbeitrag taggen \xB7 Alt+2: URL einf\xFCgen \xB7 Alt+0: alle Tags entfernen",
+      chatHelperHelp3: "Alt+p oder Alt+3: [player] \xB7 Alt+a oder Alt+4: [alliance] \xB7 Alt+b fett \xB7 Alt+i kursiv \xB7 Alt+u unterstrichen \xB7 Alt+s durchgestrichen",
+      chatHelperHelp4: "Tags kommen um die Auswahl oder um das Wort am Cursor; in einem leeren Feld oder nach einem Leerzeichen wird ein leeres Paar eingef\xFCgt.",
+      chatHelperHelp5: "K\xFCrzel: [p]Name[/p] \u2192 [player], [a]Name[/a] \u2192 [alliance]",
+      chatHelperHelp6: 'Kontakte: /list oder /contacts \xB7 /add <Name> \xB7 /del <Name> \xB7 /del all \u2014 "/whisper <Anfangsbuchstaben>" erg\xE4nzt einen Kontakt',
       descLootSummary: "Beute-\xDCbersicht im Infofenster eines Forgotten-Camps/-Au\xDFenpostens/-Basis: pl\xFCnderbare Forschung, Tiberium, Kristall, Credits und Summe, pro KP und f\xFCr den 2./3. Angriff, und die m\xF6glichen Angriffe von deiner aktuellen Basis",
       lootPossibleAttacks: "M\xF6gliche Angriffe (verf\xFCgbare KP)",
       lootLootable: "Pl\xFCnderbare Ressourcen",
@@ -1016,6 +1054,25 @@ var ShockrTools = (() => {
       transferAllSkippedFull: "{res} overgeslagen (opslag vol)",
       transferAllSkippedCredits: "{n} base(s) overgeslagen (niet genoeg credits)",
       transferAllFailed: "{n} transfer(s) geweigerd",
+      descChatHelper: "Chat Helper: co\xF6rdinaten en urls in chat, mail en forum worden automatisch getagd ([coords] = klikbaar), Alt-sneltoetsen voor BB-codes ([player], [alliance], [b], [i], [u], [s]) en een contactlijst voor /whisper \u2014 typ /chelp in de chat",
+      chatHelperStatus: "{n} contact(en)",
+      chatHelperUrlPrompt: "Website (syntax: google.com of www.google.com)",
+      chatHelperAddConfirm: "{name} aan je contactlijst toevoegen?\n\nJe contacten zie je met /list",
+      chatHelperAdded: "{name} toegevoegd aan je contacten",
+      chatHelperAlready: "{name} staat al in je contactlijst",
+      chatHelperNotInList: "{name} staat niet in je contactlijst",
+      chatHelperDelConfirm: "{name} echt uit je contacten verwijderen?",
+      chatHelperDelAllConfirm: "Echt ALLE contacten verwijderen?",
+      chatHelperDeleted: "{name} verwijderd uit je contacten",
+      chatHelperDeletedAll: "Alle contacten verwijderd",
+      chatHelperEmptyPrompt: "Je contactlijst is leeg.\n\nTyp hier een naam om een contact toe te voegen:",
+      chatHelperListHeader: "{n} contact(en):",
+      chatHelperHelp1: "Chat Helper \u2014 spatie in de chat tagt co\xF6rdinaten (123:456) en urls v\xF3\xF3r het versturen; Enter doet dat in mail/forum.",
+      chatHelperHelp2: "Alt+1: co\xF6rdinaten/urls taggen in een bericht of forumpost \xB7 Alt+2: url invoegen \xB7 Alt+0: alle tags weghalen",
+      chatHelperHelp3: "Alt+p of Alt+3: [player] \xB7 Alt+a of Alt+4: [alliance] \xB7 Alt+b vet \xB7 Alt+i cursief \xB7 Alt+u onderstreept \xB7 Alt+s doorgehaald",
+      chatHelperHelp4: "Tags komen om de selectie, of om het woord bij de cursor; in een leeg vak of na een spatie komt een leeg paar.",
+      chatHelperHelp5: "Afkortingen: [p]naam[/p] \u2192 [player], [a]naam[/a] \u2192 [alliance]",
+      chatHelperHelp6: 'Contacten: /list of /contacts \xB7 /add <naam> \xB7 /del <naam> \xB7 /del all \u2014 "/whisper <beginletters>" vult een contact aan',
       descLootSummary: "Loot-overzicht in het infopaneel van een Forgotten camp/outpost/base: plunderbare research, tiberium, crystal, credits en totaal, per CP en voor de 2e/3e aanval, en de mogelijke aanvallen vanaf je huidige base",
       lootPossibleAttacks: "Mogelijke aanvallen vanaf deze base (beschikbare CP)",
       lootLootable: "Plunderbare resources",
@@ -7942,8 +7999,299 @@ var ShockrTools = (() => {
     }
   };
 
+  // plugins/chat-helper.js
+  var STORAGE_KEY2 = "chatHelper";
+  var LEGACY_KEY = "myContacts";
+  var SAVE_VERSION = "3.2.0";
+  var KEYUP_DELAY_MS = 50;
+  var WHISPER = "/whisper ";
+  var ST_PREFIX = "/st";
+  var VALID_CHAR = /[-\w.]/;
+  function autoTag(text) {
+    let s = String(text);
+    s = s.replace(/(\[coords\])*([0-9]{3,4})[:|.]([0-9]{3,4})([:|.]\w+)?(\[\/coords\])*/gi, (...a) => {
+      const whole = a[7];
+      if (whole.startsWith("http://cnc-map") || whole.startsWith("[url]")) return a[0];
+      return "[coords]" + a[2] + ":" + a[3] + (a[4] !== void 0 ? a[4].replace(".", ":") : "") + "[/coords]";
+    });
+    s = s.replace(/(\[url\])*(https?:\/\/)?([\da-z.-]+)(\.[a-z]{2,6})([/\w.\-=?&:+%#|~]*)*\/?(\[\/url\])*/gi, (...a) => {
+      if (a[2] && a[3]) return "[url]" + a[2] + a[3] + a[4] + (a[5] === void 0 ? "" : a[5]) + "[/url]";
+      return a[0];
+    });
+    s = s.replace(/\[p\]([a-z0-9_\-\s]+)\[\/p\]/gi, "[player]$1[/player]");
+    s = s.replace(/\[a\]([a-z0-9_\-\s]+)\[\/a\]/gi, "[alliance]$1[/alliance]");
+    return s;
+  }
+  function clearTags(text) {
+    return String(text).replace(/\[\/?(coords|url|player|alliance|b|i|u|s)\]/gi, "");
+  }
+  function wordAt(text, pos) {
+    if (!VALID_CHAR.test(text.charAt(pos - 1))) return null;
+    let s = pos;
+    let e = pos;
+    while (s > 0 && VALID_CHAR.test(text.charAt(s - 1))) s--;
+    while (e < text.length && VALID_CHAR.test(text.charAt(e))) e++;
+    return [s, e];
+  }
+  function wrapTag(tag, text, selStart, selEnd) {
+    const eTag = tag.replace("[", "[/");
+    if (selStart !== selEnd) {
+      const mid = text.slice(selStart, selEnd);
+      return { value: text.slice(0, selStart) + tag + mid + eTag + text.slice(selEnd), caret: selStart + tag.length + eTag.length + mid.length };
+    }
+    const pos = selStart;
+    if ((text === "" || text.charAt(pos - 1) === " ") && text.charAt(pos) !== "[") {
+      return { value: text.slice(0, pos) + tag + eTag + text.slice(pos), caret: pos + tag.length };
+    }
+    const w = wordAt(text, pos);
+    if (w) {
+      const [s, e] = w;
+      return { value: text.slice(0, s) + tag + text.slice(s, e) + eTag + text.slice(e), caret: e + tag.length + eTag.length };
+    }
+    return null;
+  }
+  function completeWhisper(text, contacts) {
+    if (!text.startsWith(WHISPER) || text.length < WHISPER.length + 1) return null;
+    const typed = text.slice(WHISPER.length);
+    if (/\s/.test(typed)) return null;
+    let hit = null;
+    for (const c of contacts) if (c.startsWith(typed)) hit = c;
+    if (!hit) return null;
+    return { value: WHISPER + hit + " ", selStart: WHISPER.length + typed.length, selEnd: WHISPER.length + hit.length };
+  }
+  function parseCommand(text) {
+    const s = String(text);
+    if (/^\/chelp\s*$/.test(s)) return { cmd: "help" };
+    if (/^\/(list|contacts)\s*$/.test(s)) return { cmd: "list" };
+    let m = s.match(/^\/(add|del) +(\S+)\s*$/);
+    if (m) return { cmd: m[1], name: m[2] };
+    m = s.match(/^\/whisper (\w+)\s/);
+    if (m) return { cmd: "whisper", name: m[1] };
+    return null;
+  }
+  function loadContacts() {
+    try {
+      const legacy = localStorage.getItem(LEGACY_KEY);
+      if (legacy) {
+        localStorage.removeItem(LEGACY_KEY);
+        const list = legacy.split(",").filter(Boolean);
+        saveContacts(list);
+        return list;
+      }
+      const raw = localStorage.getItem(STORAGE_KEY2);
+      const obj = raw ? JSON.parse(raw) : null;
+      return obj && Array.isArray(obj.contacts) ? obj.contacts.filter((c) => typeof c === "string" && c) : [];
+    } catch {
+      return [];
+    }
+  }
+  function saveContacts(contacts) {
+    try {
+      localStorage.setItem(STORAGE_KEY2, JSON.stringify({ saveObjVer: SAVE_VERSION, contacts }));
+    } catch {
+    }
+  }
+  function sortContacts(contacts) {
+    return [...contacts].sort((a, b) => {
+      a = a.toLowerCase();
+      b = b.toLowerCase();
+      return a > b ? 1 : a < b ? -1 : 0;
+    });
+  }
+  function isTextInput(el) {
+    return !!el && (el.type === "text" || el.type === "textarea");
+  }
+  var ChatHelper = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descChatHelper");
+    }
+    constructor(config) {
+      this.name = "ChatHelper";
+      this.config = config;
+      this.running = false;
+      this.contacts = [];
+      this._declined = /* @__PURE__ */ new Set();
+      this._timer = null;
+      this._onKeyUp = this._onKeyUp.bind(this);
+      this._onKeyDown = this._onKeyDown.bind(this);
+      this._onEnterCapture = this._onEnterCapture.bind(this);
+    }
+    async start() {
+      this.contacts = loadContacts();
+      document.addEventListener("keyup", this._onKeyUp);
+      document.addEventListener("keydown", this._onKeyDown);
+      document.addEventListener("keydown", this._onEnterCapture, true);
+      this.running = true;
+    }
+    stop() {
+      document.removeEventListener("keyup", this._onKeyUp);
+      document.removeEventListener("keydown", this._onKeyDown);
+      document.removeEventListener("keydown", this._onEnterCapture, true);
+      clearTimeout(this._timer);
+      this._timer = null;
+      this.running = false;
+    }
+    statusText() {
+      return t("chatHelperStatus", { n: this.contacts.length });
+    }
+    // ── keyboard ──
+    _onKeyUp(e) {
+      const el = e.target;
+      if (!isTextInput(el) || el.value === "" || el.value.startsWith(ST_PREFIX)) return;
+      if (e.keyCode === 32) {
+        if (this._runCommand(el, el.value)) return;
+        this._applyAutoTag(el);
+      }
+      clearTimeout(this._timer);
+      this._timer = setTimeout(() => this._whisperComplete(e), KEYUP_DELAY_MS);
+    }
+    /** Enter on a chat line with a chat-helper command: handle it, never send it. */
+    _onEnterCapture(e) {
+      if (e.keyCode !== 13) return;
+      const el = e.target;
+      if (!el || el.type !== "text" || !el.value || el.value.startsWith(ST_PREFIX)) return;
+      const c = parseCommand(el.value);
+      if (!c || c.cmd === "whisper") return;
+      if (this._runCommand(el, el.value)) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }
+    _onKeyDown(e) {
+      const el = e.target;
+      if (!isTextInput(el)) return;
+      if (e.keyCode === 13) {
+        if (el.type === "textarea" && el.value !== "") this._applyAutoTag(el);
+        return;
+      }
+      if (!e.altKey || e.shiftKey || e.ctrlKey || e.altGraphKey) return;
+      const kc = e.keyCode;
+      const suppress = this.config.get("ChatHelper.suppressAltKeys", true);
+      const wrap = (tag) => {
+        this._wrap(el, tag);
+        if (suppress) e.preventDefault();
+      };
+      if (kc === 49 && el.type === "textarea") {
+        const st = el.scrollTop;
+        el.value = autoTag(el.value);
+        el.scrollTop = st;
+        this._caret(el, 0);
+      } else if (kc === 50) {
+        const url = prompt(t("chatHelperUrlPrompt"), "");
+        if (url !== null) el.value += "[url]" + url + "[/url]";
+      } else if (kc === 80 || kc === 51) {
+        wrap("[player]");
+      } else if (kc === 65 || kc === 52) {
+        wrap("[alliance]");
+      } else if (kc === 48) {
+        const st = el.scrollTop;
+        el.value = clearTags(el.value);
+        el.scrollTop = st;
+      } else if (kc === 66) {
+        wrap("[b]");
+      } else if (kc === 73) {
+        wrap("[i]");
+      } else if (kc === 85) {
+        wrap("[u]");
+      } else if (kc === 83) {
+        wrap("[s]");
+      }
+    }
+    _applyAutoTag(el) {
+      const tagged = autoTag(el.value);
+      if (tagged !== el.value) el.value = tagged;
+    }
+    _wrap(el, tag) {
+      const st = el.scrollTop;
+      const r = wrapTag(tag, el.value, el.selectionStart, el.selectionEnd);
+      if (!r) return;
+      el.value = r.value;
+      this._caret(el, r.caret);
+      if (el.type === "textarea") el.scrollTop = st;
+    }
+    _caret(el, pos) {
+      try {
+        el.setSelectionRange(pos, pos);
+        el.focus();
+      } catch {
+      }
+    }
+    _whisperComplete(e) {
+      const el = e.target;
+      if (!el || el.type !== "text" || !el.value) return;
+      if (e.altGraphKey || e.ctrlKey || e.altKey || !(e.keyCode > 47 && e.keyCode < 91)) return;
+      const r = completeWhisper(el.value, this.contacts);
+      if (!r) return;
+      el.value = r.value;
+      try {
+        el.setSelectionRange(r.selStart, r.selEnd, "forward");
+      } catch {
+      }
+    }
+    // ── commands ──
+    /** Runs a chat-helper command; true if the line was one (and is consumed). */
+    _runCommand(el, text) {
+      const c = parseCommand(text);
+      if (!c) return false;
+      if (c.cmd === "whisper") {
+        if (!this.contacts.includes(c.name) && !this._declined.has(c.name)) {
+          const name = c.name;
+          this._declined.add(name);
+          setTimeout(() => {
+            if (confirm(t("chatHelperAddConfirm", { name }))) this._add(name);
+          }, 500);
+        }
+        return false;
+      }
+      el.value = "";
+      if (c.cmd === "help") this._showHelp();
+      else if (c.cmd === "list") this._list();
+      else if (c.cmd === "add") {
+        if (this.contacts.includes(c.name)) chatMessage(`[ST] ${escapeHtml(t("chatHelperAlready", { name: c.name }))}`);
+        else if (confirm(t("chatHelperAddConfirm", { name: c.name }))) this._add(c.name);
+      } else if (c.cmd === "del") {
+        if (c.name !== "all" && !this.contacts.includes(c.name)) {
+          chatMessage(`[ST] ${escapeHtml(t("chatHelperNotInList", { name: c.name }))}`);
+        } else if (confirm(t(c.name === "all" ? "chatHelperDelAllConfirm" : "chatHelperDelConfirm", { name: c.name }))) {
+          this.contacts = c.name === "all" ? [] : this.contacts.filter((x) => x !== c.name);
+          saveContacts(this.contacts);
+          chatMessage(`[ST] ${escapeHtml(t(c.name === "all" ? "chatHelperDeletedAll" : "chatHelperDeleted", { name: c.name }))}`);
+        }
+      }
+      setTimeout(() => {
+        try {
+          el.focus();
+        } catch {
+        }
+      }, 5);
+      return true;
+    }
+    _add(name) {
+      if (this.contacts.includes(name)) return;
+      this.contacts.push(name);
+      saveContacts(this.contacts);
+      chatMessage(`[ST] ${escapeHtml(t("chatHelperAdded", { name }))}`);
+    }
+    _list() {
+      if (this.contacts.length === 0) {
+        const p = prompt(t("chatHelperEmptyPrompt"), "");
+        if (p && p.trim()) this._add(p.trim());
+        return;
+      }
+      const sorted = sortContacts(this.contacts);
+      chatMessage(`[ST] ${escapeHtml(t("chatHelperListHeader", { n: sorted.length }))}`);
+      chatMessage(`[ST] ${escapeHtml(sorted.join(", "))}`);
+    }
+    _showHelp() {
+      for (const key of ["chatHelperHelp1", "chatHelperHelp2", "chatHelperHelp3", "chatHelperHelp4", "chatHelperHelp5", "chatHelperHelp6"]) {
+        chatMessage(`[ST] ${escapeHtml(t(key))}`);
+      }
+    }
+  };
+
   // lib/main.js
-  var ST_VERSION = "5.21.0";
+  var ST_VERSION = "5.22.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -7992,7 +8340,8 @@ var ShockrTools = (() => {
       new SectorHud(config),
       new MovableMenu(config),
       new TransferAll(config),
-      new LootSummary(config)
+      new LootSummary(config),
+      new ChatHelper(config)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });
     for (const plugin of plugins) {

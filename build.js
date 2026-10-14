@@ -8,12 +8,12 @@ const esbuild = require('esbuild');
 const fs = require('fs');
 const path = require('path');
 
-const VERSION = '5.21.0';
+const VERSION = '5.22.0';
 
 const USERSCRIPT_HEADER = `// ==UserScript==
 // @name            Shockr - Tiberium Alliances Tools
 // @author          Ghozt [SoO] (original: Shockr, fixed by NetquiK [SoO])
-// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver, wavy & loot summary for C&C Tiberium Alliances
+// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver, wavy, loot summary & chat helper for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
 // @version         ${VERSION}

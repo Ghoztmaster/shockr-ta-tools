@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+## [5.22.0] — 2026-10-14
+
+Puur client-side, geen server-wijziging. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Chat Helper (nieuw, `chat-helper`, standaard aan)
+- Vervangt C&C: Tiberium Alliances Chat Helper Enhanced Yiannis Mod 3.2.3 (Netquik-fixes). `plugins/chat-helper.js`, functie voor functie uit de broncode overgenomen:
+  - auto-taggen: spatie in een chatregel, Enter in een mail/forum-textarea, Alt+1 in een textarea. Coördinaten `123:456` / `123.456[:x]` → `[coords]` (het spel maakt die klikbaar → springt naar de locatie), http(s)-urls → `[url]`, `[p]..[/p]` → `[player]`, `[a]..[/a]` → `[alliance]`. Zelfde regexen als het origineel - coördinaten dus 3-4 cijfers aan beide kanten
+  - Alt-sneltoetsen in elk tekstvak: Alt+2 url-popup, Alt+p/3 `[player]`, Alt+a/4 `[alliance]`, Alt+b/i/u/s, Alt+0 alle tags weg; om selectie, om het woord bij de cursor, of een leeg paar. Browser-Alt-menu's onderdrukt (`ChatHelper.suppressAltKeys`, standaard true)
+  - contactlijst voor whispers: `/whisper Gh` vult aan tot een contact; onbekende naam → "toevoegen?"; `/add <naam>`, `/del <naam>`, `/del all`, `/list` / `/contacts`, `/chelp`
+  - opslag: localStorage `chatHelper` - de sleutel en het formaat van het origineel, dus een bestaande contactlijst komt mee (oude `myContacts` wordt gemigreerd zoals het origineel deed)
+- **Samenspel met `/st`**: geen `document.onkeydown`/`onkeyup`-overschrijving (het origineel deed dat), alleen `addEventListener`, en een regel die met `/st` begint wordt nooit aangeraakt (auto-taggen zou `/st config set api.url https://…` in een `[url]`-tag zetten). `lib/cli.js` ongewijzigd. Enter op een chat-helper-commando wordt in de capture-fase afgehandeld en niet verstuurd
+- `/st plugin disable chat-helper` haalt alle listeners weg - chat is weer standaard
+- **Afwijkingen, bewust**: help en contactlijst als lokale chatregels (EN/DE/NL) i.p.v. `alert()` (bevestigingen en de url-popup blijven browser-dialogen); `/add`/`/del` wachten op een naam (het origineel vuurde op de eerste spatie: "  is not in your contacts list"); een geannuleerde delete meldt niets; "toevoegen?" bij een whisper één keer per naam per sessie (het origineel vroeg het bij elke spatie); commando's werken ook met Enter
+- **Niet gebouwd - staat niet in de broncode**: timestamps bij chatberichten, extra scrollback, kleuren. De werkorder noemde ze als indicatie; de broncode (de waarheid volgens de werkorder) heeft ze niet
+- Geen game-code gepatcht. Niet live geverifieerd: of de game-chat het Enter-commando nog ziet na `preventDefault` + `stopPropagation` in de capture-fase, en `[coords]`-rendering met een `:naam`-suffix. Tests: `tests/chat-helper.test.mjs`
+
 ## [5.21.0] — 2026-10-14
 
 Puur client-side, geen server-wijziging. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
