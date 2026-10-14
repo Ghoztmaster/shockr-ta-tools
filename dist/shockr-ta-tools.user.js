@@ -4,7 +4,7 @@
 // @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver, wavy, loot summary, chat helper & PvP alert for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           none
-// @version         5.23.2
+// @version         5.24.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // ==/UserScript==
 
@@ -364,7 +364,19 @@ var ShockrTools = (() => {
       versionLine: "Shockr TA Tools v{version}",
       // ── CLI ──
       noConfig: "No config set",
-      configUsage: "Usage: /st config set|get|list <key> [value]",
+      configUsage: "Usage: /st config set|get|list <key> [value] \u2014 /st config export|import",
+      configExportTitle: "Export Shockr config",
+      configExportIntro: "Copy this text and on the other world type /st config import (paste field) or /st config import <text>.",
+      configExportSecret: "\u26A0 Contains your personal API key \u2014 never share this text.",
+      configExportChat: "Config export opened \u2014 copy the text in the panel.",
+      configImportTitle: "Import Shockr config",
+      configImportIntro: "Paste the text from /st config export. Imported settings overwrite the ones here; other settings stay.",
+      configImportButton: "Import",
+      configImportInvalid: "\u274C That is not a Shockr config export \u2014 copy the whole text from /st config export.",
+      configImportDone: "\u2705 Config imported: {n} settings. Reload the game (F5) so every plugin uses them.",
+      registerAlreadyHasKey: "You already have a key. Registering again makes the old one invalid. Continue?",
+      registerContinue: "Continue",
+      cancel: "Cancel",
       commandError: "Error: {error}",
       unknownCommand: "Unknown command: {cmd}. Type /st help",
       // ── Help ──
@@ -382,13 +394,15 @@ var ShockrTools = (() => {
       helpConfigSet: "Change a setting",
       helpConfigGet: "Show a setting",
       helpConfigList: "Show all settings",
+      helpConfigExport: "Copy all settings (incl. your key) as text \u2014 for another world/browser",
+      helpConfigImport: "Put settings from /st config export back",
       helpRegister: "Register with the alliance server (personal key)",
       helpStatus: "Show plugin & registration status",
       helpVersion: "Show script version",
       helpUsefulSettings: "Useful settings:",
       helpSetLanguage: "en / de / nl (default: en)",
       helpSetColors: "shockr / maelstrom (default: shockr)",
-      helpSetApiUrl: "Server URL for scanners/watcher",
+      helpSetApiUrl: "Server URL for scanners/watcher (default https://packetlab.nl/shockr)",
       helpSetApiKey: "Shared alliance key (transition \u2014 use /st register)",
       helpSetButtonLeft: "UC button X position (px)",
       helpSetButtonTop: "UC button Y position (px)",
@@ -645,7 +659,19 @@ var ShockrTools = (() => {
       pluginDisabled: "aus",
       versionLine: "Shockr TA Tools v{version}",
       noConfig: "Keine Einstellungen gesetzt",
-      configUsage: "Verwendung: /st config set|get|list <key> [value]",
+      configUsage: "Verwendung: /st config set|get|list <key> [value] \u2014 /st config export|import",
+      configExportTitle: "Shockr-Einstellungen exportieren",
+      configExportIntro: "Kopiere diesen Text und tippe in der anderen Welt /st config import (Einf\xFCgefeld) oder /st config import <Text>.",
+      configExportSecret: "\u26A0 Enth\xE4lt deinen pers\xF6nlichen API-Key \u2014 gib diesen Text nie weiter.",
+      configExportChat: "Export der Einstellungen ge\xF6ffnet \u2014 kopiere den Text im Fenster.",
+      configImportTitle: "Shockr-Einstellungen importieren",
+      configImportIntro: "F\xFCge den Text aus /st config export ein. Importierte Einstellungen \xFCberschreiben die hiesigen; andere bleiben.",
+      configImportButton: "Importieren",
+      configImportInvalid: "\u274C Das ist kein Shockr-Export \u2014 kopiere den ganzen Text aus /st config export.",
+      configImportDone: "\u2705 Einstellungen importiert: {n}. Lade das Spiel neu (F5), damit jedes Plugin sie verwendet.",
+      registerAlreadyHasKey: "Du hast schon einen Key. Erneutes Registrieren macht den alten ung\xFCltig. Fortfahren?",
+      registerContinue: "Fortfahren",
+      cancel: "Abbrechen",
       commandError: "Fehler: {error}",
       unknownCommand: "Unbekannter Befehl: {cmd}. Tippe /st help",
       helpHeader: "Shockr Tools v{version} \u2014 Befehle",
@@ -662,13 +688,15 @@ var ShockrTools = (() => {
       helpConfigSet: "Einstellung \xE4ndern",
       helpConfigGet: "Einstellung anzeigen",
       helpConfigList: "Alle Einstellungen anzeigen",
+      helpConfigExport: "Alle Einstellungen (inkl. Key) als Text kopieren \u2014 f\xFCr eine andere Welt/Browser",
+      helpConfigImport: "Einstellungen aus /st config export zur\xFCckholen",
       helpRegister: "Beim Allianz-Server registrieren (pers\xF6nlicher Key)",
       helpStatus: "Plugin- & Registrierungsstatus anzeigen",
       helpVersion: "Script-Version anzeigen",
       helpUsefulSettings: "N\xFCtzliche Einstellungen:",
       helpSetLanguage: "en / de / nl (Standard: en)",
       helpSetColors: "shockr / maelstrom (Standard: shockr)",
-      helpSetApiUrl: "Server-URL f\xFCr Scanner/Watcher",
+      helpSetApiUrl: "Server-URL f\xFCr Scanner/Watcher (Standard https://packetlab.nl/shockr)",
       helpSetApiKey: "Gemeinsamer Allianz-Key (\xDCbergang \u2014 nutze /st register)",
       helpSetButtonLeft: "UC-Button X-Position (px)",
       helpSetButtonTop: "UC-Button Y-Position (px)",
@@ -914,7 +942,19 @@ var ShockrTools = (() => {
       pluginDisabled: "uit",
       versionLine: "Shockr TA Tools v{version}",
       noConfig: "Geen instellingen gezet",
-      configUsage: "Gebruik: /st config set|get|list <key> [waarde]",
+      configUsage: "Gebruik: /st config set|get|list <key> [waarde] \u2014 /st config export|import",
+      configExportTitle: "Shockr-config exporteren",
+      configExportIntro: "Kopieer deze tekst en typ op de andere wereld /st config import (plakveld) of /st config import <tekst>.",
+      configExportSecret: "\u26A0 Bevat je persoonlijke API-key \u2014 deel deze tekst nooit.",
+      configExportChat: "Config-export geopend \u2014 kopieer de tekst in het venster.",
+      configImportTitle: "Shockr-config importeren",
+      configImportIntro: "Plak de tekst van /st config export. Ge\xEFmporteerde instellingen overschrijven die van hier; andere blijven staan.",
+      configImportButton: "Importeren",
+      configImportInvalid: "\u274C Dat is geen Shockr-config-export \u2014 kopieer de hele tekst van /st config export.",
+      configImportDone: "\u2705 Config ge\xEFmporteerd: {n} instellingen. Herlaad de game (F5) zodat elke plugin ze gebruikt.",
+      registerAlreadyHasKey: "Je hebt al een key. Opnieuw registreren maakt de oude ongeldig. Doorgaan?",
+      registerContinue: "Doorgaan",
+      cancel: "Annuleren",
       commandError: "Fout: {error}",
       unknownCommand: "Onbekend commando: {cmd}. Typ /st help",
       helpHeader: "Shockr Tools v{version} \u2014 Commando's",
@@ -931,13 +971,15 @@ var ShockrTools = (() => {
       helpConfigSet: "Instelling wijzigen",
       helpConfigGet: "Instelling tonen",
       helpConfigList: "Alle instellingen tonen",
+      helpConfigExport: "Alle instellingen (incl. je key) als tekst kopi\xEBren \u2014 voor een andere wereld/browser",
+      helpConfigImport: "Instellingen uit /st config export terugzetten",
       helpRegister: "Registreren bij de alliance-server (persoonlijke key)",
       helpStatus: "Plugin- & registratiestatus tonen",
       helpVersion: "Script-versie tonen",
       helpUsefulSettings: "Handige instellingen:",
       helpSetLanguage: "en / de / nl (standaard: en)",
       helpSetColors: "shockr / maelstrom (standaard: shockr)",
-      helpSetApiUrl: "Server-URL voor scanners/watcher",
+      helpSetApiUrl: "Server-URL voor scanners/watcher (standaard https://packetlab.nl/shockr)",
       helpSetApiKey: "Gedeelde alliance-key (overgang \u2014 gebruik /st register)",
       helpSetButtonLeft: "UC-knop X-positie (px)",
       helpSetButtonTop: "UC-knop Y-positie (px)",
@@ -1192,6 +1234,381 @@ var ShockrTools = (() => {
     return String(s).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
   }
 
+  // lib/register-panel.js
+  var PANEL_ID = "st-register-panel";
+  var FOCUS_DELAY_MS = 50;
+  var RegisterPanel = class {
+    /**
+     * @param {(code: string, replace: boolean) => Promise<{ok: boolean, message: string, vars?: object, confirm?: boolean}>} onSubmit
+     *        — performs the enrollment; message is an i18n key, confirm = ask before replacing a key
+     */
+    constructor(onSubmit) {
+      this.onSubmit = onSubmit;
+      this._panel = null;
+    }
+    isOpen() {
+      return !!this._panel && document.body.contains(this._panel);
+    }
+    /** Show a fresh form (rebuilt each time so a previous result is gone). */
+    open() {
+      this.hide();
+      this._panel = this._build();
+      document.body.appendChild(this._panel);
+      setTimeout(() => this._input && this._input.focus(), FOCUS_DELAY_MS);
+    }
+    hide() {
+      if (this._panel) this._panel.remove();
+      this._panel = null;
+      this._input = null;
+      this._confirm = null;
+    }
+    async _submit(form, button, status, replace = false) {
+      const code = this._input.value.trim();
+      if (!code) {
+        this._input.focus();
+        return;
+      }
+      button.disabled = true;
+      this._input.disabled = true;
+      this._showStatus(status, t("registerBusy"), "#ccc");
+      const panel = this._panel;
+      const result = await this.onSubmit(code, replace);
+      if (panel !== this._panel) return;
+      if (result.confirm) {
+        this._showStatus(status, t(result.message, result.vars), "#fb5");
+        panel.appendChild(this._buildConfirm(form, button, status));
+      } else if (result.ok) {
+        form.style.display = "none";
+        this._showStatus(status, t(result.message, result.vars), "#7c7");
+        if (result.playerKey) panel.appendChild(this._buildKeyBlock(result.playerKey));
+      } else {
+        this._showStatus(status, t(result.message, result.vars), "#f77");
+        button.disabled = false;
+        this._input.disabled = false;
+        this._input.select();
+        this._input.focus();
+      }
+    }
+    /** "You already have a key …": Continue (send again with replace) or Cancel (form back). */
+    _buildConfirm(form, button, status) {
+      const row = document.createElement("div");
+      row.style.cssText = "display:flex;gap:6px;margin-top:8px;";
+      const btnStyle = "padding:5px 12px;color:#fff;border-radius:3px;cursor:pointer;font-size:12px;";
+      const go = document.createElement("button");
+      go.type = "button";
+      go.textContent = t("registerContinue");
+      go.style.cssText = btnStyle + "background:#8a4a1a;border:1px solid #b8662a;";
+      const cancel = document.createElement("button");
+      cancel.type = "button";
+      cancel.textContent = t("cancel");
+      cancel.style.cssText = btnStyle + "background:#444;border:1px solid #666;";
+      go.addEventListener("click", () => {
+        row.remove();
+        this._confirm = null;
+        this._submit(form, button, status, true);
+      });
+      cancel.addEventListener("click", () => {
+        row.remove();
+        this._confirm = null;
+        status.style.display = "none";
+        button.disabled = false;
+        this._input.disabled = false;
+        this._input.focus();
+      });
+      this._confirm = row;
+      setTimeout(() => cancel.focus(), FOCUS_DELAY_MS);
+      row.append(go, cancel);
+      return row;
+    }
+    /** The new key: notice, read-only field + Copy, and Close. */
+    _buildKeyBlock(key) {
+      const block = document.createElement("div");
+      block.style.marginTop = "10px";
+      const notice = document.createElement("div");
+      notice.textContent = t("registerKeyNotice");
+      notice.style.cssText = "color:#ddd;margin-bottom:8px;line-height:1.4;";
+      const row = document.createElement("div");
+      row.style.cssText = "display:flex;gap:6px;";
+      const field = document.createElement("input");
+      field.type = "text";
+      field.readOnly = true;
+      field.value = key;
+      field.spellcheck = false;
+      field.style.cssText = "flex:1;min-width:0;box-sizing:border-box;padding:5px 6px;background:#111;color:#fd8;border:1px solid #555;border-radius:3px;font-family:Consolas,monospace;font-size:12px;";
+      field.addEventListener("focus", () => field.select());
+      const btnStyle = "padding:5px 12px;background:#2a5a8a;color:#fff;border:1px solid #3a7ab8;border-radius:3px;cursor:pointer;font-size:12px;";
+      const copy = document.createElement("button");
+      copy.type = "button";
+      copy.textContent = t("copy");
+      copy.style.cssText = btnStyle;
+      const feedback = document.createElement("div");
+      feedback.style.cssText = "min-height:16px;margin-top:4px;font-size:11px;";
+      copy.addEventListener("click", async () => {
+        const ok = await copyText(key, field);
+        feedback.textContent = t(ok ? "copied" : "copyFailed");
+        feedback.style.color = ok ? "#7c7" : "#f77";
+        if (!ok) field.select();
+      });
+      const close = document.createElement("button");
+      close.type = "button";
+      close.textContent = t("close");
+      close.style.cssText = btnStyle + "margin-top:6px;background:#444;border-color:#666;";
+      close.addEventListener("click", () => this.hide());
+      row.append(field, copy);
+      block.append(notice, row, feedback, close);
+      setTimeout(() => {
+        field.focus();
+        field.select();
+      }, FOCUS_DELAY_MS);
+      return block;
+    }
+    _showStatus(el, text, color) {
+      el.textContent = text;
+      el.style.color = color;
+      el.style.display = "block";
+    }
+    _build() {
+      const panel = document.createElement("div");
+      panel.id = PANEL_ID;
+      panel.style.cssText = `
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10000;
+            width: 360px;
+            max-width: calc(100vw - 16px);
+            box-sizing: border-box;
+            background: rgba(20, 20, 20, 0.92);
+            color: #ddd;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px 14px 14px;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 12px;
+            pointer-events: auto;
+        `;
+      for (const type of ["keydown", "keyup", "keypress"]) {
+        panel.addEventListener(type, (e) => {
+          e.stopPropagation();
+          if (type === "keydown" && e.key === "Escape") this.hide();
+        });
+      }
+      const close = document.createElement("div");
+      close.textContent = "\u2715";
+      close.title = t("close");
+      close.style.cssText = "float:right;cursor:pointer;color:#999;font-size:14px;line-height:1;padding:2px 0 4px 8px;";
+      close.addEventListener("click", () => this.hide());
+      close.addEventListener("mouseenter", () => {
+        close.style.color = "#fff";
+      });
+      close.addEventListener("mouseleave", () => {
+        close.style.color = "#999";
+      });
+      const title = document.createElement("div");
+      title.innerHTML = `<b style="color:#8cf;font-size:13px">${escapeHtml(t("registerTitle"))}</b>`;
+      title.style.marginBottom = "8px";
+      const form = document.createElement("form");
+      form.autocomplete = "off";
+      const intro = document.createElement("div");
+      intro.textContent = t("registerIntro");
+      intro.style.cssText = "color:#aaa;margin-bottom:10px;";
+      const label = document.createElement("label");
+      label.textContent = t("registerCode");
+      label.style.cssText = "display:block;margin-bottom:4px;";
+      const input = document.createElement("input");
+      input.type = "password";
+      input.autocomplete = "off";
+      input.spellcheck = false;
+      input.maxLength = 100;
+      input.style.cssText = "width:100%;box-sizing:border-box;padding:5px 6px;background:#111;color:#eee;border:1px solid #555;border-radius:3px;font-size:12px;";
+      label.htmlFor = input.id = `${PANEL_ID}-code`;
+      const button = document.createElement("button");
+      button.type = "submit";
+      button.textContent = t("registerButton");
+      button.style.cssText = "margin-top:10px;padding:5px 16px;background:#2a5a8a;color:#fff;border:1px solid #3a7ab8;border-radius:3px;cursor:pointer;font-size:12px;";
+      const status = document.createElement("div");
+      status.style.cssText = "display:none;margin-top:10px;font-weight:bold;";
+      form.append(intro, label, input, button);
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        this._submit(form, button, status);
+      });
+      panel.append(close, title, form, status);
+      this._input = input;
+      return panel;
+    }
+  };
+  async function copyText(text, field) {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch {
+    }
+    try {
+      field.focus();
+      field.select();
+      return document.execCommand("copy");
+    } catch {
+      return false;
+    }
+  }
+
+  // lib/config-transfer.js
+  var PANEL_ID2 = "st-config-transfer-panel";
+  var FORMAT_KEY = "st-config";
+  var FOCUS_DELAY_MS2 = 50;
+  function exportConfig(data) {
+    return JSON.stringify({ [FORMAT_KEY]: data || {} });
+  }
+  function parseImport(text) {
+    let obj;
+    try {
+      obj = JSON.parse(String(text || "").trim());
+    } catch {
+      return { ok: false };
+    }
+    if (obj && typeof obj === "object" && !Array.isArray(obj) && FORMAT_KEY in obj) obj = obj[FORMAT_KEY];
+    if (!obj || typeof obj !== "object" || Array.isArray(obj)) return { ok: false };
+    const data = {};
+    for (const [k, v] of Object.entries(obj)) {
+      if (v === void 0 || v === null) continue;
+      data[k.toLowerCase()] = v;
+    }
+    return Object.keys(data).length ? { ok: true, data } : { ok: false };
+  }
+  function applyImport(config, data) {
+    for (const [k, v] of Object.entries(data)) config.data[k] = v;
+    config.save();
+    return Object.keys(data).length;
+  }
+  var ConfigTransferPanel = class {
+    constructor() {
+      this._panel = null;
+    }
+    hide() {
+      if (this._panel) this._panel.remove();
+      this._panel = null;
+    }
+    /** Read-only text of the config + Copy. */
+    openExport(text) {
+      const { panel, body } = this._open(t("configExportTitle"));
+      body.append(this._note(t("configExportIntro")), this._note(t("configExportSecret"), "#fb5"));
+      const area = this._area(text, true);
+      const feedback = this._feedback();
+      const copy = this._button(t("copy"));
+      copy.addEventListener("click", async () => {
+        const ok = await copyText(text, area);
+        feedback.textContent = t(ok ? "copied" : "copyFailed");
+        feedback.style.color = ok ? "#7c7" : "#f77";
+        if (!ok) area.select();
+      });
+      body.append(area, this._row(copy, this._closeButton()), feedback);
+      setTimeout(() => {
+        area.focus();
+        area.select();
+      }, FOCUS_DELAY_MS2);
+      return panel;
+    }
+    /**
+     * Empty text field + Import. onImport(text) returns the chat/panel result:
+     * {ok: boolean, message: string} (message already translated).
+     */
+    openImport(onImport) {
+      const { panel, body } = this._open(t("configImportTitle"));
+      body.append(this._note(t("configImportIntro")));
+      const area = this._area("", false);
+      const feedback = this._feedback();
+      const go = this._button(t("configImportButton"));
+      go.addEventListener("click", () => {
+        const result = onImport(area.value);
+        feedback.textContent = result.message;
+        feedback.style.color = result.ok ? "#7c7" : "#f77";
+        if (result.ok) {
+          area.disabled = true;
+          go.disabled = true;
+        }
+      });
+      body.append(area, this._row(go, this._closeButton()), feedback);
+      setTimeout(() => area.focus(), FOCUS_DELAY_MS2);
+      return panel;
+    }
+    _open(titleText) {
+      this.hide();
+      const panel = document.createElement("div");
+      panel.id = PANEL_ID2;
+      panel.style.cssText = `
+            position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
+            z-index: 10000; width: 440px; max-width: calc(100vw - 16px); box-sizing: border-box;
+            background: rgba(20, 20, 20, 0.92); color: #ddd; border: 1px solid #444; border-radius: 4px;
+            padding: 10px 14px 14px; font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 12px;
+            pointer-events: auto;
+        `;
+      for (const type of ["keydown", "keyup", "keypress"]) {
+        panel.addEventListener(type, (e) => {
+          e.stopPropagation();
+          if (type === "keydown" && e.key === "Escape") this.hide();
+        });
+      }
+      const close = document.createElement("div");
+      close.textContent = "\u2715";
+      close.title = t("close");
+      close.style.cssText = "float:right;cursor:pointer;color:#999;font-size:14px;line-height:1;padding:2px 0 4px 8px;";
+      close.addEventListener("click", () => this.hide());
+      const title = document.createElement("div");
+      title.innerHTML = `<b style="color:#8cf;font-size:13px">${escapeHtml(titleText)}</b>`;
+      title.style.marginBottom = "8px";
+      const body = document.createElement("div");
+      panel.append(close, title, body);
+      document.body.appendChild(panel);
+      this._panel = panel;
+      return { panel, body };
+    }
+    _note(text, color = "#aaa") {
+      const el = document.createElement("div");
+      el.textContent = text;
+      el.style.cssText = `color:${color};margin-bottom:8px;line-height:1.4;`;
+      return el;
+    }
+    _area(value, readOnly) {
+      const area = document.createElement("textarea");
+      area.value = value;
+      area.readOnly = readOnly;
+      area.spellcheck = false;
+      area.rows = 6;
+      area.style.cssText = "width:100%;box-sizing:border-box;padding:5px 6px;background:#111;color:#fd8;border:1px solid #555;border-radius:3px;font-family:Consolas,monospace;font-size:11px;resize:vertical;word-break:break-all;";
+      if (readOnly) area.addEventListener("focus", () => area.select());
+      return area;
+    }
+    _button(text) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = text;
+      b.style.cssText = "padding:5px 12px;background:#2a5a8a;color:#fff;border:1px solid #3a7ab8;border-radius:3px;cursor:pointer;font-size:12px;";
+      return b;
+    }
+    _closeButton() {
+      const b = this._button(t("close"));
+      b.style.background = "#444";
+      b.style.borderColor = "#666";
+      b.addEventListener("click", () => this.hide());
+      return b;
+    }
+    _row(...buttons) {
+      const row = document.createElement("div");
+      row.style.cssText = "display:flex;gap:6px;margin-top:8px;";
+      row.append(...buttons);
+      return row;
+    }
+    _feedback() {
+      const el = document.createElement("div");
+      el.style.cssText = "min-height:16px;margin-top:6px;font-size:12px;font-weight:bold;";
+      return el;
+    }
+  };
+
   // lib/cli.js
   var SECRET_KEYS = ["api.playerkey"];
   var Cli = class {
@@ -1201,6 +1618,7 @@ var ShockrTools = (() => {
       this._setHooks = {};
       this.PREFIX = "/st";
       this._handleKeyDown = this._handleKeyDown.bind(this);
+      this._transferPanel = new ConfigTransferPanel();
     }
     /** Register a command handler. */
     register(name, handler) {
@@ -1219,9 +1637,23 @@ var ShockrTools = (() => {
       if (el) {
         el.addEventListener("keydown", this._handleKeyDown);
       }
-      this.register("config", (args) => {
+      this.register("config", (args, rawArgs = "") => {
         const [action, ...rest] = args;
-        if (action === "set" && rest.length >= 2) {
+        if (action === "export") {
+          this._transferPanel.openExport(exportConfig(this.config.data));
+          chatMessage(`[ST] ${t("configExportChat")}`);
+        } else if (action === "import") {
+          const text = rawArgs.replace(/^import\s*/i, "");
+          if (text) {
+            chatMessage(`[ST] ${escapeHtml(this._importConfig(text).message)}`);
+          } else {
+            this._transferPanel.openImport((pasted) => {
+              const result = this._importConfig(pasted);
+              chatMessage(`[ST] ${escapeHtml(result.message)}`);
+              return result;
+            });
+          }
+        } else if (action === "set" && rest.length >= 2) {
           const key = rest[0];
           const value = this._parseValue(rest.slice(1).join(" "));
           const hook = this._setHooks[key.toLowerCase()];
@@ -1249,6 +1681,13 @@ var ShockrTools = (() => {
         }
       });
     }
+    /** Import an export text; @returns {{ok: boolean, message: string}} (translated). */
+    _importConfig(text) {
+      const parsed = parseImport(text);
+      if (!parsed.ok) return { ok: false, message: t("configImportInvalid") };
+      const n = applyImport(this.config, parsed.data);
+      return { ok: true, message: t("configImportDone", { n }) };
+    }
     /** Stop listening. */
     stop() {
       const el = this._getInputElement();
@@ -1260,13 +1699,15 @@ var ShockrTools = (() => {
       if (e.key !== "Enter") return;
       const el = this._getInputElement();
       if (!el || !el.value.startsWith(this.PREFIX)) return;
-      const parts = el.value.trim().split(/\s+/);
+      const line = el.value.trim();
+      const parts = line.split(/\s+/);
       const cmd = (parts[1] || "").toLowerCase();
       const args = parts.slice(2);
+      const raw = line.match(/^\S+\s+\S+\s*([\s\S]*)$/);
       const handler = this.commands[cmd];
       if (handler) {
         try {
-          handler(args);
+          handler(args, raw ? raw[1] : "");
         } catch (err) {
           chatMessage(`[ST] ${t("commandError", { error: err.message })}`);
         }
@@ -1492,6 +1933,8 @@ var ShockrTools = (() => {
     ["Not registered", "notRegistered"],
     ["Invalid player key", "playerKeyRejected"]
   ];
+  var DEFAULT_API_URL = "https://packetlab.nl/shockr";
+  var ALREADY_REGISTERED = "Already registered";
   var ENROLL_ERRORS = {
     "Invalid enrollment code": "registerInvalidCode",
     "Alliance not authorized": "registerNotAuthorized"
@@ -1544,7 +1987,7 @@ var ShockrTools = (() => {
       return this._key ? "shared" : "none";
     }
     get _url() {
-      return this.config.get("api.url", "");
+      return this.config.get("api.url", "") || DEFAULT_API_URL;
     }
     get _key() {
       return this.config.get("api.key", "");
@@ -1563,16 +2006,24 @@ var ShockrTools = (() => {
      * POST /api/enroll with the enrollment code and the player's identity; on
      * success the personal key is stored in api.playerKey and returned once as
      * playerKey, so the register popup can show it (website login).
+     *
+     * Re-register guard (5.24.0): a new key invalidates the old one, also in
+     * other browsers / game servers. Without `replace` the call stops with
+     * `confirm: true` when this browser holds the player's key, or when the
+     * server answers 409 (the player has a key elsewhere); the popup asks and
+     * calls again with replace = true.
      * @param {string} code
-     * @returns {Promise<{ok: boolean, message: string, vars?: object, playerKey?: string}>} message = i18n key
+     * @param {boolean} [replace] — the player confirmed replacing an existing key
+     * @returns {Promise<{ok: boolean, message: string, vars?: object, playerKey?: string, confirm?: boolean}>} message = i18n key
      */
-    async enroll(code) {
+    async enroll(code, replace = false) {
       if (!this._url) return { ok: false, message: "registerNoServer" };
       const player = readPlayer();
       if (!player || !player.id || !player.name || !player.worldId) {
         return { ok: false, message: "registerNoGameData" };
       }
       if (!player.allianceId) return { ok: false, message: "registerNoAlliance" };
+      if (!replace && this._playerKey) return { ok: false, message: "registerAlreadyHasKey", confirm: true };
       try {
         const resp = await fetch(this._url.replace(/\/$/, "") + "/api/enroll", {
           method: "POST",
@@ -1582,7 +2033,8 @@ var ShockrTools = (() => {
             playerName: player.name,
             allianceId: player.allianceId,
             worldId: player.worldId,
-            enrollmentCode: code
+            enrollmentCode: code,
+            replace
           })
         });
         let data = {};
@@ -1594,6 +2046,9 @@ var ShockrTools = (() => {
           this.config.set("api.playerKey", String(data.playerKey));
           this.config.set("api.playerKeyId", player.id);
           return { ok: true, message: "registerSuccess", playerKey: String(data.playerKey) };
+        }
+        if (resp.status === 409 && data.detail === ALREADY_REGISTERED) {
+          return { ok: false, message: "registerAlreadyHasKey", confirm: true };
         }
         if (resp.status === 403 && ENROLL_ERRORS[data.detail]) {
           return { ok: false, message: ENROLL_ERRORS[data.detail] };
@@ -1916,6 +2371,8 @@ var ShockrTools = (() => {
         ["/st config set <key> <val>", t("helpConfigSet")],
         ["/st config get <key>", t("helpConfigGet")],
         ["/st config list", t("helpConfigList")],
+        ["/st config export", t("helpConfigExport")],
+        ["/st config import [text]", t("helpConfigImport")],
         ["/st register", t("helpRegister")],
         ["/st status", t("helpStatus")],
         ["/st version", t("helpVersion")]
@@ -1976,15 +2433,15 @@ var ShockrTools = (() => {
   }
 
   // lib/help-panel.js
-  var PANEL_ID = "st-help-panel";
+  var PANEL_ID3 = "st-help-panel";
   var PANEL_CSS = `
-#${PANEL_ID} td.st-cmd { width: 230px; }
-#${PANEL_ID} table.st-sub { margin-left: 10px; }
-#${PANEL_ID} table.st-sub td.st-cmd { width: 220px; }
+#${PANEL_ID3} td.st-cmd { width: 230px; }
+#${PANEL_ID3} table.st-sub { margin-left: 10px; }
+#${PANEL_ID3} table.st-sub td.st-cmd { width: 220px; }
 @media (max-width: 600px) {
-    #${PANEL_ID} tr, #${PANEL_ID} td { display: block; }
-    #${PANEL_ID} td.st-cmd, #${PANEL_ID} table.st-sub td.st-cmd { width: auto; padding-top: 4px; }
-    #${PANEL_ID} td.st-cmd + td { padding-left: 12px; }
+    #${PANEL_ID3} tr, #${PANEL_ID3} td { display: block; }
+    #${PANEL_ID3} td.st-cmd, #${PANEL_ID3} table.st-sub td.st-cmd { width: auto; padding-top: 4px; }
+    #${PANEL_ID3} td.st-cmd + td { padding-left: 12px; }
 }
 `;
   var HelpPanel = class {
@@ -2018,7 +2475,7 @@ var ShockrTools = (() => {
     _ensurePanel() {
       if (this._panel && document.body.contains(this._panel)) return this._panel;
       const panel = document.createElement("div");
-      panel.id = PANEL_ID;
+      panel.id = PANEL_ID3;
       panel.style.cssText = `
             display: none;
             position: fixed;
@@ -2063,193 +2520,6 @@ var ShockrTools = (() => {
       return panel;
     }
   };
-
-  // lib/register-panel.js
-  var PANEL_ID2 = "st-register-panel";
-  var FOCUS_DELAY_MS = 50;
-  var RegisterPanel = class {
-    /**
-     * @param {(code: string) => Promise<{ok: boolean, message: string, vars?: object}>} onSubmit
-     *        — performs the enrollment; message is an i18n key
-     */
-    constructor(onSubmit) {
-      this.onSubmit = onSubmit;
-      this._panel = null;
-    }
-    isOpen() {
-      return !!this._panel && document.body.contains(this._panel);
-    }
-    /** Show a fresh form (rebuilt each time so a previous result is gone). */
-    open() {
-      this.hide();
-      this._panel = this._build();
-      document.body.appendChild(this._panel);
-      setTimeout(() => this._input && this._input.focus(), FOCUS_DELAY_MS);
-    }
-    hide() {
-      if (this._panel) this._panel.remove();
-      this._panel = null;
-      this._input = null;
-    }
-    async _submit(form, button, status) {
-      const code = this._input.value.trim();
-      if (!code) {
-        this._input.focus();
-        return;
-      }
-      button.disabled = true;
-      this._input.disabled = true;
-      this._showStatus(status, t("registerBusy"), "#ccc");
-      const panel = this._panel;
-      const result = await this.onSubmit(code);
-      if (panel !== this._panel) return;
-      if (result.ok) {
-        form.style.display = "none";
-        this._showStatus(status, t(result.message, result.vars), "#7c7");
-        if (result.playerKey) panel.appendChild(this._buildKeyBlock(result.playerKey));
-      } else {
-        this._showStatus(status, t(result.message, result.vars), "#f77");
-        button.disabled = false;
-        this._input.disabled = false;
-        this._input.select();
-        this._input.focus();
-      }
-    }
-    /** The new key: notice, read-only field + Copy, and Close. */
-    _buildKeyBlock(key) {
-      const block = document.createElement("div");
-      block.style.marginTop = "10px";
-      const notice = document.createElement("div");
-      notice.textContent = t("registerKeyNotice");
-      notice.style.cssText = "color:#ddd;margin-bottom:8px;line-height:1.4;";
-      const row = document.createElement("div");
-      row.style.cssText = "display:flex;gap:6px;";
-      const field = document.createElement("input");
-      field.type = "text";
-      field.readOnly = true;
-      field.value = key;
-      field.spellcheck = false;
-      field.style.cssText = "flex:1;min-width:0;box-sizing:border-box;padding:5px 6px;background:#111;color:#fd8;border:1px solid #555;border-radius:3px;font-family:Consolas,monospace;font-size:12px;";
-      field.addEventListener("focus", () => field.select());
-      const btnStyle = "padding:5px 12px;background:#2a5a8a;color:#fff;border:1px solid #3a7ab8;border-radius:3px;cursor:pointer;font-size:12px;";
-      const copy = document.createElement("button");
-      copy.type = "button";
-      copy.textContent = t("copy");
-      copy.style.cssText = btnStyle;
-      const feedback = document.createElement("div");
-      feedback.style.cssText = "min-height:16px;margin-top:4px;font-size:11px;";
-      copy.addEventListener("click", async () => {
-        const ok = await copyText(key, field);
-        feedback.textContent = t(ok ? "copied" : "copyFailed");
-        feedback.style.color = ok ? "#7c7" : "#f77";
-        if (!ok) field.select();
-      });
-      const close = document.createElement("button");
-      close.type = "button";
-      close.textContent = t("close");
-      close.style.cssText = btnStyle + "margin-top:6px;background:#444;border-color:#666;";
-      close.addEventListener("click", () => this.hide());
-      row.append(field, copy);
-      block.append(notice, row, feedback, close);
-      setTimeout(() => {
-        field.focus();
-        field.select();
-      }, FOCUS_DELAY_MS);
-      return block;
-    }
-    _showStatus(el, text, color) {
-      el.textContent = text;
-      el.style.color = color;
-      el.style.display = "block";
-    }
-    _build() {
-      const panel = document.createElement("div");
-      panel.id = PANEL_ID2;
-      panel.style.cssText = `
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10000;
-            width: 360px;
-            max-width: calc(100vw - 16px);
-            box-sizing: border-box;
-            background: rgba(20, 20, 20, 0.92);
-            color: #ddd;
-            border: 1px solid #444;
-            border-radius: 4px;
-            padding: 10px 14px 14px;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            font-size: 12px;
-            pointer-events: auto;
-        `;
-      for (const type of ["keydown", "keyup", "keypress"]) {
-        panel.addEventListener(type, (e) => {
-          e.stopPropagation();
-          if (type === "keydown" && e.key === "Escape") this.hide();
-        });
-      }
-      const close = document.createElement("div");
-      close.textContent = "\u2715";
-      close.title = t("close");
-      close.style.cssText = "float:right;cursor:pointer;color:#999;font-size:14px;line-height:1;padding:2px 0 4px 8px;";
-      close.addEventListener("click", () => this.hide());
-      close.addEventListener("mouseenter", () => {
-        close.style.color = "#fff";
-      });
-      close.addEventListener("mouseleave", () => {
-        close.style.color = "#999";
-      });
-      const title = document.createElement("div");
-      title.innerHTML = `<b style="color:#8cf;font-size:13px">${escapeHtml(t("registerTitle"))}</b>`;
-      title.style.marginBottom = "8px";
-      const form = document.createElement("form");
-      form.autocomplete = "off";
-      const intro = document.createElement("div");
-      intro.textContent = t("registerIntro");
-      intro.style.cssText = "color:#aaa;margin-bottom:10px;";
-      const label = document.createElement("label");
-      label.textContent = t("registerCode");
-      label.style.cssText = "display:block;margin-bottom:4px;";
-      const input = document.createElement("input");
-      input.type = "password";
-      input.autocomplete = "off";
-      input.spellcheck = false;
-      input.maxLength = 100;
-      input.style.cssText = "width:100%;box-sizing:border-box;padding:5px 6px;background:#111;color:#eee;border:1px solid #555;border-radius:3px;font-size:12px;";
-      label.htmlFor = input.id = `${PANEL_ID2}-code`;
-      const button = document.createElement("button");
-      button.type = "submit";
-      button.textContent = t("registerButton");
-      button.style.cssText = "margin-top:10px;padding:5px 16px;background:#2a5a8a;color:#fff;border:1px solid #3a7ab8;border-radius:3px;cursor:pointer;font-size:12px;";
-      const status = document.createElement("div");
-      status.style.cssText = "display:none;margin-top:10px;font-weight:bold;";
-      form.append(intro, label, input, button);
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        this._submit(form, button, status);
-      });
-      panel.append(close, title, form, status);
-      this._input = input;
-      return panel;
-    }
-  };
-  async function copyText(text, field) {
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(text);
-        return true;
-      }
-    } catch {
-    }
-    try {
-      field.focus();
-      field.select();
-      return document.execCommand("copy");
-    } catch {
-      return false;
-    }
-  }
 
   // lib/city-util.js
   function getMainCity() {
@@ -2526,7 +2796,7 @@ var ShockrTools = (() => {
   };
 
   // plugins/kill-info.js
-  var PANEL_ID3 = "mehrstrom-killinfo-panel";
+  var PANEL_ID4 = "mehrstrom-killinfo-panel";
   var RES_TIB = 2;
   var RES_CRY = 6;
   var PLAYER_FACTIONS = [1, 2];
@@ -2583,7 +2853,7 @@ var ShockrTools = (() => {
     _ensurePanel() {
       if (this._panel && document.body.contains(this._panel)) return this._panel;
       const panel = document.createElement("div");
-      panel.id = PANEL_ID3;
+      panel.id = PANEL_ID4;
       panel.style.cssText = `
             display: none;
             position: fixed;
@@ -3640,7 +3910,7 @@ var ShockrTools = (() => {
   }
 
   // plugins/upgrade-calc.js
-  var PANEL_ID4 = "st-upgradecalc-panel";
+  var PANEL_ID5 = "st-upgradecalc-panel";
   var BUTTON_ID = "st-upgradecalc-button";
   var RES_TIB2 = 1;
   var RES_POWER = 5;
@@ -3779,7 +4049,7 @@ var ShockrTools = (() => {
     _ensurePanel() {
       if (this._panel && document.body.contains(this._panel)) return this._panel;
       const panel = document.createElement("div");
-      panel.id = PANEL_ID4;
+      panel.id = PANEL_ID5;
       panel.style.cssText = `
             display: none;
             position: fixed;
@@ -8709,7 +8979,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.23.2";
+  var ST_VERSION = "5.24.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -8814,8 +9084,8 @@ var ShockrTools = (() => {
       const pause = { paused: "scannerPausePaused", active: "scannerPauseActive", unknown: "scannerPauseUnknown", stopped: "scannerPauseStopped" };
       chatMessage(`[ST] ${t(pause[online.describe()])}`);
     });
-    const registerPanel = new RegisterPanel(async (code) => {
-      const result = await api.enroll(code);
+    const registerPanel = new RegisterPanel(async (code, replace) => {
+      const result = await api.enroll(code, replace);
       if (result.ok) chatMessage(`[ST] ${t("registerSuccessChat")}`);
       return result;
     });

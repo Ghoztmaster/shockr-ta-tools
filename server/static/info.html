@@ -249,7 +249,7 @@
 <script src="static/session.js"></script>
 <script>
 const INSTALL_STEPS = 9;
-const TROUBLE_ROWS = 12;
+const TROUBLE_ROWS = 13;
 // [command (English, it is typed literally), description key]
 const COMMANDS = [
     ['/st help', 'infoCmdHelp'],
@@ -259,6 +259,8 @@ const COMMANDS = [
     ['/st config set <key> <value>', 'infoCmdConfigSet'],
     ['/st config get <key>', 'infoCmdConfigGet'],
     ['/st config list', 'infoCmdConfigList'],
+    ['/st config export', 'infoCmdConfigExport'],
+    ['/st config import [text]', 'infoCmdConfigImport'],
     ['/st register', 'infoCmdRegister'],
     ['/st status', 'infoCmdStatus'],
     ['/st version', 'infoCmdVersion'],

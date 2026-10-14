@@ -2,6 +2,33 @@
 
 ## [Unreleased]
 
+## [5.24.0] — 2026-10-14
+
+Userscript + server (`POST /api/enroll` kent het veld `replace`). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+Aanleiding: na de update naar v5.23.2 was `api.url` kwijt en moest opnieuw geregistreerd worden. Onderzoek: de config staat sinds de eerste versie in de localStorage van de gamepagina onder `st-config` (geen Tampermonkey-opslag, `@grant none`), en geen versie wist of migreert hem. localStorage geldt per host (`cncappXX`), dus een wereld op een andere host begint leeg. Opnieuw registreren maakt bovendien de oude key ongeldig, ook op de andere host.
+
+### Standaard api.url
+- `lib/api-client.js`: `DEFAULT_API_URL = 'https://packetlab.nl/shockr'` als `api.url` niet is ingesteld; `/st config set api.url` overschrijft hem. Alle plugins lezen de URL via `api._url`
+- `/st help` en de info-pagina noemen de standaard
+
+### /st config export | import
+- Nieuw `lib/config-transfer.js`. `/st config export` opent een venster met de hele config als één regel tekst (`{"st-config":{...}}`, incl. de persoonlijke key) met een Kopieer-knop en de waarschuwing dat de tekst nooit gedeeld mag worden
+- `/st config import <tekst>` zet hem terug; `/st config import` zonder tekst opent een plakveld (de chat-invoer van het spel is mogelijk te kort voor een volledige config). Geïmporteerde sleutels overschrijven, andere lokale sleutels blijven staan. Chatbevestiging met het aantal en "herlaad de game (F5)"
+- `lib/cli.js` geeft handlers nu ook de ruwe tekst na het commando mee (spaties in JSON-waarden blijven behouden)
+
+### Waarschuwing bij opnieuw registreren
+- `/st register` met een bestaande key: "Je hebt al een key. Opnieuw registreren maakt de oude ongeldig. Doorgaan?" met Doorgaan / Annuleren; pas na Doorgaan wordt een nieuwe key aangevraagd
+- Bestaande key in deze browser (van deze speler): de vraag komt direct, er gaat niets naar de server
+- Geen key hier maar wel op de server (andere host/browser): de userscript stuurt `replace: false`, de server antwoordt `409 Already registered` (pas na een geldige code en alliance, dus niet publiek op te vragen) en het venster vraagt alsnog. Oudere userscripts sturen geen `replace` en vervangen zoals voorheen
+
+### Info-pagina
+- Troubleshooting-rij 13: config kwijt na wisselen van wereld → `/st config export` / `/st config import`
+- Commando-referentie: `/st config export` en `/st config import [tekst]`
+
+### Tests
+- `tests/config-transfer.test.mjs` (export/import, standaard-URL, waarschuwing bij opnieuw registreren) en `tests/test_enroll.py` (409, bevestigd vervangen, oude userscripts, geen lek zonder code)
+
 ## [5.23.2] — 2026-10-14
 
 Userscript + server (nieuwe `config/plugins.json`, `/api/info` geeft `plugins` mee). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

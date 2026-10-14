@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.23.2 released — the info page now lists every plugin: click one for what it does, which old script it replaces and how to switch it on or off. Also fixed: no more double loot table on Forgotten targets when MaelstromTools shows its own.",
-      "de": "v5.23.2 veröffentlicht — die Info-Seite listet jetzt jedes Plugin: anklicken für Funktion, welches alte Script es ersetzt und wie man es ein- und ausschaltet. Außerdem behoben: keine doppelte Loot-Tabelle mehr bei Forgotten-Zielen, wenn MaelstromTools seine eigene zeigt.",
-      "nl": "v5.23.2 uitgebracht — de info-pagina toont nu elke plugin: klik erop voor wat hij doet, welk oud script hij vervangt en hoe je hem aan of uit zet. Ook opgelost: geen dubbele loot-tabel meer bij Forgotten-targets als MaelstromTools zijn eigen tabel toont."
+      "en": "v5.24.0 released — your settings and key are safer: Shockr now finds the alliance server by itself, /st config export and /st config import take your settings (incl. key) to another world or browser, and /st register warns before replacing an existing key.",
+      "de": "v5.24.0 veröffentlicht — deine Einstellungen und dein Key sind sicherer: Shockr findet den Allianz-Server jetzt selbst, /st config export und /st config import nehmen deine Einstellungen (inkl. Key) in eine andere Welt oder einen anderen Browser mit, und /st register warnt, bevor ein bestehender Key ersetzt wird.",
+      "nl": "v5.24.0 uitgebracht — je instellingen en key zijn veiliger: Shockr vindt de alliance-server nu zelf, /st config export en /st config import nemen je instellingen (incl. key) mee naar een andere wereld of browser, en /st register waarschuwt voordat een bestaande key wordt vervangen."
     },
     "type": "info",
     "active": true

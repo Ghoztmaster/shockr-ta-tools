@@ -47,6 +47,7 @@ INVALID_CODE = "Invalid enrollment code"
 ALLIANCE_NOT_AUTHORIZED = "Alliance not authorized"
 NOT_REGISTERED = "Not registered — type /st register"
 INVALID_PLAYER_KEY = "Invalid player key"
+ALREADY_REGISTERED = "Already registered"
 
 
 class EnrollPayload(BaseModel):
@@ -55,6 +56,10 @@ class EnrollPayload(BaseModel):
     allianceId: int = Field(gt=0)
     worldId: int = Field(ge=0)
     enrollmentCode: str = Field(min_length=1, max_length=100)
+    # 5.24.0: false = refuse (409) when the player already has a key, so the
+    # userscript can warn that a new key invalidates the old one; true = the
+    # player confirmed. Absent (older userscripts) = replace, as before.
+    replace: bool | None = None
 
 
 class EnrollmentError(Exception):

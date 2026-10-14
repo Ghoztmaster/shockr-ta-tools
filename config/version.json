@@ -1,7 +1,31 @@
 {
-  "version": "5.23.2",
+  "version": "5.24.0",
   "date": "2026-10-14",
   "changelog": [
+    {
+      "version": "5.24.0",
+      "date": "2026-10-14",
+      "changes": {
+        "en": [
+          "No more lost settings: without api.url set, Shockr uses the alliance server (https://packetlab.nl/shockr) by default",
+          "New: /st config export and /st config import - take all settings, incl. your key, to another world or browser",
+          "/st register warns when you already have a key: registering again makes the old one invalid, so it only continues after you confirm",
+          "Troubleshooting: config lost after switching worlds → /st config export on the old world, /st config import on the new one"
+        ],
+        "de": [
+          "Keine verlorenen Einstellungen mehr: ohne gesetzte api.url verwendet Shockr standardmäßig den Allianz-Server (https://packetlab.nl/shockr)",
+          "Neu: /st config export und /st config import - alle Einstellungen inkl. deines Keys in eine andere Welt oder einen anderen Browser mitnehmen",
+          "/st register warnt, wenn du schon einen Key hast: erneutes Registrieren macht den alten ungültig, deshalb geht es erst nach deiner Bestätigung weiter",
+          "Fehlerbehebung: Einstellungen nach Weltwechsel weg → /st config export in der alten Welt, /st config import in der neuen"
+        ],
+        "nl": [
+          "Geen verloren instellingen meer: zonder ingestelde api.url gebruikt Shockr standaard de alliance-server (https://packetlab.nl/shockr)",
+          "Nieuw: /st config export en /st config import - neem alle instellingen, incl. je key, mee naar een andere wereld of browser",
+          "/st register waarschuwt als je al een key hebt: opnieuw registreren maakt de oude ongeldig, dus het gaat pas verder na jouw bevestiging",
+          "Problemen oplossen: config kwijt na wisselen van wereld → /st config export op de oude wereld, /st config import op de nieuwe"
+        ]
+      }
+    },
     {
       "version": "5.23.2",
       "date": "2026-10-14",
@@ -77,24 +101,6 @@
         "nl": [
           "Nieuwe plugin Chat Helper: coördinaten (123:456) en urls in chat, mail en forum worden automatisch getagd, zodat coördinaten klikbaar worden",
           "Alt-sneltoetsen voor [player], [alliance], [b], [i], [u], [s] (Alt+0 haalt tags weg) en een contactlijst voor /whisper met naam-aanvulling - typ /chelp in de chat"
-        ]
-      }
-    },
-    {
-      "version": "5.21.0",
-      "date": "2026-10-14",
-      "changes": {
-        "en": [
-          "New plugin Loot Summary: select a Forgotten camp, outpost or base on the world map and the info panel shows the lootable research, tiberium, crystal, credits and total",
-          "Per CP and for the 2nd and 3rd run, plus the possible attacks from your current base (available CP)"
-        ],
-        "de": [
-          "Neues Plugin Loot Summary: wähle ein Forgotten-Camp, einen Außenposten oder eine Basis auf der Weltkarte und das Infofenster zeigt plünderbare Forschung, Tiberium, Kristall, Credits und Summe",
-          "Pro KP und für den 2. und 3. Angriff, plus die möglichen Angriffe von deiner aktuellen Basis (verfügbare KP)"
-        ],
-        "nl": [
-          "Nieuwe plugin Loot Summary: selecteer een Forgotten camp, outpost of base op de wereldkaart en het infopaneel toont de plunderbare research, tiberium, crystal, credits en het totaal",
-          "Per CP en voor de 2e en 3e aanval, plus de mogelijke aanvallen vanaf je huidige base (beschikbare CP)"
         ]
       }
     }

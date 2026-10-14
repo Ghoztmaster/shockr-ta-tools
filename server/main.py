@@ -37,7 +37,7 @@ from server.watchlist import WatchlistPayload, WatchlistStore, ClaimNotFound, Cl
 from server.members import MemberStore, MembershipError, NOT_A_MEMBER
 from server.player_keys import (
     AllianceMembershipCheck, EnrollPayload, EnrollmentConfig, PlayerKeyStore,
-    INVALID_CODE, ALLIANCE_NOT_AUTHORIZED, NOT_REGISTERED, INVALID_PLAYER_KEY,
+    INVALID_CODE, ALLIANCE_NOT_AUTHORIZED, NOT_REGISTERED, INVALID_PLAYER_KEY, ALREADY_REGISTERED,
 )
 from server.web_auth import LoginPayload, SessionStore, SESSION_COOKIE, LOGIN_FAILED
 from server.siteinfo import SiteInfo
@@ -336,6 +336,9 @@ async def post_enroll(payload: EnrollPayload, request: Request):
     if payload.allianceId not in enrollment.alliance_ids:
         log.warning("Enrollment for unauthorized alliance %d from %s: player %d", payload.allianceId, ip, payload.playerId)
         raise HTTPException(status_code=403, detail=ALLIANCE_NOT_AUTHORIZED)
+    # Checked after the code: only alliance members can learn whether a player is registered
+    if payload.replace is False and payload.playerId in player_keys.players:
+        raise HTTPException(status_code=409, detail=ALREADY_REGISTERED)
 
     scope = enrollment.scope
     if not scope:

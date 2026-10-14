@@ -213,7 +213,7 @@ class TestI18n:
             assert info <= k[lang], (lang, info - k[lang])
         for i in range(1, 10):
             assert f"infoInstall{i}Html" in info
-        for i in range(1, 13):
+        for i in range(1, 14):
             assert f"infoTrouble{i}P" in info and f"infoTrouble{i}S" in info
         for key in ("infoBugTitle", "infoBugIntro", "infoBug1", "infoBug2", "infoBug3Html", "infoContact"):
             assert key in info
