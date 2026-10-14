@@ -1,11 +1,5 @@
 {
-  "planned": [
-    {
-      "en": "v5.23.0 — PvP Alert Status (replaces: CENTER DRIVEN PvP Alert Status)",
-      "de": "v5.23.0 — PvP Alert Status (ersetzt: CENTER DRIVEN PvP Alert Status)",
-      "nl": "v5.23.0 — PvP Alert Status (vervangt: CENTER DRIVEN PvP Alert Status)"
-    }
-  ],
+  "planned": [],
   "ideas": [
     {
       "en": "Resource overflow alarm",

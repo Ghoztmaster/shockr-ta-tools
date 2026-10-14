@@ -1,7 +1,25 @@
 {
-  "version": "5.22.1",
+  "version": "5.23.0",
   "date": "2026-10-14",
   "changelog": [
+    {
+      "version": "5.23.0",
+      "date": "2026-10-14",
+      "changes": {
+        "en": [
+          "New plugin PvP Alert (replaces CENTER DRIVEN PvP Alert Status): base attacked while the game tab is in the background → tab title and icon show ALERT and a siren sounds",
+          "Resets when you return to the game; siren off: /st config set PvpAlert.sound false"
+        ],
+        "de": [
+          "Neues Plugin PvP Alert (ersetzt CENTER DRIVEN PvP Alert Status): Basis angegriffen, während der Spiel-Tab im Hintergrund ist → Tab-Titel und -Symbol zeigen ALARM und eine Sirene ertönt",
+          "Wird zurückgesetzt, sobald du zum Spiel zurückkehrst; Sirene aus: /st config set PvpAlert.sound false"
+        ],
+        "nl": [
+          "Nieuwe plugin PvP Alert (vervangt CENTER DRIVEN PvP Alert Status): base aangevallen terwijl het game-tabblad op de achtergrond staat → titel en icoon van het tabblad tonen ALARM en er klinkt een sirene",
+          "Reset zodra je terug in de game bent; sirene uit: /st config set PvpAlert.sound false"
+        ]
+      }
+    },
     {
       "version": "5.22.1",
       "date": "2026-10-14",
@@ -74,21 +92,6 @@
         "nl": [
           "Nieuwe plugin Transfer All: één knop in het resource-transferpaneel haalt alle tiberium en crystal uit je andere bases naar de open base (eerst het vakje aanvinken: toont de kosten)",
           "Houdt rekening met vrije opslag en je credits; een volle resource of een te dure base wordt overgeslagen"
-        ]
-      }
-    },
-    {
-      "version": "5.19.0",
-      "date": "2026-10-13",
-      "changes": {
-        "en": [
-          "New plugin Movable Menu: drag game windows and menu overlays (alliance, mail, forum, …) by their title bar; the position is remembered per window"
-        ],
-        "de": [
-          "Neues Plugin Movable Menu: Spielfenster und Menü-Overlays (Allianz, Post, Forum, …) an der Titelleiste verschieben; die Position wird pro Fenster gespeichert"
-        ],
-        "nl": [
-          "Nieuwe plugin Movable Menu: game-vensters en menu-overlays (alliance, mail, forum, …) verslepen aan de titelbalk; de positie wordt per venster onthouden"
         ]
       }
     }

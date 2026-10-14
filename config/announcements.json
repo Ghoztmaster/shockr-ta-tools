@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.22.1 released — the info page now has a command reference card with every /st command, plus new /st plugin list. v5.22.0 brought Chat Helper: clickable coordinates in chat, Alt shortcuts for BB codes and a /whisper contact list - type /chelp",
-      "de": "v5.22.1 veröffentlicht — die Info-Seite hat jetzt eine Referenzkarte mit allen /st-Befehlen, plus neu /st plugin list. v5.22.0 brachte Chat Helper: anklickbare Koordinaten im Chat, Alt-Kürzel für BB-Codes und eine /whisper-Kontaktliste - tippe /chelp",
-      "nl": "v5.22.1 uitgebracht — de info-pagina heeft nu een referentiekaart met alle /st-commando’s, plus nieuw /st plugin list. v5.22.0 bracht Chat Helper: klikbare coördinaten in de chat, Alt-sneltoetsen voor BB-codes en een /whisper-contactlijst - typ /chelp"
+      "en": "v5.23.0 released — new plugin PvP Alert: is one of your bases attacked while the game tab is in the background, the tab title and icon turn to ALERT and a siren sounds. Replaces CENTER DRIVEN PvP Alert Status. Siren off: /st config set PvpAlert.sound false",
+      "de": "v5.23.0 veröffentlicht — neues Plugin PvP Alert: wird eine deiner Basen angegriffen, während der Spiel-Tab im Hintergrund ist, zeigen Tab-Titel und -Symbol ALARM und eine Sirene ertönt. Ersetzt CENTER DRIVEN PvP Alert Status. Sirene aus: /st config set PvpAlert.sound false",
+      "nl": "v5.23.0 uitgebracht — nieuwe plugin PvP Alert: wordt een van je bases aangevallen terwijl het game-tabblad op de achtergrond staat, dan tonen titel en icoon van het tabblad ALARM en klinkt er een sirene. Vervangt CENTER DRIVEN PvP Alert Status. Sirene uit: /st config set PvpAlert.sound false"
     },
     "type": "info",
     "active": true

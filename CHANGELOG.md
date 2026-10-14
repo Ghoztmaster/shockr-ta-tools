@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+## [5.23.0] — 2026-10-14
+
+Alleen userscript (geen API-wijziging). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Nieuwe plugin PvP Alert (vervangt CENTER DRIVEN PvP Alert Status v1.00)
+- `plugins/pvp-alert.js`, standaard aan (`/st plugin enable|disable pvp-alert`). Functie voor functie overgenomen: elke 5 s, alleen als het venster geen focus heeft, alle eigen bases via `City.get_isAlerted()` (de aanvalsvlag van het spel zelf); bij een aanval tab-titel `ALERT - Base <naam> under attack!` (EN/DE/NL), het alarm-favicon en de sirene; terug in het spel (focus) → titel, favicon en sirene terug. Geen game-code gepatcht
+- Sirene: `enable_sound` van het origineel is nu de instelling `PvpAlert.sound` (standaard aan, staat in `/st help` onder nuttige instellingen)
+- Favicons en sirene zijn de data-URI's uit het origineel (`plugins/pvp-alert-assets.js`, ~31 kB)
+- Fixes t.o.v. het origineel: (1) het origineel zette `was_attacked` al in de scan-lus, vóór de check `is_alerted && !was_attacked` - het alarm ging daardoor nooit af; nu één alarm per aanval, reset bij terugkomst; (2) het eigen favicon van het spel wordt teruggezet (het "relax"-icoon van het origineel alleen als het spel er geen heeft) en er wordt één `<link>` hergebruikt i.p.v. per alarm een nieuwe; (3) de titel van vlak vóór het alarm wordt teruggezet
+- Console: `[ST] PvP Alert: (unknown) attacks <base>` zodra de aanvalsvlag van een base aangaat (ook met focus). De aanvaller staat niet in de aanvalsvlag van de client, dus de naam is onbekend
+- `/st status`: "bewaakt je bases (sirene aan/uit)" of "ALARM: base … wordt aangevallen"
+- Raakt PlayerStatus/CampTracker/MapLabels niet (eigen bases, alleen titel/favicon)
+- Tests: `tests/pvp-alert.test.mjs`
+
 ## [5.22.1] — 2026-10-14
 
 Userscript + statische info-pagina (geen API-wijziging). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
