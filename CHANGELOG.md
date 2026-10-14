@@ -18,6 +18,15 @@ Userscript + statische info-pagina (geen API-wijziging). Deploy op de VPS volgen
 - `[data-st-chathelper]` was in 5.22.0 altijd 0: de plugin maakte toen geen DOM-elementen en zette nergens een markering. Dat zegt dus niets over 5.22.0; vanaf nu is 1 = gekoppeld
 - Tests: `tests/chat-helper.test.mjs` (nagebootst qx-chatwidget: koppelen, later verschijnend element, tagging via setValue, geen dubbele afhandeling, `/st` onaangeroerd, mail via window capture)
 
+### Fix Chat Helper (2): chat-invoer werd live nog steeds niet gevonden
+- Live met de eerste 5.22.1-fix: plugin start, maar `[data-st-chathelper]` = 0 en `840:293` + spatie niet getagd. De exacte DOM van de huidige client is niet live bekeken (geen toegang vanuit de ontwikkelomgeving); de hook is daarom op alle plausibele oorzaken robuuster gemaakt:
+  - `findChatInput()`: is het DOM-element van `getEditable()` geen `<input>` (wrapper-div), dan het tekstvak daarbinnen; geen `getEditable()` of geen tekstvak → het eerste tekstvak in de DOM van de chatwidget zelf (content- of container-element, qx 1.x-3.x)
+  - `focusin` (window, capture): een `<input>` binnen de chatwidget die focus krijgt wordt gekoppeld, ongeacht hoe het spel het veld bouwt (console: `hooked via focus`)
+  - doelelement via `composedPath()[0]` (shadow DOM / retargeting), en `<input type=search>` / zonder type telt ook als chatregel
+  - schrijven zonder gevonden qx-widget stuurt een `input`-event, zodat het qx-veld de getagde tekst overneemt i.p.v. de oude te versturen
+- Diagnose in de console (eenmalig): na 5 mislukte pogingen (10 s) `[ST] ChatHelper: chat route - getChat: ok · getChatWidget: … · getEditable: … · editable content <…>` - per stap wat de route oplevert; en bij de eerste toets terwijl de chat niet gekoppeld is: in welk element getypt werd en of dat in de chatwidget zit. Werkt het live nog niet, dan zeggen die twee regels waar het vastloopt
+- Tests: wrapper-div, chatwidget-DOM-fallback, koppelen via focus, composedPath
+
 ## [5.22.0] — 2026-10-14
 
 Puur client-side, geen server-wijziging. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

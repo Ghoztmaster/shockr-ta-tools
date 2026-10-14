@@ -8017,6 +8017,8 @@ var ShockrTools = (() => {
   var WHISPER = "/whisper ";
   var ST_PREFIX = "/st";
   var VALID_CHAR = /[-\w.]/;
+  var LINE_TYPES = /* @__PURE__ */ new Set(["text", "search", ""]);
+  var DIAG_AFTER = 5;
   function autoTag(text) {
     let s = String(text);
     s = s.replace(/(\[coords\])*([0-9]{3,4})[:|.]([0-9]{3,4})([:|.]\w+)?(\[\/coords\])*/gi, (...a) => {
@@ -8108,8 +8110,19 @@ var ShockrTools = (() => {
       return a > b ? 1 : a < b ? -1 : 0;
     });
   }
+  function isLineInput(el) {
+    return !!el && String(el.tagName).toUpperCase() === "INPUT" && LINE_TYPES.has(String(el.type || "text").toLowerCase());
+  }
   function isTextInput(el) {
-    return !!el && (el.type === "text" || el.type === "textarea");
+    return isLineInput(el) || !!el && (el.type === "textarea" || String(el.tagName).toUpperCase() === "TEXTAREA");
+  }
+  function eventTarget(e) {
+    try {
+      const path = typeof e.composedPath === "function" ? e.composedPath() : null;
+      if (path && path.length && path[0] && path[0].tagName) return path[0];
+    } catch {
+    }
+    return e.target;
   }
   function isSpace(e) {
     return e.keyCode === 32 || e.key === " ";
@@ -8117,14 +8130,93 @@ var ShockrTools = (() => {
   function isEnter(e) {
     return e.keyCode === 13 || e.key === "Enter";
   }
-  function findChatInput() {
+  function widgetDom(w, which) {
     try {
-      const widget = qx.core.Init.getApplication().getChat().getChatWidget().getEditable();
-      const el = widget.getContentElement().getDomElement();
-      return el ? { widget, el } : null;
+      const h = typeof w[which] === "function" ? w[which]() : null;
+      return h && typeof h.getDomElement === "function" ? h.getDomElement() : null;
     } catch {
       return null;
     }
+  }
+  function textBoxIn(el) {
+    if (!el) return null;
+    if (isTextInput(el)) return el;
+    try {
+      const all = el.querySelectorAll ? el.querySelectorAll("input, textarea") : [];
+      for (const c of all) if (isLineInput(c)) return c;
+      for (const c of all) if (isTextInput(c)) return c;
+    } catch {
+    }
+    return null;
+  }
+  function chatWidget() {
+    try {
+      return qx.core.Init.getApplication().getChat().getChatWidget() || null;
+    } catch {
+      return null;
+    }
+  }
+  function findChatInput() {
+    const chat = chatWidget();
+    if (!chat) return null;
+    let widget = null;
+    try {
+      widget = typeof chat.getEditable === "function" ? chat.getEditable() : null;
+    } catch {
+      widget = null;
+    }
+    if (widget) {
+      const el2 = textBoxIn(widgetDom(widget, "getContentElement")) || textBoxIn(widgetDom(widget, "getContainerElement"));
+      if (el2) return { widget, el: el2 };
+    }
+    const el = textBoxIn(widgetDom(chat, "getContentElement")) || textBoxIn(widgetDom(chat, "getContainerElement"));
+    return el ? { widget: null, el } : null;
+  }
+  function inChatWidget(el) {
+    const chat = chatWidget();
+    if (!chat || !el) return false;
+    for (const root of [widgetDom(chat, "getContainerElement"), widgetDom(chat, "getContentElement")]) {
+      try {
+        if (root && root !== el && root.contains(el)) return true;
+      } catch {
+      }
+    }
+    return false;
+  }
+  function describeChatRoute() {
+    const tag = (el) => el ? `<${String(el.tagName).toLowerCase()}${el.type ? " type=" + el.type : ""}>` : "null";
+    const out = [];
+    let app = null;
+    try {
+      app = qx.core.Init.getApplication();
+    } catch (e) {
+      return `qx app: ${e && e.message}`;
+    }
+    let chat = null;
+    try {
+      chat = app.getChat();
+      out.push(`getChat: ${chat ? "ok" : "null"}`);
+    } catch (e) {
+      out.push(`getChat: ${e && e.message}`);
+    }
+    try {
+      chat = chat && chat.getChatWidget();
+      out.push(`getChatWidget: ${chat ? chat.classname || "ok" : "null"}`);
+    } catch (e) {
+      out.push(`getChatWidget: ${e && e.message}`);
+      chat = null;
+    }
+    if (!chat) return out.join(" \xB7 ");
+    let ed = null;
+    try {
+      ed = typeof chat.getEditable === "function" ? chat.getEditable() : void 0;
+      out.push(`getEditable: ${ed === void 0 ? "no such method" : ed ? ed.classname || "ok" : "null"}`);
+    } catch (e) {
+      out.push(`getEditable: ${e && e.message}`);
+    }
+    if (ed) out.push(`editable content ${tag(widgetDom(ed, "getContentElement"))}, container ${tag(widgetDom(ed, "getContainerElement"))}`);
+    out.push(`chat widget content ${tag(widgetDom(chat, "getContentElement"))}, container ${tag(widgetDom(chat, "getContainerElement"))}`);
+    return out.join(" \xB7 ");
   }
   function setFieldValue(el, value, widget) {
     let w = widget || null;
@@ -8147,6 +8239,10 @@ var ShockrTools = (() => {
       }
     }
     el.value = value;
+    try {
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+    } catch {
+    }
   }
   var ChatHelper = class {
     /** Short description for `/st help`. */
@@ -8163,16 +8259,32 @@ var ShockrTools = (() => {
       this._chat = null;
       this._hookTimer = null;
       this._warned = false;
+      this._misses = 0;
+      this._loggedTarget = false;
       this._onKeyUp = this._onKeyUp.bind(this);
       this._onKeyDown = this._onKeyDown.bind(this);
       this._onEnterCapture = this._onEnterCapture.bind(this);
       this._onWinKeyUp = (e) => {
-        if (!this._isChat(e.target)) this._onKeyUp(e);
+        const el = eventTarget(e);
+        if (this._isChat(el)) return;
+        this._logUnhookedTarget(el);
+        this._onKeyUp(e);
       };
       this._onWinKeyDown = (e) => {
-        if (this._isChat(e.target)) return;
+        if (this._isChat(eventTarget(e))) return;
         this._onEnterCapture(e);
         this._onKeyDown(e);
+      };
+      this._onFocusIn = (e) => {
+        const el = eventTarget(e);
+        if (this._isChat(el) || !isLineInput(el) || !inChatWidget(el)) return;
+        let widget = null;
+        try {
+          widget = qx.ui.core.Widget.getWidgetByElement(el);
+        } catch {
+          widget = null;
+        }
+        this._attach({ widget, el }, "focus");
       };
     }
     async start() {
@@ -8180,12 +8292,14 @@ var ShockrTools = (() => {
       this.running = true;
       window.addEventListener("keyup", this._onWinKeyUp, true);
       window.addEventListener("keydown", this._onWinKeyDown, true);
+      window.addEventListener("focusin", this._onFocusIn, true);
       this._hookChat();
       this._hookTimer = setInterval(() => this._hookChat(), 2e3);
     }
     stop() {
       window.removeEventListener("keyup", this._onWinKeyUp, true);
       window.removeEventListener("keydown", this._onWinKeyDown, true);
+      window.removeEventListener("focusin", this._onFocusIn, true);
       this._unhookChat();
       clearInterval(this._hookTimer);
       this._hookTimer = null;
@@ -8204,14 +8318,21 @@ var ShockrTools = (() => {
       if (!this.running) return;
       const found = findChatInput();
       if (found && this._chat && found.el === this._chat.el) return;
-      this._unhookChat();
       if (!found) {
+        if (this._chat && this._chat.el.isConnected !== false) return;
+        this._unhookChat();
+        this._misses++;
         if (!this._warned) {
           this._warned = true;
           console.warn("[ST] ChatHelper: chat input not found yet \u2014 retrying every 2 s");
         }
+        if (this._misses === DIAG_AFTER) console.warn(`[ST] ChatHelper: chat route - ${describeChatRoute()}`);
         return;
       }
+      this._attach(found, "qx");
+    }
+    _attach(found, how) {
+      this._unhookChat();
       const { el } = found;
       el.addEventListener("keyup", this._onKeyUp);
       el.addEventListener("keydown", this._onEnterCapture);
@@ -8221,7 +8342,15 @@ var ShockrTools = (() => {
       } catch {
       }
       this._chat = found;
-      console.log(`[ST] ChatHelper: chat input hooked (<${String(el.tagName).toLowerCase()} type=${el.type}>)`);
+      this._misses = 0;
+      console.log(`[ST] ChatHelper: chat input hooked via ${how} (<${String(el.tagName).toLowerCase()} type=${el.type}>)`);
+    }
+    /** Once, while the chat is not hooked: what the first key was typed in (diagnostics). */
+    _logUnhookedTarget(el) {
+      if (this._chat || this._loggedTarget || !el) return;
+      this._loggedTarget = true;
+      const cls = el.className ? ` class="${String(el.className).slice(0, 60)}"` : "";
+      console.warn(`[ST] ChatHelper: key in <${String(el.tagName).toLowerCase()}${el.type ? " type=" + el.type : ""}${cls}> while the chat is not hooked (in chat widget: ${inChatWidget(el)}) - ${describeChatRoute()}`);
     }
     _unhookChat() {
       if (!this._chat) return;
@@ -8240,20 +8369,20 @@ var ShockrTools = (() => {
     }
     // ── keyboard ──
     _onKeyUp(e) {
-      const el = e.target;
+      const el = eventTarget(e);
       if (!isTextInput(el) || el.value === "" || el.value.startsWith(ST_PREFIX)) return;
       if (isSpace(e)) {
         if (this._runCommand(el, el.value)) return;
         this._applyAutoTag(el);
       }
       clearTimeout(this._timer);
-      this._timer = setTimeout(() => this._whisperComplete(e), KEYUP_DELAY_MS);
+      this._timer = setTimeout(() => this._whisperComplete(e, el), KEYUP_DELAY_MS);
     }
     /** Enter on a chat line with a chat-helper command: handle it, never send it. */
     _onEnterCapture(e) {
       if (!isEnter(e)) return;
-      const el = e.target;
-      if (!el || el.type !== "text" || !el.value || el.value.startsWith(ST_PREFIX)) return;
+      const el = eventTarget(e);
+      if (!isLineInput(el) || !el.value || el.value.startsWith(ST_PREFIX)) return;
       const c = parseCommand(el.value);
       if (!c || c.cmd === "whisper") return;
       if (this._runCommand(el, el.value)) {
@@ -8262,7 +8391,7 @@ var ShockrTools = (() => {
       }
     }
     _onKeyDown(e) {
-      const el = e.target;
+      const el = eventTarget(e);
       if (!isTextInput(el)) return;
       if (isEnter(e)) {
         if (el.type === "textarea" && el.value !== "") this._applyAutoTag(el);
@@ -8320,9 +8449,8 @@ var ShockrTools = (() => {
       } catch {
       }
     }
-    _whisperComplete(e) {
-      const el = e.target;
-      if (!el || el.type !== "text" || !el.value) return;
+    _whisperComplete(e, el) {
+      if (!isLineInput(el) || !el.value) return;
       if (e.altGraphKey || e.ctrlKey || e.altKey || !(e.keyCode > 47 && e.keyCode < 91)) return;
       const r = completeWhisper(el.value, this.contacts);
       if (!r) return;

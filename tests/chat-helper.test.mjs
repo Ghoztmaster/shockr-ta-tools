@@ -249,3 +249,77 @@ test('mail textarea (not the chat) is tagged on Enter via window capture', async
     assert.equal(mail.value, 'meet at 840:293');
     p.stop();
 });
+
+// ── 5.22.1 fix: chat input found when getEditable()'s DOM is not the <input> ──
+
+/** A wrapper element (div) with the given children. */
+function wrapper(...kids) {
+    const w = node('', 'div');
+    w.tagName = 'DIV';
+    w.type = undefined;
+    w.querySelectorAll = () => kids;
+    w.contains = (el) => kids.includes(el);
+    return w;
+}
+
+function setupChat(chatWidget) {
+    const win = node('');
+    globalThis.window = win;
+    globalThis.qx = {
+        core: { Init: { getApplication: () => ({ getChat: () => ({ getChatWidget: () => chatWidget }) }) } },
+        ui: { core: { Widget: { getWidgetByElement: () => null } } },
+    };
+    return { win };
+}
+
+test('editable whose content element is a wrapper: the <input> inside is hooked', async () => {
+    fakeStorage();
+    const chat = node('840:293 ');
+    const game = setupChat({ getEditable: () => ({ getContentElement: () => ({ getDomElement: () => wrapper(chat) }) }) });
+    const p = new mod.ChatHelper(config);
+    await p.start();
+    assert.equal(chat.attrs['data-st-chathelper'], 'chat');
+    fire(game, chat, 'keyup', { keyCode: 32 });
+    assert.equal(chat.value, '[coords]840:293[/coords] ');
+    p.stop();
+});
+
+test('no getEditable(): the text box inside the chat widget DOM is hooked', async () => {
+    fakeStorage();
+    const chat = node('');
+    setupChat({ getContentElement: () => ({ getDomElement: () => wrapper(node('', 'textarea'), chat) }) });
+    const p = new mod.ChatHelper(config);
+    await p.start();
+    assert.equal(chat.attrs['data-st-chathelper'], 'chat');
+    p.stop();
+});
+
+test('focus on a line input inside the chat widget hooks it', async () => {
+    fakeStorage();
+    const chat = node('840:293 ');
+    let dom = null;                                     // qx route finds nothing
+    const game = setupChat({ getContainerElement: () => ({ getDomElement: () => dom }) });
+    const p = new mod.ChatHelper(config);
+    await p.start();
+    assert.match(p.statusText(), /NOT/);
+    dom = { contains: (el) => el === chat, querySelectorAll: () => [] };
+    fire(game, chat, 'focusin', {});
+    assert.equal(chat.attrs['data-st-chathelper'], 'chat');
+    fire(game, chat, 'keyup', { keyCode: 32 });
+    assert.equal(chat.value, '[coords]840:293[/coords] ');
+    p.stop();
+    assert.equal(game.win.ls.length, 0);
+});
+
+test('composedPath()[0] is used as the target (shadow DOM retargeting)', async () => {
+    fakeStorage();
+    const game = setupGame(null);
+    const host = node('', 'div');
+    host.tagName = 'DIV';
+    const inner = node('840:293 ');
+    const p = new mod.ChatHelper(config);
+    await p.start();
+    fire(game, host, 'keyup', { keyCode: 32, composedPath: () => [inner, host] });
+    assert.equal(inner.value, '[coords]840:293[/coords] ');
+    p.stop();
+});
