@@ -7568,6 +7568,8 @@ var ShockrTools = (() => {
   // plugins/loot-summary.js
   var STATUS_INFOS2 = ["RegionNPCBaseStatusInfo", "RegionNPCCampStatusInfo"];
   var HISTORY_MAX = 30;
+  var RETRY_MS = 500;
+  var RETRY_MAX = 20;
   var COLORS2 = { high: "#8bc34a", low: "#ef5350", mid: "#ffffff", muted: "#bdbdbd" };
   var CAMP_TYPES4 = { 1: "camp", 2: "camp", 3: "outpost", 4: "base" };
   var LOOT_TYPES = { 1: "tib", 2: "cry", 3: "cred", 6: "rp" };
@@ -7588,32 +7590,57 @@ var ShockrTools = (() => {
   }
   function calcLoot(buildings, defences) {
     const loot = { rp: 0, tib: 0, cry: 0, cred: 0 };
-    getLoots(buildings, loot);
+    if (buildings) getLoots(buildings, loot);
     if (defences) getLoots(defences, loot);
     loot.total = loot.tib + loot.cry + loot.cred;
     return loot;
   }
-  function findCollectionKeys(city, keys = {}) {
-    const scan = (obj) => {
-      for (const k in obj) {
-        const o = obj[k];
-        if (o === null || typeof o !== "object") continue;
-        if (typeof o.c === "undefined") continue;
-        if (o.c === 0) continue;
-        if (typeof o.d === "undefined") continue;
-        const ks = Object.keys(o.d);
-        if (ks.length !== o.c) continue;
-        const u = o.d[ks[0]];
-        if (typeof u !== "object") continue;
-        if (typeof u.get_UnitLevelRepairRequirements !== "function") continue;
-        if (typeof u.GetUnitGroupType === "undefined") keys.buildings = k;
-        else if (u.GetUnitGroupType()) keys.offences = k;
-        else keys.defences = k;
+  function defenceUnits(city) {
+    const ud = city.get_CityUnitsData();
+    if (!ud) return null;
+    try {
+      if (typeof ud.get_DefenseUnits === "function") {
+        const d = ud.get_DefenseUnits();
+        if (d && d.d) return d;
       }
-    };
-    scan(city.get_CityBuildingsData());
-    scan(city.get_CityUnitsData());
-    return keys;
+    } catch {
+    }
+    return ud.$DefenseUnits && ud.$DefenseUnits.d ? ud.$DefenseUnits : null;
+  }
+  function isBuildingList(o) {
+    if (o === null || typeof o !== "object") return false;
+    if (typeof o.c === "undefined" || o.c === 0 || typeof o.d === "undefined") return false;
+    const ks = Object.keys(o.d);
+    if (ks.length !== o.c) return false;
+    const u = o.d[ks[0]];
+    return typeof u === "object" && u !== null && typeof u.get_UnitLevelRepairRequirements === "function" && typeof u.GetUnitGroupType === "undefined";
+  }
+  function buildingList(city) {
+    try {
+      if (typeof city.get_Buildings === "function") {
+        const b = city.get_Buildings();
+        if (isBuildingList(b)) return b;
+      }
+    } catch {
+    }
+    let bd = null;
+    try {
+      bd = city.get_CityBuildingsData();
+    } catch {
+    }
+    for (const src of [city, bd]) {
+      if (!src) continue;
+      for (const k in src) {
+        let o;
+        try {
+          o = src[k];
+        } catch {
+          continue;
+        }
+        if (isBuildingList(o)) return o;
+      }
+    }
+    return null;
   }
   function lootPerCp(total, cp) {
     return cp > 0 ? total / cp : null;
@@ -7649,7 +7676,7 @@ var ShockrTools = (() => {
       this._listeners = [];
       this._citiesHooked = false;
       this._panel = null;
-      this._keys = null;
+      this._timer = null;
       this._shown = null;
       this._history = { total: [], ratio: [] };
       this._seen = /* @__PURE__ */ new Set();
@@ -7704,6 +7731,11 @@ var ShockrTools = (() => {
         this._panel = null;
       }
       this._shown = null;
+      this._clearTimer();
+    }
+    _clearTimer() {
+      if (this._timer) clearTimeout(this._timer);
+      this._timer = null;
     }
     /** One-line status for `/st status`. */
     statusText() {
@@ -7769,25 +7801,39 @@ var ShockrTools = (() => {
     _onAppear(widget) {
       if (!this.running) return;
       const sel = this._selected();
-      this._shown = sel ? { widget, sel } : null;
+      this._shown = sel ? { widget, sel, tries: 0 } : null;
       if (sel) this._render();
     }
     _onDisappear(widget) {
-      if (this._shown && this._shown.widget === widget) this._shown = null;
+      if (this._shown && this._shown.widget === widget) {
+        this._shown = null;
+        this._clearTimer();
+      }
     }
     /** MHTools recomputes on every city change; the target's data arrives that way. */
     _onCitiesChange() {
       if (this.running && this._shown) this._render();
     }
     _render() {
-      const { widget, sel } = this._shown;
+      this._clearTimer();
+      const shown = this._shown;
+      const { widget, sel } = shown;
       try {
         const panel = this._ensurePanel();
         if (!panel) return;
         panel.title.setValue(t("lootTitle"));
         const target = this._target(sel);
-        if (target) this._fill(panel, sel, target);
-        else this._setLoading(panel);
+        if (target) {
+          this._fill(panel, sel, target);
+        } else {
+          this._setLoading(panel);
+          if (shown.tries++ < RETRY_MAX) {
+            this._timer = setTimeout(() => {
+              this._timer = null;
+              if (this.running && this._shown === shown) this._render();
+            }, RETRY_MS);
+          }
+        }
         widget.add(panel.container);
       } catch (e) {
         this._warn("panel update failed", e);
@@ -7798,36 +7844,19 @@ var ShockrTools = (() => {
       panel.res.setTextColor(COLORS2.muted);
       for (const l of [panel.total, panel.info, panel.ratio]) l.setValue("");
     }
-    /** MHTools getBypass/loadBypass: collection keys from an own base, once all three are found. */
-    _collectionKeys() {
-      if (this._keys) return this._keys;
-      try {
-        for (const c of Object.values(ClientLib.Data.MainData.GetInstance().get_Cities().get_AllCities().d)) {
-          const keys = findCollectionKeys(c);
-          if (keys.buildings && keys.defences && keys.offences) {
-            this._keys = keys;
-            break;
-          }
-        }
-      } catch (e) {
-        this._warn("could not find the building/unit collections", e);
-      }
-      return this._keys;
-    }
     /** Loot data of the selected target ({loot, level, type}), or null while it is not loaded (MHTools loadBase). */
     _target(sel) {
-      const keys = this._collectionKeys();
-      if (!keys) return null;
       const md = ClientLib.Data.MainData.GetInstance();
-      const cities = md.get_Cities();
-      const ec = cities.get_CurrentCity();
-      if (ec === null || ec === void 0) return null;
-      if (sel.id !== null && cities.get_CurrentCityId() !== sel.id) return null;
-      if (ec.get_CityBuildingsData() === null) return null;
-      if (ec.get_CityUnitsData() === null) return null;
-      const buildings = ec.get_CityBuildingsData()[keys.buildings];
-      const defences = ec.get_CityUnitsData()[keys.defences];
-      if (!buildings || buildings.c === 0) return null;
+      const ec = md.get_Cities().get_CurrentCity();
+      if (!ec) return null;
+      try {
+        if (ec.get_PosX() !== sel.x || ec.get_PosY() !== sel.y) return null;
+      } catch {
+      }
+      if (!ec.get_CityBuildingsData() || !ec.get_CityUnitsData()) return null;
+      const buildings = buildingList(ec);
+      const defences = defenceUnits(ec);
+      if (!buildings && !defences) return null;
       const loot = calcLoot(buildings, defences);
       let level = null;
       try {

@@ -9,15 +9,18 @@ Puur client-side, geen server-wijziging. Deploy op de VPS volgens de staande reg
 ### Loot Summary (nieuw, `loot-summary`, standaard aan)
 - Vervangt MHTools Tiberium Alliances Available Loot Summary + Info 1.8.3.9. `plugins/loot-summary.js`
 - Sectie "Loot" onderaan het info-paneel van een geselecteerd Forgotten camp / outpost / base (`RegionNPCCampStatusInfo` / `RegionNPCBaseStatusInfo`, zelfde plek als Wavy): tib / crystal / credits (k/M), totaal (+ research points als > 0), type + level, CP-kosten vanaf je dichtstbijzijnde base, loot/CP
-- Spelerbases krijgen geen sectie: die widgets worden niet gehookt, en een stad met spelerfactie wordt overgeslagen
-- **Afwijking van de werkorder**: `get_LootTiberium()` e.d. bestaan niet in de client. De loot-berekening is 1-op-1 overgenomen uit de broncode van MHTools 1.8.3.9 (`getBypass` / `loadBase` / `getLoots` / `calcResources`):
-  - target = `get_Cities().get_CurrentCity()`; nog niet geladen zolang die, `get_CityBuildingsData()` of `get_CityUnitsData()` null is, of de gebouwen-collectie `c === 0` heeft
-  - de (geobfusceerde) collecties gebouwen / verdediging / aanval gevonden zoals MHTools: het `{c, d}`-object waarvan het eerste element `get_UnitLevelRepairRequirements()` heeft; geen `GetUnitGroupType` = gebouwen, `GetUnitGroupType()` truthy = aanval, anders verdediging. Eenmalig gezocht in een eigen base. Anders dan MHTools wordt `ClientLib.Data.City.prototype` niet gepatcht
+- Spelerbases krijgen geen sectie: die info-widgets worden niet gehookt
+- **Afwijking van de werkorder**: `get_LootTiberium()` e.d. bestaan niet in de client. De loot-formule komt uit de broncode van MHTools 1.8.3.9 (`getLoots` / `calcResources` / `loadBase`):
   - loot = voor elk gebouw en elke verdedigingsunit (aanval telt niet): `get_HitpointsPercent() × Count` over `get_UnitLevelRepairRequirements()`, per `EResourceType` (1 tib, 2 crystal, 3 credits, 6 research)
-- MHTools rekent opnieuw in `onCitiesChange` van het widget (overschrijft die methode); Shockr luistert naar hetzelfde Cities-`Change`-event, zonder het widget te patchen. Tot de data er is: "laden…"
+  - target = `get_Cities().get_CurrentCity()`; null tot het spel de selectie geladen heeft, en hij moet op de geselecteerde positie staan (anders is het nog het vorige target)
+- Lijsten lezen - **niet** via MHTools' key-zoektocht: in de huidige client staan de `{c, d}`-lijsten op het city-object zelf, en `get_CityBuildingsData()` bevat alleen een telling (`{c: 3, d: {2: 1, 5: 2, 29: 5}}`, live gemeten). Daarom vond de eerste versie niets:
+  - verdediging: `get_CityUnitsData().get_DefenseUnits()` (publieke getter, live geverifieerd in MehrStrom), anders de gepatchte `$DefenseUnits`
+  - gebouwen: `city.get_Buildings()` als die bestaat, anders MHTools' regel (eerste element heeft `get_UnitLevelRepairRequirements()` en geen `GetUnitGroupType`) op de velden van het city-object zelf, daarna op `get_CityBuildingsData()`
+  - geen zoektocht meer in een eigen base, geen patch op `ClientLib.Data.City.prototype`
+- MHTools rekent opnieuw in `onCitiesChange` van het widget (overschrijft die methode); Shockr luistert naar hetzelfde Cities-`Change`-event, zonder het widget te patchen, en kijkt daarnaast elke 500 ms opnieuw (max 10 s) zolang er "laden…" staat
 - Niet uit MHTools (uit de werkorder): totaal (tib + crystal + credits), CP vanaf de dichtstbijzijnde eigen base (`city.CalculateAttackCommandPointCostToCoord(x, y)`), loot/CP en de kleur - vergeleken met de targets die je deze sessie bekeek (max 30): bovenste derde groen, onderste derde rood, anders wit; neutraal tot er 3 bekend zijn
 - KillInfo (`/st plunder`, per-unit tabel in eigen paneel) ongewijzigd
-- Niet live geverifieerd: de collectie-detectie in de huidige client, het laadmoment van de target-data, `CalculateAttackCommandPointCostToCoord` en de volgorde met de Wavy-sectie. Tests: `tests/loot-summary.test.mjs`
+- Niet live geverifieerd: de gebouwen-lijst op het city-object (welke van de 7 `{c, d}`-velden), `get_UnitLevelRepairRequirements()` op FG-gebouwen en -units, `CalculateAttackCommandPointCostToCoord` en de volgorde met de Wavy-sectie. Tests: `tests/loot-summary.test.mjs`
 
 ### Roadmap
 - v5.21.0 uit `planned` in `config/roadmap.json`

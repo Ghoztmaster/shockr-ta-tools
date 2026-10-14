@@ -82,25 +82,30 @@ const entity = (reqs, hp = 1, group) => {
 /** {c, d} collection, as the game stores it. */
 const coll = (...items) => ({ c: items.length, d: Object.fromEntries(items.map((x, i) => [`k${i}`, x])) });
 
-/** Obfuscated collection names: buildings in CityBuildingsData.XBLD, units in CityUnitsData.XDEF / XOFF. */
-function city({ buildings = coll(), defences = coll(), offences = coll(), extra = {} } = {}) {
+/**
+ * Live shape (2026-10): the {c, d} lists sit on the city object under obfuscated
+ * names; get_CityBuildingsData() holds a count summary {c, d: {techId: count}};
+ * get_CityUnitsData() has the public get_DefenseUnits().
+ */
+function city({ x = 10, y = 10, buildings = coll(), defences = coll(), offences = coll() } = {}) {
     return {
-        get_CityBuildingsData: () => ({ XBLD: buildings, other: { c: 2, d: { a: 1 } }, ...extra }),
-        get_CityUnitsData: () => ({ XDEF: defences, XOFF: offences }),
+        YRMYVJ: { c: 2, d: { a: 1, b: 2 } },       // some other {c, d} list
+        UNPJNJ: buildings,
+        get_CityBuildingsData: () => ({ c: 3, d: { 2: 1, 5: 2, 29: 5 } }),
+        get_CityUnitsData: () => ({ get_DefenseUnits: () => defences, get_OffenseUnits: () => offences }),
         get_LvlBase: () => 31.4,
+        get_PosX: () => x, get_PosY: () => y,
     };
 }
 
-function fakeGame({ loaded = true, campType = 3, selected = [10, 10], currentId = 77 } = {}) {
-    const state = { loaded, currentId };
+function fakeGame({ loaded = true, campType = 3, selected = [10, 10], current = [10, 10] } = {}) {
+    const state = { loaded, current };
     const req = (Type, Count) => ({ Type, Count });
-    const target = {
-        ...city({
-            buildings: coll(entity([req(1, 1000), req(3, 200)])),
-            defences: coll(entity([req(2, 500), req(6, 50)], 0.5, 0)),
-        }),
-        get_CityBuildingsData() { return state.loaded ? { XBLD: coll(entity([req(1, 1000), req(3, 200)])) } : null; },
-    };
+    const full = city({
+        x: current[0], y: current[1],
+        buildings: coll(entity([req(1, 1000), req(3, 200)])),
+        defences: coll(entity([req(2, 500), req(6, 50)], 0.5, 0)),
+    });
     const ownBase = (name, x, y, cp) => ({
         ...city({
             buildings: coll(entity([req(1, 1)])),
@@ -124,8 +129,7 @@ function fakeGame({ loaded = true, campType = 3, selected = [10, 10], currentId 
             MainData: {
                 GetInstance: () => ({
                     get_Cities: () => ({
-                        get_CurrentCity: () => target,
-                        get_CurrentCityId: () => state.currentId,
+                        get_CurrentCity: () => (state.loaded ? full : null),
                         get_AllCities: () => ({ d: { 1: ownBase('Far', 40, 40, 30), 2: ownBase('Near', 13, 14, 6) } }),
                     }),
                     get_World: () => ({ GetObjectFromPosition: () => ({ Type: 3, $CampType: campType, $Level: 31 }) }),
@@ -151,14 +155,19 @@ test('calcLoot: buildings + defence, total = tib + cry + credits', () => {
     assert.deepEqual(loot, { rp: 1.75, tib: 100, cry: 10, cred: 0, total: 110 });
 });
 
-test('findCollectionKeys: buildings / defence / offence by the MHTools rules', () => {
-    const c = city({
-        buildings: coll(entity([])),
-        defences: coll(entity([], 1, 0)),
-        offences: coll(entity([], 1, 3)),
-        extra: { empty: { c: 0, d: {} }, mismatch: { c: 3, d: { a: entity([]) } } },
-    });
-    assert.deepEqual(mod.findCollectionKeys(c), { buildings: 'XBLD', defences: 'XDEF', offences: 'XOFF' });
+test('buildingList: the {c, d} list on the city object whose entries are buildings, not the count summary', () => {
+    const b = coll(entity([]));
+    assert.equal(mod.buildingList(city({ buildings: b })), b);
+    const withGetter = { ...city(), get_Buildings: () => b };
+    assert.equal(mod.buildingList(withGetter), b);
+    assert.equal(mod.buildingList({ ...city(), UNPJNJ: coll(entity([], 1, 0)) }), null, 'units are not buildings');
+});
+
+test('defenceUnits: public get_DefenseUnits(), else $DefenseUnits', () => {
+    const d = coll(entity([], 1, 0));
+    assert.equal(mod.defenceUnits(city({ defences: d })), d);
+    assert.equal(mod.defenceUnits({ get_CityUnitsData: () => ({ $DefenseUnits: d }) }), d);
+    assert.equal(mod.defenceUnits({ get_CityUnitsData: () => null }), null);
 });
 
 // ─── Helpers from the work order ────────────────────────────────────
@@ -232,12 +241,26 @@ test('not loaded yet: shows loading, then fills on the Cities Change event (MHTo
     p.stop();
 });
 
-test('current city still the previous target: loading', async () => {
+test('current city still the previous target (other position): loading', async () => {
     const { instances: w } = fakeQx();
-    fakeGame({ currentId: 12 });
+    fakeGame({ current: [20, 20] });
     const p = new mod.LootSummary({});
     await p.start();
     w.RegionNPCCampStatusInfo.fire('appear');
     assert.match(w.RegionNPCCampStatusInfo.kids[0].kids[1].value, /Loading/);
+    p.stop();
+});
+
+test('no Cities Change event: the 500 ms re-check fills the panel', async () => {
+    const { instances: w } = fakeQx();
+    const state = fakeGame({ loaded: false });
+    const p = new mod.LootSummary({});
+    await p.start();
+    w.RegionNPCCampStatusInfo.fire('appear');
+    const box = w.RegionNPCCampStatusInfo.kids[0];
+    assert.match(box.kids[1].value, /Loading/);
+    state.loaded = true;
+    await new Promise(r => setTimeout(r, 600));
+    assert.match(box.kids[1].value, /Tib 1k/);
     p.stop();
 });
