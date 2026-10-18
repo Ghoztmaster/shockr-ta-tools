@@ -1,7 +1,31 @@
 {
-  "version": "5.25.0",
+  "version": "5.26.0",
   "date": "2026-10-18",
   "changelog": [
+    {
+      "version": "5.26.0",
+      "date": "2026-10-18",
+      "changes": {
+        "en": [
+          "New: the Shockr button (shield icon, top left) - one click opens a grid with all Shockr panels; drag it anywhere, the position is remembered",
+          "In the grid: Upgrade Calculator, Help, Target Watch and a Config button (export/import your settings)",
+          "New plugin Target Watch in-game: see which targets your alliance is looking at, who and since when - click a row to centre the map on it (also /st targets)",
+          "The separate \"UC\" button is gone - Upgrade Calculator now lives in the Shockr button"
+        ],
+        "de": [
+          "Neu: der Shockr-Knopf (Schild-Symbol, oben links) - ein Klick öffnet ein Raster mit allen Shockr-Panels; frei verschiebbar, die Position bleibt gespeichert",
+          "Im Raster: Upgrade Calculator, Hilfe, Target Watch und ein Config-Knopf (Einstellungen exportieren/importieren)",
+          "Neues Plugin Target Watch im Spiel: sieh, welche Ziele deine Allianz ansieht, wer und seit wann - Klick auf eine Zeile zentriert die Karte darauf (auch /st targets)",
+          "Der separate \"UC\"-Knopf ist weg - der Upgrade Calculator steckt jetzt im Shockr-Knopf"
+        ],
+        "nl": [
+          "Nieuw: de Shockr-knop (schild-icoon, linksboven) - één klik opent een raster met alle Shockr-panels; versleepbaar, de positie wordt onthouden",
+          "In het raster: Upgrade Calculator, Help, Target Watch en een Config-knop (instellingen exporteren/importeren)",
+          "Nieuwe plugin Target Watch in-game: zie naar welke targets je alliance kijkt, wie en sinds wanneer - klik op een rij om de kaart erop te centreren (ook /st targets)",
+          "De losse \"UC\"-knop is weg - de Upgrade Calculator zit nu in de Shockr-knop"
+        ]
+      }
+    },
     {
       "version": "5.25.0",
       "date": "2026-10-18",
@@ -98,27 +122,6 @@
         "nl": [
           "Nieuwe plugin PvP Alert (vervangt CENTER DRIVEN PvP Alert Status): base aangevallen terwijl het game-tabblad op de achtergrond staat → titel en icoon van het tabblad tonen ALARM en er klinkt een sirene",
           "Reset zodra je terug in de game bent; sirene uit: /st config set PvpAlert.sound false"
-        ]
-      }
-    },
-    {
-      "version": "5.22.1",
-      "date": "2026-10-14",
-      "changes": {
-        "en": [
-          "Info page: second column with all /st commands and useful settings as a reference card",
-          "New: /st plugin list shows every plugin with on/off",
-          "Fix Chat Helper: now hooks the chat input itself - coordinates and urls are tagged in the live game"
-        ],
-        "de": [
-          "Info-Seite: zweite Spalte mit allen /st-Befehlen und nützlichen Einstellungen als Referenzkarte",
-          "Neu: /st plugin list zeigt jedes Plugin mit an/aus",
-          "Fix Chat Helper: hängt sich jetzt direkt an die Chat-Eingabe - Koordinaten und URLs werden im Spiel getaggt"
-        ],
-        "nl": [
-          "Info-pagina: tweede kolom met alle /st-commando’s en nuttige instellingen als referentiekaart",
-          "Nieuw: /st plugin list toont elke plugin met aan/uit",
-          "Fix Chat Helper: koppelt nu direct aan de chat-invoer - coördinaten en urls worden in de game getagd"
         ]
       }
     }

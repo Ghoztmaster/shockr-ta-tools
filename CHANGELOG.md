@@ -2,6 +2,26 @@
 
 ## [Unreleased]
 
+## [5.26.0] — 2026-10-18
+
+Userscript-only (geen server-wijziging; `config/version.json`, `config/announcements.json` en `config/plugins.json` zijn wel gewijzigd). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Shockr-knop (`lib/toolbar.js`, `lib/drag.js`)
+- Eén gedeelde knop (schild met bliksem, 32×32, blauwe TA-stijl) in plaats van een zwevende knop per plugin. Klik → raster van 2 kolommen met de geregistreerde panels, daaronder een brede **Config**-knop (kiezen tussen export en import, `ConfigTransferPanel.openMenu`). Esc, klik buiten het raster of klik op een item sluit het
+- Versleepbaar, positie in `toolbar.x`/`toolbar.y`; standaard linksboven net onder de oude UC-plek (80, 46). Lib-module, geen plugin: altijd aanwezig, ook als niets zich registreert (dan alleen Config)
+- API: `toolbar.register({ id, icon, label, onClick, isAvailable })` / `unregister(id)`; `label` mag een functie zijn (i18n), `isAvailable()` false verbergt het item
+- Help registreert zich met een "?"-icoon (opent altijd de popup, los van `help.popup`)
+
+### UpgradeCalc
+- De eigen "UC"-knop is weg; UC registreert zich met een rekenmachine-icoon. Buiten een eigen base geeft het item een chatregel. Panel-logica ongewijzigd. `UpgradeCalc.buttonLeft/Top` blijven in de config staan maar worden niet meer gebruikt (en staan niet meer onder "nuttige instellingen" in `/st help`)
+
+### TargetBoard (`plugins/target-board.js`, nieuw, plugin 24)
+- In-game versie van de Target Watch-pagina: radar-icoon in de Shockr-knop of `/st targets`. Kolommen Target (naam + coördinaten), Level, Kijkers (aantal + namen), Laatst gezien (relatief: "2 min", "1 u"); ≥2 kijkers = oranje rij. Klik op een rij → wereldkaart, gecentreerd op het target. Titel: aantal + "ververst om HH:MM:SS"
+- Data: `GET /api/target-watch/{worldId}` met de persoonlijke key (eigen alliance, huidige wereld). Niet `/api/targets`: dat endpoint vraagt een website-sessie (cookie), die de game-pagina niet heeft. `/api/target-watch*` heeft al CORS voor de game-pagina (TargetWatcher gebruikt het)
+- Requests alleen zolang het panel open is: één bij openen, dan elke 20 s; dicht = timer weg. Zonder server/key (`api.isConfigured`, dezelfde check als TargetWatcher) geen toolbar-item
+- Panel versleepbaar aan de titelbalk (`TargetBoard.x/y`), ✕ en Esc sluiten
+- Er is geen "Aanvallers"-kolom: Target Watch-data kent alleen kijkers (ook het dashboard toont alleen Watchers)
+
 ## [5.25.0] — 2026-10-18
 
 Userscript + server (`@grant GM_getValue`/`GM_setValue` - Tampermonkey vraagt bij de update één keer om die toestemming; nieuw `POST /api/enroll/restore`, CORS-header op `GET /api/version`). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`. Geen nginx-wijziging nodig (zie `docs/DEPLOY.md` §13).

@@ -106,9 +106,9 @@
       "nl": "Upgrade-kosten en spaartijd per gebouw"
     },
     "long": {
-      "en": "A \"UC\" button top left in your own base opens a panel with every building that is not max level, the cost of its next level and how long you need to save for it at the current production. Fastest first. Off by default.",
-      "de": "Ein \"UC\"-Knopf oben links in deiner eigenen Basis öffnet ein Panel mit jedem Gebäude, das nicht auf Maximalstufe ist, den Kosten der nächsten Stufe und wie lange du bei der aktuellen Produktion dafür sparen musst. Schnellste zuerst. Standardmäßig aus.",
-      "nl": "Een \"UC\"-knop linksboven in je eigen base opent een paneel met elk gebouw dat niet op max level staat, de kosten van het volgende level en hoe lang je daarvoor moet sparen bij de huidige productie. Snelste eerst. Standaard uit."
+      "en": "The calculator icon in the Shockr button (top left) opens, in your own base, a panel with every building that is not max level, the cost of its next level and how long you need to save for it at the current production. Fastest first. Off by default.",
+      "de": "Das Rechner-Symbol im Shockr-Knopf (oben links) öffnet in deiner eigenen Basis ein Panel mit jedem Gebäude, das nicht auf Maximalstufe ist, den Kosten der nächsten Stufe und wie lange du bei der aktuellen Produktion dafür sparen musst. Schnellste zuerst. Standardmäßig aus.",
+      "nl": "Het rekenmachine-icoon in de Shockr-knop (linksboven) opent in je eigen base een paneel met elk gebouw dat niet op max level staat, de kosten van het volgende level en hoe lang je daarvoor moet sparen bij de huidige productie. Snelste eerst. Standaard uit."
     }
   },
   {
@@ -365,6 +365,22 @@
       "en": "When one of your bases is attacked while the game tab is in the background, the tab title and icon change to ALERT and a siren sounds. Everything resets when you return to the game. Siren off: /st config set PvpAlert.sound false.",
       "de": "Wird eine deiner Basen angegriffen, während der Spiel-Tab im Hintergrund ist, zeigen Tab-Titel und -Symbol ALARM und eine Sirene ertönt. Alles wird zurückgesetzt, sobald du zum Spiel zurückkehrst. Sirene aus: /st config set PvpAlert.sound false.",
       "nl": "Wordt een van je bases aangevallen terwijl het game-tabblad op de achtergrond staat, dan veranderen titel en icoon van het tabblad in ALARM en klinkt er een sirene. Alles reset zodra je terug in de game bent. Sirene uit: /st config set PvpAlert.sound false."
+    }
+  },
+  {
+    "name": "TargetBoard",
+    "slug": "target-board",
+    "defaultEnabled": true,
+    "replaces": null,
+    "short": {
+      "en": "In-game overview of alliance targets — who is watching and who is attacking",
+      "de": "In-Game-Übersicht der Allianz-Ziele — wer schaut und wer greift an",
+      "nl": "In-game overzicht van alliance-targets — wie kijkt en wie valt aan"
+    },
+    "long": {
+      "en": "The Target Watch page, in the game: the radar icon in the Shockr button (or /st targets) opens a panel with every target your alliance is looking at right now — level, who watches it and since when. Two or more watchers = orange row. Click a row to centre the map on it. Refreshes every 20 s while open. Needs the alliance server (/st register).",
+      "de": "Die Target-Watch-Seite im Spiel: das Radar-Symbol im Shockr-Knopf (oder /st targets) öffnet ein Panel mit jedem Ziel, das deine Allianz gerade ansieht — Level, wer schaut und seit wann. Zwei oder mehr Beobachter = orange Zeile. Klick auf eine Zeile zentriert die Karte darauf. Aktualisiert alle 20 s, solange es offen ist. Braucht den Allianz-Server (/st register).",
+      "nl": "De Target Watch-pagina, in de game: het radar-icoon in de Shockr-knop (of /st targets) opent een paneel met elk target waar je alliance nu naar kijkt — level, wie kijkt en sinds wanneer. Twee of meer kijkers = oranje rij. Klik op een rij om de kaart erop te centreren. Ververst elke 20 s zolang het open is. Heeft de alliance-server nodig (/st register)."
     }
   }
 ]

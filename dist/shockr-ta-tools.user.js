@@ -5,7 +5,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.25.0
+// @version         5.26.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -493,8 +493,6 @@ var ShockrTools = (() => {
       helpSetColors: "shockr / maelstrom (default: shockr)",
       helpSetApiUrl: "Server URL for scanners/watcher (default https://packetlab.nl/shockr)",
       helpSetApiKey: "Shared alliance key (transition \u2014 use /st register)",
-      helpSetButtonLeft: "UC button X position (px)",
-      helpSetButtonTop: "UC button Y position (px)",
       helpSetPvpSound: "PvP Alert siren on/off (default: true)",
       helpHelp: "This message",
       helpCloseHint: "Press Escape, click \u2715 or type /st help again to close. Show help in the chat instead: /st config set help.popup false",
@@ -510,6 +508,7 @@ var ShockrTools = (() => {
       descUpgradeCalc: "Building upgrade cost & time panel",
       descTargetWatcher: "Report viewed targets to alliance server",
       descAttackTracker: "Log your won attacks on Forgotten targets to the alliance server",
+      descTargetBoard: "In-game overview of alliance targets \u2014 who is watching and who is attacking",
       // ── Shared ──
       close: "Close",
       apiKeyRejected: "\u26A0 API key rejected \u2014 check /st config set api.key",
@@ -600,8 +599,9 @@ var ShockrTools = (() => {
       upgradeCalcTime: "Time",
       upgradeCalcReady: "Ready",
       upgradeCalcHours: "{h}h {m}m",
-      upgradeCalcStatusButton: "button in base view",
-      upgradeCalcStatusOpen: "button in base view, panel open",
+      upgradeCalcStatusButton: "in the Shockr toolbar (own base)",
+      upgradeCalcStatusOpen: "in the Shockr toolbar, panel open",
+      upgradeCalcOwnBaseOnly: "Upgrade Calculator: open one of your own bases first",
       // ── TargetWatcher ──
       targetWatcherNoServer: "TargetWatcher enabled but no server configured. Set api.url first, then /st register.",
       targetWatcherWarning: "\u26A0\uFE0F {player} is also viewing {target}{since}",
@@ -641,6 +641,7 @@ var ShockrTools = (() => {
       formationListLine: "{count} units \xB7 {base} \xB7 {date}",
       formationStorageFailed: "Could not save (browser storage unavailable)",
       helpCmdFormation: "Save/load attack formations",
+      helpCmdTargets: "Open/close the Target Watch panel",
       descWavy: "Forgotten attack waves per base: Forgotten bases in range, level distribution, waves + distance lines on the world map",
       descPoiAnalyser: "Alliance POI bonuses: POI labels on the world map (gold = yours), the active bonuses in the base info panel and the real gain/loss of a selected POI",
       descSectorHud: "Sector HUD on the world map: view coordinates + sector, and per sector the POIs held (own green, enemy red, free grey)",
@@ -746,7 +747,34 @@ var ShockrTools = (() => {
       watchAgoNow: "just now",
       watchAgoMin: "{n} min ago",
       watchAgoHour: "1 hour ago",
-      watchAgoHours: "{n} hours ago"
+      watchAgoHours: "{n} hours ago",
+      // ── Toolbar (5.26.0) ──
+      toolbarConfig: "Config",
+      toolbarConfigHint: "Export / import your Shockr settings",
+      toolbarHelp: "Help",
+      toolbarUpgradeCalc: "Upgrade Calculator",
+      toolbarTargetBoard: "Target Watch",
+      configMenuTitle: "Shockr config",
+      configMenuIntro: "Export: take all settings incl. your key to another world or browser. Import: paste an export.",
+      configMenuExport: "Export",
+      configMenuImport: "Import",
+      // ── TargetBoard ──
+      targetBoardNoServer: "Target Watch needs the alliance server \u2014 type /st register",
+      targetBoardStatusOpen: "panel open",
+      targetBoardStatusClosed: "panel closed (/st targets)",
+      targetBoardLoading: "loading\u2026",
+      targetBoardFailed: "Could not load the targets \u2014 see the console (F12)",
+      targetBoardRefreshFailed: "refresh failed",
+      targetBoardEmpty: "Nobody in the alliance is watching a target right now",
+      targetBoardUpdated: "refreshed at {time}",
+      targetBoardAgoNow: "now",
+      targetBoardAgoMin: "{n} min",
+      targetBoardAgoHour: "{n} h",
+      targetBoardColTarget: "Target",
+      targetBoardColLevel: "Level",
+      targetBoardColWatchers: "Watchers",
+      targetBoardColSeen: "Last seen",
+      targetBoardCenterHint: "Click: centre the map on this target"
     },
     de: {
       loaded: "v{version} geladen \u2014 {active}/{total} Plugins aktiv",
@@ -800,8 +828,6 @@ var ShockrTools = (() => {
       helpSetColors: "shockr / maelstrom (Standard: shockr)",
       helpSetApiUrl: "Server-URL f\xFCr Scanner/Watcher (Standard https://packetlab.nl/shockr)",
       helpSetApiKey: "Gemeinsamer Allianz-Key (\xDCbergang \u2014 nutze /st register)",
-      helpSetButtonLeft: "UC-Button X-Position (px)",
-      helpSetButtonTop: "UC-Button Y-Position (px)",
       helpSetPvpSound: "PvP-Alarm-Sirene an/aus (Standard: true)",
       helpHelp: "Diese Hilfe",
       helpCloseHint: "Schlie\xDFen mit Escape, \u2715 oder erneut /st help. Hilfe stattdessen im Chat: /st config set help.popup false",
@@ -816,6 +842,7 @@ var ShockrTools = (() => {
       descUpgradeCalc: "Panel mit Upgrade-Kosten & -Dauer der Geb\xE4ude",
       descTargetWatcher: "Angesehene Ziele an den Allianz-Server melden",
       descAttackTracker: "Gewonnene Angriffe auf Forgotten-Ziele an den Allianz-Server melden",
+      descTargetBoard: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an",
       close: "Schlie\xDFen",
       apiKeyRejected: "\u26A0 API-Key abgelehnt \u2014 pr\xFCfe /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: nicht erkannt \u2014 scanne zuerst eine Basis, um dich zu registrieren.",
@@ -897,8 +924,9 @@ var ShockrTools = (() => {
       upgradeCalcTime: "Zeit",
       upgradeCalcReady: "Bereit",
       upgradeCalcHours: "{h}h {m}m",
-      upgradeCalcStatusButton: "Button in der Basis-Ansicht",
-      upgradeCalcStatusOpen: "Button in der Basis-Ansicht, Panel offen",
+      upgradeCalcStatusButton: "in der Shockr-Leiste (eigene Basis)",
+      upgradeCalcStatusOpen: "in der Shockr-Leiste, Panel offen",
+      upgradeCalcOwnBaseOnly: "Upgrade Calculator: \xF6ffne zuerst eine deiner eigenen Basen",
       targetWatcherNoServer: "TargetWatcher aktiv, aber kein Server eingerichtet. Setze zuerst api.url, dann /st register.",
       targetWatcherWarning: "\u26A0\uFE0F {player} schaut sich auch {target} an{since}",
       targetWatcherWarningMulti: "\u26A0\uFE0F {players} schauen sich auch {target} an",
@@ -936,6 +964,7 @@ var ShockrTools = (() => {
       formationListLine: "{count} Einheiten \xB7 {base} \xB7 {date}",
       formationStorageFailed: "Speichern fehlgeschlagen (Browserspeicher nicht verf\xFCgbar)",
       helpCmdFormation: "Angriffsformationen speichern/laden",
+      helpCmdTargets: "Target-Watch-Panel \xF6ffnen/schlie\xDFen",
       descWavy: "Forgotten-Angriffswellen pro Basis: Forgotten-Basen in Reichweite, Level-Verteilung, Wellen + Entfernungslinien auf der Weltkarte",
       descPoiAnalyser: "Allianz-POI-Boni: POI-Labels auf der Weltkarte (gold = eure), aktive Boni im Basis-Infofenster und der echte Gewinn/Verlust eines gew\xE4hlten POI",
       descSectorHud: "Sektor-HUD auf der Weltkarte: Ansichtskoordinaten + Sektor, und pro Sektor die gehaltenen POIs (eigene gr\xFCn, feindliche rot, freie grau)",
@@ -1041,7 +1070,34 @@ var ShockrTools = (() => {
       watchAgoNow: "gerade eben",
       watchAgoMin: "vor {n} Min.",
       watchAgoHour: "vor 1 Stunde",
-      watchAgoHours: "vor {n} Stunden"
+      watchAgoHours: "vor {n} Stunden",
+      // ── Toolbar (5.26.0) ──
+      toolbarConfig: "Config",
+      toolbarConfigHint: "Shockr-Einstellungen exportieren / importieren",
+      toolbarHelp: "Hilfe",
+      toolbarUpgradeCalc: "Upgrade Calculator",
+      toolbarTargetBoard: "Target Watch",
+      configMenuTitle: "Shockr-Einstellungen",
+      configMenuIntro: "Exportieren: alle Einstellungen inkl. Key in eine andere Welt oder einen anderen Browser mitnehmen. Importieren: einen Export einf\xFCgen.",
+      configMenuExport: "Exportieren",
+      configMenuImport: "Importieren",
+      // ── TargetBoard ──
+      targetBoardNoServer: "Target Watch braucht den Allianz-Server \u2014 tippe /st register",
+      targetBoardStatusOpen: "Panel offen",
+      targetBoardStatusClosed: "Panel geschlossen (/st targets)",
+      targetBoardLoading: "l\xE4dt\u2026",
+      targetBoardFailed: "Ziele konnten nicht geladen werden \u2014 siehe Konsole (F12)",
+      targetBoardRefreshFailed: "Aktualisierung fehlgeschlagen",
+      targetBoardEmpty: "Gerade schaut niemand aus der Allianz ein Ziel an",
+      targetBoardUpdated: "aktualisiert um {time}",
+      targetBoardAgoNow: "jetzt",
+      targetBoardAgoMin: "{n} Min",
+      targetBoardAgoHour: "{n} Std",
+      targetBoardColTarget: "Ziel",
+      targetBoardColLevel: "Level",
+      targetBoardColWatchers: "Beobachter",
+      targetBoardColSeen: "Zuletzt",
+      targetBoardCenterHint: "Klick: Karte auf dieses Ziel zentrieren"
     },
     nl: {
       loaded: "v{version} geladen \u2014 {active}/{total} plugins actief",
@@ -1095,8 +1151,6 @@ var ShockrTools = (() => {
       helpSetColors: "shockr / maelstrom (standaard: shockr)",
       helpSetApiUrl: "Server-URL voor scanners/watcher (standaard https://packetlab.nl/shockr)",
       helpSetApiKey: "Gedeelde alliance-key (overgang \u2014 gebruik /st register)",
-      helpSetButtonLeft: "UC-knop X-positie (px)",
-      helpSetButtonTop: "UC-knop Y-positie (px)",
       helpSetPvpSound: "PvP Alert-sirene aan/uit (standaard: true)",
       helpHelp: "Dit bericht",
       helpCloseHint: "Sluiten met Escape, \u2715 of nogmaals /st help. Help liever in de chat: /st config set help.popup false",
@@ -1111,6 +1165,7 @@ var ShockrTools = (() => {
       descUpgradeCalc: "Paneel met upgrade-kosten & -tijd van gebouwen",
       descTargetWatcher: "Bekeken targets melden aan de alliance-server",
       descAttackTracker: "Gewonnen aanvallen op Forgotten-targets melden aan de alliance-server",
+      descTargetBoard: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan",
       close: "Sluiten",
       apiKeyRejected: "\u26A0 API-key geweigerd \u2014 controleer /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: niet herkend \u2014 scan eerst een base om je te registreren.",
@@ -1192,8 +1247,9 @@ var ShockrTools = (() => {
       upgradeCalcTime: "Tijd",
       upgradeCalcReady: "Gereed",
       upgradeCalcHours: "{h}u {m}m",
-      upgradeCalcStatusButton: "knop in base-view",
-      upgradeCalcStatusOpen: "knop in base-view, paneel open",
+      upgradeCalcStatusButton: "in de Shockr-knop (eigen basis)",
+      upgradeCalcStatusOpen: "in de Shockr-knop, paneel open",
+      upgradeCalcOwnBaseOnly: "Upgrade Calculator: open eerst een van je eigen bases",
       targetWatcherNoServer: "TargetWatcher aan, maar geen server ingesteld. Zet eerst api.url en doe dan /st register.",
       targetWatcherWarning: "\u26A0\uFE0F {player} kijkt ook naar {target}{since}",
       targetWatcherWarningMulti: "\u26A0\uFE0F {players} kijken ook naar {target}",
@@ -1231,6 +1287,7 @@ var ShockrTools = (() => {
       formationListLine: "{count} units \xB7 {base} \xB7 {date}",
       formationStorageFailed: "Opslaan mislukt (browseropslag niet beschikbaar)",
       helpCmdFormation: "Aanvalsformaties opslaan/laden",
+      helpCmdTargets: "Target Watch-paneel openen/sluiten",
       descWavy: "Forgotten-aanvalsgolven per base: Forgotten-bases in bereik, level-verdeling, waves + afstandslijnen op de wereldkaart",
       descPoiAnalyser: "Alliance-POI-bonussen: POI-labels op de wereldkaart (goud = van jullie), de actieve bonussen in het base-infopaneel en de echte winst/verlies van een geselecteerde POI",
       descSectorHud: "Sector-HUD op de wereldkaart: kijkco\xF6rdinaten + sector, en per sector de bezette POIs (eigen groen, vijandelijk rood, vrij grijs)",
@@ -1336,7 +1393,34 @@ var ShockrTools = (() => {
       watchAgoNow: "net",
       watchAgoMin: "{n} min geleden",
       watchAgoHour: "1 uur geleden",
-      watchAgoHours: "{n} uur geleden"
+      watchAgoHours: "{n} uur geleden",
+      // ── Toolbar (5.26.0) ──
+      toolbarConfig: "Config",
+      toolbarConfigHint: "Shockr-instellingen exporteren / importeren",
+      toolbarHelp: "Help",
+      toolbarUpgradeCalc: "Upgrade Calculator",
+      toolbarTargetBoard: "Target Watch",
+      configMenuTitle: "Shockr-config",
+      configMenuIntro: "Exporteren: neem alle instellingen incl. je key mee naar een andere wereld of browser. Importeren: plak een export.",
+      configMenuExport: "Exporteren",
+      configMenuImport: "Importeren",
+      // ── TargetBoard ──
+      targetBoardNoServer: "Target Watch heeft de alliance-server nodig \u2014 typ /st register",
+      targetBoardStatusOpen: "paneel open",
+      targetBoardStatusClosed: "paneel dicht (/st targets)",
+      targetBoardLoading: "laden\u2026",
+      targetBoardFailed: "Targets konden niet geladen worden \u2014 zie de console (F12)",
+      targetBoardRefreshFailed: "verversen mislukt",
+      targetBoardEmpty: "Niemand in de alliance kijkt nu naar een target",
+      targetBoardUpdated: "ververst om {time}",
+      targetBoardAgoNow: "nu",
+      targetBoardAgoMin: "{n} min",
+      targetBoardAgoHour: "{n} u",
+      targetBoardColTarget: "Target",
+      targetBoardColLevel: "Level",
+      targetBoardColWatchers: "Kijkers",
+      targetBoardColSeen: "Laatst gezien",
+      targetBoardCenterHint: "Klik: centreer de kaart op dit target"
     }
   };
   var _config = null;
@@ -1739,6 +1823,17 @@ var ShockrTools = (() => {
       if (this._panel) this._panel.remove();
       this._panel = null;
     }
+    /** 5.26.0: the toolbar's "Config" button - choose Export or Import. */
+    openMenu({ onExport, onImport }) {
+      const { panel, body } = this._open(t("configMenuTitle"));
+      body.append(this._note(t("configMenuIntro")));
+      const exp = this._button(t("configMenuExport"));
+      exp.addEventListener("click", () => onExport());
+      const imp = this._button(t("configMenuImport"));
+      imp.addEventListener("click", () => onImport());
+      body.append(this._row(exp, imp, this._closeButton()));
+      return panel;
+    }
     /** Read-only text of the config + Copy. */
     openExport(text) {
       const { panel, body } = this._open(t("configExportTitle"));
@@ -1887,18 +1982,13 @@ var ShockrTools = (() => {
       this.register("config", (args, rawArgs = "") => {
         const [action, ...rest] = args;
         if (action === "export") {
-          this._transferPanel.openExport(exportConfig(this.config.data));
-          chatMessage(`[ST] ${t("configExportChat")}`);
+          this.openExport();
         } else if (action === "import") {
           const text = rawArgs.replace(/^import\s*/i, "");
           if (text) {
             chatMessage(`[ST] ${escapeHtml(this._importConfig(text).message)}`);
           } else {
-            this._transferPanel.openImport((pasted) => {
-              const result = this._importConfig(pasted);
-              chatMessage(`[ST] ${escapeHtml(result.message)}`);
-              return result;
-            });
+            this.openImport();
           }
         } else if (action === "set" && rest.length >= 2) {
           const key = rest[0];
@@ -1926,6 +2016,22 @@ var ShockrTools = (() => {
         } else {
           chatMessage(`[ST] ${escapeHtml(t("configUsage"))}`);
         }
+      });
+    }
+    /** 5.26.0: the toolbar's "Config" button. */
+    openConfigMenu() {
+      this._transferPanel.openMenu({ onExport: () => this.openExport(), onImport: () => this.openImport() });
+    }
+    openExport() {
+      this._transferPanel.openExport(exportConfig(this.config.data));
+      chatMessage(`[ST] ${t("configExportChat")}`);
+    }
+    /** Paste field; the result goes to the panel and the chat. */
+    openImport() {
+      this._transferPanel.openImport((pasted) => {
+        const result = this._importConfig(pasted);
+        chatMessage(`[ST] ${escapeHtml(result.message)}`);
+        return result;
       });
     }
     /** Import an export text; @returns {{ok: boolean, message: string}} (translated). */
@@ -2625,15 +2731,14 @@ var ShockrTools = (() => {
     { cmd: "scanalliance", usage: "/st scanalliance", key: "helpCmdScanAlliance" },
     { cmd: "watch", usage: "/st watch [force]", key: "helpCmdWatch" },
     { cmd: "unwatch", usage: "/st unwatch [all]", key: "helpCmdUnwatch" },
-    { cmd: "formation", usage: "/st formation save|load|list|delete [name]", key: "helpCmdFormation" }
+    { cmd: "formation", usage: "/st formation save|load|list|delete [name]", key: "helpCmdFormation" },
+    { cmd: "targets", usage: "/st targets", key: "helpCmdTargets" }
   ];
   var USEFUL_SETTINGS = [
     ["language", "helpSetLanguage"],
     ["colors", "helpSetColors"],
     ["api.url", "helpSetApiUrl"],
     ["api.key", "helpSetApiKey"],
-    ["UpgradeCalc.buttonLeft", "helpSetButtonLeft"],
-    ["UpgradeCalc.buttonTop", "helpSetButtonTop"],
     ["PvpAlert.sound", "helpSetPvpSound"]
   ];
   function getHelpModel(version, plugins, commands) {
@@ -2860,6 +2965,240 @@ var ShockrTools = (() => {
       console.warn("[ST] Update notice failed:", e);
     }
     return result.version;
+  }
+
+  // lib/drag.js
+  var DRAG_THRESHOLD_PX = 4;
+  var MIN_VISIBLE_PX = 24;
+  function loadPosition(config, prefix, fallback) {
+    const x = Number(config.get(`${prefix}.x`));
+    const y = Number(config.get(`${prefix}.y`));
+    return Number.isFinite(x) && Number.isFinite(y) ? { x, y } : fallback;
+  }
+  function clampPosition(pos, size, viewport) {
+    const maxX = Math.max(0, viewport.w - Math.min(size.w, MIN_VISIBLE_PX));
+    const maxY = Math.max(0, viewport.h - Math.min(size.h, MIN_VISIBLE_PX));
+    return {
+      x: Math.round(Math.min(Math.max(0, pos.x), maxX)),
+      y: Math.round(Math.min(Math.max(0, pos.y), maxY))
+    };
+  }
+  function makeDraggable(el, handle, { config, prefix, onClick, onMove }) {
+    handle.addEventListener("mousedown", (e) => {
+      if (e.button !== 0) return;
+      const startX = e.clientX;
+      const startY = e.clientY;
+      const rect = el.getBoundingClientRect();
+      let dragging = false;
+      const move = (ev) => {
+        const dx = ev.clientX - startX;
+        const dy = ev.clientY - startY;
+        if (!dragging && Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD_PX) return;
+        dragging = true;
+        const pos = clampPosition(
+          { x: rect.left + dx, y: rect.top + dy },
+          { w: rect.width, h: rect.height },
+          { w: window.innerWidth, h: window.innerHeight }
+        );
+        el.style.left = `${pos.x}px`;
+        el.style.top = `${pos.y}px`;
+        if (onMove) onMove();
+      };
+      const up = () => {
+        document.removeEventListener("mousemove", move);
+        document.removeEventListener("mouseup", up);
+        if (dragging) {
+          config.set(`${prefix}.x`, parseInt(el.style.left, 10));
+          config.set(`${prefix}.y`, parseInt(el.style.top, 10));
+        } else if (onClick) {
+          onClick();
+        }
+      };
+      document.addEventListener("mousemove", move);
+      document.addEventListener("mouseup", up);
+      e.preventDefault();
+    });
+  }
+
+  // lib/toolbar.js
+  var BUTTON_ID = "st-toolbar-button";
+  var GRID_ID = "st-toolbar-grid";
+  var DEFAULT_POSITION = { x: 80, y: 46 };
+  var BUTTON_SIZE = 32;
+  var ITEM_SIZE = 40;
+  var GAP = 4;
+  var COLUMNS = 2;
+  var ICON_COLOR = "#4fc3f7";
+  var BUTTON_CSS = `
+    box-sizing: border-box;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(to bottom, #1a4a6e, #0d2a40);
+    color: ${ICON_COLOR};
+    border: 1px solid #5f8fb4;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 3px rgba(0, 0, 0, 0.6);
+    cursor: pointer;
+    user-select: none;
+    pointer-events: auto;
+`;
+  var ICONS = {
+    shield: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2.5l8 3v6c0 5-3.4 8.8-8 10.5-4.6-1.7-8-5.5-8-10.5v-6z"/><path d="M13.2 6.5L9 13h3l-1.2 4.8L15 11h-3z" fill="currentColor" stroke="none"/></svg>',
+    calc: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="5" y="2.5" width="14" height="19" rx="2"/><rect x="8" y="5.5" width="8" height="4" rx="0.5"/><path d="M8.5 13h1M12 13h0M15.5 13h0M8.5 16.5h0M12 16.5h0M15.5 16.5h0" stroke-width="2.4" stroke-linecap="round"/></svg>',
+    help: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.2 9.3a2.9 2.9 0 0 1 5.6 1c0 1.9-2.8 2.4-2.8 4.2"/><circle cx="12" cy="17.6" r="0.6" fill="currentColor"/></svg>',
+    radar: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="5"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/></svg>'
+  };
+  var Toolbar = class {
+    /**
+     * @param {object} config
+     * @param {object} opts
+     * @param {Function} opts.onConfig — the "Config" button (export/import panel)
+     */
+    constructor(config, { onConfig }) {
+      this.config = config;
+      this._onConfig = onConfig;
+      this._items = [];
+      this._button = null;
+      this._grid = null;
+      this._onDocDown = (e) => {
+        if (this._grid && this._grid.contains(e.target)) return;
+        if (this._button && this._button.contains(e.target)) return;
+        this.close();
+      };
+      this._onKeyDown = (e) => {
+        if (e.key === "Escape") this.close();
+      };
+    }
+    /** Add a grid item; the same id again replaces it in place. */
+    register(item) {
+      const i = this._items.findIndex((x) => x.id === item.id);
+      if (i >= 0) this._items[i] = item;
+      else this._items.push(item);
+      if (this.isOpen()) this._renderGrid();
+    }
+    unregister(id) {
+      this._items = this._items.filter((i) => i.id !== id);
+      if (this.isOpen()) this._renderGrid();
+    }
+    /** Items the grid shows now (isAvailable() false → hidden). */
+    visibleItems() {
+      return this._items.filter((i) => {
+        try {
+          return !i.isAvailable || i.isAvailable();
+        } catch {
+          return false;
+        }
+      });
+    }
+    /** Create the main button (once the game UI is up). */
+    start() {
+      if (this._button && document.body.contains(this._button)) return;
+      const pos = clampPosition(
+        loadPosition(this.config, "toolbar", DEFAULT_POSITION),
+        { w: BUTTON_SIZE, h: BUTTON_SIZE },
+        { w: window.innerWidth, h: window.innerHeight }
+      );
+      const btn = document.createElement("div");
+      btn.id = BUTTON_ID;
+      btn.title = "Shockr TA Tools";
+      btn.innerHTML = ICONS.shield;
+      btn.style.cssText = `${BUTTON_CSS}
+            position: fixed; left: ${pos.x}px; top: ${pos.y}px; z-index: 9999;
+            width: ${BUTTON_SIZE}px; height: ${BUTTON_SIZE}px;`;
+      hover(btn);
+      document.body.appendChild(btn);
+      this._button = btn;
+      makeDraggable(btn, btn, {
+        config: this.config,
+        prefix: "toolbar",
+        onClick: () => this.toggle(),
+        onMove: () => {
+          if (this.isOpen()) this._placeGrid();
+        }
+      });
+    }
+    isOpen() {
+      return !!this._grid && this._grid.style.display !== "none";
+    }
+    toggle() {
+      if (this.isOpen()) this.close();
+      else this.open();
+    }
+    open() {
+      if (!this._grid || !document.body.contains(this._grid)) {
+        const grid = document.createElement("div");
+        grid.id = GRID_ID;
+        grid.style.cssText = `
+                position: fixed; z-index: 10001; box-sizing: border-box;
+                padding: ${GAP}px; background: rgba(10, 25, 38, 0.92);
+                border: 1px solid #3d6a8c; border-radius: 4px; pointer-events: auto;`;
+        document.body.appendChild(grid);
+        this._grid = grid;
+      }
+      this._renderGrid();
+      this._grid.style.display = "block";
+      this._placeGrid();
+      document.addEventListener("mousedown", this._onDocDown, true);
+      document.addEventListener("keydown", this._onKeyDown);
+    }
+    close() {
+      document.removeEventListener("mousedown", this._onDocDown, true);
+      document.removeEventListener("keydown", this._onKeyDown);
+      if (this._grid) this._grid.style.display = "none";
+    }
+    _renderGrid() {
+      const grid = this._grid;
+      grid.innerHTML = "";
+      const cells = document.createElement("div");
+      cells.style.cssText = `display: grid; grid-template-columns: repeat(${COLUMNS}, ${ITEM_SIZE}px); gap: ${GAP}px;`;
+      for (const item of this.visibleItems()) {
+        const cell = document.createElement("div");
+        cell.innerHTML = item.icon;
+        cell.title = typeof item.label === "function" ? item.label() : item.label;
+        cell.style.cssText = `${BUTTON_CSS} width: ${ITEM_SIZE}px; height: ${ITEM_SIZE}px;`;
+        hover(cell);
+        cell.addEventListener("click", () => this._run(item.onClick));
+        cells.appendChild(cell);
+      }
+      if (cells.childElementCount) grid.appendChild(cells);
+      const config = document.createElement("div");
+      config.textContent = t("toolbarConfig");
+      config.title = t("toolbarConfigHint");
+      config.style.cssText = `${BUTTON_CSS}
+            width: ${COLUMNS * ITEM_SIZE + (COLUMNS - 1) * GAP}px; height: 24px;
+            margin-top: ${cells.childElementCount ? GAP : 0}px;
+            font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 12px; font-weight: bold;`;
+      hover(config);
+      config.addEventListener("click", () => this._run(this._onConfig));
+      grid.appendChild(config);
+    }
+    /** Below the button, or above it when there is no room; kept inside the viewport. */
+    _placeGrid() {
+      const b = this._button.getBoundingClientRect();
+      const g = this._grid.getBoundingClientRect();
+      let top = b.bottom + GAP;
+      if (top + g.height > window.innerHeight) top = Math.max(0, b.top - GAP - g.height);
+      const left = Math.min(Math.max(0, b.left), Math.max(0, window.innerWidth - g.width));
+      this._grid.style.left = `${Math.round(left)}px`;
+      this._grid.style.top = `${Math.round(top)}px`;
+    }
+    _run(fn) {
+      this.close();
+      try {
+        if (fn) fn();
+      } catch (err) {
+        console.error("[ST] Toolbar: item failed", err);
+      }
+    }
+  };
+  function hover(el) {
+    el.addEventListener("mouseenter", () => {
+      el.style.borderColor = "#9fd4f5";
+      el.style.color = "#b3e5fc";
+    });
+    el.addEventListener("mouseleave", () => {
+      el.style.borderColor = "#5f8fb4";
+      el.style.color = ICON_COLOR;
+    });
   }
 
   // lib/city-util.js
@@ -4270,7 +4609,7 @@ var ShockrTools = (() => {
 
   // plugins/upgrade-calc.js
   var PANEL_ID5 = "st-upgradecalc-panel";
-  var BUTTON_ID = "st-upgradecalc-button";
+  var TOOLBAR_ID = "upgradecalc";
   var RES_TIB2 = 1;
   var RES_POWER = 5;
   var VIEW_CHECK_INTERVAL_MS = 1e3;
@@ -4280,21 +4619,26 @@ var ShockrTools = (() => {
     get description() {
       return t("descUpgradeCalc");
     }
-    constructor(config) {
+    constructor(config, toolbar) {
       this.name = "UpgradeCalc";
       this.defaultEnabled = false;
       this.config = config;
+      this.toolbar = toolbar;
       this.running = false;
       this._panel = null;
       this._content = null;
-      this._button = null;
       this._viewTimer = null;
       this._refreshTimer = null;
       this._viewKey = null;
     }
     async start() {
       this.running = true;
-      this._ensureButton();
+      this.toolbar.register({
+        id: TOOLBAR_ID,
+        icon: ICONS.calc,
+        label: () => t("toolbarUpgradeCalc"),
+        onClick: () => this.toggle()
+      });
       this._checkView();
       this._viewTimer = setInterval(() => this._checkView(), VIEW_CHECK_INTERVAL_MS);
     }
@@ -4305,12 +4649,10 @@ var ShockrTools = (() => {
         clearInterval(this._viewTimer);
         this._viewTimer = null;
       }
-      for (const el of [this._panel, this._button]) {
-        if (el) el.remove();
-      }
+      this.toolbar.unregister(TOOLBAR_ID);
+      if (this._panel) this._panel.remove();
       this._panel = null;
       this._content = null;
-      this._button = null;
       this._viewKey = null;
     }
     /** One-line status for `/st status`. */
@@ -4318,14 +4660,17 @@ var ShockrTools = (() => {
       if (!this.running) return "/st plugin enable upgradecalc";
       return t(this._isOpen() ? "upgradeCalcStatusOpen" : "upgradeCalcStatusButton");
     }
-    /** Button click: close the panel if open, otherwise show it for the current own city. */
+    /** Toolbar item: close the panel if open, otherwise show it for the current own city. */
     toggle() {
       if (this._isOpen()) {
         this._hide();
         return;
       }
       const city = getViewedOwnCity();
-      if (!city) return;
+      if (!city) {
+        chatMessage(`[ST] ${t("upgradeCalcOwnBaseOnly")}`);
+        return;
+      }
       this._ensurePanel();
       this._render(city);
       this._panel.style.display = "block";
@@ -4334,7 +4679,7 @@ var ShockrTools = (() => {
         if (current) this._render(current);
       }, REFRESH_INTERVAL_MS);
     }
-    /** Show the button only on own bases; close the panel when the view/base changes. */
+    /** Close the panel when the view/base changes. */
     _checkView() {
       const city = getViewedOwnCity();
       const key = city ? String(city.get_Id()) : null;
@@ -4342,7 +4687,6 @@ var ShockrTools = (() => {
         this._viewKey = key;
         this._hide();
       }
-      if (this._button) this._button.style.display = city ? "block" : "none";
     }
     _render(city) {
       try {
@@ -4361,49 +4705,6 @@ var ShockrTools = (() => {
         this._refreshTimer = null;
       }
       if (this._panel) this._panel.style.display = "none";
-    }
-    _ensureButton() {
-      if (this._button && document.body.contains(this._button)) return this._button;
-      const css = (v) => typeof v === "number" ? `${v}px` : v;
-      const left = this.config.get("UpgradeCalc.buttonLeft", 80);
-      const top = this.config.get("UpgradeCalc.buttonTop", 10);
-      const btn = document.createElement("div");
-      btn.id = BUTTON_ID;
-      btn.textContent = "UC";
-      btn.title = "Upgrade Calculator";
-      btn.style.cssText = `
-            display: none;
-            position: fixed;
-            left: ${css(left)};
-            top: ${css(top)};
-            z-index: 9999;
-            width: 32px;
-            height: 32px;
-            line-height: 32px;
-            text-align: center;
-            background: rgba(20, 20, 20, 0.88);
-            color: #ddd;
-            border: 1px solid #444;
-            border-radius: 4px;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            user-select: none;
-            pointer-events: auto;
-        `;
-      btn.addEventListener("click", () => this.toggle());
-      btn.addEventListener("mouseenter", () => {
-        btn.style.color = "#fff";
-        btn.style.borderColor = "#888";
-      });
-      btn.addEventListener("mouseleave", () => {
-        btn.style.color = "#ddd";
-        btn.style.borderColor = "#444";
-      });
-      document.body.appendChild(btn);
-      this._button = btn;
-      return btn;
     }
     _ensurePanel() {
       if (this._panel && document.body.contains(this._panel)) return this._panel;
@@ -7749,13 +8050,13 @@ var ShockrTools = (() => {
   // plugins/movable-menu.js
   var SCAN_MS2 = 1e3;
   var HEADER_PX = 40;
-  var DRAG_THRESHOLD_PX = 4;
-  var MIN_VISIBLE_PX = 80;
+  var DRAG_THRESHOLD_PX2 = 4;
+  var MIN_VISIBLE_PX2 = 80;
   var MAX_ENTRIES = 60;
   var STORE_KEY = "MovableMenu.positions";
-  function clampPosition(left, top, w, vw, vh) {
-    const minLeft = -Math.max(0, w - MIN_VISIBLE_PX);
-    const maxLeft = Math.max(0, vw - MIN_VISIBLE_PX);
+  function clampPosition2(left, top, w, vw, vh) {
+    const minLeft = -Math.max(0, w - MIN_VISIBLE_PX2);
+    const maxLeft = Math.max(0, vw - MIN_VISIBLE_PX2);
     return {
       left: Math.round(Math.min(Math.max(left, minLeft), maxLeft)),
       top: Math.round(Math.min(Math.max(top, 0), Math.max(0, vh - 30)))
@@ -7952,7 +8253,7 @@ var ShockrTools = (() => {
       if (!pos || typeof pos.left !== "number") return;
       const b = win.getBounds && win.getBounds() || {};
       const { vw, vh } = this._viewport();
-      const c = clampPosition(pos.left, pos.top, b.width || 0, vw, vh);
+      const c = clampPosition2(pos.left, pos.top, b.width || 0, vw, vh);
       const cur = win.getLayoutProperties() || {};
       if (cur.left !== c.left || cur.top !== c.top) win.moveTo(c.left, c.top);
     }
@@ -7979,7 +8280,7 @@ var ShockrTools = (() => {
       const baseLeft = r.left - cur.dx;
       const baseTop = r.top - cur.dy;
       const { vw, vh } = this._viewport();
-      const c = clampPosition(baseLeft + dx, baseTop + dy, r.width, vw, vh);
+      const c = clampPosition2(baseLeft + dx, baseTop + dy, r.width, vw, vh);
       const off = { dx: c.left - Math.round(baseLeft), dy: c.top - Math.round(baseTop) };
       el.style.transform = off.dx || off.dy ? `translate(${off.dx}px, ${off.dy}px)` : "";
       this._shifted.add(el);
@@ -8005,7 +8306,7 @@ var ShockrTools = (() => {
         const move = (ev) => {
           const dx = ev.clientX - start.x;
           const dy = ev.clientY - start.y;
-          if (!dragging && Math.abs(dx) < DRAG_THRESHOLD_PX && Math.abs(dy) < DRAG_THRESHOLD_PX) return;
+          if (!dragging && Math.abs(dx) < DRAG_THRESHOLD_PX2 && Math.abs(dy) < DRAG_THRESHOLD_PX2) return;
           if (!dragging) {
             dragging = true;
             document.body.style.userSelect = "none";
@@ -8275,7 +8576,7 @@ var ShockrTools = (() => {
   var RETRY_MAX = 20;
   var COLORS2 = { high: "#8bc34a", low: "#ef5350", mid: "#ffffff", muted: "#bdbdbd" };
   var LOOT_TYPES = { 1: "tib", 2: "cry", 3: "cred", 6: "rp" };
-  var COLUMNS = [
+  var COLUMNS2 = [
     { key: "rp", icon: "ui/common/icn_res_tiberium.png" },
     { key: "tib", icon: "ui/common/icn_res_chrystal.png" },
     { key: "cry", icon: "ui/common/icn_res_dollar.png" },
@@ -8513,7 +8814,7 @@ var ShockrTools = (() => {
         this._icons = {};
         try {
           const fm = ClientLib.File.FileManager.GetInstance();
-          for (const c of COLUMNS) this._icons[c.key] = fm.GetPhysicalPath(c.icon);
+          for (const c of COLUMNS2) this._icons[c.key] = fm.GetPhysicalPath(c.icon);
         } catch {
         }
       }
@@ -8665,7 +8966,7 @@ var ShockrTools = (() => {
         row++;
         let col = 1;
         this._label(grid, row, col++, `${t(labelKey)}:`, { bold });
-        for (const c of COLUMNS) {
+        for (const c of COLUMNS2) {
           this._image(grid, row, col++, c.key);
           let color;
           if (c.key === "total" && div === 1) color = COLORS2[rankColor(loot.total, this._history.total)];
@@ -9337,8 +9638,243 @@ var ShockrTools = (() => {
     return names2;
   }
 
+  // plugins/target-board.js
+  var PANEL_ID6 = "st-targetboard-panel";
+  var TOOLBAR_ID2 = "targetboard";
+  var REFRESH_INTERVAL_MS2 = 2e4;
+  var PANEL_WIDTH = 400;
+  var DEFAULT_POSITION2 = { x: 130, y: 46 };
+  var DOUBLE_WATCHERS = 2;
+  var TargetBoard = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descTargetBoard");
+    }
+    constructor(config, api, toolbar, cli) {
+      this.name = "TargetBoard";
+      this.config = config;
+      this.api = api;
+      this.toolbar = toolbar;
+      this.cli = cli;
+      this.running = false;
+      this._panel = null;
+      this._title = null;
+      this._content = null;
+      this._timer = null;
+      this._targets = null;
+      this._updatedAt = null;
+      this._error = false;
+      this._loading = false;
+      this._onKeyDown = (e) => {
+        if (e.key === "Escape") this.close();
+      };
+    }
+    async start() {
+      this.running = true;
+      this.toolbar.register({
+        id: TOOLBAR_ID2,
+        icon: ICONS.radar,
+        label: () => t("toolbarTargetBoard"),
+        onClick: () => this.toggle(),
+        isAvailable: () => this.api.isConfigured
+      });
+      this.cli.register("targets", () => this.toggle());
+    }
+    stop() {
+      this.running = false;
+      this.close();
+      this.toolbar.unregister(TOOLBAR_ID2);
+      delete this.cli.commands.targets;
+      if (this._panel) this._panel.remove();
+      this._panel = null;
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      if (!this.running) return "/st plugin enable target-board";
+      if (!this.api.isConfigured) return t("targetBoardNoServer");
+      return t(this.isOpen() ? "targetBoardStatusOpen" : "targetBoardStatusClosed");
+    }
+    isOpen() {
+      return !!this._panel && this._panel.style.display !== "none";
+    }
+    toggle() {
+      if (this.isOpen()) this.close();
+      else this.open();
+    }
+    open() {
+      if (!this.api.isConfigured) {
+        chatMessage(`[ST] ${t("targetBoardNoServer")}`);
+        return;
+      }
+      this._ensurePanel();
+      this._targets = null;
+      this._error = false;
+      this._render();
+      this._panel.style.display = "block";
+      document.addEventListener("keydown", this._onKeyDown);
+      this._load();
+      this._timer = setInterval(() => this._load(), REFRESH_INTERVAL_MS2);
+    }
+    close() {
+      document.removeEventListener("keydown", this._onKeyDown);
+      if (this._timer) {
+        clearInterval(this._timer);
+        this._timer = null;
+      }
+      if (this._panel) this._panel.style.display = "none";
+    }
+    async _load() {
+      if (this._loading) return;
+      const worldId3 = currentWorldId2();
+      if (worldId3 === null) return;
+      this._loading = true;
+      let data = null;
+      try {
+        data = await this.api.request("GET", `/api/target-watch/${worldId3}`);
+      } finally {
+        this._loading = false;
+      }
+      if (!this.isOpen()) return;
+      if (data && Array.isArray(data.targets)) {
+        this._targets = data.targets;
+        this._updatedAt = /* @__PURE__ */ new Date();
+        this._error = false;
+      } else {
+        this._error = true;
+      }
+      this._render();
+    }
+    _render() {
+      const rows = this._targets ? sortTargets(this._targets) : null;
+      this._title.innerHTML = renderTitle(rows, this._updatedAt, this._error);
+      if (!rows) {
+        this._content.innerHTML = `<div style="color:#999;padding:12px 0;text-align:center;">${escapeHtml(t(this._error ? "targetBoardFailed" : "targetBoardLoading"))}</div>`;
+        return;
+      }
+      this._content.innerHTML = renderTable(rows, Date.now());
+      this._content.querySelectorAll("tr[data-x]").forEach((tr2) => {
+        tr2.addEventListener("click", () => centerMap(Number(tr2.dataset.x), Number(tr2.dataset.y)));
+      });
+    }
+    _ensurePanel() {
+      if (this._panel && document.body.contains(this._panel)) return;
+      const pos = clampPosition(
+        loadPosition(this.config, "TargetBoard", DEFAULT_POSITION2),
+        { w: PANEL_WIDTH, h: 40 },
+        { w: window.innerWidth, h: window.innerHeight }
+      );
+      const panel = document.createElement("div");
+      panel.id = PANEL_ID6;
+      panel.style.cssText = `
+            display: none;
+            position: fixed;
+            left: ${pos.x}px;
+            top: ${pos.y}px;
+            z-index: 10000;
+            width: ${PANEL_WIDTH}px;
+            max-width: calc(100vw - 16px);
+            box-sizing: border-box;
+            background: rgba(20, 20, 20, 0.92);
+            color: #ddd;
+            border: 1px solid #444;
+            border-radius: 4px;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 12px;
+            pointer-events: auto;
+        `;
+      const header = document.createElement("div");
+      header.style.cssText = "display:flex;align-items:baseline;gap:8px;padding:8px 10px 6px;cursor:move;user-select:none;border-bottom:1px solid #333;";
+      const title = document.createElement("div");
+      title.style.cssText = "flex:1;min-width:0;";
+      const close = document.createElement("div");
+      close.textContent = "\u2715";
+      close.title = t("close");
+      close.style.cssText = "cursor:pointer;color:#999;font-size:14px;line-height:1;";
+      close.addEventListener("mousedown", (e) => e.stopPropagation());
+      close.addEventListener("click", () => this.close());
+      close.addEventListener("mouseenter", () => {
+        close.style.color = "#fff";
+      });
+      close.addEventListener("mouseleave", () => {
+        close.style.color = "#999";
+      });
+      header.append(title, close);
+      const content = document.createElement("div");
+      content.style.cssText = "max-height:60vh;overflow-y:auto;padding:4px 10px 8px;";
+      panel.append(header, content);
+      document.body.appendChild(panel);
+      makeDraggable(panel, header, { config: this.config, prefix: "TargetBoard" });
+      this._panel = panel;
+      this._title = title;
+      this._content = content;
+    }
+  };
+  function sortTargets(targets) {
+    return targets.filter((tg) => tg && Array.isArray(tg.watchers) && tg.watchers.length).sort((a, b) => b.watchers.length - a.watchers.length || latest(b) - latest(a));
+  }
+  function latest(target) {
+    return Math.max(...target.watchers.map((w) => toMs(w.timestamp)));
+  }
+  function toMs(ts) {
+    const n = Number(ts) || 0;
+    return n < 1e12 ? n * 1e3 : n;
+  }
+  function relativeTime(ms, now) {
+    const min = Math.floor(Math.max(0, now - ms) / 6e4);
+    if (min < 1) return t("targetBoardAgoNow");
+    if (min < 60) return t("targetBoardAgoMin", { n: min });
+    return t("targetBoardAgoHour", { n: Math.floor(min / 60) });
+  }
+  function renderTitle(rows, updatedAt, error) {
+    let html = `<b style="color:#fff;">\u{1F3AF} Target Watch</b>`;
+    if (rows) html += ` <span style="color:#aaa;">(${rows.length})</span>`;
+    if (updatedAt) {
+      const time = updatedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+      html += ` <span style="color:#777;font-size:11px;">\xB7 ${escapeHtml(t("targetBoardUpdated", { time }))}</span>`;
+    }
+    if (error && rows) html += ` <span style="color:#e57373;font-size:11px;">\xB7 ${escapeHtml(t("targetBoardRefreshFailed"))}</span>`;
+    return html;
+  }
+  function renderTable(rows, now) {
+    if (!rows.length) {
+      return `<div style="color:#999;padding:12px 0;text-align:center;">${escapeHtml(t("targetBoardEmpty"))}</div>`;
+    }
+    const th = "padding:3px 4px;text-align:left;font-weight:normal;color:#999;border-bottom:1px solid #444;";
+    const td = "padding:3px 4px;vertical-align:top;";
+    let html = '<table style="width:100%;border-collapse:collapse;">';
+    html += `<tr><th style="${th}">${escapeHtml(t("targetBoardColTarget"))}</th><th style="${th}">${escapeHtml(t("targetBoardColLevel"))}</th><th style="${th}">${escapeHtml(t("targetBoardColWatchers"))}</th><th style="${th}white-space:nowrap;">${escapeHtml(t("targetBoardColSeen"))}</th></tr>`;
+    for (const tg of rows) {
+      const double = tg.watchers.length >= DOUBLE_WATCHERS;
+      const rowStyle = double ? "background:#3a2e14;box-shadow:inset 3px 0 0 #ff9800;" : "box-shadow:inset 3px 0 0 #555;";
+      const x = Number(tg.targetX);
+      const y = Number(tg.targetY);
+      const names2 = tg.watchers.map((w) => escapeHtml(w.playerName || "?")).join(", ");
+      html += `<tr data-x="${x}" data-y="${y}" title="${escapeHtml(t("targetBoardCenterHint"))}" style="${rowStyle}cursor:pointer;border-bottom:1px solid #2a2a2a;"><td style="${td}padding-left:8px;"><div style="color:#e0e0e0;">${escapeHtml(tg.targetName || "?")}</div><div style="color:#4fc3f7;">${x}:${y}</div></td><td style="${td}white-space:nowrap;">L${Math.floor(Number(tg.targetLevel) || 0)}</td><td style="${td}"><span style="color:${double ? "#ffb74d" : "#aaa"};font-weight:${double ? "bold" : "normal"};">${tg.watchers.length}</span> \xB7 ${names2}</td><td style="${td}white-space:nowrap;color:#888;">${escapeHtml(relativeTime(latest(tg), now))}</td></tr>`;
+    }
+    return html + "</table>";
+  }
+  function currentWorldId2() {
+    try {
+      return Number(ClientLib.Data.MainData.GetInstance().get_Server().get_WorldId());
+    } catch {
+      return null;
+    }
+  }
+  function centerMap(x, y) {
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+    try {
+      const vis = ClientLib.Vis.VisMain.GetInstance();
+      if (vis.get_Mode() !== ClientLib.Vis.Mode.Region) {
+        qx.core.Init.getApplication().getPlayArea().setView(ClientLib.Data.PlayerAreaViewMode.pavmNone, -1, 0, 0);
+      }
+      vis.CenterGridPosition(x, y);
+    } catch (e) {
+      console.warn("[ST] TargetBoard: centre map failed", e && e.message);
+    }
+  }
+
   // lib/main.js
-  var ST_VERSION = "5.25.0";
+  var ST_VERSION = "5.26.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -9362,6 +9898,7 @@ var ShockrTools = (() => {
     api.setSendGate(() => online.isPaused);
     online.on("resume", () => api.resumeQueue());
     online.start();
+    const toolbar = new Toolbar(config, { onConfig: () => cli.openConfigMenu() });
     const attackTracker = new AttackTracker(config, api);
     const watchList = new WatchList(config, cli, api);
     const targetWatcher = new TargetWatcher(config, api);
@@ -9373,7 +9910,7 @@ var ShockrTools = (() => {
       new LayoutScanner(config, cli, api, idle, online),
       new AllianceScanner(config, cli, api, idle, online),
       new RepairGuard(config),
-      new UpgradeCalc(config),
+      new UpgradeCalc(config, toolbar),
       targetWatcher,
       attackTracker,
       watchList,
@@ -9389,7 +9926,8 @@ var ShockrTools = (() => {
       new TransferAll(config),
       new LootSummary(config),
       new ChatHelper(config),
-      new PvpAlert(config)
+      new PvpAlert(config),
+      new TargetBoard(config, api, toolbar, cli)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });
     for (const plugin of plugins) {
@@ -9468,6 +10006,13 @@ var ShockrTools = (() => {
         chatMessage(buildHelp(ST_VERSION, plugins, cli.commands));
       }
     });
+    toolbar.register({
+      id: "help",
+      icon: ICONS.help,
+      label: () => t("toolbarHelp"),
+      onClick: () => helpPanel.toggle(buildHelpPanel(ST_VERSION, plugins, cli.commands))
+    });
+    toolbar.start();
     cli.start();
     idle.start();
     fixUnload();

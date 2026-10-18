@@ -10,14 +10,17 @@
 
 A Tampermonkey userscript for [C&C Tiberium Alliances](https://www.tiberiumalliances.com/) that adds:
 
+- **Shockr button** — one shield icon top left (drag it anywhere, the position is remembered). Click it for a grid with every Shockr panel: Upgrade Calculator, Help, Target Watch, and a **Config** button for export/import of your settings. Escape or a click outside closes it
+
 - **CampTracker** — numbered markers on the world map for nearby camps, outposts and bases, with chat alerts and clickable coordinates
 - **KillInfo** — plunder panel for the selected Forgotten base (tiberium + crystal per unit and total), toggled with `/st plunder`
 - **PlayerStatus** — alliance base colors by online status, own bases cyan; scheme via `/st config set colors shockr|maelstrom` (default shockr)
 - **LayoutScanner** — scan nearby FG base layouts and upload to a shared alliance server
 - **RepairGuard** — blocks "Repair All" so you don't fully repair by accident (saves crystal on Forgotten Attack worlds); per-unit repair keeps working. Off by default — `/st plugin enable repair-guard`
-- **UpgradeCalc** — upgrade panel for your current base: next-level Tiberium + Power cost per building and how long it takes to save up at your current production (fastest first), opened with the "UC" button on your own base. Off by default — `/st plugin enable upgradecalc`
+- **UpgradeCalc** — upgrade panel for your current base: next-level Tiberium + Power cost per building and how long it takes to save up at your current production (fastest first), opened with the calculator icon in the Shockr button on your own base. Off by default — `/st plugin enable upgradecalc`
 - **AttackTracker** — logs your own WON attacks on Forgotten camps/outposts/bases (target, level, coordinates, tib/crystal/credits loot) to the alliance server, read from your combat reports. Lost attacks and PvP are never sent. The website page **🗡 Attacks** shows per tunnel (targets within 10 fields) who attacked what, with filters per player / day / target type. Uses the scanner's `api.url` + `/st register`. On by default — `/st plugin disable attack-tracker`
 - **TargetWatcher** — tells your alliance server which enemy/Forgotten base you are viewing and warns in chat when an alliance mate is looking at the same target (`[ST] ⚠️ NeoJackson1 kijkt ook naar Camp L47 (sinds 3 min)`), so two players don't hit the same target unknowingly. Uses the scanner's `api.url` / `api.key`. On by default for new installs (installs from before 5.12.0 keep their setting) — `/st plugin disable target-watcher`
+- **TargetBoard** — the website's Target Watch overview in-game: radar icon in the Shockr button or `/st targets`. Every target your alliance is looking at right now, with level, who watches it and since when; 2+ watchers = orange row. Click a row to centre the world map on it. Refreshes every 20 s while open, no requests while closed. Needs the alliance server (`/st register`). On by default — `/st plugin disable target-board`
 
 All features work offline — no external API dependency. The optional scanner uploads to your own self-hosted server.
 
@@ -62,6 +65,7 @@ All configuration via in-game chat:
 | `/st status` | Show plugin status and whether you are registered with the alliance server |
 | `/st register` | Register with the alliance server — popup asking for the enrollment code |
 | `/st plunder` | Toggle the plunder panel for the selected Forgotten base |
+| `/st targets` | Open/close the in-game Target Watch panel |
 | `/st plugin enable <name>` | Enable a plugin |
 | `/st plugin disable <name>` | Disable a plugin |
 | `/st config list` | Show all config values |
