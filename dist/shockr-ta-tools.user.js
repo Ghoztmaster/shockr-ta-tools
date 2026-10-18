@@ -3,11 +3,16 @@
 // @author          Ghozt [SoO] (original: Shockr, fixed by NetquiK [SoO])
 // @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver, wavy, loot summary, chat helper & PvP alert for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
-// @grant           none
-// @version         5.24.0
+// @grant           GM_getValue
+// @grant           GM_setValue
+// @version         5.25.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
+// @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
+// @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // ==/UserScript==
 
+(function () {
+function __stBundle() {
 var ShockrTools = (() => {
   var __defProp = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -277,24 +282,70 @@ var ShockrTools = (() => {
   ];
 
   // lib/config.js
+  var SYNC_SUFFIX = "-gm-sync";
+  var gmConfig = null;
+  var CONFIG_LOST_MESSAGE = '[ST] Config niet gevonden in localStorage en GM-storage. Als je het script via "Importeren" hebt bijgewerkt, is je config gewist. Gebruik /st config import met je export-code, of /st register.';
+  if (typeof window !== "undefined" && typeof window.addEventListener === "function") {
+    window.addEventListener("st-gm-config", (e) => {
+      try {
+        const parsed = JSON.parse(e.detail);
+        const cfg = parsed && parsed.config;
+        gmConfig = cfg && typeof cfg === "object" && !Array.isArray(cfg) ? cfg : {};
+      } catch {
+        gmConfig = null;
+      }
+    });
+    try {
+      window.dispatchEvent(new CustomEvent("st-gm-request"));
+    } catch {
+    }
+  }
+  var same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  function mergeWithGm(local, gm, base) {
+    const merged = { ...local };
+    for (const [k, v] of Object.entries(gm || {})) {
+      if (v === void 0 || v === null) continue;
+      if (!(k in merged)) {
+        merged[k] = v;
+      } else if (base && k in base && same(merged[k], base[k]) && !same(merged[k], v)) {
+        merged[k] = v;
+      }
+    }
+    return merged;
+  }
   var Config = class {
     /**
      * @param {string} storageKey — localStorage key for all config
+     * @param {object|null} [gm] — GM mirror config; defaults to what the bootstrapper sent
      */
-    constructor(storageKey = "st-config") {
+    constructor(storageKey = "st-config", gm = gmConfig) {
       this.storageKey = storageKey;
       this.data = {};
       this.isNew = true;
+      this.configLost = false;
+      this._gm = gm && typeof gm === "object" ? gm : null;
+      this._synced = null;
       this.load();
     }
     load() {
+      let raw = null;
       try {
-        const raw = localStorage.getItem(this.storageKey);
-        this.isNew = !raw;
+        raw = localStorage.getItem(this.storageKey);
         if (raw) this.data = JSON.parse(raw);
       } catch {
         this.data = {};
       }
+      this.isNew = !raw;
+      if (!this._gm) return;
+      const base = this._readSync();
+      this.configLost = !raw && base !== null && Object.keys(this._gm).length === 0;
+      if (this.configLost) console.warn(CONFIG_LOST_MESSAGE);
+      const before = JSON.stringify(this.data);
+      this.data = mergeWithGm(this.data, this._gm, base);
+      if (Object.keys(this._gm).length) this.isNew = false;
+      this._synced = { ...this._gm };
+      this.save(JSON.stringify(this.data) !== before);
+      this._writeSync();
     }
     /**
      * Pin `<plugin>.enabled` for plugins whose default changed, so the new default
@@ -313,11 +364,49 @@ var ShockrTools = (() => {
         this.set(key, this.isNew ? plugin.defaultEnabled !== false : legacyDefaults[plugin.name]);
       }
     }
-    save() {
+    /** @param {boolean} [writeLocal=true] — false: only mirror, localStorage is already current */
+    save(writeLocal = true) {
+      if (writeLocal) {
+        try {
+          localStorage.setItem(this.storageKey, JSON.stringify(this.data));
+        } catch (e) {
+          console.warn("[ST] Config save failed:", e);
+        }
+      }
+      this._mirror();
+    }
+    /** Send every key that differs from what GM holds (also catches direct `data` writes, e.g. import). */
+    _mirror() {
+      if (!this._synced) return;
+      const keys = /* @__PURE__ */ new Set([...Object.keys(this.data), ...Object.keys(this._synced)]);
+      let changed = false;
+      for (const k of keys) {
+        const v = this.data[k];
+        if (same(v, this._synced[k])) continue;
+        const detail = v === void 0 ? { key: k } : { key: k, value: v };
+        try {
+          window.dispatchEvent(new CustomEvent("st-config-changed", { detail: JSON.stringify(detail) }));
+        } catch {
+        }
+        if (v === void 0) delete this._synced[k];
+        else this._synced[k] = v;
+        changed = true;
+      }
+      if (changed) this._writeSync();
+    }
+    _readSync() {
       try {
-        localStorage.setItem(this.storageKey, JSON.stringify(this.data));
-      } catch (e) {
-        console.warn("[ST] Config save failed:", e);
+        const raw = localStorage.getItem(this.storageKey + SYNC_SUFFIX);
+        const v = raw ? JSON.parse(raw) : null;
+        return v && typeof v === "object" && !Array.isArray(v) ? v : null;
+      } catch {
+        return null;
+      }
+    }
+    _writeSync() {
+      try {
+        localStorage.setItem(this.storageKey + SYNC_SUFFIX, JSON.stringify(this._synced));
+      } catch {
       }
     }
     /**
@@ -452,6 +541,19 @@ var ShockrTools = (() => {
       registerStatusOn: "Registration: \u2705 registered \u2014 personal key active",
       registerStatusShared: "Registration: \u26A0\uFE0F not registered \u2014 using the shared alliance key (type /st register)",
       registerStatusOff: "Registration: \u26A0\uFE0F not registered \u2014 type /st register",
+      // 5.25.0: key restore + export prompt in the register popup, update notice, wiped-config notice
+      registerHaveKey: "I still have my key",
+      registerRestoreIntro: "Paste the key from an earlier /st config export (or from the register popup). It stays the same key \u2014 other browsers keep working.",
+      registerRestoreLabel: "Your key",
+      registerRestoreButton: "Restore key",
+      registerRestoreBusy: "Checking key...",
+      registerRestored: "\u2705 Key restored \u2014 your personal key is active again.",
+      registerRestoredChat: "\u2705 Key restored",
+      registerRestoreInvalid: "\u274C Key not valid",
+      registerExportTitle: "Your backup code",
+      registerExportNotice: "Keep this code somewhere safe. If you ever have to reinstall the script, it puts your settings and key back via /st config import.",
+      updateAvailable: 'New version {version} available. Tampermonkey menu \u2192 "Check for userscript updates" (your settings are kept).',
+      configLost: '\u26A0\uFE0F Config not found in localStorage or GM storage. If you updated the script via "Import", your config was wiped. Use /st config import with your export code, or /st register.',
       // ── CampTracker ──
       campSpawned: "{time}: New L{level} {type} spawned at {coord}",
       campTypeCamp: "Camp",
@@ -743,6 +845,18 @@ var ShockrTools = (() => {
       registerStatusOn: "Registrierung: \u2705 registriert \u2014 pers\xF6nlicher Key aktiv",
       registerStatusShared: "Registrierung: \u26A0\uFE0F nicht registriert \u2014 gemeinsamer Allianz-Key in Gebrauch (tippe /st register)",
       registerStatusOff: "Registrierung: \u26A0\uFE0F nicht registriert \u2014 tippe /st register",
+      registerHaveKey: "Ich habe meinen Key noch",
+      registerRestoreIntro: "F\xFCge den Key aus einem fr\xFCheren /st config export (oder aus dem Registrierungsfenster) ein. Es bleibt derselbe Key \u2014 andere Browser funktionieren weiter.",
+      registerRestoreLabel: "Dein Key",
+      registerRestoreButton: "Key wiederherstellen",
+      registerRestoreBusy: "Pr\xFCfe Key...",
+      registerRestored: "\u2705 Key wiederhergestellt \u2014 dein pers\xF6nlicher Key ist wieder aktiv.",
+      registerRestoredChat: "\u2705 Key wiederhergestellt",
+      registerRestoreInvalid: "\u274C Key nicht g\xFCltig",
+      registerExportTitle: "Dein Sicherungscode",
+      registerExportNotice: "Bewahre diesen Code sicher auf. Falls du das Script jemals neu installieren musst, setzt er deine Einstellungen und deinen Key \xFCber /st config import zur\xFCck.",
+      updateAvailable: 'Neue Version {version} verf\xFCgbar. Tampermonkey-Men\xFC \u2192 "Nach Userscript-Updates suchen" (deine Einstellungen bleiben erhalten).',
+      configLost: '\u26A0\uFE0F Konfiguration weder im localStorage noch im GM-Speicher gefunden. Wenn du das Script \xFCber "Importieren" aktualisiert hast, wurde sie gel\xF6scht. Nutze /st config import mit deinem Export-Code oder /st register.',
       campSpawned: "{time}: Neues L{level} {type} erschienen bei {coord}",
       campTypeCamp: "Camp",
       campTypeOutpost: "Outpost",
@@ -1026,6 +1140,18 @@ var ShockrTools = (() => {
       registerStatusOn: "Registratie: \u2705 geregistreerd \u2014 persoonlijke key actief",
       registerStatusShared: "Registratie: \u26A0\uFE0F niet geregistreerd \u2014 gedeelde alliance-key in gebruik (typ /st register)",
       registerStatusOff: "Registratie: \u26A0\uFE0F niet geregistreerd \u2014 typ /st register",
+      registerHaveKey: "Ik heb mijn key nog",
+      registerRestoreIntro: "Plak de key uit een eerdere /st config export (of uit het registratievenster). Het blijft dezelfde key \u2014 andere browsers blijven werken.",
+      registerRestoreLabel: "Je key",
+      registerRestoreButton: "Key terugzetten",
+      registerRestoreBusy: "Key controleren...",
+      registerRestored: "\u2705 Key hersteld \u2014 je persoonlijke key is weer actief.",
+      registerRestoredChat: "\u2705 Key hersteld",
+      registerRestoreInvalid: "\u274C Key niet geldig",
+      registerExportTitle: "Je back-upcode",
+      registerExportNotice: "Bewaar deze code ergens veilig. Als je het script ooit opnieuw moet installeren, kun je hiermee je instellingen en key terugzetten via /st config import.",
+      updateAvailable: 'Nieuwe versie {version} beschikbaar. Tampermonkey-menu \u2192 "Controleren op updates" (je instellingen blijven behouden).',
+      configLost: '\u26A0\uFE0F Config niet gevonden in localStorage en GM-storage. Als je het script via "Importeren" hebt bijgewerkt, is je config gewist. Gebruik /st config import met je export-code, of /st register.',
       campSpawned: "{time}: Nieuw L{level} {type} verschenen op {coord}",
       campTypeCamp: "Camp",
       campTypeOutpost: "Outpost",
@@ -1237,13 +1363,22 @@ var ShockrTools = (() => {
   // lib/register-panel.js
   var PANEL_ID = "st-register-panel";
   var FOCUS_DELAY_MS = 50;
+  var BTN_PRIMARY = "padding:5px 12px;background:#2a5a8a;color:#fff;border:1px solid #3a7ab8;border-radius:3px;cursor:pointer;font-size:12px;";
+  var BTN_GREY = "padding:5px 12px;background:#444;color:#fff;border:1px solid #666;border-radius:3px;cursor:pointer;font-size:12px;";
+  var FIELD = "width:100%;box-sizing:border-box;padding:5px 6px;background:#111;color:#eee;border:1px solid #555;border-radius:3px;font-size:12px;";
+  var MONO_FIELD = "flex:1;min-width:0;box-sizing:border-box;padding:5px 6px;background:#111;color:#fd8;border:1px solid #555;border-radius:3px;font-family:Consolas,monospace;font-size:12px;";
   var RegisterPanel = class {
     /**
-     * @param {(code: string, replace: boolean) => Promise<{ok: boolean, message: string, vars?: object, confirm?: boolean}>} onSubmit
+     * @param {(code: string, replace: boolean) => Promise<{ok: boolean, message: string, vars?: object, confirm?: boolean, playerKey?: string}>} onSubmit
      *        — performs the enrollment; message is an i18n key, confirm = ask before replacing a key
+     * @param {{onRestore?: (key: string) => Promise<{ok: boolean, message: string, vars?: object}>, getExport?: () => string}} [hooks]
+     *        — onRestore: check + store an existing key (absent = no restore option);
+     *          getExport: the /st config export text, shown after a success (absent = no export block)
      */
-    constructor(onSubmit) {
+    constructor(onSubmit, hooks = {}) {
       this.onSubmit = onSubmit;
+      this.onRestore = typeof hooks.onRestore === "function" ? hooks.onRestore : null;
+      this.getExport = typeof hooks.getExport === "function" ? hooks.getExport : null;
       this._panel = null;
     }
     isOpen() {
@@ -1260,6 +1395,8 @@ var ShockrTools = (() => {
       if (this._panel) this._panel.remove();
       this._panel = null;
       this._input = null;
+      this._restoreInput = null;
+      this._restoreBlock = null;
       this._confirm = null;
     }
     async _submit(form, button, status, replace = false) {
@@ -1278,9 +1415,7 @@ var ShockrTools = (() => {
         this._showStatus(status, t(result.message, result.vars), "#fb5");
         panel.appendChild(this._buildConfirm(form, button, status));
       } else if (result.ok) {
-        form.style.display = "none";
-        this._showStatus(status, t(result.message, result.vars), "#7c7");
-        if (result.playerKey) panel.appendChild(this._buildKeyBlock(result.playerKey));
+        this._finish(panel, form, status, result, result.playerKey ? this._buildKeyBlock(result.playerKey) : null);
       } else {
         this._showStatus(status, t(result.message, result.vars), "#f77");
         button.disabled = false;
@@ -1289,19 +1424,67 @@ var ShockrTools = (() => {
         this._input.focus();
       }
     }
+    /** "I still have my key" → check it with the server and store it. */
+    async _submitRestore(form, button, status) {
+      const key = this._restoreInput.value.trim();
+      if (!key) {
+        this._restoreInput.focus();
+        return;
+      }
+      button.disabled = true;
+      this._restoreInput.disabled = true;
+      this._showStatus(status, t("registerRestoreBusy"), "#ccc");
+      const panel = this._panel;
+      const result = await this.onRestore(key);
+      if (panel !== this._panel) return;
+      if (result.ok) {
+        this._finish(panel, form, status, result, null);
+      } else {
+        this._showStatus(status, t(result.message, result.vars), "#f77");
+        button.disabled = false;
+        this._restoreInput.disabled = false;
+        this._restoreInput.select();
+        this._restoreInput.focus();
+      }
+    }
+    /** Success (new key or restored): form away, green status, key block, export block, Close. */
+    _finish(panel, form, status, result, keyBlock) {
+      form.style.display = "none";
+      if (this._restoreBlock) this._restoreBlock.style.display = "none";
+      this._showStatus(status, t(result.message, result.vars), "#7c7");
+      if (keyBlock) panel.appendChild(keyBlock);
+      const exportText = this._exportText();
+      if (exportText) panel.appendChild(this._buildExportBlock(exportText));
+      const close = document.createElement("button");
+      close.type = "button";
+      close.textContent = t("close");
+      close.style.cssText = BTN_GREY + "margin-top:10px;";
+      close.addEventListener("click", () => this.hide());
+      panel.appendChild(close);
+      if (!keyBlock) setTimeout(() => close.focus(), FOCUS_DELAY_MS);
+    }
+    /** The export text AFTER the key was stored (so it contains the key); '' when unavailable. */
+    _exportText() {
+      if (!this.getExport) return "";
+      try {
+        return String(this.getExport() || "");
+      } catch (e) {
+        console.warn("[ST] Register: export text failed:", e);
+        return "";
+      }
+    }
     /** "You already have a key …": Continue (send again with replace) or Cancel (form back). */
     _buildConfirm(form, button, status) {
       const row = document.createElement("div");
       row.style.cssText = "display:flex;gap:6px;margin-top:8px;";
-      const btnStyle = "padding:5px 12px;color:#fff;border-radius:3px;cursor:pointer;font-size:12px;";
       const go = document.createElement("button");
       go.type = "button";
       go.textContent = t("registerContinue");
-      go.style.cssText = btnStyle + "background:#8a4a1a;border:1px solid #b8662a;";
+      go.style.cssText = BTN_PRIMARY + "background:#8a4a1a;border-color:#b8662a;";
       const cancel = document.createElement("button");
       cancel.type = "button";
       cancel.textContent = t("cancel");
-      cancel.style.cssText = btnStyle + "background:#444;border:1px solid #666;";
+      cancel.style.cssText = BTN_GREY;
       go.addEventListener("click", () => {
         row.remove();
         this._confirm = null;
@@ -1320,46 +1503,108 @@ var ShockrTools = (() => {
       row.append(go, cancel);
       return row;
     }
-    /** The new key: notice, read-only field + Copy, and Close. */
+    /** The new key: notice, read-only field + Copy. */
     _buildKeyBlock(key) {
       const block = document.createElement("div");
       block.style.marginTop = "10px";
       const notice = document.createElement("div");
       notice.textContent = t("registerKeyNotice");
       notice.style.cssText = "color:#ddd;margin-bottom:8px;line-height:1.4;";
-      const row = document.createElement("div");
-      row.style.cssText = "display:flex;gap:6px;";
       const field = document.createElement("input");
       field.type = "text";
       field.readOnly = true;
       field.value = key;
       field.spellcheck = false;
-      field.style.cssText = "flex:1;min-width:0;box-sizing:border-box;padding:5px 6px;background:#111;color:#fd8;border:1px solid #555;border-radius:3px;font-family:Consolas,monospace;font-size:12px;";
+      field.style.cssText = MONO_FIELD;
       field.addEventListener("focus", () => field.select());
-      const btnStyle = "padding:5px 12px;background:#2a5a8a;color:#fff;border:1px solid #3a7ab8;border-radius:3px;cursor:pointer;font-size:12px;";
-      const copy = document.createElement("button");
-      copy.type = "button";
-      copy.textContent = t("copy");
-      copy.style.cssText = btnStyle;
-      const feedback = document.createElement("div");
-      feedback.style.cssText = "min-height:16px;margin-top:4px;font-size:11px;";
-      copy.addEventListener("click", async () => {
-        const ok = await copyText(key, field);
-        feedback.textContent = t(ok ? "copied" : "copyFailed");
-        feedback.style.color = ok ? "#7c7" : "#f77";
-        if (!ok) field.select();
-      });
-      const close = document.createElement("button");
-      close.type = "button";
-      close.textContent = t("close");
-      close.style.cssText = btnStyle + "margin-top:6px;background:#444;border-color:#666;";
-      close.addEventListener("click", () => this.hide());
-      row.append(field, copy);
-      block.append(notice, row, feedback, close);
+      const { row, feedback } = this._copyRow(field, key);
+      block.append(notice, row, feedback);
       setTimeout(() => {
         field.focus();
         field.select();
       }, FOCUS_DELAY_MS);
+      return block;
+    }
+    /** The /st config export text (incl. the key) as a backup, with Copy. */
+    _buildExportBlock(text) {
+      const block = document.createElement("div");
+      block.style.cssText = "margin-top:12px;padding-top:10px;border-top:1px solid #444;";
+      const title = document.createElement("div");
+      title.innerHTML = `<b style="color:#8cf">${escapeHtml(t("registerExportTitle"))}</b>`;
+      title.style.marginBottom = "4px";
+      const notice = document.createElement("div");
+      notice.textContent = t("registerExportNotice");
+      notice.style.cssText = "color:#ddd;margin-bottom:8px;line-height:1.4;";
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.readOnly = true;
+      area.spellcheck = false;
+      area.rows = 4;
+      area.style.cssText = "flex:1;min-width:0;box-sizing:border-box;padding:5px 6px;background:#111;color:#fd8;border:1px solid #555;border-radius:3px;font-family:Consolas,monospace;font-size:11px;resize:vertical;word-break:break-all;";
+      area.addEventListener("focus", () => area.select());
+      const { row, feedback } = this._copyRow(area, text);
+      block.append(title, notice, row, feedback);
+      return block;
+    }
+    /** field + Copy button side by side, with a feedback line underneath. */
+    _copyRow(field, text) {
+      const row = document.createElement("div");
+      row.style.cssText = "display:flex;gap:6px;align-items:flex-start;";
+      const copy = document.createElement("button");
+      copy.type = "button";
+      copy.textContent = t("copy");
+      copy.style.cssText = BTN_PRIMARY;
+      const feedback = document.createElement("div");
+      feedback.style.cssText = "min-height:16px;margin-top:4px;font-size:11px;";
+      copy.addEventListener("click", async () => {
+        const ok = await copyText(text, field);
+        feedback.textContent = t(ok ? "copied" : "copyFailed");
+        feedback.style.color = ok ? "#7c7" : "#f77";
+        if (!ok) field.select();
+      });
+      row.append(field, copy);
+      return { row, feedback };
+    }
+    /** "I still have my key": a link that opens the restore field + button. */
+    _buildRestoreBlock(status) {
+      const block = document.createElement("div");
+      block.style.cssText = "margin-top:12px;padding-top:8px;border-top:1px solid #444;";
+      const toggle = document.createElement("button");
+      toggle.type = "button";
+      toggle.textContent = t("registerHaveKey");
+      toggle.style.cssText = "padding:0;background:none;border:none;color:#8cf;cursor:pointer;font-size:12px;text-decoration:underline;";
+      const section = document.createElement("form");
+      section.autocomplete = "off";
+      section.style.cssText = "display:none;margin-top:8px;";
+      const intro = document.createElement("div");
+      intro.textContent = t("registerRestoreIntro");
+      intro.style.cssText = "color:#aaa;margin-bottom:8px;line-height:1.4;";
+      const label = document.createElement("label");
+      label.textContent = t("registerRestoreLabel");
+      label.style.cssText = "display:block;margin-bottom:4px;";
+      const input = document.createElement("input");
+      input.type = "text";
+      input.autocomplete = "off";
+      input.spellcheck = false;
+      input.maxLength = 100;
+      input.style.cssText = FIELD + "font-family:Consolas,monospace;";
+      label.htmlFor = input.id = `${PANEL_ID}-restore-key`;
+      const button = document.createElement("button");
+      button.type = "submit";
+      button.textContent = t("registerRestoreButton");
+      button.style.cssText = BTN_PRIMARY + "margin-top:10px;";
+      section.append(intro, label, input, button);
+      section.addEventListener("submit", (e) => {
+        e.preventDefault();
+        this._submitRestore(section, button, status);
+      });
+      toggle.addEventListener("click", () => {
+        const open = section.style.display === "none";
+        section.style.display = open ? "block" : "none";
+        if (open) setTimeout(() => input.focus(), FOCUS_DELAY_MS);
+      });
+      block.append(toggle, section);
+      this._restoreInput = input;
       return block;
     }
     _showStatus(el, text, color) {
@@ -1421,12 +1666,12 @@ var ShockrTools = (() => {
       input.autocomplete = "off";
       input.spellcheck = false;
       input.maxLength = 100;
-      input.style.cssText = "width:100%;box-sizing:border-box;padding:5px 6px;background:#111;color:#eee;border:1px solid #555;border-radius:3px;font-size:12px;";
+      input.style.cssText = FIELD;
       label.htmlFor = input.id = `${PANEL_ID}-code`;
       const button = document.createElement("button");
       button.type = "submit";
       button.textContent = t("registerButton");
-      button.style.cssText = "margin-top:10px;padding:5px 16px;background:#2a5a8a;color:#fff;border:1px solid #3a7ab8;border-radius:3px;cursor:pointer;font-size:12px;";
+      button.style.cssText = BTN_PRIMARY + "margin-top:10px;";
       const status = document.createElement("div");
       status.style.cssText = "display:none;margin-top:10px;font-weight:bold;";
       form.append(intro, label, input, button);
@@ -1435,6 +1680,8 @@ var ShockrTools = (() => {
         this._submit(form, button, status);
       });
       panel.append(close, title, form, status);
+      this._restoreBlock = this.onRestore ? this._buildRestoreBlock(status) : null;
+      if (this._restoreBlock) panel.appendChild(this._restoreBlock);
       this._input = input;
       return panel;
     }
@@ -1939,6 +2186,7 @@ var ShockrTools = (() => {
     "Invalid enrollment code": "registerInvalidCode",
     "Alliance not authorized": "registerNotAuthorized"
   };
+  var KEY_NOT_VALID = "Key not valid";
   var ApiClient = class {
     constructor(config) {
       this.config = config;
@@ -2057,6 +2305,47 @@ var ShockrTools = (() => {
         return { ok: false, message: "registerFailed", vars: { error: `HTTP ${resp.status}` } };
       } catch (e) {
         console.warn("[ST] API: enroll network error", e.message);
+        return { ok: false, message: "registerFailed", vars: { error: e.message } };
+      }
+    }
+    /**
+     * POST /api/enroll/restore (5.25.0): put a key the player still has (from
+     * /st config export) back after the browser lost it. The server only checks
+     * it against the stored hash - nothing new is issued, so other browsers /
+     * game servers that still hold the key keep working. On success the key is
+     * stored like after an enrollment (api.playerKey + api.playerKeyId).
+     * @param {string} key
+     * @returns {Promise<{ok: boolean, message: string, vars?: object, playerKey?: string}>} message = i18n key
+     */
+    async restoreKey(key) {
+      if (!this._url) return { ok: false, message: "registerNoServer" };
+      const player = readPlayer();
+      if (!player || !player.id) return { ok: false, message: "registerNoGameData" };
+      const raw = String(key || "").trim();
+      if (!raw) return { ok: false, message: "registerRestoreInvalid" };
+      try {
+        const resp = await fetch(this._url.replace(/\/$/, "") + "/api/enroll/restore", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ playerId: player.id, key: raw })
+        });
+        let data = {};
+        try {
+          data = await resp.json();
+        } catch {
+        }
+        if (resp.ok && data.status === "ok") {
+          this.config.set("api.playerKey", raw);
+          this.config.set("api.playerKeyId", player.id);
+          return { ok: true, message: "registerRestored", playerKey: raw };
+        }
+        if (resp.status === 403 && data.detail === KEY_NOT_VALID) {
+          return { ok: false, message: "registerRestoreInvalid" };
+        }
+        if (resp.status === 429) return { ok: false, message: "registerRateLimited" };
+        return { ok: false, message: "registerFailed", vars: { error: `HTTP ${resp.status}` } };
+      } catch (e) {
+        console.warn("[ST] API: key restore network error", e.message);
         return { ok: false, message: "registerFailed", vars: { error: e.message } };
       }
     }
@@ -2520,6 +2809,58 @@ var ShockrTools = (() => {
       return panel;
     }
   };
+
+  // lib/update-check.js
+  var VERSION_PATH = "/api/version";
+  var FETCH_TIMEOUT_MS = 8e3;
+  function compareVersions(a, b) {
+    const pa = parse(a);
+    const pb = parse(b);
+    const n = Math.max(pa.length, pb.length);
+    for (let i = 0; i < n; i++) {
+      const d = (pa[i] || 0) - (pb[i] || 0);
+      if (d !== 0) return d;
+    }
+    return 0;
+  }
+  function parse(v) {
+    return String(v || "").trim().replace(/^v/i, "").split(".").map((p) => {
+      const n = parseInt(p, 10);
+      return Number.isFinite(n) ? n : 0;
+    });
+  }
+  async function checkForUpdate(baseUrl, current, fetchFn = globalThis.fetch) {
+    const base = String(baseUrl || "").trim().replace(/\/$/, "");
+    if (!base || typeof fetchFn !== "function") return { newer: false, version: null };
+    let timer = null;
+    try {
+      const ctrl = typeof AbortController === "function" ? new AbortController() : null;
+      if (ctrl) timer = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
+      const resp = await fetchFn(base + VERSION_PATH, { method: "GET", signal: ctrl ? ctrl.signal : void 0 });
+      if (!resp || !resp.ok) return { newer: false, version: null };
+      const data = await resp.json();
+      const version = data && typeof data.version === "string" ? data.version.trim() : "";
+      if (!version) return { newer: false, version: null };
+      return { newer: compareVersions(version, current) > 0, version };
+    } catch {
+      return { newer: false, version: null };
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  }
+  var announced = false;
+  async function announceUpdateOnce({ url, current, notify, fetchFn }) {
+    if (announced) return null;
+    const result = await checkForUpdate(url, current, fetchFn);
+    if (!result.newer || announced) return null;
+    announced = true;
+    try {
+      notify(result.version);
+    } catch (e) {
+      console.warn("[ST] Update notice failed:", e);
+    }
+    return result.version;
+  }
 
   // lib/city-util.js
   function getMainCity() {
@@ -3469,6 +3810,7 @@ var ShockrTools = (() => {
   var SCAN_DELAY_MS = 2e3;
   var SCAN_INTERVAL_MS = 36e5;
   var scannedVersions = /* @__PURE__ */ new Map();
+  var MAX_CACHED_VERSIONS = 500;
   var LayoutScanner = class {
     /** Short description for `/st help`. */
     get description() {
@@ -3577,6 +3919,14 @@ var ShockrTools = (() => {
           if (!payload) continue;
           this.api.send(payload);
           scannedVersions.set(cityId, version);
+          if (scannedVersions.size > MAX_CACHED_VERSIONS) {
+            const excess = scannedVersions.size - MAX_CACHED_VERSIONS;
+            let i = 0;
+            for (const key of scannedVersions.keys()) {
+              if (i++ >= excess) break;
+              scannedVersions.delete(key);
+            }
+          }
           scanned++;
           await sleep3(SCAN_DELAY_MS);
         }
@@ -3613,6 +3963,7 @@ var ShockrTools = (() => {
   var LOCK_WAIT_MS = 5e3;
   var LOCK_WAIT_MAX = 120;
   var scannedVersions2 = /* @__PURE__ */ new Map();
+  var MAX_CACHED_VERSIONS2 = 500;
   var AllianceScanner = class {
     /** Short description for `/st help`. */
     get description() {
@@ -3722,6 +4073,14 @@ var ShockrTools = (() => {
           if (!payload) continue;
           this.api.send(payload);
           scannedVersions2.set(cityId, version);
+          if (scannedVersions2.size > MAX_CACHED_VERSIONS2) {
+            const excess = scannedVersions2.size - MAX_CACHED_VERSIONS2;
+            let i = 0;
+            for (const key of scannedVersions2.keys()) {
+              if (i++ >= excess) break;
+              scannedVersions2.delete(key);
+            }
+          }
           scanned++;
           await sleep4(SCAN_DELAY_MS2);
         }
@@ -5760,7 +6119,7 @@ var ShockrTools = (() => {
   };
 
   // plugins/tunnel-info.js
-  var REFRESH_MS3 = 2e3;
+  var REFRESH_MS3 = 5e3;
   var DEFAULT_INFLUENCE_RANGE = 6;
   var COLOR_ACTIVE = "#06ff00";
   var COLOR_BLOCKED = "#ff3600";
@@ -8979,7 +9338,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.24.0";
+  var ST_VERSION = "5.25.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -9088,6 +9447,13 @@ var ShockrTools = (() => {
       const result = await api.enroll(code, replace);
       if (result.ok) chatMessage(`[ST] ${t("registerSuccessChat")}`);
       return result;
+    }, {
+      onRestore: async (key) => {
+        const result = await api.restoreKey(key);
+        if (result.ok) chatMessage(`[ST] ${t("registerRestoredChat")}`);
+        return result;
+      },
+      getExport: () => exportConfig(config.data)
     });
     cli.register("register", () => registerPanel.open());
     cli.register("version", () => {
@@ -9107,6 +9473,13 @@ var ShockrTools = (() => {
     fixUnload();
     chatMessage(`[ST] ${t("loaded", { version: ST_VERSION, active: plugins.filter((p) => p.running).length, total: plugins.length })}`);
     console.log(`[ST] v${ST_VERSION} ready`);
+    if (config.configLost) chatMessage(`[ST] ${t("configLost")}`);
+    announceUpdateOnce({
+      url: api._url,
+      current: ST_VERSION,
+      notify: (version) => chatMessage(`[ST] ${t("updateAvailable", { version })}`)
+    }).catch(() => {
+    });
   }
   function chatMessage(msg) {
     try {
@@ -9122,4 +9495,78 @@ var ShockrTools = (() => {
   }
   startup().catch((err) => console.error("[ST] Fatal:", err));
   return __toCommonJS(main_exports);
+})();
+}
+
+/**
+ * bootstrap.js — userscript-manager side of Shockr TA Tools (5.25.0).
+ *
+ * Not an ES module: build.js pastes this file as-is into the .user.js, after
+ * `function __stBundle() { ...whole bundle... }`, and calls stBootstrap(__stBundle).
+ *
+ * With @grant GM_getValue/GM_setValue the manager runs the script in a sandbox,
+ * where ClientLib, qx and the game objects are not reachable. So the bundle is
+ * injected into the page as a <script> and talks to this side via window events
+ * (see lib/config.js): it asks for the mirrored config ('st-gm-request') while
+ * it loads, gets it back synchronously ('st-gm-config'), and reports every
+ * config change ('st-config-changed'), which is written to GM storage. GM
+ * storage is shared by all game hosts (cncappXX), localStorage is not.
+ */
+function stBootstrap(bundle) {
+    const GM_KEY = 'st-config';
+    const hasGm = typeof GM_getValue === 'function' && typeof GM_setValue === 'function';
+
+    function readGm() {
+        try {
+            const v = GM_getValue(GM_KEY, {});
+            return v && typeof v === 'object' && !Array.isArray(v) ? v : {};
+        } catch (e) {
+            console.warn('[ST] GM config read failed:', e);
+            return {};
+        }
+    }
+
+    let requested = false;
+    if (hasGm) {
+        window.addEventListener('st-gm-request', () => {
+            requested = true;
+            window.dispatchEvent(new CustomEvent('st-gm-config', {
+                detail: JSON.stringify({ config: readGm() }),
+            }));
+        });
+
+        window.addEventListener('st-config-changed', (e) => {
+            let change;
+            try {
+                change = JSON.parse(e.detail);
+            } catch {
+                return;
+            }
+            if (!change || typeof change.key !== 'string' || !change.key) return;
+            // Read fresh each time: another tab (other host) may have written since
+            const cfg = readGm();
+            if ('value' in change) cfg[change.key] = change.value;
+            else delete cfg[change.key];
+            try {
+                GM_setValue(GM_KEY, cfg);
+            } catch (err) {
+                console.warn('[ST] GM config write failed:', err);
+            }
+        });
+    } else {
+        console.warn('[ST] GM storage not available — config is not mirrored across game hosts');
+    }
+
+    // Synchronous: an inline script runs during appendChild, before the next line
+    const script = document.createElement('script');
+    script.textContent = '(' + bundle.toString() + ')();';
+    (document.head || document.documentElement).appendChild(script);
+    script.remove();
+
+    if (hasGm && !requested) {
+        console.error('[ST] Bundle did not start in the page (script injection blocked?)');
+    }
+}
+
+stBootstrap(__stBundle);
 })();

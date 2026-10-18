@@ -18,3 +18,4 @@ git pull && docker compose build --no-cache && docker compose up -d
 ```
 
 Dus nooit "geen VPS-update nodig" melden: elke release noemt deze deploy-stap.
+De deploy zelf voert Wilco altijd uit — CC noemt de stap alleen, vraagt er geen goedkeuring voor en voert hem niet uit.

@@ -31,7 +31,7 @@ import {
     addToMap, attachMapEvents, detachMapEvents,
 } from '../lib/map-overlay.js';
 
-const REFRESH_MS = 2000;
+const REFRESH_MS = 5000;
 const DEFAULT_INFLUENCE_RANGE = 6;
 const COLOR_ACTIVE = '#06ff00';
 const COLOR_BLOCKED = '#ff3600';

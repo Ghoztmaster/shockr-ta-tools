@@ -1,19 +1,17 @@
 /**
  * upgrade-calc.js — upgrade cost + saving time per building of the current own city.
  *
- * Off by default — `/st plugin enable upgradecalc`. While enabled, a floating
- * "UC" button sits top left (next to the game logo) whenever you view one of
- * your own bases (hidden on the world map and on enemy/Forgotten bases).
- * Clicking it toggles a panel with every building that is not max level, the
- * cost of its next level and how long it takes to save up for it at the
- * current production rate (fastest first).
- *
- * The button floats instead of being injected into the game's own base-view
- * button bar: that bar is a qooxdoo widget without a stable, readable handle.
+ * Off by default — `/st plugin enable upgradecalc`. While enabled it has an
+ * item in the Shockr toolbar (lib/toolbar.js; until 5.26.0 it had its own
+ * floating "UC" button - the UpgradeCalc.buttonLeft/Top settings are no longer
+ * used). On one of your own bases the item toggles a panel with every building
+ * that is not max level, the cost of its next level and how long it takes to
+ * save up for it at the current production rate (fastest first); elsewhere it
+ * says so in the chat.
  *
  * Pure client-side — no fetch, no document-wide listeners. A 1 s timer reads
- * two getters (view mode + viewed city) to show/hide the button; switching
- * base closes the panel. While the panel is open it refreshes every 30 s.
+ * two getters (view mode + viewed city); switching base closes the panel.
+ * While the panel is open it refreshes every 30 s.
  *
  * Data paths (verified in the F12 console):
  *   city  = MainData.get_Cities().get_CurrentOwnCity()
@@ -26,15 +24,17 @@
  *   stock = city.GetResourceCount(type)
  *   rate  = city.GetResourceGrowPerHour(type, true, true)   — incl. package + POI
  */
+import { chatMessage } from '../lib/main.js';
 import { t } from '../lib/i18n.js';
+import { ICONS } from '../lib/toolbar.js';
 
 const PANEL_ID = 'st-upgradecalc-panel';
-const BUTTON_ID = 'st-upgradecalc-button';
+const TOOLBAR_ID = 'upgradecalc';
 
 const RES_TIB = 1;
 const RES_POWER = 5;
 
-/** How often the button checks whether an own base is in view. */
+/** How often the plugin checks whether the viewed base changed. */
 const VIEW_CHECK_INTERVAL_MS = 1000;
 /** How often the open panel refreshes stock/production/time. */
 const REFRESH_INTERVAL_MS = 30000;
@@ -43,14 +43,14 @@ export class UpgradeCalc {
     /** Short description for `/st help`. */
     get description() { return t('descUpgradeCalc'); }
 
-    constructor(config) {
+    constructor(config, toolbar) {
         this.name = 'UpgradeCalc';
         this.defaultEnabled = false;
         this.config = config;
+        this.toolbar = toolbar;
         this.running = false;
         this._panel = null;
         this._content = null;
-        this._button = null;
         this._viewTimer = null;
         this._refreshTimer = null;
         this._viewKey = null;
@@ -58,7 +58,12 @@ export class UpgradeCalc {
 
     async start() {
         this.running = true;
-        this._ensureButton();
+        this.toolbar.register({
+            id: TOOLBAR_ID,
+            icon: ICONS.calc,
+            label: () => t('toolbarUpgradeCalc'),
+            onClick: () => this.toggle(),
+        });
         this._checkView();
         this._viewTimer = setInterval(() => this._checkView(), VIEW_CHECK_INTERVAL_MS);
     }
@@ -70,12 +75,10 @@ export class UpgradeCalc {
             clearInterval(this._viewTimer);
             this._viewTimer = null;
         }
-        for (const el of [this._panel, this._button]) {
-            if (el) el.remove();
-        }
+        this.toolbar.unregister(TOOLBAR_ID);
+        if (this._panel) this._panel.remove();
         this._panel = null;
         this._content = null;
-        this._button = null;
         this._viewKey = null;
     }
 
@@ -85,7 +88,7 @@ export class UpgradeCalc {
         return t(this._isOpen() ? 'upgradeCalcStatusOpen' : 'upgradeCalcStatusButton');
     }
 
-    /** Button click: close the panel if open, otherwise show it for the current own city. */
+    /** Toolbar item: close the panel if open, otherwise show it for the current own city. */
     toggle() {
         if (this._isOpen()) {
             this._hide();
@@ -93,7 +96,10 @@ export class UpgradeCalc {
         }
 
         const city = getViewedOwnCity();
-        if (!city) return;
+        if (!city) {
+            chatMessage(`[ST] ${t('upgradeCalcOwnBaseOnly')}`);
+            return;
+        }
 
         this._ensurePanel();
         this._render(city);
@@ -104,7 +110,7 @@ export class UpgradeCalc {
         }, REFRESH_INTERVAL_MS);
     }
 
-    /** Show the button only on own bases; close the panel when the view/base changes. */
+    /** Close the panel when the view/base changes. */
     _checkView() {
         const city = getViewedOwnCity();
         const key = city ? String(city.get_Id()) : null;
@@ -112,7 +118,6 @@ export class UpgradeCalc {
             this._viewKey = key;
             this._hide();
         }
-        if (this._button) this._button.style.display = city ? 'block' : 'none';
     }
 
     _render(city) {
@@ -134,46 +139,6 @@ export class UpgradeCalc {
             this._refreshTimer = null;
         }
         if (this._panel) this._panel.style.display = 'none';
-    }
-
-    _ensureButton() {
-        if (this._button && document.body.contains(this._button)) return this._button;
-
-        const css = (v) => (typeof v === 'number' ? `${v}px` : v);
-        const left = this.config.get('UpgradeCalc.buttonLeft', 80);
-        const top = this.config.get('UpgradeCalc.buttonTop', 10);
-        const btn = document.createElement('div');
-        btn.id = BUTTON_ID;
-        btn.textContent = 'UC';
-        btn.title = 'Upgrade Calculator';
-        btn.style.cssText = `
-            display: none;
-            position: fixed;
-            left: ${css(left)};
-            top: ${css(top)};
-            z-index: 9999;
-            width: 32px;
-            height: 32px;
-            line-height: 32px;
-            text-align: center;
-            background: rgba(20, 20, 20, 0.88);
-            color: #ddd;
-            border: 1px solid #444;
-            border-radius: 4px;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            user-select: none;
-            pointer-events: auto;
-        `;
-        btn.addEventListener('click', () => this.toggle());
-        btn.addEventListener('mouseenter', () => { btn.style.color = '#fff'; btn.style.borderColor = '#888'; });
-        btn.addEventListener('mouseleave', () => { btn.style.color = '#ddd'; btn.style.borderColor = '#444'; });
-
-        document.body.appendChild(btn);
-        this._button = btn;
-        return btn;
     }
 
     _ensurePanel() {

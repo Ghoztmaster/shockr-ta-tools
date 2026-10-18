@@ -395,6 +395,29 @@ No nginx change: the member list rides along on `POST /api/scan` (`allianceMembe
 docker compose logs -f | grep -E 'Key revoked|not in alliance list'
 ```
 
+## 13. Key restore + in-game update notice (v5.25.0)
+
+Two new calls come from the GAME PAGE (cross-origin), and neither has - nor needs - an nginx CORS block:
+
+- `POST /shockr/api/enroll/restore` (`/st register` → "I still have my key"): `{playerId, key}`, checked against the stored bcrypt hash; 200 `{"status":"ok"}` and nothing changes, else always 403 `Key not valid` (unknown player, revoked or wrong key - no enumeration). Own rate limit: **5 attempts per IP per hour**, right key included (`restore_limiter`).
+- `GET /shockr/api/version` (already public, used by the website footer): the userscript reads it after loading and shows one chat line when the `version` in `config/version.json` is semver-higher than the running script.
+
+**No nginx change.** Both paths fall under the plain `location /shockr/` website block (the `=`/regex blocks for `/api/enroll` and `/api/enroll/[0-9]+` don't match them), so they reach the app without Basic Auth - and the app sets the CORS headers itself (`game_cors_headers()` in `server/main.py`): `Access-Control-Allow-Origin` echoed only for `https://*.alliances.commandandconquer.com`, also on the 403/429 answers (without it the userscript only sees a network error), plus an `OPTIONS /api/enroll/restore` preflight (204). **Do not add an nginx CORS block for these two paths**: a second `Access-Control-Allow-Origin` header makes the browser refuse the response. The `X-Forwarded-For` the website block already sets is what the rate limiter keys on.
+
+```bash
+# Preflight -> 204 with the allow headers (origin must be a game host)
+curl -si -X OPTIONS https://packetlab.nl/shockr/api/enroll/restore \
+  -H 'Origin: https://prodgame40.alliances.commandandconquer.com' -H 'Access-Control-Request-Method: POST' | head -6
+# Wrong key -> 403 {"detail":"Key not valid"}, WITH access-control-allow-origin
+curl -si -X POST https://packetlab.nl/shockr/api/enroll/restore -H 'Content-Type: application/json' \
+  -H 'Origin: https://prodgame40.alliances.commandandconquer.com' -d '{"playerId":1,"key":"wrong"}' | head -8
+# 6th attempt within the hour -> 429
+# Version for the game page -> 200 with access-control-allow-origin; without Origin header no CORS header
+curl -si https://packetlab.nl/shockr/api/version -H 'Origin: https://prodgame40.alliances.commandandconquer.com' | grep -i 'access-control\|"version"'
+```
+
+Logs: `Key restored: name (id)` on success, `Key restore refused from <ip>: player <id>` on a miss, `Key restore rate limit hit from <ip>` at the limit.
+
 ## Update
 
 ```bash

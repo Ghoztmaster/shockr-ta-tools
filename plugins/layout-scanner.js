@@ -24,6 +24,7 @@ const SCAN_INTERVAL_MS = 3600000; // re-scan every 60 minutes when idle
 
 /** Local version cache to avoid re-scanning identical bases. */
 const scannedVersions = new Map();
+const MAX_CACHED_VERSIONS = 500;   // cap the cache; oldest entries drop first
 
 export class LayoutScanner {
     /** Short description for `/st help`. */
@@ -164,6 +165,14 @@ export class LayoutScanner {
 
                 this.api.send(payload);
                 scannedVersions.set(cityId, version);
+                if (scannedVersions.size > MAX_CACHED_VERSIONS) {
+                    const excess = scannedVersions.size - MAX_CACHED_VERSIONS;
+                    let i = 0;
+                    for (const key of scannedVersions.keys()) {
+                        if (i++ >= excess) break;
+                        scannedVersions.delete(key);
+                    }
+                }
                 scanned++;
 
                 // Pacing: 2 seconds between scans to avoid screen flickering

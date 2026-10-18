@@ -12,6 +12,7 @@ Security-first:
   at the reverse proxy
 """
 import json
+import re
 import time
 import logging
 from urllib.parse import unquote
@@ -36,8 +37,9 @@ from server.attacks import (
 from server.watchlist import WatchlistPayload, WatchlistStore, ClaimNotFound, ClaimForbidden
 from server.members import MemberStore, MembershipError, NOT_A_MEMBER
 from server.player_keys import (
-    AllianceMembershipCheck, EnrollPayload, EnrollmentConfig, PlayerKeyStore,
+    AllianceMembershipCheck, EnrollPayload, EnrollmentConfig, PlayerKeyStore, RestorePayload,
     INVALID_CODE, ALLIANCE_NOT_AUTHORIZED, NOT_REGISTERED, INVALID_PLAYER_KEY, ALREADY_REGISTERED,
+    KEY_NOT_VALID,
 )
 from server.web_auth import LoginPayload, SessionStore, SESSION_COOKIE, LOGIN_FAILED
 from server.siteinfo import SiteInfo
@@ -107,6 +109,8 @@ membership_check = AllianceMembershipCheck()
 enrollment = EnrollmentConfig(ENROLLMENT_FILE)
 post_limiter = RateLimiter(max_requests=10, window_seconds=1)
 enroll_limiter = RateLimiter(max_requests=5, window_seconds=3600)
+# 5.25.0: key restore is a brute-force target (one bcrypt check per call) - same strict budget
+restore_limiter = RateLimiter(max_requests=5, window_seconds=3600)
 get_limiter = RateLimiter(max_requests=30, window_seconds=1)
 login_limiter = RateLimiter(max_requests=10, window_seconds=60)
 sessions = SessionStore(player_keys)
@@ -264,6 +268,33 @@ async def rate_limit_get(request: Request):
     if not get_limiter.allow(ip):
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
 
+
+# ─── CORS for the two endpoints the GAME PAGE calls that nginx has no CORS
+# block for (5.25.0): GET /api/version (update notice) and POST
+# /api/enroll/restore (key restore). The other game-page endpoints (/api/scan,
+# /api/enroll, /api/attack, ...) get their CORS headers from nginx (docs/
+# DEPLOY.md); these two fall under the plain website block and get them here,
+# so the deploy needs no nginx change. Do NOT add an nginx CORS block for them
+# as well - doubled Access-Control-Allow-Origin headers make the browser
+# refuse the response.
+
+GAME_ORIGIN_RE = re.compile(r"^https://([a-z0-9-]+\.)*alliances\.commandandconquer\.com$", re.IGNORECASE)
+CORS_MAX_AGE_S = 86400
+
+
+def game_cors_headers(request: Request) -> dict[str, str]:
+    """Allow-Origin for a request from the game's own domains, {} for any other origin."""
+    origin = request.headers.get("origin", "")
+    if not GAME_ORIGIN_RE.match(origin):
+        return {}
+    return {"Access-Control-Allow-Origin": origin, "Vary": "Origin"}
+
+
+def game_json(request: Request, content, status_code: int = 200) -> JSONResponse:
+    """JSON response that a game-page fetch may read (error responses too - without the
+    header the browser hides the status and the userscript only sees a network error)."""
+    return JSONResponse(status_code=status_code, content=content, headers=game_cors_headers(request))
+
 def current_session(request: Request) -> dict | None:
     return sessions.get(request.cookies.get(SESSION_COOKIE))
 
@@ -345,6 +376,38 @@ async def post_enroll(payload: EnrollPayload, request: Request):
         scope = next(iter(key_store.keys)) if len(key_store.keys) == 1 else str(payload.allianceId)
     player_key = player_keys.enroll(payload.playerId, payload.playerName.strip()[:50], payload.allianceId, scope)
     return {"status": "ok", "playerKey": player_key}
+
+
+@app.options("/api/enroll/restore")
+async def options_enroll_restore(request: Request):
+    """CORS preflight for the game page (POST with a JSON body)."""
+    headers = game_cors_headers(request)
+    if not headers:
+        raise HTTPException(status_code=403, detail="Origin not allowed")
+    headers.update({
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Max-Age": str(CORS_MAX_AGE_S),
+    })
+    return Response(status_code=204, headers=headers)
+
+
+@app.post("/api/enroll/restore")
+async def post_enroll_restore(payload: RestorePayload, request: Request):
+    """5.25.0: put an existing key back after the browser lost it. The key itself is
+    the auth: it must match the stored bcrypt hash of that playerId. Nothing is
+    issued or changed on success; a miss is always the same 403, whether the
+    player is unknown, revoked or the key is wrong (no enumeration)."""
+    ip = get_client_ip(request)
+    if not restore_limiter.allow(ip):
+        log.warning("Key restore rate limit hit from %s (player %d)", ip, payload.playerId)
+        return game_json(request, {"detail": "Too many restore attempts — try again later"}, 429)
+    entry = player_keys.verify(payload.playerId, payload.key.strip())
+    if entry is None:
+        log.warning("Key restore refused from %s: player %d", ip, payload.playerId)
+        return game_json(request, {"detail": KEY_NOT_VALID}, 403)
+    log.info("Key restored: %s (%d)", entry.get("playerName") or "?", payload.playerId)
+    return game_json(request, {"status": "ok", "playerId": payload.playerId})
 
 
 @app.delete("/api/enroll/{player_id}", dependencies=[Depends(rate_limit_get)])
@@ -640,10 +703,12 @@ async def health():
 # no restart (server/siteinfo.py).
 
 @app.get("/api/version", dependencies=[Depends(rate_limit_get)])
-async def get_version():
+async def get_version(request: Request):
     """Public on purpose: the footer also shows on the login page. Version
-    number + date + short changelog only, no player or alliance data."""
-    return site_info.version()
+    number + date + short changelog only, no player or alliance data.
+    5.25.0: also read by the userscript (lib/update-check.js) for the in-game
+    "new version available" notice - hence the CORS header for the game origin."""
+    return game_json(request, site_info.version())
 
 
 @app.get("/api/announcements", dependencies=[Depends(rate_limit_get), Depends(require_session)])

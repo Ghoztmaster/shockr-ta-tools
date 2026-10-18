@@ -131,3 +131,38 @@ test('a key of another account in this browser does not trigger the warning', as
     stubFetch([[200, { playerKey: 'mine' }]]);
     assert.equal((await api.enroll('code')).ok, true);
 });
+
+// ─── key restore (5.25.0) ──────────────────────────────────────────
+
+test('restoreKey: server says ok -> the key is stored for this player, the export then contains it', async () => {
+    fakeGame();
+    const api = new mod.ApiClient(freshConfig({ language: 'nl' }));
+    const sent = stubFetch([[200, { status: 'ok', playerId: 164 }]]);
+    const r = await api.restoreKey('  abc123  ');
+    assert.deepEqual(r, { ok: true, message: 'registerRestored', playerKey: 'abc123' });
+    assert.deepEqual(sent, [{ playerId: 164, key: 'abc123' }], 'trimmed, with the own player id');
+    assert.equal(api.config.get('api.playerKey'), 'abc123');
+    assert.equal(api.config.get('api.playerKeyId'), 164);
+    assert.equal(api.registration, 'player');
+    assert.ok(mod.exportConfig(api.config.data).includes('"api.playerkey":"abc123"'), 'the backup code holds the key');
+});
+
+test('restoreKey: 403 -> "Key not valid", nothing stored', async () => {
+    fakeGame();
+    const api = new mod.ApiClient(freshConfig());
+    stubFetch([[403, { detail: 'Key not valid' }]]);
+    assert.deepEqual(await api.restoreKey('wrong'), { ok: false, message: 'registerRestoreInvalid' });
+    assert.equal(api.config.get('api.playerKey'), undefined);
+    assert.equal(api.registration, 'none');
+});
+
+test('restoreKey: 429 and other errors map like enroll; empty key never hits the server', async () => {
+    fakeGame();
+    const api = new mod.ApiClient(freshConfig());
+    const sent = stubFetch([[429, {}], [500, {}]]);
+    assert.deepEqual(await api.restoreKey('   '), { ok: false, message: 'registerRestoreInvalid' });
+    assert.equal(sent.length, 0);
+    assert.equal((await api.restoreKey('k')).message, 'registerRateLimited');
+    assert.deepEqual(await api.restoreKey('k'), { ok: false, message: 'registerFailed', vars: { error: 'HTTP 500' } });
+    assert.equal(api.config.get('api.playerKey'), undefined);
+});

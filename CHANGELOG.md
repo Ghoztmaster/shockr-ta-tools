@@ -2,6 +2,46 @@
 
 ## [Unreleased]
 
+## [5.25.0] — 2026-10-18
+
+Userscript + server (`@grant GM_getValue`/`GM_setValue` - Tampermonkey vraagt bij de update één keer om die toestemming; nieuw `POST /api/enroll/restore`, CORS-header op `GET /api/version`). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`. Geen nginx-wijziging nodig (zie `docs/DEPLOY.md` §13).
+
+Aanleiding: Wilco werkte het script bij via Tampermonkey → Importeren. Tampermonkey maakt het script dan als NIEUW aan (ander script-id) en de GM-storage van het oude is weg - de GM-mirror (hieronder) helpt daar niet tegen. Spelers moeten kunnen updaten zonder hun key te verliezen, liefst zonder er iets voor te doen.
+
+### GM-mirror van de config
+- localStorage is per gamehost (`cncappXX`), de opslag van Tampermonkey niet. Nieuw `lib/bootstrap.js` draait in de Tampermonkey-sandbox, injecteert de bundle in de pagina en spiegelt de config via window-events (`st-gm-request`/`st-gm-config`/`st-config-changed`) naar GM-storage; `lib/config.js` voegt bij het opstarten samen (`mergeWithGm`: alleen-GM komt binnen, alleen-lokaal blijft, hier ongewijzigd sinds de laatste sync maar elders gewijzigd → GM wint, conflict → lokaal wint; een sleutel die in GM ontbreekt wist nooit een lokale)
+- Een wereld op een andere server start dus met je config in plaats van leeg; een instelling die je op één server wijzigt nemen de andere bij de volgende herlaad over
+- `build.js` wikkelt de bundle in `__stBundle()` en start hem via `stBootstrap()`; zonder GM-storage (harnassen) werkt Config op localStorage alleen
+
+### Auto-update via de header
+- `build.js`: `@updateURL` en `@downloadURL` wijzen naar `raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js` (branch `main`). Tampermonkey controleert daarmee zelf (standaard dagelijks) en werkt bij een hogere `@version` in-place bij - script-id en GM-storage blijven. Ze hebben nooit eerder in `build.js` gestaan (git-log: alleen de Basescanner-bestanden in `dist/` hadden ze), dus er is niets bewust verwijderd
+- **Eenmalig**: 5.24.0 en ouder hebben de velden niet, dus 5.25.0 moet nog één keer met de hand geïnstalleerd worden - plakken in de Tampermonkey-editor, NIET via Importeren. Daarna gaat het vanzelf
+
+### In-game melding bij een nieuwe versie
+- Nieuw `lib/update-check.js`: na het laden één `GET {api.url}/api/version` (het bestaande publieke endpoint voor `config/version.json`; de game-pagina haalde dat bestand nog nergens op) en een semver-vergelijking per getal (`5.26.0 > 5.9.0`). Nieuwer → één keer per pagina-laad in de chat: `[ST] Nieuwe versie X beschikbaar. Tampermonkey-menu → "Controleren op updates" (je instellingen blijven behouden).` Niet nieuwer, geen server-URL of een mislukte fetch → stil
+- De bundle draait in de pagina (bootstrap injecteert hem), dus `GM_info` is er niet: de eigen versie is `ST_VERSION`. Server-URL = dezelfde als de plugins (`api.url`, anders de standaard uit 5.24.0)
+- Server: `GET /api/version` draagt nu `Access-Control-Allow-Origin` voor de game-domeinen (nginx heeft voor dit pad geen CORS-blok; zonder header ziet de userscript alleen een netwerkfout)
+
+### Key terugzetten bij /st register
+- Paneel: tweede optie "Ik heb mijn key nog" (link onder het formulier, klapt een veld + knop uit). Submit → `POST /api/enroll/restore` met `{playerId, key}`. Klopt → key opgeslagen via de bestaande Config (localStorage + GM-mirror), "✅ Key hersteld"; klopt niet → "❌ Key niet geldig", niets opgeslagen
+- Server (`server/main.py`, `RestorePayload` in `player_keys.py`): verifieert tegen de opgeslagen bcrypt-hash (`PlayerKeyStore.verify`, dezelfde check als de website-login); geeft niets uit en wijzigt niets. Onbekende speler, ingetrokken key of verkeerde key → altijd dezelfde 403 `Key not valid`. Eigen rate-limit `restore_limiter`: 5 pogingen per uur per IP (ook een juiste key telt mee). CORS in de app zelf (ook op 403/429, en een OPTIONS-preflight), alleen voor `https://*.alliances.commandandconquer.com`
+- `lib/api-client.js`: `restoreKey(key)`, zelfde foutafhandeling als `enroll()`
+
+### Export-prompt na registratie
+- Na elke geslaagde registratie (nieuw of hersteld) toont het paneel de `/st config export`-tekst (dezelfde `exportConfig()` als het commando - bevat `api.playerkey`, gecontroleerd in de test) met de uitleg "Bewaar deze code ergens veilig …" en een Kopieer-knop. De tekst wordt ná het opslaan van de key opgebouwd
+
+### GM-mirror: diagnose bij gewiste config
+- `lib/config.js`: localStorage leeg én GM-mirror leeg én een `-gm-sync`-marker aanwezig → één console-regel (`CONFIG_LOST_MESSAGE`) en `config.configLost = true`; `main.js` zet dezelfde boodschap ook in de chat (een speler kijkt niet in de console). De merge-logica (`mergeWithGm`, `_readSync`, `_writeSync`) is ongewijzigd
+
+### Documentatie
+- `INSTALL.md` (NL/DE) en `README.md` (EN): sectie "Updaten zonder je instellingen te verliezen" + probleem-item "no server configured na een update". `ALLIANCE_GUIDE.md` uit de werkorder bestaat niet; dit zijn de bestaande handleidingen. De werkorder noemt `/st export`/`/st import`; de echte commando's zijn `/st config export`/`/st config import` en zo staan ze in alle teksten
+- Info-pagina: troubleshooting-rij 14 (key kwijt na Importeren) in EN/DE/NL
+- `docs/DEPLOY.md` §13: restore-endpoint + version-CORS, waarom er GEEN nginx-blok bij mag
+
+### Tests
+- `tests/config-mirror.test.mjs` (merge-regels, events, end-to-end met de gebouwde `.user.js` in een sandbox + pagina)
+- `tests/update-check.test.mjs` (semver, endpoint, stil bij fouten, één melding), `tests/config-transfer.test.mjs` (restoreKey: opslaan/403/429, export bevat de key), `tests/config-mirror.test.mjs` (diagnose wel/niet), `tests/test_enroll.py` (restore 200/403/429, CORS alleen voor de game-origin, preflight, `/api/version`-CORS)
+
 ## [5.24.0] — 2026-10-14
 
 Userscript + server (`POST /api/enroll` kent het veld `replace`). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

@@ -21,6 +21,12 @@ Keys: 32-char hex (secrets.token_hex(16)), stored as a bcrypt hash; the
 plaintext is returned once. Enrolling again with the same playerId issues a
 NEW key and invalidates the old one (the old plaintext can't be recovered).
 
+Restore (POST /api/enroll/restore, 5.25.0): a player whose browser lost the key
+(script re-created by a Tampermonkey "Import") but who still has it from an
+export sends {playerId, key}; the server verifies it against the stored hash
+and answers 200 - nothing is issued or changed, the key simply stays valid.
+Any other case is 403 KEY_NOT_VALID, with no hint whether the player exists.
+
 Storage: data/player_keys.jsonl, one line per registered player. Enrolling
 again and revoking OVERWRITE that player's line: the whole file is rewritten
 atomically (temp file + rename), so it never holds an old key. Files from
@@ -48,6 +54,7 @@ ALLIANCE_NOT_AUTHORIZED = "Alliance not authorized"
 NOT_REGISTERED = "Not registered — type /st register"
 INVALID_PLAYER_KEY = "Invalid player key"
 ALREADY_REGISTERED = "Already registered"
+KEY_NOT_VALID = "Key not valid"
 
 
 class EnrollPayload(BaseModel):
@@ -60,6 +67,12 @@ class EnrollPayload(BaseModel):
     # userscript can warn that a new key invalidates the old one; true = the
     # player confirmed. Absent (older userscripts) = replace, as before.
     replace: bool | None = None
+
+
+class RestorePayload(BaseModel):
+    """POST /api/enroll/restore: the player's own id + the key they still have."""
+    playerId: int = Field(gt=0)
+    key: str = Field(min_length=1, max_length=100)
 
 
 class EnrollmentError(Exception):

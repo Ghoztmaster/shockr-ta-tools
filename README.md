@@ -25,13 +25,32 @@ This is a clean-room rebuild of the original [Shockr Tools](https://shockr.dev) 
 
 ## Installation
 
-See [INSTALL_GUIDE.md](INSTALL_GUIDE.md) for step-by-step instructions (NL + DE).
+See [INSTALL.md](INSTALL.md) for step-by-step instructions (NL + DE).
 
 Quick version:
 
 1. Install [Tampermonkey](https://www.tampermonkey.net/)
 2. Open `dist/shockr-ta-tools.user.js` → click "Install"
 3. Reload the game
+
+### Updating without losing your settings
+
+The script checks for updates by itself (daily) and installs them automatically — the header's `@updateURL` points at this repo's `dist/shockr-ta-tools.user.js` on `main`. Normally you don't have to do anything. The game chat tells you when a newer version is waiting.
+
+Want it right away? Click the Tampermonkey icon in your browser → **Check for userscript updates**. Or click the install link on GitHub again — Tampermonkey recognises the script and updates it in place.
+
+**Never do this:**
+- Delete the script and install it again
+- Tampermonkey → Utilities → Import
+- Drag a `.user.js` file into the Tampermonkey dashboard
+
+With those three methods Tampermonkey wipes your settings **and** your API key (it creates the script as a new one, with new storage). You would have to register again.
+
+**Backup:** after registering, run `/st config export` once and keep the code (the register popup shows it right away). If things do go wrong, `/st config import` puts everything back — or choose "I still have my key" in `/st register` and paste just the key.
+
+> **One-time, when moving to 5.25.0:** older versions don't have the update link in their header yet, so install 5.25.0 by hand once: open `dist/shockr-ta-tools.user.js`, copy its contents and paste them over the old version in the Tampermonkey editor (dashboard → click the script name → replace all → Ctrl+S). Not via Import. From then on it updates itself.
+
+**Troubleshooting — `[ST] no server configured` or key gone after an update:** you updated via Tampermonkey → Import or by deleting and reinstalling, which wipes your settings and API key. This does not happen with a normal update (Tampermonkey menu or the install link). Fix: `/st register`; if you have an export code from `/st config export`, choose "I still have my key" and paste the key, otherwise create a new key. Prevent it: let Tampermonkey update by itself, and run `/st config export` once after registering.
 
 ## Chat Commands
 
@@ -74,6 +93,9 @@ Every player gets their own API key — no key to copy or paste:
 3. The script sends the code together with your player id, name, alliance id and world id (read from the game) to `POST /api/enroll`.
 4. The server checks the code and whether your alliance is allowed, and returns a personal key. The script stores it in `api.playerKey` — you'll see `✅ Registered! Your personal key is active.` and `[ST] ✅ Registered successfully` in the chat.
 5. The popup then shows the key itself with a **Copy** button and stays open until you click **Close**. You need it (with your player name) to log in to the Shockr Alliance website.
+6. Below the key the popup shows your **backup code** (the same text as `/st config export`, including the key) with its own **Copy** button. Keep it somewhere safe: `/st config import` restores all settings and the key after a reinstall.
+
+**Lost the key but still have it from an export?** `/st register` → "I still have my key" → paste it. The server checks it against the stored hash (`POST /api/enroll/restore`, 5 attempts per hour per IP) and the key simply becomes active again in this browser — nothing new is issued, so other browsers or game servers that still hold it keep working. A wrong key gives "Key not valid" and stores nothing.
 
 From then on every scan and target-watch request uses your personal key (`X-Player-Key`). `/st config get api.playerKey` shows the key again (only in your own chat, nothing is sent); `/st config list` still shows it as *set* / *not set*, and `/st status` shows whether you are registered. Registering again (e.g. new browser) gives you a new key and invalidates the old one.
 
