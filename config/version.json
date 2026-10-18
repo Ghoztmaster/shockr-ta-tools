@@ -1,7 +1,22 @@
 {
-  "version": "5.26.0",
+  "version": "5.26.1",
   "date": "2026-10-18",
   "changelog": [
+    {
+      "version": "5.26.1",
+      "date": "2026-10-18",
+      "changes": {
+        "en": [
+          "The Shockr button is now 40×40 (was 32×32), the same size as the MaelstromTools button next to it"
+        ],
+        "de": [
+          "Der Shockr-Knopf ist jetzt 40×40 (war 32×32), so groß wie der MaelstromTools-Knopf daneben"
+        ],
+        "nl": [
+          "De Shockr-knop is nu 40×40 (was 32×32), even groot als de MaelstromTools-knop ernaast"
+        ]
+      }
+    },
     {
       "version": "5.26.0",
       "date": "2026-10-18",
@@ -104,24 +119,6 @@
           "Info-pagina: nieuwe sectie Plugins - elke plugin met een korte beschrijving, standaard aan/uit, welk oud script hij vervangt en het commando om hem aan of uit te zetten (klik om uit te klappen)",
           "Loot Summary: geen dubbele loot-tabel meer bij Forgotten-targets als MaelstromTools zijn eigen loot-tabel toont (Shockr stapt opzij)",
           "Problemen oplossen: dubbele loot-tabel → zet \"Show lootable resources\" uit in MaelstromTools"
-        ]
-      }
-    },
-    {
-      "version": "5.23.0",
-      "date": "2026-10-14",
-      "changes": {
-        "en": [
-          "New plugin PvP Alert (replaces CENTER DRIVEN PvP Alert Status): base attacked while the game tab is in the background → tab title and icon show ALERT and a siren sounds",
-          "Resets when you return to the game; siren off: /st config set PvpAlert.sound false"
-        ],
-        "de": [
-          "Neues Plugin PvP Alert (ersetzt CENTER DRIVEN PvP Alert Status): Basis angegriffen, während der Spiel-Tab im Hintergrund ist → Tab-Titel und -Symbol zeigen ALARM und eine Sirene ertönt",
-          "Wird zurückgesetzt, sobald du zum Spiel zurückkehrst; Sirene aus: /st config set PvpAlert.sound false"
-        ],
-        "nl": [
-          "Nieuwe plugin PvP Alert (vervangt CENTER DRIVEN PvP Alert Status): base aangevallen terwijl het game-tabblad op de achtergrond staat → titel en icoon van het tabblad tonen ALARM en er klinkt een sirene",
-          "Reset zodra je terug in de game bent; sirene uit: /st config set PvpAlert.sound false"
         ]
       }
     }

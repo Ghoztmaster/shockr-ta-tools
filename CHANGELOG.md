@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [5.26.1] — 2026-10-18
+
+Userscript-only (geen server-wijziging; `config/version.json` en `config/announcements.json` zijn wel gewijzigd). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+- Shockr-knop van 32×32 naar 40×40 (schild-icoon 20 → 25 px), zodat hij even groot oogt als de MaelstromTools-knop ernaast
+
 ## [5.26.0] — 2026-10-18
 
 Userscript-only (geen server-wijziging; `config/version.json`, `config/announcements.json` en `config/plugins.json` zijn wel gewijzigd). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
