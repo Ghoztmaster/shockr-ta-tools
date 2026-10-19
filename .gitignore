@@ -3,6 +3,9 @@ node_modules/
 .DS_Store
 Thumbs.db
 
+# Reference originals (not ours to redistribute; see legacy/README.md)
+legacy/*.user.js
+
 # Server
 config/keys.json
 config/enrollment.json

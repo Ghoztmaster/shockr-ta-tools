@@ -1,3 +1,6 @@
+// Shockr TA Tools - Copyright (C) 2026 Ghozt [SoO]
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Free software under the GNU General Public License v3 or later; see LICENSE. No warranty.
 /**
  * pvp-alert-assets.js — data URIs from the original CENTER DRIVEN PvP Alert Status
  * (der_flake, forked by XDaast): alert favicon, normal favicon and the siren sound.

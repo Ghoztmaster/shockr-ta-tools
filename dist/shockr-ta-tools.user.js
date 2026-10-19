@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name            Shockr - Tiberium Alliances Tools
 // @author          Ghozt [SoO] (original: Shockr, fixed by NetquiK [SoO])
+// @license         GPL-3.0-or-later
 // @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver, wavy, loot summary, chat helper & PvP alert for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
@@ -10,6 +11,68 @@
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // ==/UserScript==
+
+/*
+A note on licensing and attribution
+
+Shockr Alliance Tools started as a rebuild of community scripts for Tiberium
+Alliances, many of which were abandoned years ago. We have put considerable
+effort into tracing the origin of every piece of code, identifying the
+original authors and their licenses, and either rewriting code where the
+license did not allow reuse or crediting it properly where it did. The full
+inventory is in docs/LICENTIES_DERDEN.md.
+
+We may still have missed something. If you are the author of code or assets
+used here and believe we have not credited you correctly, or if you object to
+the way your work is used, please open an issue or contact Ghozt on the TA
+forum. We will work with you to resolve it properly — whether that means
+adding attribution, changing the license note, or replacing the code.
+
+------------------------------------------------------------------------------
+
+Shockr TA Tools
+Copyright (C) 2026 Ghozt [SoO]
+Licensed under the GNU General Public License v3 or later (see LICENSE).
+
+This project is a rebuild of Shockr Tools by Blayne Chard
+(https://github.com/blacha/st, archived 2020). Parts of the following files
+are derived from that MIT-licensed code (ported from TypeScript to JavaScript
+and modified); those parts remain available under the MIT license below:
+
+  lib/packer.js                <- packages/clientlib-util/src/util/base.n.ts, base.62.ts, pack/*.packer.ts
+  lib/clientlib-patch.js       <- packages/clientlib-util/src/patch/patch.data.ts, client.patcher.ts
+  lib/city-util.js             <- packages/clientlib-util/src/util/city.ts
+  lib/scanner-util.js          <- packages/clientlib-util/src/util/city.scan.ts
+  lib/cli.js                   <- packages/st-extension/src/st.cli.ts
+  plugins/camp-tracker.js      <- packages/st-extension/src/plugins/camp.tracker/camp.tracker.ts
+  plugins/player-status.js     <- packages/st-extension/src/plugins/player.status/player.status.ts
+  plugins/alliance-scanner.js  <- packages/st-extension/src/plugins/alliance.scanner/alliance.scanner.ts
+  plugins/layout-scanner.js    <- packages/st-extension/src/plugins/layout/layout.ts
+
+------------------------------------------------------------------------------
+
+MIT License
+
+Copyright (c) 2020 Blayne Chard
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 (function () {
 function __stBundle() {
@@ -10043,6 +10106,9 @@ var ShockrTools = (() => {
 })();
 }
 
+// Shockr TA Tools - Copyright (C) 2026 Ghozt [SoO]
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Free software under the GNU General Public License v3 or later; see LICENSE. No warranty.
 /**
  * bootstrap.js — userscript-manager side of Shockr TA Tools (5.25.0).
  *

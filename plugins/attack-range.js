@@ -1,3 +1,6 @@
+// Shockr TA Tools - Copyright (C) 2026 Ghozt [SoO]
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Free software under the GNU General Public License v3 or later; see LICENSE. No warranty.
 /**
  * attack-range.js — dashed circle around each own base on the world map,
  * showing which targets are within attack range.

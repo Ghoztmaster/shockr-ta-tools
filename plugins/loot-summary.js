@@ -1,3 +1,6 @@
+// Shockr TA Tools - Copyright (C) 2026 Ghozt [SoO]
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Free software under the GNU General Public License v3 or later; see LICENSE. No warranty.
 /**
  * loot-summary.js — lootable resources of a Forgotten target in the region
  * info panel, before the attack (replaces MHTools Tiberium Alliances Available

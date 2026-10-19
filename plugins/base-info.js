@@ -1,3 +1,6 @@
+// Shockr TA Tools - Copyright (C) 2026 Ghozt [SoO]
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Free software under the GNU General Public License v3 or later; see LICENSE. No warranty.
 /**
  * base-info.js — offense/defense level + per-player number on player bases
  * on the world map (replaces CnCTA SoO "CENTER DRIVEN Base Info", which

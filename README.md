@@ -24,7 +24,7 @@ A Tampermonkey userscript for [C&C Tiberium Alliances](https://www.tiberiumallia
 
 All features work offline — no external API dependency. The optional scanner uploads to your own self-hosted server.
 
-This is a clean-room rebuild of the original [Shockr Tools](https://shockr.dev) (v4.5.3.6, NetquiK fork), which stopped working after the shockr.dev API went offline.
+This is a rebuild based on the original [Shockr Tools](https://github.com/blacha/st) by Blayne Chard (MIT; used in-game as v4.5.3.6, NetquiK fork), which stopped working after the shockr.dev API went offline. Parts of its code were ported and are still under its MIT license — see [NOTICE](NOTICE).
 
 ## Installation
 
@@ -127,10 +127,16 @@ node build.js
 
 ## Credits
 
-- **Shockr** — original author
+- **Shockr** (Blayne Chard) — original author, [blacha/st](https://github.com/blacha/st)
 - **NetquiK [SoO]** — maintained fork
 - **Ghozt [SoO]** — rebuild (v5.0.0+), alliance scanner
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+GPL-3.0-or-later — see [LICENSE](LICENSE). Shockr TA Tools is free software: you can redistribute and/or modify it under the terms of the GNU General Public License version 3 or (at your option) any later version. Code taken over from other userscripts names its source and license in the file (see [docs/LICENTIES_DERDEN.md](docs/LICENTIES_DERDEN.md)). MIT-licensed parts from the original Shockr Tools: see [NOTICE](NOTICE).
+
+## A note on licensing and attribution
+
+Shockr Alliance Tools started as a rebuild of community scripts for Tiberium Alliances, many of which were abandoned years ago. We have put considerable effort into tracing the origin of every piece of code, identifying the original authors and their licenses, and either rewriting code where the license did not allow reuse or crediting it properly where it did. The full inventory is in [docs/LICENTIES_DERDEN.md](docs/LICENTIES_DERDEN.md).
+
+We may still have missed something. If you are the author of code or assets used here and believe we have not credited you correctly, or if you object to the way your work is used, please open an issue or contact Ghozt on the TA forum. We will work with you to resolve it properly — whether that means adding attribution, changing the license note, or replacing the code.

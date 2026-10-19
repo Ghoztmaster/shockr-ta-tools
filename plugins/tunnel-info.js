@@ -1,3 +1,6 @@
+// Shockr TA Tools - Copyright (C) 2026 Ghozt [SoO]
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Free software under the GNU General Public License v3 or later; see LICENSE. No warranty.
 /**
  * tunnel-info.js — level, required offense and influence range of the tunnels
  * on the world map (replaces CnCTA SoO "TA Tunnel Info", which only showed

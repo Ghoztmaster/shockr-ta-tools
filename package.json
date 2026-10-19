@@ -3,7 +3,7 @@
   "version": "5.26.1",
   "description": "Camp tracker, kill info, player status & alliance recon for C&C Tiberium Alliances",
   "author": "Ghozt [SoO]",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "private": true,
   "scripts": {
     "build": "node build.js",

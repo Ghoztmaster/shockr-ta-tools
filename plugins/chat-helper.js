@@ -1,3 +1,6 @@
+// Shockr TA Tools - Copyright (C) 2026 Ghozt [SoO]
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Free software under the GNU General Public License v3 or later; see LICENSE. No warranty.
 /**
  * chat-helper.js — BB-code helper for chat, mail and forum text boxes
  * (replaces "C&C: Tiberium Alliances Chat Helper Enhanced Yiannis Mod" 3.2.3).

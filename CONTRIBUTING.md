@@ -47,4 +47,4 @@ The `server/` directory contains the alliance scanner backend (FastAPI). It runs
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+GPL-3.0-or-later — see [LICENSE](LICENSE).

@@ -1,3 +1,7 @@
+// Shockr TA Tools - Copyright (C) 2026 Ghozt [SoO]
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Free software under the GNU General Public License v3 or later; see LICENSE. No warranty.
+// Portions derived from blacha/st (Shockr Tools), Copyright (c) 2020 Blayne Chard, MIT; see NOTICE.
 /**
  * alliance-scanner.js — scan the bases of all own-alliance members and POST
  * them to the alliance server. Same pattern as layout-scanner.js.

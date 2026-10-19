@@ -24,6 +24,7 @@ const UPDATE_URL = 'https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tool
 const USERSCRIPT_HEADER = `// ==UserScript==
 // @name            Shockr - Tiberium Alliances Tools
 // @author          Ghozt [SoO] (original: Shockr, fixed by NetquiK [SoO])
+// @license         GPL-3.0-or-later
 // @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver, wavy, loot summary, chat helper & PvP alert for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
@@ -53,7 +54,10 @@ async function build() {
 
     const code = result.outputFiles[0].text;
     const bootstrap = fs.readFileSync(path.join(__dirname, 'lib', 'bootstrap.js'), 'utf8');
+    // NOTICE (GPL notice + the MIT text of the original Shockr code) must travel with the distributed file
+    const notice = fs.readFileSync(path.join(__dirname, 'NOTICE'), 'utf8').replace(/\r\n/g, '\n');
     const output = USERSCRIPT_HEADER + '\n'
+        + '/*\n' + notice + '*/\n\n'
         + '(function () {\n'
         + 'function __stBundle() {\n' + code + '}\n\n'
         + bootstrap + '\n'

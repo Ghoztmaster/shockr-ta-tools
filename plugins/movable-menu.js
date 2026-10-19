@@ -1,3 +1,6 @@
+// Shockr TA Tools - Copyright (C) 2026 Ghozt [SoO]
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Free software under the GNU General Public License v3 or later; see LICENSE. No warranty.
 /**
  * movable-menu.js — drag game windows and menu overlays to another spot
  * (replaces SoO MovableMenuOverlay 1.0.9).

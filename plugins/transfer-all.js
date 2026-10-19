@@ -1,3 +1,6 @@
+// Shockr TA Tools - Copyright (C) 2026 Ghozt [SoO]
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Free software under the GNU General Public License v3 or later; see LICENSE. No warranty.
 /**
  * transfer-all.js — "Transfer All" in the game's resource-transfer panel
  * (replaces Tiberium Alliances Transfer All Resources 1.6.2, KRS_L).

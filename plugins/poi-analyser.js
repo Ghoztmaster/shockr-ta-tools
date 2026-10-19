@@ -1,3 +1,6 @@
+// Shockr TA Tools - Copyright (C) 2026 Ghozt [SoO]
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Free software under the GNU General Public License v3 or later; see LICENSE. No warranty.
 /**
  * poi-analyser.js — POI bonuses on the world map and in the info panel
  * (replaces the POI part of Tiberium Alliances Info Sticker and
