@@ -15,7 +15,7 @@ async function load() {
         stdin: {
             contents: `export * as util from './lib/poi-util.js';
                        export { PoiAnalyser, labelText, ownerKind, bonusLines, COLORS } from './plugins/poi-analyser.js';
-                       export { SectorHud, viewCenter, parseCoords, STATUS_COLORS } from './plugins/sector-hud.js';`,
+                       export { SectorHud, viewCenter, parseCoords, insertAt, STATUS_COLORS } from './plugins/sector-hud.js';`,
             resolveDir: root,
         },
         bundle: true, format: 'esm', write: false,
@@ -223,16 +223,25 @@ test('PoiAnalyser: label per POI in view (gold own, red enemy, grey free), none 
 test('viewCenter + parseCoords', () => {
     const region = { get_ZoomFactor: () => 1, get_PosX: () => 4000, get_PosY: () => 1000, get_ViewWidth: () => 100, get_ViewHeight: () => 100,
         get_GridWidth: () => 10, get_GridHeight: () => 10 };
-    assert.deepEqual(mod.viewCenter(region), { x: 404, y: 104 });
+    assert.deepEqual(mod.viewCenter(region), { x: 405, y: 105 });   // centre px 4050 → cell 405 (cell x = px x*10 .. x*10+10)
     assert.deepEqual(mod.parseCoords('[coords]450:620[/coords]'), { x: 450, y: 620 });
     assert.deepEqual(mod.parseCoords('12 34'), { x: 12, y: 34 });
     assert.equal(mod.parseCoords('nope'), null);
+    assert.deepEqual(mod.parseCoords('450:620'), { x: 450, y: 620 });
+    assert.equal(mod.parseCoords('450'), null);
+});
+
+test('insertAt: coords tag over the selection, a space only where it would touch a word', () => {
+    assert.equal(mod.insertAt('', 0, 0, '[c]'), '[c]');
+    assert.equal(mod.insertAt('go ', 3, 3, '[c]'), 'go [c]');
+    assert.equal(mod.insertAt('go', 2, 2, '[c]'), 'go [c]');
+    assert.equal(mod.insertAt('go here now', 3, 7, '[c]'), 'go [c] now');
 });
 
 test('SectorHud: coords + sector + POI counts; own sector green, enemy red; hidden off-map; gone on disable', async () => {
     const { body } = fakeDom();
     const state = {
-        mode: 'region', posX: 4950, posY: 950,                  // view centre ≈ 499:99 → north
+        mode: 'region', posX: 4950, posY: 950,                  // view centre ≈ 500:100 → north
         pois: {
             '500:100': { type: EPOI.TiberiumBonus, level: 20, owner: 7 },   // north, enemy (seen)
             '502:100': { type: EPOI.TiberiumBonus, level: 20, owner: 0 },   // north, free (seen)
@@ -245,7 +254,7 @@ test('SectorHud: coords + sector + POI counts; own sector green, enemy red; hidd
         await p.start();
         assert.equal(body.children.length, 1);
         const el = body.children[0];
-        assert.match(el.textContent, /^499:99 \[N\] · POI 0 own · 1 enemy · 1 free/);
+        assert.match(el.textContent, /^500:100 \[N\] · POI 0 own · 1 enemy · 1 free/);
         const chips = el.children[1].children;
         assert.equal(chips.length, 8);
         assert.equal(chips[4].textContent, 'N 0');

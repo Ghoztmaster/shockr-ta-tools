@@ -5,13 +5,15 @@
  * chat-helper.js — BB-code helper for chat, mail and forum text boxes
  * (replaces "C&C: Tiberium Alliances Chat Helper Enhanced Yiannis Mod" 3.2.3).
  *
- * Function by function from the original:
+ * Same features as the original (its source states no license, so none of
+ * its code is used - the behaviour below is rebuilt in Shockr's own code):
  *   - Auto-tagging (space in a chat line, Enter in a mail/forum textarea,
  *     Alt+1 in a textarea): coordinates "123:456" / "123.456[:x]" →
  *     [coords]123:456[/coords] (the game renders those as clickable links that
  *     jump to the spot), http(s) urls → [url]..[/url], shorthands [p]..[/p] →
- *     [player], [a]..[/a] → [alliance]. Same regexes as the original (Netquik's
- *     mod), so coordinates need 3-4 digits on both sides.
+ *     [player], [a]..[/a] → [alliance]. As in the original, coordinates need
+ *     3-4 digits on both sides, and a line that starts with a cnc-map link or
+ *     [url] keeps its coordinates as they are.
  *   - Alt shortcuts in any text box: Alt+2 url popup, Alt+p / Alt+3 [player],
  *     Alt+a / Alt+4 [alliance], Alt+b / i / u / s bold / italic / underline /
  *     strikethrough, Alt+0 removes all those tags. Word wrap: selection → tags
@@ -64,43 +66,60 @@ const SAVE_VERSION = '3.2.0';         // the original's saveObjVer, kept for com
 const KEYUP_DELAY_MS = 50;            // original onkeyupDelay
 const WHISPER = '/whisper ';
 const ST_PREFIX = '/st';
-const VALID_CHAR = /[-\w.]/;
+/** Characters that belong to a word for Alt+b/i/u/s: letters, digits, _ . - */
+const WORD_CHAR = /[A-Za-z0-9_.-]/;
 const LINE_TYPES = new Set(['text', 'search', '']);
 const DIAG_AFTER = 5;                 // failed hook attempts (x 2 s) before the route is logged once
 
 // ─── Pure helpers (exported for tests) ───────────────────────────────
 
-/** The original's autoTag(): coords, urls, [p]/[a] shorthands. */
+/** BB-code blocks that are already tagged; auto-tagging never touches their content. */
+const TAGGED_BLOCK = /\[(coords|url|player|alliance)\][\s\S]*?\[\/\1\]/gi;
+const SHORTHAND = /\[(p|a)\]([^[\]]+?)\[\/\1\]/gi;
+const URL = /https?:\/\/[^\s[\]]+/gi;
+const COORDS = /(^|[^\d])(\d{3,4})[:.](\d{3,4})([:.]\w+)?(?!\d)/g;
+const NO_COORDS_LINE = /^(http:\/\/cnc-map|\[url\])/i;
+const CLEARABLE = new Set(['coords', 'url', 'player', 'alliance', 'b', 'i', 'u', 's']);
+
+/** Apply `fn` to the text between already-tagged blocks; the blocks stay as they are. */
+function outsideTags(text, fn) {
+    let out = '';
+    let last = 0;
+    for (const m of text.matchAll(TAGGED_BLOCK)) {
+        out += fn(text.slice(last, m.index)) + m[0];
+        last = m.index + m[0].length;
+    }
+    return out + fn(text.slice(last));
+}
+
+/** Auto-tagging: [p]/[a] shorthands, then http(s) urls, then coordinates. Idempotent. */
 export function autoTag(text) {
     let s = String(text);
-    // auto coords — Modded by NetquiK (args: match, g1..g5, offset, whole string)
-    s = s.replace(/(\[coords\])*([0-9]{3,4})[:|.]([0-9]{3,4})([:|.]\w+)?(\[\/coords\])*/gi, (...a) => {
-        const whole = a[7];
-        if (whole.startsWith('http://cnc-map') || whole.startsWith('[url]')) return a[0];
-        return '[coords]' + a[2] + ':' + a[3] + (a[4] !== undefined ? a[4].replace('.', ':') : '') + '[/coords]';
-    });
-    // auto url — Modded by NetquiK
-    s = s.replace(/(\[url\])*(https?:\/\/)?([\da-z.-]+)(\.[a-z]{2,6})([/\w.\-=?&:+%#|~]*)*\/?(\[\/url\])*/gi, (...a) => {
-        if (a[2] && a[3]) return '[url]' + a[2] + a[3] + a[4] + (a[5] === undefined ? '' : a[5]) + '[/url]';
-        return a[0];
-    });
-    s = s.replace(/\[p\]([a-z0-9_\-\s]+)\[\/p\]/gi, '[player]$1[/player]');
-    s = s.replace(/\[a\]([a-z0-9_\-\s]+)\[\/a\]/gi, '[alliance]$1[/alliance]');
+    const keepCoords = NO_COORDS_LINE.test(s);
+    s = outsideTags(s, part => part.replace(SHORTHAND, (m, kind, name) => {
+        const tag = kind.toLowerCase() === 'p' ? 'player' : 'alliance';
+        return `[${tag}]${name}[/${tag}]`;
+    }));
+    s = outsideTags(s, part => part.replace(URL, url => `[url]${url}[/url]`));
+    if (!keepCoords) {
+        s = outsideTags(s, part => part.replace(COORDS, (m, before, x, y, extra) =>
+            `${before}[coords]${x}:${y}${extra ? ':' + extra.slice(1) : ''}[/coords]`));
+    }
     return s;
 }
 
-/** Alt+0: strip every tag the helper knows. */
+/** Alt+0: strip every tag the helper knows; other bracket text stays. */
 export function clearTags(text) {
-    return String(text).replace(/\[\/?(coords|url|player|alliance|b|i|u|s)\]/gi, '');
+    return String(text).replace(/\[\/?([a-z]+)\]/gi, (m, name) => (CLEARABLE.has(name.toLowerCase()) ? '' : m));
 }
 
 /** [start, end] of the word the caret sits right behind, or null. */
 export function wordAt(text, pos) {
-    if (!VALID_CHAR.test(text.charAt(pos - 1))) return null;
+    if (!WORD_CHAR.test(text.charAt(pos - 1))) return null;
     let s = pos;
     let e = pos;
-    while (s > 0 && VALID_CHAR.test(text.charAt(s - 1))) s--;
-    while (e < text.length && VALID_CHAR.test(text.charAt(e))) e++;
+    while (s > 0 && WORD_CHAR.test(text.charAt(s - 1))) s--;
+    while (e < text.length && WORD_CHAR.test(text.charAt(e))) e++;
     return [s, e];
 }
 

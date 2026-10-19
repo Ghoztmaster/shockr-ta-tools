@@ -22,9 +22,9 @@ Doel: per bestand vastleggen welke externe code erin zit, van wie, onder welke l
    - óf doorgaan zoals fase 1 (logica lezen, zelf schrijven).
 
    Gedaan in `chore: relicense to GPL-3.0`: `legacy/README.md` zegt dat TABS geen licentie heeft, het TABS-bestand staat niet meer in git (`legacy/*.user.js` weer in `.gitignore`). Besluit (Wilco, 2026-10-19): geen toestemming vragen; STABS blijft herschrijven zoals fase 1, ook in fase 2 en later.
-2. **CC-BY-NC-SA, niet GPL-compatibel:** WarChiefs Sector HUD (Eistee, CC-BY-NC-SA 3.0). `lib/poi-util.js` `sectorNo()` en `plugins/sector-hud.js` `viewCenter()` zijn 1-op-1 overgenomen, tot en met de constante `6.2831853071795862`. Herschrijven vanuit de game-feiten (hoek vanaf het wereldmidden → sector), of Eistee om toestemming vragen.
-3. **Assets zonder licentie:** `plugins/pvp-alert-assets.js` bevat letterlijk het sirenegeluid en de twee favicons uit CENTER DRIVEN PvP Alert Status. Vervangen door eigen of vrij gelicenseerde assets (bijv. CC0), of der_flake/XDaast om toestemming vragen.
-4. **Code zonder licentie:** Chat Helper Enhanced (regexes en functies "function by function"). Toestemming vragen of de regexes/functies zelf herschrijven.
+2. ✅ **CC-BY-NC-SA, niet GPL-compatibel:** WarChiefs Sector HUD (Eistee, CC-BY-NC-SA 3.0). Herschreven in `fix: replace third-party code without a compatible license`: `sectorNo()` (eigen formulering vanuit de game-feiten; zelfde sector op 500.000 willekeurige cellen), `viewCenter()` (Shockr's eigen rasterconventie, zie hieronder), `parseCoords()` en het plakken van coördinaten.
+3. ✅ **Assets zonder licentie:** de assets uit CENTER DRIVEN PvP Alert Status zijn vervangen: eigen SVG-favicons en het CC0-geluid "Alarm 2_9.wav" van Joao_Janz (https://freesound.org/s/478295/).
+4. ◐ **Code zonder licentie:** Chat Helper Enhanced. De regexes (auto-tagging, Alt+0) zijn herschreven. Nog open: `wrapTag`/`wordAt`/`completeWhisper` volgen de functies van het origineel (tagWith, whisper-aanvulling) - herschrijven vanuit het gedrag.
 
 ## Per bestand
 
@@ -40,14 +40,14 @@ Doel: per bestand vastleggen welke externe code erin zit, van wie, onder welke l
 | `plugins/layout-scanner.js` | `blacha/st` layout.ts | Blayne Chard | MIT | code/regels | ✅ geregeld |
 | `plugins/player-status.js` | `blacha/st` player.status.ts; kleurschema "maelstrom" uit Maelstrom ADDON City Online Status Colorer | Blayne Chard; White X Dragon, Debitosphere, Der_Flake, NetquiK | MIT; Colorer: niet vermeld | code (blacha); feiten (kleurwaarden) | ✅ blacha geregeld; Colorer: bronvermelding staat er, kleurwaarden zijn feiten — geen actie |
 | `lib/bugfix.js` | idee uit `blacha/st` bug.fix.ts | Blayne Chard | MIT | idee (eigen implementatie) | geen |
-| `lib/poi-util.js` | WarChiefs Sector HUD `get_SectorNo` | Eistee | **CC-BY-NC-SA 3.0** | code (1-op-1) | **herschrijven** of toestemming |
+| `lib/poi-util.js` | WarChiefs Sector HUD `get_SectorNo` | Eistee | **CC-BY-NC-SA 3.0** | — (herschreven) | ✅ herschreven; geen code van het origineel meer |
 | `lib/poi-util.js` | Tiberium Alliances Real POI Bonus (`calculateBonus`, directe gevallen) | petui (fix AlkalyneD4, NetquiK) | GPL-3.0-or-later | code (geport) | bronvermelding met licentie toevoegen in de header |
 | `lib/poi-util.js`, `plugins/poi-analyser.js` | Info Sticker, MaelstromTools (POI-gegevens) | unicode / NetquiK; Maelstrom e.a. | niet vermeld | feiten | geen (bronvermelding staat er) |
-| `plugins/sector-hud.js` | WarChiefs Sector HUD (`get_Coords`, coords-regex, lay-out) | Eistee (fix NetquiK) | **CC-BY-NC-SA 3.0** | code/regels | **herschrijven** of toestemming |
-| `plugins/movable-menu.js` | SoO MovableMenuOverlay 1.0.9 | NetquiK | **CC-BY-NC-SA 4.0** | idee (eigen aanpak; header: "Not copied from the original") | regel-voor-regel controleren of er niets letterlijk in staat; dan alleen bronvermelding |
-| `plugins/chat-helper.js` | Chat Helper Enhanced Yiannis Mod 3.2.3 | onbekend (Yiannis-mod, fixes NetquiK) | niet vermeld | code (regexes, functies, opslagformaat) | **toestemming vragen** of regexes/functies herschrijven; opslagsleutel/-formaat (compatibiliteit) mag blijven |
+| `plugins/sector-hud.js` | WarChiefs Sector HUD (idee: coördinaten + sector linksboven, klikken om te plakken/springen) | Eistee (fix NetquiK) | **CC-BY-NC-SA 3.0** | idee | ✅ herschreven. Let op: `viewCenter` geeft nu de cel die echt onder het midden ligt (het origineel trok een halve cel af), dus de getoonde coördinaat kan 1 hoger zijn dan voorheen |
+| `plugins/movable-menu.js` | SoO MovableMenuOverlay 1.0.9 | NetquiK | **CC-BY-NC-SA 4.0** | idee | ✅ regel voor regel vergeleken (2026-10-19): geen gedeelde code, structuur of namen behalve game-API-namen. Het origineel definieert een eigen qx-klasse en vervangt via een regex een app-methode en `centerPosition`; Shockr patcht niets en versleept de DOM met een CSS-transform. Bronvermelding staat in de header |
+| `plugins/chat-helper.js` | Chat Helper Enhanced Yiannis Mod 3.2.3 | onbekend (Yiannis-mod, fixes NetquiK) | niet vermeld | functies (tagWith, whisper-aanvulling), opslagformaat | ◐ regexes herschreven; nog herschrijven: `wrapTag`/`wordAt`/`completeWhisper`. Opslagsleutel/-formaat (compatibiliteit) mag blijven |
 | `plugins/pvp-alert.js` | CENTER DRIVEN PvP Alert Status 1.00 | der_flake, fork XDaast | niet vermeld | regels ("port", met fixes) | bronvermelding staat er; code-niveau nalopen |
-| `plugins/pvp-alert-assets.js` | idem: favicons + sirenegeluid | der_flake, XDaast | niet vermeld | **assets letterlijk** | **vervangen** door eigen/CC0-assets of toestemming |
+| `plugins/pvp-alert-assets.js` | eigen favicons; "Alarm 2_9.wav" (freesound 478295) | Ghozt [SoO]; Joao_Janz | GPL (eigen); CC0 1.0 | — | ✅ vervangen; bron staat in de header |
 | `plugins/loot-summary.js` | MHTools Available Loot Summary + Info 1.8.3.9; MaelstromTools Dev (lootoverzicht) | MrHIDEn (o.b.v. Yaeger, Panavia); Maelstrom, HuffyLuf, KRS_L e.a. | niet vermeld | regels (formule = game-API), lay-out, labelteksten (ook de DE-teksten van Maelstrom) | bronvermelding staat er; eigen DE-labels schrijven i.p.v. die van Maelstrom |
 | `plugins/formation-saver.js` | TA Formation Saver 2.x | Panavia, KRS_L, DebitoSphere (NetquiK) | niet vermeld | feiten (client-route) | geen (bronvermelding staat er) |
 | `plugins/transfer-all.js` | Transfer All Resources 1.6.2 | KRS_L | niet vermeld | regels + feiten (kindpad, `SelfTrade`) | geen (bronvermelding staat er) |

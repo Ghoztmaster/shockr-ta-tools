@@ -81,7 +81,7 @@ test('background + alerted base → title, alert favicon, siren, console line', 
     plugin.check();
     state.restoreLog();
     assert.equal(document.title, 'ALERT - Base Bravo under attack!');
-    assert.ok(icons(head).some(h => h && h.startsWith('data:image/gif')));
+    assert.ok(icons(head).some(h => h && h.startsWith('data:image/svg+xml')));
     assert.equal(state.audio.length, 1);
     assert.equal(state.audio[0].playing, true);
     assert.ok(state.logs.includes('[ST] PvP Alert: (unknown) attacks Bravo'));
@@ -130,14 +130,15 @@ test('stop() during an alarm restores title and favicon', () => {
     assert.equal(plugin.running, false);
 });
 
-test('no own favicon → the original normal icon after the alarm', () => {
+test('no own favicon → the neutral Shockr icon after the alarm', () => {
     const { state, head, plugin } = setup({ bases: [{ name: 'Alpha', alerted: true }], focus: false, icon: null });
     plugin.check();
     state.focus = true;
     plugin.check();
     state.restoreLog();
     assert.equal(head.children.length, 1);
-    assert.ok(icons(head)[0].startsWith('data:image/png'));
+    assert.ok(icons(head)[0].startsWith('data:image/svg+xml'));
+    assert.ok(icons(head)[0].includes('546e7a'), 'the grey shield, not the red alert icon');
 });
 
 test('ClientLib not ready → nothing alerted, no throw', () => {

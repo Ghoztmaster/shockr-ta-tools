@@ -5,10 +5,12 @@
  * sector-hud.js — sector HUD on the world map (replaces WarChiefs - Tiberium
  * Alliances Sector HUD 22.05.04).
  *
- * The original shows one line top-left (desktop left 128, top 0): the view
- * centre's coordinates and its compass sector, "450:620 [NE]"; left click
- * pastes the coordinates into the chat input, right click asks for
- * coordinates to jump to. Ported, plus POI progress per sector:
+ * Same idea as the original (one line top-left: the view centre's
+ * coordinates and its compass sector, "450:620 [NE]"; left click pastes the
+ * coordinates into the chat input, right click asks for coordinates to jump
+ * to). The original is CC-BY-NC-SA 3.0, which does not mix with Shockr's GPL,
+ * so none of its code is used: view centre, sector, coordinate parsing and
+ * the paste are Shockr's own. Plus POI progress per sector:
  *
  *   450:620 [NE] · POI 4 own · 2 enemy · 9 free
  *   S 0  SW 2  W 0  NW 1  N 5  NE 4  E 0  SE 3      (own POIs per sector)
@@ -34,19 +36,31 @@ const TICK_MS = 1000;
 const SCAN_MS = 3000;
 export const STATUS_COLORS = { own: '#66bb6a', enemy: '#ef5350', none: '#9e9e9e' };
 
-/** View centre cell - WarChiefs' get_Coords. */
+/**
+ * Cell under the centre of the view. The region's PosX/PosY is the world
+ * pixel at the top-left of the view; the view is ViewWidth/Height screen px
+ * at ZoomFactor screen px per world px; cell x covers world px x*grid ..
+ * (x+1)*grid (map-overlay's cellToScreen convention).
+ */
 export function viewCenter(region) {
-    const zoom = region.get_ZoomFactor();
-    return {
-        x: Math.floor((region.get_PosX() + region.get_ViewWidth() / 2 / zoom) / region.get_GridWidth() - 0.5),
-        y: Math.floor((region.get_PosY() + region.get_ViewHeight() / 2 / zoom) / region.get_GridHeight() - 0.5),
-    };
+    const zoom = region.get_ZoomFactor() || 1;
+    const midX = region.get_PosX() + region.get_ViewWidth() / (2 * zoom);
+    const midY = region.get_PosY() + region.get_ViewHeight() / (2 * zoom);
+    return { x: Math.floor(midX / region.get_GridWidth()), y: Math.floor(midY / region.get_GridHeight()) };
 }
 
-/** "[coords]450:620[/coords]" parsing for the jump prompt (WarChiefs' regex). */
+/** First two numbers in the jump prompt's text: "[coords]450:620[/coords]", "450:620", "450 620". */
 export function parseCoords(text) {
-    const m = /(\[coords\])?#?(\d{1,4})\D(\d{1,4})/i.exec(String(text || ''));
-    return m ? { x: parseInt(m[2], 10), y: parseInt(m[3], 10) } : null;
+    const nums = String(text || '').match(/\d+/g);
+    if (!nums || nums.length < 2) return null;
+    return { x: Number(nums[0]), y: Number(nums[1]) };
+}
+
+/** `tag` put over the selection [from, to) of `value`, with a space before it when it would touch a word. */
+export function insertAt(value, from, to, tag) {
+    const before = value.slice(0, from);
+    const gap = before && !/\s$/.test(before) ? ' ' : '';
+    return before + gap + tag + value.slice(to);
 }
 
 export class SectorHud {
@@ -158,7 +172,7 @@ export class SectorHud {
     _ensureElement() {
         if (this.el) return this.el;
         const el = document.createElement('div');
-        Object.assign(el.style, {       // WarChiefs' spot: desktop left 128, top 0
+        Object.assign(el.style, {       // top-left, right of the game's own corner menu
             position: 'fixed',
             left: '128px',
             top: '0px',
@@ -185,21 +199,22 @@ export class SectorHud {
         return el;
     }
 
-    /** Left click: "[coords]x:y[/coords]" into the chat input at the cursor (WarChiefs' paste_Coords). */
+    /** Left click: "[coords]x:y[/coords]" into the chat input at the cursor. */
     _pasteCoords() {
         try {
             const c = viewCenter(ClientLib.Vis.VisMain.GetInstance().get_Region());
             const input = qx.core.Init.getApplication().getChat().getChatWidget().getEditable();
             const dom = input.getContentElement().getDomElement();
             const value = dom.value || '';
-            input.setValue([value.substring(0, dom.selectionStart), `[coords]${c.x}:${c.y}[/coords]`,
-                value.substring(dom.selectionEnd)].join(' '));
+            const from = typeof dom.selectionStart === 'number' ? dom.selectionStart : value.length;
+            const to = typeof dom.selectionEnd === 'number' ? dom.selectionEnd : from;
+            input.setValue(insertAt(value, from, to, `[coords]${c.x}:${c.y}[/coords]`));
         } catch (e) {
             console.warn('[ST] SectorHud: paste coords failed', e && e.message);
         }
     }
 
-    /** Right click: ask for coordinates and centre the map there (WarChiefs' jump_Coords). */
+    /** Right click: ask for coordinates and centre the map there. */
     _jumpCoords() {
         try {
             const c = parseCoords(window.prompt(t('sectorHudJumpPrompt')));

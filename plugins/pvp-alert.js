@@ -18,7 +18,8 @@
  *     `is_alerted && !was_attacked` check, so the alarm never fired; here the
  *     alarm fires once per attack and resets when you come back
  *   - the original's "relax" favicon was its own copy of the game icon; here the
- *     game's actual favicon is restored (the original's icon is the fallback)
+ *     game's actual favicon is restored (Shockr's own neutral icon is the
+ *     fallback; favicons and siren are Shockr's / CC0, see pvp-alert-assets.js)
  *     and one <link> is reused instead of a new one per alarm
  *   - the title is restored to what it was right before the alarm
  *
@@ -26,7 +27,7 @@
  * flag, so the console line names the base only.
  */
 import { t } from '../lib/i18n.js';
-import { ALERT_FAVICON, NORMAL_FAVICON, SIREN_SOUND } from './pvp-alert-assets.js';
+import { ALERT_FAVICON, ALERT_FAVICON_TYPE, NORMAL_FAVICON, SIREN_SOUND } from './pvp-alert-assets.js';
 
 const CHECK_INTERVAL_MS = 5000;
 
@@ -89,7 +90,7 @@ export class PvpAlert {
         this._victim = victim;
         this._savedTitle = document.title;
         document.title = t('pvpAlertTitle', { base: victim });
-        this._setFavicon(ALERT_FAVICON, 'image/gif');
+        this._setFavicon(ALERT_FAVICON, ALERT_FAVICON_TYPE);
         if (this._soundOn()) {
             try {
                 if (!this._siren) this._siren = new Audio(SIREN_SOUND);
@@ -152,7 +153,7 @@ export class PvpAlert {
             for (const { el, href } of saved) el.setAttribute('href', href);
             if (this._iconLink && this._iconLink.parentNode) this._iconLink.parentNode.removeChild(this._iconLink);
         } else if (this._iconLink) {
-            // the page had no favicon of its own: the original's normal icon
+            // the page had no favicon of its own: Shockr's neutral icon
             this._setFavicon(NORMAL_FAVICON, null);
         }
         this._savedIcons = null;

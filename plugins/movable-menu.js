@@ -17,8 +17,10 @@
  *      transform, which the qx layout never touches. Offset remembered per
  *      overlay class.
  *
- * Not copied from the original: it regex-matched the obfuscated
- * switchMenuOverlay source and replaced that app method plus
+ * Not copied from the original (CC-BY-NC-SA 4.0, which does not mix with
+ * Shockr's GPL; compared line by line 2026-10-19 - only game API names are
+ * shared): it defines its own qx class, regex-matches the obfuscated
+ * switchMenuOverlay source and replaces that app method plus
  * MenuOverlayWidget.prototype.centerPosition. Shockr patches no game code:
  * a 1 s scan of the root/desktop children finds new windows/overlays and
  * adds listeners - all removed again on stop.
