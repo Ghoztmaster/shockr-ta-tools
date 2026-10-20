@@ -11,6 +11,11 @@ Userscript + website (`server/static/targets.html`); `config/version.json` en `c
 - Bron: TargetWatcher stuurt `targetLevel` met één decimaal (`roundLevel`; de server nam al een float aan, `TargetWatchPayload.targetLevel: float`). Weergave: Target Board in de game (`formatLevel`) en de website `/targets` (`fmtLevel`). Map Labels vergelijkt levels nog steeds als heel getal - ongewijzigd
 - Spelers op een oudere versie sturen nog hele getallen; die staan als `L30` tot ze bijgewerkt zijn. Tests: `tests/toolbar.test.mjs`
 
+### Sector HUD: eigen reserveringsmarker
+- De coördinaat (met sector en POI-regel) in de HUD is die van je eigen reserveringsmarker als je er een hebt: alliance-marker met `get_Type() === 5` en `get_NamePlayerCreated()` gelijk aan `get_Player().get_Name()`, getoond als `📌 116:318`. Zonder marker: het midden van het beeld, zoals voorheen. Linksklik plakt de getoonde coördinaat
+- Markers via `get_Alliance().get_Markers().l` (getters, geen ruwe keys); bijgewerkt op `AllianceMarkerChange` (delegate `ClientLib.Data.AllianceMarkerChange`), niet per tick. Type 5 = reservering is live afgeleid (2026-10-20); het spel heeft er geen benoemd enum voor (`RESERVE_MARKER_TYPE`)
+- Tests: `tests/poi-sector.test.mjs`
+
 ### Build
 - `dist/` opnieuw gebouwd (de `@description` zonder STABS stond al in 5.27.0)
 - `@updateURL`/`@downloadURL` blijven op `raw.githubusercontent.com`. Gemeten (2026-10-20): GitHub raw `Cache-Control: max-age=300` (max 5 min oud), jsDelivr `@main` `max-age=604800, s-maxage=43200` (CDN 12 uur, browser 7 dagen) - jsDelivr zou updates juist langer vertragen

@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.27.1 released — Target Watch shows levels with one decimal, as the game does (L30.9). Shockr is GPL-3.0-or-later since 5.27.0. Tampermonkey updates by itself; never update via Import.",
-      "de": "v5.27.1 veröffentlicht — Target Watch zeigt Level mit einer Nachkommastelle, wie das Spiel (L30.9). Shockr steht seit 5.27.0 unter GPL-3.0-or-later. Tampermonkey aktualisiert selbst; nie über Importieren aktualisieren.",
-      "nl": "v5.27.1 uitgebracht — Target Watch toont levels met één decimaal, zoals de game (L30.9). Shockr is sinds 5.27.0 GPL-3.0-or-later. Tampermonkey werkt zelf bij; werk nooit bij via Importeren."
+      "en": "v5.27.1 released — Target Watch shows levels with one decimal, as the game does (L30.9); Sector HUD shows your own reservation marker (📌). Shockr is GPL-3.0-or-later since 5.27.0. Tampermonkey updates by itself; never update via Import.",
+      "de": "v5.27.1 veröffentlicht — Target Watch zeigt Level mit einer Nachkommastelle, wie das Spiel (L30.9); Sektor-HUD zeigt deine eigene Reservierungsmarkierung (📌). Shockr steht seit 5.27.0 unter GPL-3.0-or-later. Tampermonkey aktualisiert selbst; nie über Importieren aktualisieren.",
+      "nl": "v5.27.1 uitgebracht — Target Watch toont levels met één decimaal, zoals de game (L30.9); Sector HUD toont je eigen reserveringsmarker (📌). Shockr is sinds 5.27.0 GPL-3.0-or-later. Tampermonkey werkt zelf bij; werk nooit bij via Importeren."
     },
     "type": "info",
     "active": true

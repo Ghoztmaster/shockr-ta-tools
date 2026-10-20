@@ -22,6 +22,10 @@
  *   - enemy / free: only the POIs SEEN on the map this session (the client
  *     only knows loaded regions) - the tooltip says so
  *
+ * The coordinates are those of the own reservation marker ("📌 116:318")
+ * when there is one, else the view centre; the marker is re-read on the
+ * alliance's AllianceMarkerChange event.
+ *
  * Only while the world map is shown; the view centre is read every second,
  * the visible POIs every 3 s. DOM overlay under document.body
  * (position: fixed), no qx window.
@@ -47,6 +51,20 @@ export function viewCenter(region) {
     const midX = region.get_PosX() + region.get_ViewWidth() / (2 * zoom);
     const midY = region.get_PosY() + region.get_ViewHeight() / (2 * zoom);
     return { x: Math.floor(midX / region.get_GridWidth()), y: Math.floor(midY / region.get_GridHeight()) };
+}
+
+/** Alliance marker type of a reservation (seen live 2026-10-20; the game has no named enum for it). */
+export const RESERVE_MARKER_TYPE = 5;
+
+/** First reservation marker placed by `playerName`, as {x, y}, or null. */
+export function ownReserveMarker(markers, playerName) {
+    if (!playerName) return null;
+    for (const m of markers || []) {
+        if (m.get_Type() === RESERVE_MARKER_TYPE && m.get_NamePlayerCreated() === playerName) {
+            return { x: m.get_CoordX(), y: m.get_CoordY() };
+        }
+    }
+    return null;
 }
 
 /** First two numbers in the jump prompt's text: "[coords]450:620[/coords]", "450:620", "450 620". */
@@ -76,10 +94,13 @@ export class SectorHud {
         this._timer = null;
         this._lastScan = 0;
         this._warned = false;
+        this.reserve = null;          // {x, y} of the own reservation marker, or null
+        this._markerEvent = null;
     }
 
     async start() {
         this.running = true;
+        this._watchMarkers();
         this._timer = setInterval(() => this.tick(), TICK_MS);
         this.tick();
         console.log('[ST] SectorHud: started');
@@ -89,10 +110,48 @@ export class SectorHud {
         this.running = false;
         if (this._timer) clearInterval(this._timer);
         this._timer = null;
+        if (this._markerEvent) {
+            const ev = this._markerEvent;
+            try { webfrontend.phe.cnc.Util.detachNetEvent(ev.source, 'AllianceMarkerChange', ev.type, this, this._onMarkersChange); } catch { /* ignore */ }
+            this._markerEvent = null;
+        }
         if (this.el) {
             this.el.remove();
             this.el = null;
         }
+    }
+
+    /**
+     * Own reservation marker, refreshed on the alliance's AllianceMarkerChange
+     * event instead of every tick. ClientLib.Data.AllianceMarkerChange is the
+     * delegate name by the game's naming pattern (AllianceChange, CitiesChange).
+     */
+    _watchMarkers() {
+        try {
+            const source = ClientLib.Data.MainData.GetInstance().get_Alliance();
+            const type = ClientLib.Data.AllianceMarkerChange;
+            webfrontend.phe.cnc.Util.attachNetEvent(source, 'AllianceMarkerChange', type, this, this._onMarkersChange);
+            this._markerEvent = { source, type };
+        } catch (e) {
+            console.warn('[ST] SectorHud: marker event not available', e && e.message);
+        }
+        this._onMarkersChange();
+    }
+
+    _onMarkersChange() {
+        try {
+            const md = ClientLib.Data.MainData.GetInstance();
+            this.reserve = ownReserveMarker(md.get_Alliance().get_Markers().l, md.get_Player().get_Name());
+        } catch {
+            this.reserve = null;
+        }
+        if (this.running && this.el && this.el.style.display !== 'none') this.render();
+    }
+
+    /** Cell shown in the HUD: the own reservation marker, else the view centre. */
+    focus() {
+        if (this.reserve) return { ...this.reserve, reserve: true };
+        return viewCenter(ClientLib.Vis.VisMain.GetInstance().get_Region());
     }
 
     /** One-line status for `/st status`. */
@@ -130,8 +189,7 @@ export class SectorHud {
     render() {
         const geo = worldGeometry();
         if (!geo) return;
-        const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
-        const c = viewCenter(region);
+        const c = this.focus();
         const here = sectorNo(c.x, c.y, geo.width, geo.height, geo.count);
         const own = ownAlliance();
         const summary = sectorSummary(this.knownPois(own && own.id), own && own.id, geo);
@@ -142,7 +200,7 @@ export class SectorHud {
         el.textContent = '';
         const line1 = document.createElement('div');
         const coords = document.createElement('span');
-        coords.textContent = `${c.x}:${c.y} `;
+        coords.textContent = `${c.reserve ? '📌 ' : ''}${c.x}:${c.y} `;
         const sec = document.createElement('span');
         sec.textContent = `[${sectorAbbr(here)}]`;
         sec.style.color = STATUS_COLORS[cur.status];
@@ -164,6 +222,7 @@ export class SectorHud {
         el.append(line1, line2);
         el.title = [
             ...summary.map(s => `${sectorAbbr(s.sector)}: ${t('sectorHudPoi', { own: s.own, enemy: s.enemy, free: s.free })}`),
+            ...(c.reserve ? [t('sectorHudReserveNote')] : []),
             t('sectorHudSeenNote'),
             t('sectorHudClickNote'),
         ].join('\n');
@@ -202,7 +261,7 @@ export class SectorHud {
     /** Left click: "[coords]x:y[/coords]" into the chat input at the cursor. */
     _pasteCoords() {
         try {
-            const c = viewCenter(ClientLib.Vis.VisMain.GetInstance().get_Region());
+            const c = this.focus();
             const input = qx.core.Init.getApplication().getChat().getChatWidget().getEditable();
             const dom = input.getContentElement().getDomElement();
             const value = dom.value || '';

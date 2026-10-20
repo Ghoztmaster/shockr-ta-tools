@@ -7,13 +7,16 @@
       "date": "2026-10-20",
       "changes": {
         "en": [
-          "Target Watch shows the target level with one decimal, as the game does (L30.9 instead of L30) - in the game and on the website"
+          "Target Watch shows the target level with one decimal, as the game does (L30.9 instead of L30) - in the game and on the website",
+          "Sector HUD shows the coordinates of your own reservation marker (📌 116:318), live when you move it; without a marker it shows the view centre as before"
         ],
         "de": [
-          "Target Watch zeigt das Ziel-Level mit einer Nachkommastelle, wie das Spiel (L30.9 statt L30) - im Spiel und auf der Website"
+          "Target Watch zeigt das Ziel-Level mit einer Nachkommastelle, wie das Spiel (L30.9 statt L30) - im Spiel und auf der Website",
+          "Sektor-HUD zeigt die Koordinaten deiner eigenen Reservierungsmarkierung (📌 116:318), live beim Verschieben; ohne Markierung wie bisher die Ansichtsmitte"
         ],
         "nl": [
-          "Target Watch toont het level van het target met één decimaal, zoals de game (L30.9 in plaats van L30) - in de game en op de website"
+          "Target Watch toont het level van het target met één decimaal, zoals de game (L30.9 in plaats van L30) - in de game en op de website",
+          "Sector HUD toont de coördinaat van je eigen reserveringsmarker (📌 116:318), live als je hem verplaatst; zonder marker zoals voorheen het midden van het beeld"
         ]
       }
     },

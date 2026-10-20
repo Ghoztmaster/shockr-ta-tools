@@ -783,6 +783,7 @@ var ShockrTools = (() => {
       poiLoading: "loading\u2026",
       poiStatus: "{labels} POI label(s) \xB7 {types} bonus type(s) active",
       sectorHudPoi: "POI {own} own \xB7 {enemy} enemy \xB7 {free} free",
+      sectorHudReserveNote: "\u{1F4CC} = your reservation marker (no marker: the view centre)",
       sectorHudSeenNote: "Own POIs: complete list. Enemy/free: POIs seen on the map this session.",
       sectorHudClickNote: "Left click: coordinates into the chat \xB7 right click: jump to coordinates",
       sectorHudJumpPrompt: "Jump to coordinates (x:y):",
@@ -1150,6 +1151,7 @@ var ShockrTools = (() => {
       poiLoading: "l\xE4dt\u2026",
       poiStatus: "{labels} POI-Label(s) \xB7 {types} Bonusart(en) aktiv",
       sectorHudPoi: "POI {own} eigene \xB7 {enemy} feindl. \xB7 {free} frei",
+      sectorHudReserveNote: "\u{1F4CC} = deine Reservierungsmarkierung (keine Markierung: die Ansichtsmitte)",
       sectorHudSeenNote: "Eigene POIs: vollst\xE4ndige Liste. Feindlich/frei: in dieser Sitzung auf der Karte gesehene POIs.",
       sectorHudClickNote: "Linksklick: Koordinaten in den Chat \xB7 Rechtsklick: zu Koordinaten springen",
       sectorHudJumpPrompt: "Zu Koordinaten springen (x:y):",
@@ -1517,6 +1519,7 @@ var ShockrTools = (() => {
       poiLoading: "laden\u2026",
       poiStatus: "{labels} POI-label(s) \xB7 {types} bonustype(s) actief",
       sectorHudPoi: "POI {own} eigen \xB7 {enemy} vijandelijk \xB7 {free} vrij",
+      sectorHudReserveNote: "\u{1F4CC} = je reserveringsmarker (geen marker: het midden van het beeld)",
       sectorHudSeenNote: "Eigen POIs: volledige lijst. Vijandelijk/vrij: POIs die je deze sessie op de kaart zag.",
       sectorHudClickNote: "Linksklik: co\xF6rdinaten in de chat \xB7 rechtsklik: naar co\xF6rdinaten springen",
       sectorHudJumpPrompt: "Spring naar co\xF6rdinaten (x:y):",
@@ -8093,6 +8096,16 @@ var ShockrTools = (() => {
     const midY = region.get_PosY() + region.get_ViewHeight() / (2 * zoom);
     return { x: Math.floor(midX / region.get_GridWidth()), y: Math.floor(midY / region.get_GridHeight()) };
   }
+  var RESERVE_MARKER_TYPE = 5;
+  function ownReserveMarker(markers, playerName) {
+    if (!playerName) return null;
+    for (const m of markers || []) {
+      if (m.get_Type() === RESERVE_MARKER_TYPE && m.get_NamePlayerCreated() === playerName) {
+        return { x: m.get_CoordX(), y: m.get_CoordY() };
+      }
+    }
+    return null;
+  }
   function parseCoords(text) {
     const nums = String(text || "").match(/\d+/g);
     if (!nums || nums.length < 2) return null;
@@ -8117,9 +8130,12 @@ var ShockrTools = (() => {
       this._timer = null;
       this._lastScan = 0;
       this._warned = false;
+      this.reserve = null;
+      this._markerEvent = null;
     }
     async start() {
       this.running = true;
+      this._watchMarkers();
       this._timer = setInterval(() => this.tick(), TICK_MS);
       this.tick();
       console.log("[ST] SectorHud: started");
@@ -8128,10 +8144,48 @@ var ShockrTools = (() => {
       this.running = false;
       if (this._timer) clearInterval(this._timer);
       this._timer = null;
+      if (this._markerEvent) {
+        const ev = this._markerEvent;
+        try {
+          webfrontend.phe.cnc.Util.detachNetEvent(ev.source, "AllianceMarkerChange", ev.type, this, this._onMarkersChange);
+        } catch {
+        }
+        this._markerEvent = null;
+      }
       if (this.el) {
         this.el.remove();
         this.el = null;
       }
+    }
+    /**
+     * Own reservation marker, refreshed on the alliance's AllianceMarkerChange
+     * event instead of every tick. ClientLib.Data.AllianceMarkerChange is the
+     * delegate name by the game's naming pattern (AllianceChange, CitiesChange).
+     */
+    _watchMarkers() {
+      try {
+        const source = ClientLib.Data.MainData.GetInstance().get_Alliance();
+        const type = ClientLib.Data.AllianceMarkerChange;
+        webfrontend.phe.cnc.Util.attachNetEvent(source, "AllianceMarkerChange", type, this, this._onMarkersChange);
+        this._markerEvent = { source, type };
+      } catch (e) {
+        console.warn("[ST] SectorHud: marker event not available", e && e.message);
+      }
+      this._onMarkersChange();
+    }
+    _onMarkersChange() {
+      try {
+        const md = ClientLib.Data.MainData.GetInstance();
+        this.reserve = ownReserveMarker(md.get_Alliance().get_Markers().l, md.get_Player().get_Name());
+      } catch {
+        this.reserve = null;
+      }
+      if (this.running && this.el && this.el.style.display !== "none") this.render();
+    }
+    /** Cell shown in the HUD: the own reservation marker, else the view centre. */
+    focus() {
+      if (this.reserve) return { ...this.reserve, reserve: true };
+      return viewCenter(ClientLib.Vis.VisMain.GetInstance().get_Region());
     }
     /** One-line status for `/st status`. */
     statusText() {
@@ -8165,8 +8219,7 @@ var ShockrTools = (() => {
     render() {
       const geo = worldGeometry();
       if (!geo) return;
-      const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
-      const c = viewCenter(region);
+      const c = this.focus();
       const here = sectorNo(c.x, c.y, geo.width, geo.height, geo.count);
       const own = ownAlliance();
       const summary = sectorSummary(this.knownPois(own && own.id), own && own.id, geo);
@@ -8176,7 +8229,7 @@ var ShockrTools = (() => {
       el.textContent = "";
       const line1 = document.createElement("div");
       const coords = document.createElement("span");
-      coords.textContent = `${c.x}:${c.y} `;
+      coords.textContent = `${c.reserve ? "\u{1F4CC} " : ""}${c.x}:${c.y} `;
       const sec = document.createElement("span");
       sec.textContent = `[${sectorAbbr(here)}]`;
       sec.style.color = STATUS_COLORS[cur.status];
@@ -8197,6 +8250,7 @@ var ShockrTools = (() => {
       el.append(line1, line2);
       el.title = [
         ...summary.map((s) => `${sectorAbbr(s.sector)}: ${t("sectorHudPoi", { own: s.own, enemy: s.enemy, free: s.free })}`),
+        ...c.reserve ? [t("sectorHudReserveNote")] : [],
         t("sectorHudSeenNote"),
         t("sectorHudClickNote")
       ].join("\n");
@@ -8234,7 +8288,7 @@ var ShockrTools = (() => {
     /** Left click: "[coords]x:y[/coords]" into the chat input at the cursor. */
     _pasteCoords() {
       try {
-        const c = viewCenter(ClientLib.Vis.VisMain.GetInstance().get_Region());
+        const c = this.focus();
         const input = qx.core.Init.getApplication().getChat().getChatWidget().getEditable();
         const dom = input.getContentElement().getDomElement();
         const value = dom.value || "";
