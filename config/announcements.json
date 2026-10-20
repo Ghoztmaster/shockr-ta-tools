@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.27.2 released — Sector HUD shows your own reservation marker (📌 116:318) and follows it live when you move it. Since 5.27.1 Target Watch shows levels with one decimal (L30.9). Tampermonkey updates by itself; never update via Import.",
-      "de": "v5.27.2 veröffentlicht — Sektor-HUD zeigt deine eigene Reservierungsmarkierung (📌 116:318) und folgt ihr live beim Verschieben. Seit 5.27.1 zeigt Target Watch Level mit einer Nachkommastelle (L30.9). Tampermonkey aktualisiert selbst; nie über Importieren aktualisieren.",
-      "nl": "v5.27.2 uitgebracht — Sector HUD toont je eigen reserveringsmarker (📌 116:318) en volgt hem live als je hem verplaatst. Sinds 5.27.1 toont Target Watch levels met één decimaal (L30.9). Tampermonkey werkt zelf bij; werk nooit bij via Importeren."
+      "en": "v5.27.4 released — removing a reservation marker no longer crashes the game. Sector HUD shows your own reservation marker (📌 116:318) and follows it within a second. Tampermonkey updates by itself; never update via Import.",
+      "de": "v5.27.4 veröffentlicht — das Entfernen einer Reservierungsmarkierung lässt das Spiel nicht mehr abstürzen. Sektor-HUD zeigt deine eigene Reservierungsmarkierung (📌 116:318) und folgt ihr innerhalb einer Sekunde. Tampermonkey aktualisiert selbst; nie über Importieren aktualisieren.",
+      "nl": "v5.27.4 uitgebracht — een reserveringsmarker verwijderen laat het spel niet meer crashen. Sector HUD toont je eigen reserveringsmarker (📌 116:318) en volgt hem binnen een seconde. Tampermonkey werkt zelf bij; werk nooit bij via Importeren."
     },
     "type": "info",
     "active": true

@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.27.2
+// @version         5.27.4
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -8100,8 +8100,12 @@ var ShockrTools = (() => {
   function ownReserveMarker(markers, playerName) {
     if (!playerName) return null;
     for (const m of markers || []) {
-      if (m.get_Type() === RESERVE_MARKER_TYPE && m.get_NamePlayerCreated() === playerName) {
-        return { x: m.get_CoordX(), y: m.get_CoordY() };
+      try {
+        if (m.get_Type() !== RESERVE_MARKER_TYPE || m.get_NamePlayerCreated() !== playerName) continue;
+        const x = m.get_CoordX();
+        const y = m.get_CoordY();
+        if (Number.isFinite(x) && Number.isFinite(y)) return { x, y };
+      } catch {
       }
     }
     return null;
@@ -8131,11 +8135,10 @@ var ShockrTools = (() => {
       this._lastScan = 0;
       this._warned = false;
       this.reserve = null;
-      this._markerEvent = null;
     }
     async start() {
       this.running = true;
-      this._watchMarkers();
+      this._readMarkers();
       this._timer = setInterval(() => this.tick(), TICK_MS);
       this.tick();
       console.log("[ST] SectorHud: started");
@@ -8144,43 +8147,25 @@ var ShockrTools = (() => {
       this.running = false;
       if (this._timer) clearInterval(this._timer);
       this._timer = null;
-      if (this._markerEvent) {
-        const ev = this._markerEvent;
-        try {
-          webfrontend.phe.cnc.Util.detachNetEvent(ev.source, "AllianceMarkerChange", ev.type, this, this._onMarkersChange);
-        } catch {
-        }
-        this._markerEvent = null;
-      }
       if (this.el) {
         this.el.remove();
         this.el = null;
       }
     }
     /**
-     * Own reservation marker, refreshed on the alliance's AllianceMarkerChange
-     * event instead of every tick. ClientLib.Data.AllianceMarkerChange is the
-     * delegate name by the game's naming pattern (AllianceChange, CitiesChange).
+     * Own reservation marker (null: none valid, the HUD shows the view centre),
+     * re-read every tick from the local (~26 item) marker list. No
+     * AllianceMarkerChange listener: a handler on that event crashed the game
+     * when a marker was deleted.
      */
-    _watchMarkers() {
-      try {
-        const source = ClientLib.Data.MainData.GetInstance().get_Alliance();
-        const type = ClientLib.Data.AllianceMarkerChange;
-        webfrontend.phe.cnc.Util.attachNetEvent(source, "AllianceMarkerChange", type, this, this._onMarkersChange);
-        this._markerEvent = { source, type };
-      } catch (e) {
-        console.warn("[ST] SectorHud: marker event not available", e && e.message);
-      }
-      this._onMarkersChange();
-    }
-    _onMarkersChange() {
+    _readMarkers() {
+      let next = null;
       try {
         const md = ClientLib.Data.MainData.GetInstance();
-        this.reserve = ownReserveMarker(md.get_Alliance().get_Markers().l, md.get_Player().get_Name());
+        next = ownReserveMarker(md.get_Alliance().get_Markers().l, md.get_Player().get_Name());
       } catch {
-        this.reserve = null;
       }
-      if (this.running && this.el && this.el.style.display !== "none") this.render();
+      this.reserve = next;
     }
     /** Cell shown in the HUD: the own reservation marker, else the view centre. */
     focus() {
@@ -8208,6 +8193,7 @@ var ShockrTools = (() => {
           this._lastScan = now;
           for (const p of visiblePois()) this.seen.set(`${p.x}:${p.y}`, { x: p.x, y: p.y, ownerId: p.ownerId });
         }
+        this._readMarkers();
         this.render();
       } catch (e) {
         if (!this._warned) {
@@ -11575,7 +11561,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.27.2";
+  var ST_VERSION = "5.27.4";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });

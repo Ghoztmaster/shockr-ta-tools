@@ -1,7 +1,22 @@
 {
-  "version": "5.27.2",
+  "version": "5.27.4",
   "date": "2026-10-20",
   "changelog": [
+    {
+      "version": "5.27.4",
+      "date": "2026-10-20",
+      "changes": {
+        "en": [
+          "Fix: removing a reservation marker no longer crashes the game; Sector HUD picks up marker changes within a second"
+        ],
+        "de": [
+          "Fix: Das Entfernen einer Reservierungsmarkierung lässt das Spiel nicht mehr abstürzen; Sektor-HUD übernimmt Markierungsänderungen innerhalb einer Sekunde"
+        ],
+        "nl": [
+          "Fix: een reserveringsmarker verwijderen laat het spel niet meer crashen; Sector HUD neemt marker-wijzigingen binnen een seconde over"
+        ]
+      }
+    },
     {
       "version": "5.27.2",
       "date": "2026-10-20",
@@ -62,30 +77,6 @@
         ],
         "nl": [
           "De Shockr-knop is nu 40×40 (was 32×32), even groot als de MaelstromTools-knop ernaast"
-        ]
-      }
-    },
-    {
-      "version": "5.26.0",
-      "date": "2026-10-18",
-      "changes": {
-        "en": [
-          "New: the Shockr button (shield icon, top left) - one click opens a grid with all Shockr panels; drag it anywhere, the position is remembered",
-          "In the grid: Upgrade Calculator, Help, Target Watch and a Config button (export/import your settings)",
-          "New plugin Target Watch in-game: see which targets your alliance is looking at, who and since when - click a row to centre the map on it (also /st targets)",
-          "The separate \"UC\" button is gone - Upgrade Calculator now lives in the Shockr button"
-        ],
-        "de": [
-          "Neu: der Shockr-Knopf (Schild-Symbol, oben links) - ein Klick öffnet ein Raster mit allen Shockr-Panels; frei verschiebbar, die Position bleibt gespeichert",
-          "Im Raster: Upgrade Calculator, Hilfe, Target Watch und ein Config-Knopf (Einstellungen exportieren/importieren)",
-          "Neues Plugin Target Watch im Spiel: sieh, welche Ziele deine Allianz ansieht, wer und seit wann - Klick auf eine Zeile zentriert die Karte darauf (auch /st targets)",
-          "Der separate \"UC\"-Knopf ist weg - der Upgrade Calculator steckt jetzt im Shockr-Knopf"
-        ],
-        "nl": [
-          "Nieuw: de Shockr-knop (schild-icoon, linksboven) - één klik opent een raster met alle Shockr-panels; versleepbaar, de positie wordt onthouden",
-          "In het raster: Upgrade Calculator, Help, Target Watch en een Config-knop (instellingen exporteren/importeren)",
-          "Nieuwe plugin Target Watch in-game: zie naar welke targets je alliance kijkt, wie en sinds wanneer - klik op een rij om de kaart erop te centreren (ook /st targets)",
-          "De losse \"UC\"-knop is weg - de Upgrade Calculator zit nu in de Shockr-knop"
         ]
       }
     }

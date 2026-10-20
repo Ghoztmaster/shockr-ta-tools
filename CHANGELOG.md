@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+## [5.27.4] — 2026-10-20
+
+Userscript-only (geen server-wijziging; `config/version.json` en `config/announcements.json` zijn wel gewijzigd). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Fix: Sector HUD
+- fix: marker event handler crashed the game when removing a reservation marker; removed event listener, tick-only fallback.
+- `plugins/sector-hud.js`: geen `add_AllianceMarkerChange`/`remove_AllianceMarkerChange` meer. De tick van 1 s leest `get_Markers().l`, elke marker in een eigen try/catch (kapotte objecten overgeslagen); geen geldige type-5-marker → het midden van het beeld. Een verplaatste marker staat binnen 1 s in de HUD. Tests: `tests/poi-sector.test.mjs`
+
 ## [5.27.2] — 2026-10-20
 
 Userscript-only (geen server-wijziging; `config/version.json`, `config/announcements.json` en `config/plugins.json` zijn wel gewijzigd). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

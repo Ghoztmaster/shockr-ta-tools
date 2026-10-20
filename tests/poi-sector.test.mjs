@@ -79,11 +79,20 @@ function fakeGame(state) {
         get_Type: () => p.type, get_Level: () => p.level,
         get_OwnerAllianceId: () => p.owner || 0, get_OwnerAllianceName: () => p.ownerName || '',
     });
-    state.events = state.events || {};
-    globalThis.webfrontend = { phe: { cnc: { Util: {
-        attachNetEvent: (src, name, type, ctx, cb) => { state.events[name] = () => cb.call(ctx); },
-        detachNetEvent: (src, name) => { delete state.events[name]; },
-    } } } };
+    // One Alliance object (as the client keeps); state.allianceObj = makeAlliance() swaps it.
+    state.makeAlliance = () => {
+        return {
+            get_Exists: () => state.alliance !== false,
+            get_Id: () => (state.alliance === false ? 0 : OWN), get_Name: () => 'SoO',
+            get_OwnedPOIs: () => state.owned || [],
+            get_Markers: () => ({ l: state.markers || [] }),
+            get_POIRankScore: () => [{ r: 3, s: 500 }, { r: 1, s: 900 }],
+            get_POITiberiumBonus: () => 12300, get_POICrystalBonus: () => 0, get_POIPowerBonus: () => 0,
+            get_POIInfantryBonus: () => 10, get_POIVehicleBonus: () => 0, get_POIAirBonus: () => 0, get_POIDefenseBonus: () => 0,
+        };
+    };
+    state.allianceObj = state.makeAlliance();
+    globalThis.webfrontend = { phe: { cnc: { Util: { attachNetEvent() {}, detachNetEvent() {} } } } };
     globalThis.qx = undefined;
     globalThis.ClientLib = {
         Base: {
@@ -117,15 +126,7 @@ function fakeGame(state) {
                 get_Player: () => ({ id: 1, name: 'GhoztMasters', get_Name: () => 'GhoztMasters' }),
                 get_Server: () => ({ get_WorldWidth: () => 1000, get_WorldHeight: () => 1000, get_SectorCount: () => 8 }),
                 get_World: () => ({ GetObjectFromPosition: (x, y) => (state.pois[`${x}:${y}`] ? { Type: 4 } : null) }),
-                get_Alliance: () => ({
-                    get_Exists: () => state.alliance !== false,
-                    get_Id: () => (state.alliance === false ? 0 : OWN), get_Name: () => 'SoO',
-                    get_OwnedPOIs: () => state.owned || [],
-                    get_Markers: () => ({ l: state.markers || [] }),
-                    get_POIRankScore: () => [{ r: 3, s: 500 }, { r: 1, s: 900 }],
-                    get_POITiberiumBonus: () => 12300, get_POICrystalBonus: () => 0, get_POIPowerBonus: () => 0,
-                    get_POIInfantryBonus: () => 10, get_POIVehicleBonus: () => 0, get_POIAirBonus: () => 0, get_POIDefenseBonus: () => 0,
-                }),
+                get_Alliance: () => state.allianceObj,
             }) },
         },
     };
@@ -288,7 +289,14 @@ test('ownReserveMarker: type 5 placed by the own player, else null', () => {
     assert.equal(mod.ownReserveMarker(undefined, 'GhoztMasters'), null);
 });
 
-test('SectorHud: own reservation marker replaces the view centre, live on AllianceMarkerChange', async () => {
+test('ownReserveMarker: a marker whose getters throw is skipped', () => {
+    const broken = { get_Type: () => { throw new Error('deleted'); } };
+    const noCoords = { ...marker(5, 'GhoztMasters', 0, 0), get_CoordX: () => { throw new Error('deleted'); } };
+    assert.equal(mod.ownReserveMarker([broken, noCoords], 'GhoztMasters'), null, 'none valid: view centre');
+    assert.deepEqual(mod.ownReserveMarker([broken, noCoords, marker(5, 'GhoztMasters', 116, 318)], 'GhoztMasters'), { x: 116, y: 318 });
+});
+
+test('SectorHud: the tick follows the own reservation marker (placed, moved, broken, removed) and an Alliance swap', async () => {
     const { body } = fakeDom();
     const state = { mode: 'region', posX: 4950, posY: 950, pois: {}, markers: [marker(5, 'Other', 10, 10)] };
     fakeGame(state);
@@ -298,20 +306,28 @@ test('SectorHud: own reservation marker replaces the view centre, live on Allian
         const el = body.children[0];
         assert.match(el.textContent, /^500:100 \[N\]/, 'no own marker: view centre');
 
-        state.markers.push(marker(5, 'GhoztMasters', 900, 500));
-        state.events.AllianceMarkerChange();
+        state.markers.push(marker(5, 'GhoztMasters', 900, 500));    // placed
+        p.tick();
         assert.match(el.textContent, /^📌 900:500 \[E\]/);
         assert.match(el.title, /reservation marker/);
 
         state.markers[1] = marker(5, 'GhoztMasters', 500, 900);     // moved
-        state.events.AllianceMarkerChange();
+        p.tick();
         assert.match(el.textContent, /^📌 500:900 \[S\]/);
 
+        state.markers[1] = { get_Type: () => { throw new Error('deleted'); } };   // half-deleted object
+        p.tick();
+        assert.match(el.textContent, /^500:100 \[N\]/, 'broken marker skipped: view centre');
+
         state.markers.pop();                                         // removed
-        state.events.AllianceMarkerChange();
+        p.tick();
         assert.match(el.textContent, /^500:100 \[N\]/);
+
+        state.allianceObj = state.makeAlliance();                   // client swapped the Alliance object
+        state.markers = [marker(5, 'GhoztMasters', 100, 500)];
+        p.tick();
+        assert.match(el.textContent, /^📌 100:500 \[W\]/);
     } finally {
         p.stop();
     }
-    assert.equal(state.events.AllianceMarkerChange, undefined, 'disable detaches the marker event');
 });
