@@ -1,22 +1,34 @@
 {
-  "version": "5.27.1",
+  "version": "5.27.2",
   "date": "2026-10-20",
   "changelog": [
+    {
+      "version": "5.27.2",
+      "date": "2026-10-20",
+      "changes": {
+        "en": [
+          "Sector HUD shows the coordinates of your own reservation marker (📌 116:318), live when you move it; without a marker it shows the view centre as before"
+        ],
+        "de": [
+          "Sektor-HUD zeigt die Koordinaten deiner eigenen Reservierungsmarkierung (📌 116:318), live beim Verschieben; ohne Markierung wie bisher die Ansichtsmitte"
+        ],
+        "nl": [
+          "Sector HUD toont de coördinaat van je eigen reserveringsmarker (📌 116:318), live als je hem verplaatst; zonder marker zoals voorheen het midden van het beeld"
+        ]
+      }
+    },
     {
       "version": "5.27.1",
       "date": "2026-10-20",
       "changes": {
         "en": [
-          "Target Watch shows the target level with one decimal, as the game does (L30.9 instead of L30) - in the game and on the website",
-          "Sector HUD shows the coordinates of your own reservation marker (📌 116:318), live when you move it; without a marker it shows the view centre as before"
+          "Target Watch shows the target level with one decimal, as the game does (L30.9 instead of L30) - in the game and on the website"
         ],
         "de": [
-          "Target Watch zeigt das Ziel-Level mit einer Nachkommastelle, wie das Spiel (L30.9 statt L30) - im Spiel und auf der Website",
-          "Sektor-HUD zeigt die Koordinaten deiner eigenen Reservierungsmarkierung (📌 116:318), live beim Verschieben; ohne Markierung wie bisher die Ansichtsmitte"
+          "Target Watch zeigt das Ziel-Level mit einer Nachkommastelle, wie das Spiel (L30.9 statt L30) - im Spiel und auf der Website"
         ],
         "nl": [
-          "Target Watch toont het level van het target met één decimaal, zoals de game (L30.9 in plaats van L30) - in de game en op de website",
-          "Sector HUD toont de coördinaat van je eigen reserveringsmarker (📌 116:318), live als je hem verplaatst; zonder marker zoals voorheen het midden van het beeld"
+          "Target Watch toont het level van het target met één decimaal, zoals de game (L30.9 in plaats van L30) - in de game en op de website"
         ]
       }
     },
@@ -74,42 +86,6 @@
           "In het raster: Upgrade Calculator, Help, Target Watch en een Config-knop (instellingen exporteren/importeren)",
           "Nieuwe plugin Target Watch in-game: zie naar welke targets je alliance kijkt, wie en sinds wanneer - klik op een rij om de kaart erop te centreren (ook /st targets)",
           "De losse \"UC\"-knop is weg - de Upgrade Calculator zit nu in de Shockr-knop"
-        ]
-      }
-    },
-    {
-      "version": "5.25.0",
-      "date": "2026-10-18",
-      "changes": {
-        "en": [
-          "Settings and key now work on every game server: Shockr keeps a copy in Tampermonkey's own storage, so a world on another server (cncappXX) starts with your config instead of an empty one - no need to register again",
-          "A setting changed on one server is picked up by the others at their next reload",
-          "Updates install themselves: Tampermonkey checks the GitHub link in the script header daily and updates in place - your settings and key stay. Never update via Import or by deleting and reinstalling: that wipes them",
-          "Chat notice when a newer version is available (Tampermonkey menu → Check for userscript updates)",
-          "/st register: new option \"I still have my key\" - paste the key from an earlier /st config export and it is active again; no new key, other browsers keep working",
-          "After every registration the popup shows your backup code (the /st config export text) with a Copy button - keep it somewhere safe",
-          "Config wiped by an Import? The chat says so at startup and tells you what to do",
-          "Tampermonkey asks once for the new storage permission when updating - allow it"
-        ],
-        "de": [
-          "Einstellungen und Key funktionieren jetzt auf jedem Spielserver: Shockr speichert eine Kopie in Tampermonkeys eigenem Speicher, eine Welt auf einem anderen Server (cncappXX) startet also mit deiner Konfiguration statt leer - kein erneutes Registrieren nötig",
-          "Eine auf einem Server geänderte Einstellung übernehmen die anderen beim nächsten Neuladen",
-          "Updates installieren sich selbst: Tampermonkey prüft täglich den GitHub-Link im Script-Header und aktualisiert an Ort und Stelle - Einstellungen und Key bleiben. Nie über Importieren oder Löschen + Neuinstallation aktualisieren: das löscht sie",
-          "Chat-Hinweis, wenn eine neuere Version verfügbar ist (Tampermonkey-Menü → Nach Userscript-Updates suchen)",
-          "/st register: neue Option \"Ich habe meinen Key noch\" - Key aus einem früheren /st config export einfügen und er ist wieder aktiv; kein neuer Key, andere Browser funktionieren weiter",
-          "Nach jeder Registrierung zeigt das Fenster deinen Sicherungscode (den /st config export-Text) mit Kopieren-Button - sicher aufbewahren",
-          "Konfiguration durch ein Importieren gelöscht? Der Chat sagt es beim Start und was zu tun ist",
-          "Tampermonkey fragt beim Update einmal nach der neuen Speicher-Berechtigung - bitte erlauben"
-        ],
-        "nl": [
-          "Instellingen en key werken nu op elke gameserver: Shockr bewaart een kopie in de eigen opslag van Tampermonkey, dus een wereld op een andere server (cncappXX) start met je config in plaats van leeg - opnieuw registreren is niet nodig",
-          "Een instelling die je op één server wijzigt, nemen de andere bij de volgende herlaad over",
-          "Updates installeren zichzelf: Tampermonkey controleert dagelijks de GitHub-link in de script-header en werkt ter plekke bij - je instellingen en key blijven. Werk nooit bij via Importeren of verwijderen + opnieuw installeren: dat wist ze",
-          "Chat-melding als er een nieuwere versie is (Tampermonkey-menu → Controleren op updates)",
-          "/st register: nieuwe optie \"Ik heb mijn key nog\" - plak de key uit een eerdere /st config export en hij is weer actief; geen nieuwe key, andere browsers blijven werken",
-          "Na elke registratie toont het venster je back-upcode (de /st config export-tekst) met een Kopieer-knop - bewaar die veilig",
-          "Config gewist door een Importeren? De chat zegt het bij het opstarten en wat je moet doen",
-          "Tampermonkey vraagt bij de update één keer om de nieuwe opslag-toestemming - sta die toe"
         ]
       }
     }

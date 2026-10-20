@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [5.27.2] — 2026-10-20
+
+Userscript-only (geen server-wijziging; `config/version.json`, `config/announcements.json` en `config/plugins.json` zijn wel gewijzigd). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Sector HUD: eigen reserveringsmarker
+- De coördinaat (met sector en POI-regel) in de HUD is die van je eigen reserveringsmarker als je er een hebt: alliance-marker met `get_Type() === 5` en `get_NamePlayerCreated()` gelijk aan `get_Player().get_Name()`, getoond als `📌 116:318`. Zonder marker: het midden van het beeld, zoals voorheen. Linksklik plakt de getoonde coördinaat
+- Markers via `get_Alliance().get_Markers().l` (getters, geen ruwe keys); bijgewerkt op `AllianceMarkerChange` (delegate `ClientLib.Data.AllianceMarkerChange`), niet per tick. Type 5 = reservering is live afgeleid (2026-10-20); het spel heeft er geen benoemd enum voor (`RESERVE_MARKER_TYPE`)
+- Tests: `tests/poi-sector.test.mjs`
+
 ## [5.27.1] — 2026-10-20
 
 Userscript + website (`server/static/targets.html`); `config/version.json` en `config/announcements.json` gewijzigd. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
@@ -10,11 +19,6 @@ Userscript + website (`server/static/targets.html`); `config/version.json` en `c
 - Het level werd overal afgekapt (`Math.floor`): een base van 30.9 stond als "L30". Nu één decimaal, zoals de game het toont, hele levels zonder ".0" (`L30.9`, `L31`)
 - Bron: TargetWatcher stuurt `targetLevel` met één decimaal (`roundLevel`; de server nam al een float aan, `TargetWatchPayload.targetLevel: float`). Weergave: Target Board in de game (`formatLevel`) en de website `/targets` (`fmtLevel`). Map Labels vergelijkt levels nog steeds als heel getal - ongewijzigd
 - Spelers op een oudere versie sturen nog hele getallen; die staan als `L30` tot ze bijgewerkt zijn. Tests: `tests/toolbar.test.mjs`
-
-### Sector HUD: eigen reserveringsmarker
-- De coördinaat (met sector en POI-regel) in de HUD is die van je eigen reserveringsmarker als je er een hebt: alliance-marker met `get_Type() === 5` en `get_NamePlayerCreated()` gelijk aan `get_Player().get_Name()`, getoond als `📌 116:318`. Zonder marker: het midden van het beeld, zoals voorheen. Linksklik plakt de getoonde coördinaat
-- Markers via `get_Alliance().get_Markers().l` (getters, geen ruwe keys); bijgewerkt op `AllianceMarkerChange` (delegate `ClientLib.Data.AllianceMarkerChange`), niet per tick. Type 5 = reservering is live afgeleid (2026-10-20); het spel heeft er geen benoemd enum voor (`RESERVE_MARKER_TYPE`)
-- Tests: `tests/poi-sector.test.mjs`
 
 ### Build
 - `dist/` opnieuw gebouwd (de `@description` zonder STABS stond al in 5.27.0)

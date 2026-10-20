@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.27.1
+// @version         5.27.2
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -11575,7 +11575,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.27.1";
+  var ST_VERSION = "5.27.2";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
