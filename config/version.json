@@ -1,7 +1,22 @@
 {
-  "version": "5.27.0",
-  "date": "2026-10-19",
+  "version": "5.27.1",
+  "date": "2026-10-20",
   "changelog": [
+    {
+      "version": "5.27.1",
+      "date": "2026-10-20",
+      "changes": {
+        "en": [
+          "Target Watch shows the target level with one decimal, as the game does (L30.9 instead of L30) - in the game and on the website"
+        ],
+        "de": [
+          "Target Watch zeigt das Ziel-Level mit einer Nachkommastelle, wie das Spiel (L30.9 statt L30) - im Spiel und auf der Website"
+        ],
+        "nl": [
+          "Target Watch toont het level van het target met één decimaal, zoals de game (L30.9 in plaats van L30) - in de game en op de website"
+        ]
+      }
+    },
     {
       "version": "5.27.0",
       "date": "2026-10-19",
@@ -92,30 +107,6 @@
           "Na elke registratie toont het venster je back-upcode (de /st config export-tekst) met een Kopieer-knop - bewaar die veilig",
           "Config gewist door een Importeren? De chat zegt het bij het opstarten en wat je moet doen",
           "Tampermonkey vraagt bij de update één keer om de nieuwe opslag-toestemming - sta die toe"
-        ]
-      }
-    },
-    {
-      "version": "5.24.0",
-      "date": "2026-10-14",
-      "changes": {
-        "en": [
-          "No more lost settings: without api.url set, Shockr uses the alliance server (https://packetlab.nl/shockr) by default",
-          "New: /st config export and /st config import - take all settings, incl. your key, to another world or browser",
-          "/st register warns when you already have a key: registering again makes the old one invalid, so it only continues after you confirm",
-          "Troubleshooting: config lost after switching worlds → /st config export on the old world, /st config import on the new one"
-        ],
-        "de": [
-          "Keine verlorenen Einstellungen mehr: ohne gesetzte api.url verwendet Shockr standardmäßig den Allianz-Server (https://packetlab.nl/shockr)",
-          "Neu: /st config export und /st config import - alle Einstellungen inkl. deines Keys in eine andere Welt oder einen anderen Browser mitnehmen",
-          "/st register warnt, wenn du schon einen Key hast: erneutes Registrieren macht den alten ungültig, deshalb geht es erst nach deiner Bestätigung weiter",
-          "Fehlerbehebung: Einstellungen nach Weltwechsel weg → /st config export in der alten Welt, /st config import in der neuen"
-        ],
-        "nl": [
-          "Geen verloren instellingen meer: zonder ingestelde api.url gebruikt Shockr standaard de alliance-server (https://packetlab.nl/shockr)",
-          "Nieuw: /st config export en /st config import - neem alle instellingen, incl. je key, mee naar een andere wereld of browser",
-          "/st register waarschuwt als je al een key hebt: opnieuw registreren maakt de oude ongeldig, dus het gaat pas verder na jouw bevestiging",
-          "Problemen oplossen: config kwijt na wisselen van wereld → /st config export op de oude wereld, /st config import op de nieuwe"
         ]
       }
     }

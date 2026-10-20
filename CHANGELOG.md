@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [5.27.1] — 2026-10-20
+
+Userscript + website (`server/static/targets.html`); `config/version.json` en `config/announcements.json` gewijzigd. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Target Watch: level met één decimaal
+- Het level werd overal afgekapt (`Math.floor`): een base van 30.9 stond als "L30". Nu één decimaal, zoals de game het toont, hele levels zonder ".0" (`L30.9`, `L31`)
+- Bron: TargetWatcher stuurt `targetLevel` met één decimaal (`roundLevel`; de server nam al een float aan, `TargetWatchPayload.targetLevel: float`). Weergave: Target Board in de game (`formatLevel`) en de website `/targets` (`fmtLevel`). Map Labels vergelijkt levels nog steeds als heel getal - ongewijzigd
+- Spelers op een oudere versie sturen nog hele getallen; die staan als `L30` tot ze bijgewerkt zijn. Tests: `tests/toolbar.test.mjs`
+
+### Build
+- `dist/` opnieuw gebouwd (de `@description` zonder STABS stond al in 5.27.0)
+- `@updateURL`/`@downloadURL` blijven op `raw.githubusercontent.com`. Gemeten (2026-10-20): GitHub raw `Cache-Control: max-age=300` (max 5 min oud), jsDelivr `@main` `max-age=604800, s-maxage=43200` (CDN 12 uur, browser 7 dagen) - jsDelivr zou updates juist langer vertragen
+
 ## [5.27.0] — 2026-10-19
 
 Userscript-only (geen server-wijziging; `config/version.json` en `config/announcements.json` zijn wel gewijzigd). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

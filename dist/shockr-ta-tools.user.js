@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.27.0
+// @version         5.27.1
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -5084,6 +5084,14 @@ var ShockrTools = (() => {
   }
 
   // plugins/target-watcher.js
+  function roundLevel(level) {
+    return Math.round(Number(level) * 10) / 10;
+  }
+  function formatLevel(level) {
+    const l = roundLevel(level);
+    if (!Number.isFinite(l)) return "0";
+    return Number.isInteger(l) ? String(l) : l.toFixed(1);
+  }
   var POLL_INTERVAL_MS = 2500;
   var POST_MIN_INTERVAL_MS = 5e3;
   var NAME_MAX_LENGTH = 50;
@@ -5192,14 +5200,14 @@ var ShockrTools = (() => {
       }
       const x = city.get_PosX();
       const y = city.get_PosY();
-      const level = Math.floor(city.get_LvlBase());
+      const level = roundLevel(city.get_LvlBase());
       const type = getTargetType(x, y, faction);
       const label = { camp: "Camp", outpost: "Outpost", base: "FG Base", player: "Base" }[type];
       return {
         playerId,
         playerName: clip(playerName),
         targetId: Number(city.get_Id()),
-        targetName: clip(city.get_Name() || `${label} L${level}`),
+        targetName: clip(city.get_Name() || `${label} L${formatLevel(level)}`),
         targetX: Math.round(Number(x)),
         targetY: Math.round(Number(y)),
         targetLevel: Number.isFinite(level) ? level : 0,
@@ -10064,7 +10072,7 @@ var ShockrTools = (() => {
       const x = Number(tg.targetX);
       const y = Number(tg.targetY);
       const names2 = tg.watchers.map((w) => escapeHtml(w.playerName || "?")).join(", ");
-      html += `<tr data-x="${x}" data-y="${y}" title="${escapeHtml(t("targetBoardCenterHint"))}" style="${rowStyle}cursor:pointer;border-bottom:1px solid #2a2a2a;"><td style="${td}padding-left:8px;"><div style="color:#e0e0e0;">${escapeHtml(tg.targetName || "?")}</div><div style="color:#4fc3f7;">${x}:${y}</div></td><td style="${td}white-space:nowrap;">L${Math.floor(Number(tg.targetLevel) || 0)}</td><td style="${td}"><span style="color:${double ? "#ffb74d" : "#aaa"};font-weight:${double ? "bold" : "normal"};">${tg.watchers.length}</span> \xB7 ${names2}</td><td style="${td}white-space:nowrap;color:#888;">${escapeHtml(relativeTime(latest(tg), now))}</td></tr>`;
+      html += `<tr data-x="${x}" data-y="${y}" title="${escapeHtml(t("targetBoardCenterHint"))}" style="${rowStyle}cursor:pointer;border-bottom:1px solid #2a2a2a;"><td style="${td}padding-left:8px;"><div style="color:#e0e0e0;">${escapeHtml(tg.targetName || "?")}</div><div style="color:#4fc3f7;">${x}:${y}</div></td><td style="${td}white-space:nowrap;">L${formatLevel(tg.targetLevel)}</td><td style="${td}"><span style="color:${double ? "#ffb74d" : "#aaa"};font-weight:${double ? "bold" : "normal"};">${tg.watchers.length}</span> \xB7 ${names2}</td><td style="${td}white-space:nowrap;color:#888;">${escapeHtml(relativeTime(latest(tg), now))}</td></tr>`;
     }
     return html + "</table>";
   }
@@ -11513,7 +11521,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.27.0";
+  var ST_VERSION = "5.27.1";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });

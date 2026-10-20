@@ -13,7 +13,7 @@ const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 async function load() {
     const out = await esbuild.build({
         stdin: {
-            contents: `export * from './lib/toolbar.js'; export * from './lib/drag.js'; export * from './plugins/target-board.js';`,
+            contents: `export * from './lib/toolbar.js'; export * from './lib/drag.js'; export * from './plugins/target-board.js'; export { roundLevel, formatLevel } from './plugins/target-watcher.js';`,
             resolveDir: root,
         },
         bundle: true, format: 'esm', write: false,
@@ -194,7 +194,8 @@ test('renderTable: orange row at 2+ watchers, coordinates on the row, names esca
     ], NOW);
     assert.match(html, /data-x="400" data-y="512"[^>]*background:#3a2e14/);
     assert.doesNotMatch(html, /data-x="1" data-y="2"[^>]*background:#3a2e14/);
-    assert.match(html, /L45/);
+    assert.match(html, />L45\.7</, 'level with one decimal (5.27.1)');
+    assert.match(html, />L30</, 'whole level without .0');
     assert.match(html, /A&lt;b&gt;, B/);
     assert.match(html, /400:512/);
     assert.match(mod.renderTable([], NOW), /Nobody/);
@@ -238,4 +239,13 @@ test('TargetBoard: requests only while open, every 20 s; no toolbar item without
         mock.timers.reset();
         delete globalThis.ClientLib;
     }
+});
+
+test('formatLevel: one decimal as the game shows it, whole levels without .0', () => {
+    assert.equal(mod.formatLevel(30.94), '30.9');
+    assert.equal(mod.formatLevel(30.96), '31');
+    assert.equal(mod.formatLevel(45.7), '45.7');
+    assert.equal(mod.formatLevel(30), '30');
+    assert.equal(mod.formatLevel(undefined), '0');
+    assert.equal(mod.roundLevel(17.649), 17.6);
 });

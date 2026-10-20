@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.27.0 released — Shockr is now GPL-3.0-or-later, with credit to the original Shockr Tools and other sources. The PvP alarm has new icons and a new alarm sound. Tampermonkey updates by itself; never update via Import.",
-      "de": "v5.27.0 veröffentlicht — Shockr steht jetzt unter GPL-3.0-or-later, mit Nennung der ursprünglichen Shockr Tools und anderer Quellen. Der PvP-Alarm hat neue Symbole und einen neuen Alarmton. Tampermonkey aktualisiert selbst; nie über Importieren aktualisieren.",
-      "nl": "v5.27.0 uitgebracht — Shockr is nu GPL-3.0-or-later, met vermelding van de oorspronkelijke Shockr Tools en andere bronnen. Het PvP-alarm heeft nieuwe iconen en een nieuw alarmgeluid. Tampermonkey werkt zelf bij; werk nooit bij via Importeren."
+      "en": "v5.27.1 released — Target Watch shows levels with one decimal, as the game does (L30.9). Shockr is GPL-3.0-or-later since 5.27.0. Tampermonkey updates by itself; never update via Import.",
+      "de": "v5.27.1 veröffentlicht — Target Watch zeigt Level mit einer Nachkommastelle, wie das Spiel (L30.9). Shockr steht seit 5.27.0 unter GPL-3.0-or-later. Tampermonkey aktualisiert selbst; nie über Importieren aktualisieren.",
+      "nl": "v5.27.1 uitgebracht — Target Watch toont levels met één decimaal, zoals de game (L30.9). Shockr is sinds 5.27.0 GPL-3.0-or-later. Tampermonkey werkt zelf bij; werk nooit bij via Importeren."
     },
     "type": "info",
     "active": true

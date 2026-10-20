@@ -25,6 +25,7 @@ import { chatMessage } from '../lib/main.js';
 import { t, escapeHtml } from '../lib/i18n.js';
 import { ICONS } from '../lib/toolbar.js';
 import { makeDraggable, loadPosition, clampPosition } from '../lib/drag.js';
+import { formatLevel } from './target-watcher.js';
 
 const PANEL_ID = 'st-targetboard-panel';
 const TOOLBAR_ID = 'targetboard';
@@ -263,7 +264,7 @@ export function renderTable(rows, now) {
         html += `<tr data-x="${x}" data-y="${y}" title="${escapeHtml(t('targetBoardCenterHint'))}" style="${rowStyle}cursor:pointer;border-bottom:1px solid #2a2a2a;">`
             + `<td style="${td}padding-left:8px;"><div style="color:#e0e0e0;">${escapeHtml(tg.targetName || '?')}</div>`
             + `<div style="color:#4fc3f7;">${x}:${y}</div></td>`
-            + `<td style="${td}white-space:nowrap;">L${Math.floor(Number(tg.targetLevel) || 0)}</td>`
+            + `<td style="${td}white-space:nowrap;">L${formatLevel(tg.targetLevel)}</td>`
             + `<td style="${td}"><span style="color:${double ? '#ffb74d' : '#aaa'};font-weight:${double ? 'bold' : 'normal'};">${tg.watchers.length}</span> · ${names}</td>`
             + `<td style="${td}white-space:nowrap;color:#888;">${escapeHtml(relativeTime(latest(tg), now))}</td></tr>`;
     }

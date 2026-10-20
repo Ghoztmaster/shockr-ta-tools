@@ -258,7 +258,7 @@ function render() {
         return `<tr class="${double ? 'double' : ''}">
             <td class="target-cell" data-label="${esc(T('colTarget'))}"><span class="target-name">${esc(t.targetName || '?')}</span></td>
             <td data-label="${esc(T('colCoord'))}">${t.targetX}:${t.targetY}</td>
-            <td data-label="${esc(T('colLevel'))}">L${Math.floor(t.targetLevel)}</td>
+            <td data-label="${esc(T('colLevel'))}">L${fmtLevel(t.targetLevel)}</td>
             <td data-label="${esc(T('colType'))}"><span class="type type-${esc(type)}">${esc(type || '—')}</span></td>
             <td class="watchers-cell" data-label="${esc(T('colWatchers'))}"><div>${watchers}${double ? `<div class="double-flag">${esc(T('doubleFlag', { n: t.watchers.length }))}</div>` : ''}</div></td>
         </tr>`;
@@ -272,6 +272,13 @@ function latest(t) {
 function ago(seconds) {
     const min = Math.floor(Math.max(0, seconds) / 60);
     return min < 1 ? T('justNow') : T('minAgo', { n: min });
+}
+
+/** Base level to one decimal, whole levels without ".0" (30.94 -> "30.9", 31 -> "31"). */
+function fmtLevel(level) {
+    const l = Math.round(Number(level) * 10) / 10;
+    if (!Number.isFinite(l)) return '0';
+    return Number.isInteger(l) ? String(l) : l.toFixed(1);
 }
 
 function esc(s) {

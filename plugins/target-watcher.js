@@ -37,6 +37,18 @@ import { chatMessage } from '../lib/main.js';
 import { t } from '../lib/i18n.js';
 import { scanLockHolder } from '../lib/scanner-util.js';
 
+/** Base level to one decimal, as the game shows it (30.94 -> 30.9). */
+export function roundLevel(level) {
+    return Math.round(Number(level) * 10) / 10;
+}
+
+/** "30.9", whole levels without ".0" ("31"); 0 for anything unreadable. */
+export function formatLevel(level) {
+    const l = roundLevel(level);
+    if (!Number.isFinite(l)) return '0';
+    return Number.isInteger(l) ? String(l) : l.toFixed(1);
+}
+
 const POLL_INTERVAL_MS = 2500;
 const POST_MIN_INTERVAL_MS = 5000;
 
@@ -176,17 +188,18 @@ function getViewedTarget() {
 
         const x = city.get_PosX();
         const y = city.get_PosY();
-        const level = Math.floor(city.get_LvlBase());
+        const level = roundLevel(city.get_LvlBase());
         const type = getTargetType(x, y, faction);
         const label = { camp: 'Camp', outpost: 'Outpost', base: 'FG Base', player: 'Base' }[type];
 
         // Every field typed and bounded exactly as TargetWatchPayload expects
-        // (ints, names <= 50 chars) - anything else is a 422 on the server.
+        // (ints, the level a float, names <= 50 chars) - anything else is a 422 on the server.
+        // The level keeps one decimal (5.27.1; before it was cut to a whole number).
         return {
             playerId,
             playerName: clip(playerName),
             targetId: Number(city.get_Id()),
-            targetName: clip(city.get_Name() || `${label} L${level}`),
+            targetName: clip(city.get_Name() || `${label} L${formatLevel(level)}`),
             targetX: Math.round(Number(x)),
             targetY: Math.round(Number(y)),
             targetLevel: Number.isFinite(level) ? level : 0,
