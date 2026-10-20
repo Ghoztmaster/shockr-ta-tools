@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+## [5.27.0] — 2026-10-19
+
+Userscript-only (geen server-wijziging; `config/version.json` en `config/announcements.json` zijn wel gewijzigd). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Licentie (commits `chore: relicense to GPL-3.0` en `fix: replace third-party code without a compatible license`)
+- MIT → **GPL-3.0-or-later**: GPL-tekst in `LICENSE`, SPDX-header in elk bestand in `lib/` en `plugins/`, `@license` in de userscript-header, `package.json`, README en CONTRIBUTING
+- Bronvermelding van de oorspronkelijke Shockr Tools (`blacha/st`, MIT, © 2020 Blayne Chard): `NOTICE` met de MIT-tekst en de negen bestanden die ervan afgeleid zijn, een "Portions derived from"-regel in die bestanden, NOTICE ook in het geïnstalleerde userscript. README noemt het geen clean-room-herbouw meer
+- "A note on licensing and attribution" in README en NOTICE; inventaris van code van derden in `docs/LICENTIES_DERDEN.md`
+- Vervangen omdat de licentie het niet toeliet: Sector HUD (`sectorNo`, `viewCenter`, coördinaten plakken/springen - WarChiefs is CC-BY-NC-SA; de getoonde coördinaat is nu de cel die echt onder het midden ligt, kan 1 hoger zijn dan voorheen), Chat Helper (eigen auto-tag-code, zelfde gedrag), PvP-alarm (eigen favicons, CC0-alarmgeluid "Alarm 2_9.wav" van Joao_Janz, freesound 478295). Movable Menu regel voor regel vergeleken met MovableMenuOverlay: geen gedeelde code
+- TABS heeft geen licentie (alleen NetquiK's pack is GPL): de originelen blijven buiten git (`legacy/*.user.js` in `.gitignore`)
+
+### STABS
+- STABS fase 1 gebouwd maar uitgeschakeld — TABS wordt apart onderhouden. Code in `plugins/stabs.js`, `plugins/stabs-stats.js`, `plugins/stabs-window.js` blijft staan (`defaultEnabled: false`, niet in `/st help`, de Shockr-knop of `config/plugins.json`); `/st plugin enable stabs` zet hem voor tests aan
+
+### Overig
+- `/st status`: een plugin kan met `statusState()` een eigen toestand tonen in plaats van "aan" (STABS naast TABS: "inactief — TABS gedetecteerd")
+- `lib/toolbar.js`: icoon `sim` (gekruiste zwaarden)
+
 ## [5.26.1] — 2026-10-18
 
 Userscript-only (geen server-wijziging; `config/version.json` en `config/announcements.json` zijn wel gewijzigd). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

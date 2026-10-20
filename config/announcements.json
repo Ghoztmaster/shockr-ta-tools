@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.26.1 released — the Shockr button top left (now the same size as the MaelstromTools button) holds all panels: Upgrade Calculator, Help, Target Watch and Config. Target Watch is now also in-game: see which targets your alliance is looking at and click one to jump to it on the map. Tampermonkey updates by itself; never update via Import.",
-      "de": "v5.26.1 veröffentlicht — der Shockr-Knopf oben links (jetzt so groß wie der MaelstromTools-Knopf) enthält alle Panels: Upgrade Calculator, Hilfe, Target Watch und Config. Target Watch gibt es jetzt auch im Spiel: sieh, welche Ziele deine Allianz ansieht, und spring per Klick auf der Karte hin. Tampermonkey aktualisiert selbst; nie über Importieren aktualisieren.",
-      "nl": "v5.26.1 uitgebracht — de Shockr-knop linksboven (nu even groot als de MaelstromTools-knop) bevat alle panels: Upgrade Calculator, Help, Target Watch en Config. Target Watch is nu ook in-game: zie naar welke targets je alliance kijkt en klik erop om ernaartoe te springen op de kaart. Tampermonkey werkt zelf bij; werk nooit bij via Importeren."
+      "en": "v5.27.0 released — Shockr is now GPL-3.0-or-later, with credit to the original Shockr Tools and other sources. The PvP alarm has new icons and a new alarm sound. Tampermonkey updates by itself; never update via Import.",
+      "de": "v5.27.0 veröffentlicht — Shockr steht jetzt unter GPL-3.0-or-later, mit Nennung der ursprünglichen Shockr Tools und anderer Quellen. Der PvP-Alarm hat neue Symbole und einen neuen Alarmton. Tampermonkey aktualisiert selbst; nie über Importieren aktualisieren.",
+      "nl": "v5.27.0 uitgebracht — Shockr is nu GPL-3.0-or-later, met vermelding van de oorspronkelijke Shockr Tools en andere bronnen. Het PvP-alarm heeft nieuwe iconen en een nieuw alarmgeluid. Tampermonkey werkt zelf bij; werk nooit bij via Importeren."
     },
     "type": "info",
     "active": true

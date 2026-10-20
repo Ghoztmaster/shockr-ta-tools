@@ -29,6 +29,9 @@ MAIN_JS = (ROOT / "lib" / "main.js").read_text(encoding="utf-8")
 _PLUGINS_ARRAY = re.search(r"const plugins = \[(.*?)\];", MAIN_JS, re.S).group(1)
 _VAR_CLASS = dict(re.findall(r"const (\w+) = new (\w+)\(", MAIN_JS))
 PLUGIN_NAMES = [m[0] or _VAR_CLASS[m[1]] for m in re.findall(r"^\s+(?:new (\w+)\(|(\w+),)", _PLUGINS_ARRAY, re.M)]
+# parked plugins (built, defaultEnabled false) stay in lib/main.js but are not offered on the site
+PARKED = {"Stabs"}
+PLUGIN_NAMES = [n for n in PLUGIN_NAMES if n not in PARKED]
 
 
 def write(path: Path, obj):
@@ -87,7 +90,8 @@ class TestSiteInfo:
 
     def test_repo_plugins_file(self, cfg):
         plugins = SiteInfo(cfg).plugins()
-        assert [p["name"] for p in plugins] == PLUGIN_NAMES, "same plugins and order as lib/main.js"
+        # class names in lib/main.js; the plugin name may differ in case only (Stabs -> "STABS")
+        assert [p["name"].lower() for p in plugins] == [n.lower() for n in PLUGIN_NAMES], "same plugins and order as lib/main.js"
         off = {"RepairGuard", "UpgradeCalc"}   # the only plugins with defaultEnabled = false
         for p in plugins:
             kebab = re.sub(r"([a-z0-9])([A-Z])", r"\1-\2", p["name"]).lower()

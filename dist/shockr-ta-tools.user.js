@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.26.1
+// @version         5.27.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -572,6 +572,7 @@ var ShockrTools = (() => {
       descTargetWatcher: "Report viewed targets to alliance server",
       descAttackTracker: "Log your won attacks on Forgotten targets to the alliance server",
       descTargetBoard: "In-game overview of alliance targets \u2014 who is watching and who is attacking",
+      descStabs: "STABS battle simulator (replaces TABS): simulate an attack and see HP, repair and loot",
       // ── Shared ──
       close: "Close",
       apiKeyRejected: "\u26A0 API key rejected \u2014 check /st config set api.key",
@@ -817,6 +818,7 @@ var ShockrTools = (() => {
       toolbarHelp: "Help",
       toolbarUpgradeCalc: "Upgrade Calculator",
       toolbarTargetBoard: "Target Watch",
+      toolbarStabs: "Battle Simulator",
       configMenuTitle: "Shockr config",
       configMenuIntro: "Export: take all settings incl. your key to another world or browser. Import: paste an export.",
       configMenuExport: "Export",
@@ -837,7 +839,49 @@ var ShockrTools = (() => {
       targetBoardColLevel: "Level",
       targetBoardColWatchers: "Watchers",
       targetBoardColSeen: "Last seen",
-      targetBoardCenterHint: "Click: centre the map on this target"
+      targetBoardCenterHint: "Click: centre the map on this target",
+      // ── STABS ──
+      stabsTitle: "STABS: Statistic",
+      stabsSimulate: "Simulate battle [NUM 0]",
+      stabsPreset: "Preset",
+      stabsPresetLive: "live",
+      stabsPresetLiveDesc: "Shows the current army formation.",
+      stabsPresetCyDesc: "Best cached simulation for the construction yard (and everything in front of it); then the whole base, your repair time, your losses and the battle duration.",
+      stabsEnemy: "Defender",
+      stabsLoadSimulate: "Load this formation and simulate",
+      stabsViewSimulation: "View simulation",
+      stabsReplayBack: "Back to the attack setup",
+      stabsOutcome: "Combat report",
+      stabsDuration: "Battle duration",
+      stabsBase: "Base",
+      stabsMorale: "Morale",
+      stabsMoraleWarning: "Morale reduced by {v}%",
+      stabsMoraleError: "Morale strongly reduced by {v}%",
+      stabsTotalDefeat: "Total defeat",
+      stabsTotalVictory: "Total victory",
+      stabsVictory: "Victory",
+      stabsTotal: "Total",
+      stabsDefense: "Defense",
+      stabsStructure: "Base",
+      stabsSupport: "Support",
+      stabsRepair: "Own repair costs",
+      stabsRepairStorage: "Offense repair time",
+      stabsRepairPoints: "Repair points",
+      stabsCrystal: "Crystal",
+      stabsRepairInf: "Infantry repair",
+      stabsRepairVeh: "Vehicle repair",
+      stabsRepairAir: "Aircraft repair",
+      stabsLoot: "Loot",
+      stabsTiberium: "Tiberium",
+      stabsCredits: "Credits",
+      stabsResearch: "Research points",
+      stabsLootTotal: "Total loot",
+      stabsCacheCount: "{n} simulations in cache",
+      stabsReset: "Reset",
+      stabsStatus: "{n} simulations in cache for this target",
+      stabsStatusTabs: "turn one off: /st plugin disable stabs, or disable TABS in Tampermonkey",
+      stabsInactiveTabs: "inactive \u2014 TABS detected",
+      stabsTabsDetected: "TABS is loaded, so STABS stays inactive. Two simulators side by side get confusing \u2014 turn one off (/st plugin disable stabs, or TABS in Tampermonkey)."
     },
     de: {
       loaded: "v{version} geladen \u2014 {active}/{total} Plugins aktiv",
@@ -906,6 +950,7 @@ var ShockrTools = (() => {
       descTargetWatcher: "Angesehene Ziele an den Allianz-Server melden",
       descAttackTracker: "Gewonnene Angriffe auf Forgotten-Ziele an den Allianz-Server melden",
       descTargetBoard: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an",
+      descStabs: "STABS-Kampfsimulator (ersetzt TABS): Angriff simulieren, HP, Reparatur und Beute sehen",
       close: "Schlie\xDFen",
       apiKeyRejected: "\u26A0 API-Key abgelehnt \u2014 pr\xFCfe /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: nicht erkannt \u2014 scanne zuerst eine Basis, um dich zu registrieren.",
@@ -1140,6 +1185,7 @@ var ShockrTools = (() => {
       toolbarHelp: "Hilfe",
       toolbarUpgradeCalc: "Upgrade Calculator",
       toolbarTargetBoard: "Target Watch",
+      toolbarStabs: "Kampfsimulator",
       configMenuTitle: "Shockr-Einstellungen",
       configMenuIntro: "Exportieren: alle Einstellungen inkl. Key in eine andere Welt oder einen anderen Browser mitnehmen. Importieren: einen Export einf\xFCgen.",
       configMenuExport: "Exportieren",
@@ -1160,7 +1206,49 @@ var ShockrTools = (() => {
       targetBoardColLevel: "Level",
       targetBoardColWatchers: "Beobachter",
       targetBoardColSeen: "Zuletzt",
-      targetBoardCenterHint: "Klick: Karte auf dieses Ziel zentrieren"
+      targetBoardCenterHint: "Klick: Karte auf dieses Ziel zentrieren",
+      // ── STABS ──
+      stabsTitle: "STABS: Statistik",
+      stabsSimulate: "Kampf simulieren [NUM 0]",
+      stabsPreset: "Vorgabe",
+      stabsPresetLive: "live",
+      stabsPresetLiveDesc: "Zeigt die aktuelle Armee-Formation.",
+      stabsPresetCyDesc: "Beste gespeicherte Simulation f\xFCr den Bauhof (und alles davor); danach die ganze Basis, deine Reparaturzeit, deine Verluste und die Kampfdauer.",
+      stabsEnemy: "Verteidiger",
+      stabsLoadSimulate: "Diese Formation laden und simulieren",
+      stabsViewSimulation: "Simulation ansehen",
+      stabsReplayBack: "Zur\xFCck zur Angriffsaufstellung",
+      stabsOutcome: "Kampfbericht",
+      stabsDuration: "Kampfdauer",
+      stabsBase: "Basis",
+      stabsMorale: "Moral",
+      stabsMoraleWarning: "Moral um {v}% reduziert",
+      stabsMoraleError: "Moral stark um {v}% reduziert",
+      stabsTotalDefeat: "Totale Niederlage",
+      stabsTotalVictory: "Totaler Sieg",
+      stabsVictory: "Sieg",
+      stabsTotal: "Gesamt",
+      stabsDefense: "Verteidigung",
+      stabsStructure: "Basis",
+      stabsSupport: "Unterst\xFCtzung",
+      stabsRepair: "Eigene Reparaturkosten",
+      stabsRepairStorage: "Reparaturzeit Offensive",
+      stabsRepairPoints: "Reparaturpunkte",
+      stabsCrystal: "Kristall",
+      stabsRepairInf: "Reparatur Infanterie",
+      stabsRepairVeh: "Reparatur Fahrzeuge",
+      stabsRepairAir: "Reparatur Flugzeuge",
+      stabsLoot: "Beute",
+      stabsTiberium: "Tiberium",
+      stabsCredits: "Credits",
+      stabsResearch: "Forschungspunkte",
+      stabsLootTotal: "Beute gesamt",
+      stabsCacheCount: "{n} Simulationen im Cache",
+      stabsReset: "Zur\xFCcksetzen",
+      stabsStatus: "{n} Simulationen im Cache f\xFCr dieses Ziel",
+      stabsStatusTabs: "schalte eines ab: /st plugin disable stabs, oder TABS in Tampermonkey deaktivieren",
+      stabsInactiveTabs: "inaktiv \u2014 TABS erkannt",
+      stabsTabsDetected: "TABS ist geladen, deshalb bleibt STABS inaktiv. Zwei Simulatoren nebeneinander verwirren \u2014 schalte einen ab (/st plugin disable stabs, oder TABS in Tampermonkey)."
     },
     nl: {
       loaded: "v{version} geladen \u2014 {active}/{total} plugins actief",
@@ -1229,6 +1317,7 @@ var ShockrTools = (() => {
       descTargetWatcher: "Bekeken targets melden aan de alliance-server",
       descAttackTracker: "Gewonnen aanvallen op Forgotten-targets melden aan de alliance-server",
       descTargetBoard: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan",
+      descStabs: "STABS-gevechtssimulator (vervangt TABS): simuleer een aanval en zie HP, repair en loot",
       close: "Sluiten",
       apiKeyRejected: "\u26A0 API-key geweigerd \u2014 controleer /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: niet herkend \u2014 scan eerst een base om je te registreren.",
@@ -1463,6 +1552,7 @@ var ShockrTools = (() => {
       toolbarHelp: "Help",
       toolbarUpgradeCalc: "Upgrade Calculator",
       toolbarTargetBoard: "Target Watch",
+      toolbarStabs: "Gevechtssimulator",
       configMenuTitle: "Shockr-config",
       configMenuIntro: "Exporteren: neem alle instellingen incl. je key mee naar een andere wereld of browser. Importeren: plak een export.",
       configMenuExport: "Exporteren",
@@ -1483,7 +1573,49 @@ var ShockrTools = (() => {
       targetBoardColLevel: "Level",
       targetBoardColWatchers: "Kijkers",
       targetBoardColSeen: "Laatst gezien",
-      targetBoardCenterHint: "Klik: centreer de kaart op dit target"
+      targetBoardCenterHint: "Klik: centreer de kaart op dit target",
+      // ── STABS ──
+      stabsTitle: "STABS: Statistiek",
+      stabsSimulate: "Gevecht simuleren [NUM 0]",
+      stabsPreset: "Preset",
+      stabsPresetLive: "live",
+      stabsPresetLiveDesc: "Toont de huidige legerformatie.",
+      stabsPresetCyDesc: "Beste opgeslagen simulatie voor de construction yard (en alles ervoor); daarna de hele base, je reparatietijd, je verliezen en de gevechtsduur.",
+      stabsEnemy: "Verdediger",
+      stabsLoadSimulate: "Deze formatie laden en simuleren",
+      stabsViewSimulation: "Simulatie bekijken",
+      stabsReplayBack: "Terug naar de aanvalsopstelling",
+      stabsOutcome: "Gevechtsrapport",
+      stabsDuration: "Gevechtsduur",
+      stabsBase: "Base",
+      stabsMorale: "Moraal",
+      stabsMoraleWarning: "Moraal {v}% lager",
+      stabsMoraleError: "Moraal sterk verlaagd, {v}% lager",
+      stabsTotalDefeat: "Totale nederlaag",
+      stabsTotalVictory: "Totale overwinning",
+      stabsVictory: "Overwinning",
+      stabsTotal: "Totaal",
+      stabsDefense: "Verdediging",
+      stabsStructure: "Base",
+      stabsSupport: "Support",
+      stabsRepair: "Eigen reparatiekosten",
+      stabsRepairStorage: "Repairtijd offense",
+      stabsRepairPoints: "Repairpunten",
+      stabsCrystal: "Crystal",
+      stabsRepairInf: "Repair infanterie",
+      stabsRepairVeh: "Repair voertuigen",
+      stabsRepairAir: "Repair vliegtuigen",
+      stabsLoot: "Buit",
+      stabsTiberium: "Tiberium",
+      stabsCredits: "Credits",
+      stabsResearch: "Researchpunten",
+      stabsLootTotal: "Totale loot",
+      stabsCacheCount: "{n} simulaties in cache",
+      stabsReset: "Reset",
+      stabsStatus: "{n} simulaties in cache voor dit target",
+      stabsStatusTabs: "zet er \xE9\xE9n uit: /st plugin disable stabs, of TABS uitschakelen in Tampermonkey",
+      stabsInactiveTabs: "inactief \u2014 TABS gedetecteerd",
+      stabsTabsDetected: "TABS is geladen, dus STABS blijft inactief. Twee simulators naast elkaar is verwarrend \u2014 zet er \xE9\xE9n uit (/st plugin disable stabs, of TABS in Tampermonkey)."
     }
   };
   var _config = null;
@@ -2815,7 +2947,8 @@ var ShockrTools = (() => {
       sub: {
         kind: "plugins",
         title: t("helpAvailablePlugins"),
-        rows: plugins.map((p) => [kebab(p.name), p.description || ""])
+        rows: plugins.filter((p) => !p.parked).map((p) => [kebab(p.name), p.description || ""])
+        // parked = built, off, not offered
       }
     }];
     const tools = TOOL_COMMANDS.filter((c) => commands[c.cmd]);
@@ -3108,6 +3241,7 @@ var ShockrTools = (() => {
     shield: '<svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2.5l8 3v6c0 5-3.4 8.8-8 10.5-4.6-1.7-8-5.5-8-10.5v-6z"/><path d="M13.2 6.5L9 13h3l-1.2 4.8L15 11h-3z" fill="currentColor" stroke="none"/></svg>',
     calc: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="5" y="2.5" width="14" height="19" rx="2"/><rect x="8" y="5.5" width="8" height="4" rx="0.5"/><path d="M8.5 13h1M12 13h0M15.5 13h0M8.5 16.5h0M12 16.5h0M15.5 16.5h0" stroke-width="2.4" stroke-linecap="round"/></svg>',
     help: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.2 9.3a2.9 2.9 0 0 1 5.6 1c0 1.9-2.8 2.4-2.8 4.2"/><circle cx="12" cy="17.6" r="0.6" fill="currentColor"/></svg>',
+    sim: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3.5l9.5 9.5M3.5 3.5h3l9 9M20 3.5L10.5 13M20.5 3.5h-3l-9 9"/><path d="M6.5 15.5l2 2M15.5 15.5l-2 2M4.5 19.5l3-3M19.5 19.5l-3-3"/></svg>',
     radar: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="5"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/></svg>'
   };
   var Toolbar = class {
@@ -3310,9 +3444,9 @@ var ShockrTools = (() => {
     return Array.from(combined.values());
   }
   async function waitForCity(cityId, maxAttempts = 30) {
-    const cities = ClientLib.Data.MainData.GetInstance().get_Cities();
+    const cities2 = ClientLib.Data.MainData.GetInstance().get_Cities();
     for (let i = 0; i < maxAttempts; i++) {
-      const city = cities.GetCity(cityId);
+      const city = cities2.GetCity(cityId);
       if (city && !city.get_IsGhostMode() && city.GetBuildingsConditionInPercent() > 0) {
         return city;
       }
@@ -3660,16 +3794,16 @@ var ShockrTools = (() => {
   }
   function getSelectedForgottenCity() {
     const md = ClientLib.Data.MainData.GetInstance();
-    const cities = md.get_Cities();
+    const cities2 = md.get_Cities();
     let city = null;
     try {
       const sel = ClientLib.Vis.VisMain.GetInstance().get_SelectedObject();
-      if (sel && typeof sel.get_Id === "function") city = cities.GetCity(sel.get_Id());
+      if (sel && typeof sel.get_Id === "function") city = cities2.GetCity(sel.get_Id());
     } catch {
     }
     if (!city) {
       try {
-        city = cities.get_CurrentCity();
+        city = cities2.get_CurrentCity();
       } catch {
       }
     }
@@ -4283,8 +4417,8 @@ var ShockrTools = (() => {
       let aborted = false;
       let originalCityId = null;
       try {
-        const cities = ClientLib.Data.MainData.GetInstance().get_Cities();
-        originalCityId = cities.get_CurrentCityId();
+        const cities2 = ClientLib.Data.MainData.GetInstance().get_Cities();
+        originalCityId = cities2.get_CurrentCityId();
       } catch {
       }
       try {
@@ -4308,8 +4442,8 @@ var ShockrTools = (() => {
             }
           } catch {
           }
-          const cities = ClientLib.Data.MainData.GetInstance().get_Cities();
-          cities.set_CurrentCityId(cityId);
+          const cities2 = ClientLib.Data.MainData.GetInstance().get_Cities();
+          cities2.set_CurrentCityId(cityId);
           const city = await waitForCity(cityId, 20);
           if (!city) continue;
           const version = city.get_Version();
@@ -4449,21 +4583,21 @@ var ShockrTools = (() => {
       }
       try {
         const cityIds = await getAllianceCityIds();
-        const cities = ClientLib.Data.MainData.GetInstance().get_Cities();
+        const cities2 = ClientLib.Data.MainData.GetInstance().get_Cities();
         for (const cityId of cityIds) {
           if (!manual && (!this.idle.isIdle || this.online.isPaused)) {
             aborted = this.online.isPaused ? "player online" : "player active";
             break;
           }
           try {
-            const existingCity = cities.GetCity(cityId);
+            const existingCity = cities2.GetCity(cityId);
             if (existingCity && scannedVersions2.get(cityId) === existingCity.get_Version()) {
               skipped++;
               continue;
             }
           } catch {
           }
-          cities.set_CurrentCityId(cityId);
+          cities2.set_CurrentCityId(cityId);
           const city = await waitForCity(cityId, 20);
           if (!city) continue;
           const version = city.get_Version();
@@ -4817,9 +4951,9 @@ var ShockrTools = (() => {
     try {
       const vis = ClientLib.Vis.VisMain.GetInstance();
       if (vis.get_Mode() !== ClientLib.Vis.Mode.City) return null;
-      const cities = ClientLib.Data.MainData.GetInstance().get_Cities();
-      const own = cities.get_CurrentOwnCity();
-      const viewed = cities.get_CurrentCity();
+      const cities2 = ClientLib.Data.MainData.GetInstance().get_Cities();
+      const own = cities2.get_CurrentOwnCity();
+      const viewed = cities2.get_CurrentCity();
       if (!own || !viewed || own.get_Id() !== viewed.get_Id()) return null;
       return own;
     } catch {
@@ -5844,7 +5978,7 @@ var ShockrTools = (() => {
     collect() {
       const md = ClientLib.Data.MainData.GetInstance();
       const world = md.get_World();
-      const cities = md.get_Cities();
+      const cities2 = md.get_Cities();
       const cityType = cityObjectType();
       let ownPlayerId2 = null;
       try {
@@ -5853,7 +5987,7 @@ var ShockrTools = (() => {
       }
       let ownIds = [];
       try {
-        ownIds = Object.values(cities.get_AllCities().d).map((c) => c.get_Id());
+        ownIds = Object.values(cities2.get_AllCities().d).map((c) => c.get_Id());
       } catch {
       }
       const range = visibleCellRange();
@@ -5878,14 +6012,14 @@ var ShockrTools = (() => {
       }
       for (const base of found) {
         base.number = base.own ? baseNumber(ownIds.includes(base.id) ? ownIds : [...ownIds, base.id], base.id) : baseNumber(this.seen.get(base.playerId), base.id);
-        this._readLevels(cities, base.id);
+        this._readLevels(cities2, base.id);
         base.levels = this.levels.get(base.id) || null;
       }
       return found;
     }
-    _readLevels(cities, id) {
+    _readLevels(cities2, id) {
       try {
-        const city = cities.GetCity(id);
+        const city = cities2.GetCity(id);
         if (!city) return;
         const off = Number(city.get_LvlOffense());
         const def = Number(city.get_LvlDefense());
@@ -6132,7 +6266,7 @@ var ShockrTools = (() => {
   }
   function mergeLabels(data, own = {}) {
     const out = /* @__PURE__ */ new Map();
-    const add = (entry, status) => {
+    const add2 = (entry, status) => {
       const x = Math.round(Number(entry.x));
       const y = Math.round(Number(entry.y));
       if (!Number.isFinite(x) || !Number.isFinite(y)) return;
@@ -6148,10 +6282,10 @@ var ShockrTools = (() => {
     for (const w of data.watches || []) {
       const isOwn = own.ownId != null && Number(w.playerId) === Number(own.ownId);
       if (isOwn && Number(own.ownCurrentTargetId) !== Number(w.targetId)) continue;
-      add(w, "viewing");
+      add2(w, "viewing");
     }
-    for (const c of data.claims || []) add(c, "claimed");
-    for (const a of data.attacks || []) add(a, "attacked");
+    for (const c of data.claims || []) add2(c, "claimed");
+    for (const a of data.attacks || []) add2(a, "attacked");
     const result = /* @__PURE__ */ new Map();
     for (const [key, { x, y, players }] of out) {
       const lines = [...players.values()].sort((a, b) => STATUS[b.status].rank - STATUS[a.status].rank || String(a.playerName).localeCompare(String(b.playerName)));
@@ -6798,16 +6932,16 @@ var ShockrTools = (() => {
     }
   }
   function currentFormation() {
-    const cities = ClientLib.Data.MainData.GetInstance().get_Cities();
-    const own = cities.get_CurrentOwnCity();
+    const cities2 = ClientLib.Data.MainData.GetInstance().get_Cities();
+    const own = cities2.get_CurrentOwnCity();
     let targetId = 0;
     try {
-      targetId = cities.get_CurrentForeignCityId();
+      targetId = cities2.get_CurrentForeignCityId();
     } catch {
     }
     if (!targetId) {
       try {
-        targetId = cities.get_CurrentCity().get_Id();
+        targetId = cities2.get_CurrentCity().get_Id();
       } catch {
       }
     }
@@ -8453,8 +8587,8 @@ var ShockrTools = (() => {
     return { items, skippedFull, skippedCredits, cost: items.reduce((s, i) => s + i.cost, 0) };
   }
   function ownCities() {
-    const cities = ClientLib.Data.MainData.GetInstance().get_Cities();
-    return { target: cities.get_CurrentOwnCity(), all: Object.values(cities.get_AllCities().d) };
+    const cities2 = ClientLib.Data.MainData.GetInstance().get_Cities();
+    return { target: cities2.get_CurrentOwnCity(), all: Object.values(cities2.get_AllCities().d) };
   }
   function credits() {
     try {
@@ -9954,8 +10088,1432 @@ var ShockrTools = (() => {
     }
   }
 
+  // plugins/stabs-stats.js
+  var RES = { TIB: 1, CRY: 2, CREDITS: 3, RP: 6, RC_BASE: 7, RC_AIR: 8, RC_INF: 9, RC_VEH: 10 };
+  var RES_KEYS = Object.values(RES);
+  var DECAYING = /* @__PURE__ */ new Set([RES.TIB, RES.CRY, RES.CREDITS, RES.RP]);
+  var ENEMY_KEYS = [
+    "overall",
+    "structure",
+    "cy",
+    "cc",
+    "barracks",
+    "factory",
+    "airport",
+    "df",
+    "dhq",
+    "support",
+    "defense",
+    "defenseArmored",
+    "defenseNonArmored"
+  ];
+  var OFFENSE_KEYS = ["overall", "infantry", "vehicle", "aircraft"];
+  var FRONT_KEYS = ["cy", "cc", "barracks", "factory", "airport", "df", "dhq", "support"];
+  function emptyHp() {
+    return { max: 0, start: 0, end: 0, rep: 0, maxFront: 0, startFront: 0, endFront: 0 };
+  }
+  function emptyRes() {
+    const r = {};
+    for (const k of RES_KEYS) r[k] = 0;
+    return r;
+  }
+  function emptyEntity() {
+    return { hp: emptyHp(), res: emptyRes() };
+  }
+  function emptyStats() {
+    const stats = { battleDuration: 0, enemy: {}, offense: {} };
+    for (const k of ENEMY_KEYS) stats.enemy[k] = emptyEntity();
+    for (const k of OFFENSE_KEYS) stats.offense[k] = emptyEntity();
+    return stats;
+  }
+  function add(entity, hp, res) {
+    for (const k of ["max", "start", "end", "rep"]) entity.hp[k] += hp[k];
+    for (const k of RES_KEYS) entity.res[k] += res[k];
+  }
+  function addFront(entity, hp) {
+    entity.hp.maxFront += hp.max;
+    entity.hp.startFront += hp.start;
+    entity.hp.endFront += hp.end;
+  }
+  function battleDuration(cs, md) {
+    return cs * 100 + (cs < md * 10 ? 3e3 : 0);
+  }
+  function repairCost(getCosts, hp, attackCounter = 0) {
+    const res = emptyRes();
+    let ratio;
+    if (hp.start !== hp.end) {
+      ratio = (hp.start - hp.end) / hp.max;
+      const costs = getCosts(ratio);
+      for (const c of costs || []) {
+        if (!(c.Type in res)) continue;
+        res[c.Type] = DECAYING.has(c.Type) ? c.Count * Math.pow(0.7, attackCounter) : c.Count;
+      }
+    }
+    if (res[RES.RP] > 0) res[RES.RP] = Math.max(1, Math.floor(res[RES.RP] * ratio));
+    return res;
+  }
+  function computeStats(data, env) {
+    const { E } = env;
+    const d = data.d;
+    const stats = emptyStats();
+    const enemy = stats.enemy;
+    const offense = stats.offense;
+    const sim = {};
+    for (const e of data.e) sim[e.Key] = e.Value;
+    const playerBase = d.df === E.GDI || d.df === E.NOD;
+    const info = env.buildingInfo;
+    const hasInfo = info.cy !== void 0;
+    const costsFor = (unit, u) => (ratio) => env.repairCosts(unit, u.i, u.l, ratio);
+    stats.battleDuration = battleDuration(d.cs, d.md);
+    let efficiency = 0;
+    let dfLevel = 1;
+    for (const b of d.s) {
+      const unit = env.unit(b.i);
+      const hp = emptyHp();
+      if (playerBase) {
+        hp.max = sim[b.ci].mh;
+        hp.start = sim[b.ci].h;
+      } else {
+        hp.max = Math.max(env.maxHealth(b.l, unit, false, d.dm), b.h * 16);
+        hp.start = b.h * 16;
+      }
+      hp.end = sim[b.ci].h;
+      const res = repairCost(costsFor(unit, b), hp);
+      add(enemy.overall, hp, res);
+      add(enemy.structure, hp, res);
+      const kind = buildingKind(env.techName(unit), E.tech);
+      if (kind) add(enemy[kind], hp, res);
+      if (kind === "df") {
+        efficiency = 0.7 * (hp.end / hp.max);
+        dfLevel = b.l;
+      }
+      if (hasInfo) {
+        for (const k of FRONT_KEYS) {
+          const pos = info[k];
+          if (pos && pos.x === b.x && pos.y < b.y) addFront(enemy[k], hp);
+        }
+      }
+    }
+    for (const u of d.d) {
+      const unit = env.unit(u.i);
+      const hp = emptyHp();
+      hp.max = Math.max(env.maxHealth(u.l, unit, playerBase, d.dm), u.h * 16);
+      hp.start = u.h * 16;
+      hp.end = sim[u.ci].h;
+      hp.rep = (u.h * 16 - sim[u.ci].h) * efficiency * dfLevel / Math.max(dfLevel, u.l);
+      const res = repairCost(costsFor(unit, u), hp, u.ac);
+      add(enemy.overall, hp, res);
+      add(enemy.defense, hp, res);
+      add(unit.ptt === E.ArmorNone ? enemy.defenseNonArmored : enemy.defenseArmored, hp, res);
+      if (hasInfo && unit.mt === E.Structure) {
+        for (const k of FRONT_KEYS) {
+          const pos = info[k];
+          if (pos && pos.x === u.x) addFront(enemy[k], hp);
+        }
+      }
+    }
+    env.asAttacker(() => {
+      for (const u of d.a) {
+        const unit = env.unit(u.i);
+        const hp = emptyHp();
+        hp.max = Math.max(env.maxHealth(u.l, unit, false, d.am), u.h * 16);
+        hp.start = u.h * 16;
+        hp.end = sim[u.ci] !== void 0 ? sim[u.ci].h : u.h * 16;
+        const res = repairCost(costsFor(unit, u), hp);
+        add(offense.overall, hp, res);
+        const group = offenseGroup(unit.mt, E);
+        if (group) add(offense[group], hp, res);
+      }
+    });
+    return stats;
+  }
+  function buildingKind(techName2, tech) {
+    if (techName2 === tech.cy) return "cy";
+    if (techName2 === tech.cc) return "cc";
+    if (techName2 === tech.barracks) return "barracks";
+    if (techName2 === tech.factory) return "factory";
+    if (techName2 === tech.airport) return "airport";
+    if (techName2 === tech.df) return "df";
+    if (techName2 === tech.dhq) return "dhq";
+    if (tech.support.includes(techName2)) return "support";
+    return null;
+  }
+  function offenseGroup(mt, E) {
+    if (mt === E.Feet) return "infantry";
+    if (mt === E.Wheel || mt === E.Track) return "vehicle";
+    if (mt === E.Air || mt === E.Air2) return "aircraft";
+    return null;
+  }
+  function formationKey(units, ownId) {
+    const parts = units.filter((u) => u.enabled && u.h > 0).map((u) => [u.x, u.y, u.i, u.l]).sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2] || a[3] - b[3]).map((p) => p.join(","));
+    return `${ownId}|${parts.join(";")}`;
+  }
+  function mergeFormation(formation, attackers) {
+    for (const f of formation) {
+      for (const a of attackers) {
+        if (f.gs === a.gs && f.i === a.i && f.l === a.l && f.x === a.x && f.y === a.y) Object.assign(f, a);
+      }
+    }
+    return formation;
+  }
+  var SimCache = class {
+    constructor() {
+      this.cities = {};
+    }
+    city(targetId) {
+      if (!this.cities[targetId]) this.cities[targetId] = { data: {}, entries: {} };
+      return this.cities[targetId];
+    }
+    /**
+     * Re-validate against the current game state, then the valid entry for `key`.
+     * @param {object} state — { version: target version (-1 unknown), own: null | { version, recovery, poi: {air, inf, veh} | null } }
+     */
+    check(targetId, key, state) {
+      this._validate(targetId, key, state);
+      return this.get(targetId, key);
+    }
+    get(targetId, key) {
+      const entry = this.city(targetId).entries[key];
+      return entry && entry.valid ? entry : null;
+    }
+    add(targetId, key, entry) {
+      this.city(targetId).entries[key] = { ...entry, valid: true };
+    }
+    /** Entries for the target, valid or not (the panel's count). */
+    count(targetId) {
+      const c = this.cities[targetId];
+      return c ? Object.keys(c.entries).length : 0;
+    }
+    clear(targetId) {
+      delete this.cities[targetId];
+    }
+    /** All entries for the target, valid or not. */
+    entries(targetId) {
+      const c = this.cities[targetId];
+      return c ? Object.entries(c.entries).map(([key, entry]) => ({ key, entry })) : [];
+    }
+    /** The preset column's pick: see bestEntry. */
+    best(targetId, criteria) {
+      return bestEntry(this.entries(targetId), criteria);
+    }
+    _validate(targetId, key, state) {
+      const c = this.city(targetId);
+      const invalidateAll = () => {
+        for (const k in c.entries) c.entries[k].valid = false;
+      };
+      if (state.version !== -1 && c.data.version !== state.version) {
+        c.data.version = state.version;
+        invalidateAll();
+      }
+      const own = state.own;
+      if (!own || own.version === -1) return;
+      const entry = c.entries[key];
+      if (entry && entry.recovery !== own.recovery) entry.valid = false;
+      const poi = own.poi;
+      if (poi && own.recovery === false && (c.data.air !== poi.air || c.data.inf !== poi.inf || c.data.veh !== poi.veh)) {
+        c.data.air = poi.air;
+        c.data.inf = poi.inf;
+        c.data.veh = poi.veh;
+        if (state.version !== -1) c.data.version = state.version;
+        invalidateAll();
+      }
+    }
+  };
+  var MAX_DURATION_MS = 12e4;
+  function hpWithFront(hp) {
+    return Math.min(Math.max(hp.end + hp.endFront, 0), hp.max + hp.maxFront);
+  }
+  var CRITERIA = {
+    /** Enemy group (cy, overall, …) left standing, its front included. */
+    enemyLeft: (group) => (s) => hpWithFront(s.enemy[group].hp),
+    /** The slowest of the three offense repair times. */
+    offenseRepair: (s) => {
+      const r = s.offense.overall.res;
+      return Math.max(r[RES.RC_AIR], r[RES.RC_INF], r[RES.RC_VEH]);
+    },
+    /** Own units left - more is better, hence negative. */
+    offenseLost: (s) => -hpWithFront(s.offense.overall.hp),
+    duration: (s) => Math.min(Math.max(s.battleDuration, 0), MAX_DURATION_MS)
+  };
+  var PRESETS = {
+    live: { id: "live", name: "live", criteria: null },
+    cy: {
+      id: "cy",
+      name: "CY",
+      criteria: [
+        CRITERIA.enemyLeft("cy"),
+        CRITERIA.enemyLeft("overall"),
+        CRITERIA.offenseRepair,
+        CRITERIA.offenseLost,
+        CRITERIA.duration
+      ]
+    }
+  };
+  function compareByCriteria(a, b, criteria) {
+    for (const c of criteria) {
+      const d = c(a) - c(b);
+      if (d) return d;
+    }
+    return 0;
+  }
+  function bestEntry(list, criteria) {
+    if (!list.length) return null;
+    const sorted = [...list].sort((a, b) => compareByCriteria(a.entry.stats, b.entry.stats, criteria));
+    return sorted.find((x) => x.entry.valid) || sorted[0];
+  }
+  function formatPercent(part, whole) {
+    const percent = part / whole * 100;
+    const digits = percent <= 0 || percent >= 100 ? 0 : percent >= 10 ? 1 : 2;
+    const rounded = Math.round(percent * Math.pow(10, digits)) / Math.pow(10, digits);
+    return `${rounded.toFixed(digits)} %`;
+  }
+  function colorFromRatio(value) {
+    if (!Number.isFinite(value)) return null;
+    const hue = 120 * (1 - value);
+    const light = 25 + Math.round((Math.max(value - 0.4, 0) * 2 + Math.max(0.4 - value, 0)) * 25);
+    return `hsl(${hue}, 100%, ${light}%)`;
+  }
+  function battleOutcome(stats) {
+    if (stats.offense.overall.hp.end <= 0) return "total-defeat";
+    if (stats.enemy.overall.hp.end <= 0) return "total-victory";
+    return "victory";
+  }
+  var ENEMY_ROWS = ["overall", "defense", "structure", "cy", "df", "cc", "barracks", "factory", "airport", "support"];
+  var ALWAYS_SHOWN = /* @__PURE__ */ new Set(["overall", "structure", "cy"]);
+  var REPAIR_ROWS = ["storage", "overall", "crystal", "infantry", "vehicle", "aircraft"];
+  var LOOT_ROWS = ["tiberium", "crystal", "credits", "research", "total"];
+  var LOOT_TYPES2 = {
+    tiberium: [RES.TIB],
+    crystal: [RES.CRY],
+    credits: [RES.CREDITS],
+    research: [RES.RP],
+    total: [RES.TIB, RES.CRY, RES.CREDITS, RES.RP]
+  };
+  var EMPTY = { text: "-", color: null };
+  function visibleEnemyRows(liveStats) {
+    return ENEMY_ROWS.filter((k) => ALWAYS_SHOWN.has(k) || liveStats && liveStats.enemy[k].hp.max > 0);
+  }
+  function hpCell(entity) {
+    const hp = entity && entity.hp;
+    if (!hp || hp.max <= 0) return EMPTY;
+    return { text: formatPercent(hp.end, hp.max), color: colorFromRatio(hp.end / hp.max) };
+  }
+  function repairCell(entity, seconds, fmt5) {
+    const hp = entity && entity.hp;
+    if (!hp || hp.max <= 0) return EMPTY;
+    return { text: fmt5.time(seconds), color: colorFromRatio(1 - hp.end / hp.max) };
+  }
+  function lootCell(stats, loot, types, fmt5) {
+    if (!stats || stats.enemy.overall.hp.max <= 0 || !loot) return EMPTY;
+    const got = types.reduce((s, k) => s + stats.enemy.overall.res[k], 0);
+    const all = types.reduce((s, k) => s + (loot[k] || 0), 0);
+    return { text: fmt5.number(got), color: colorFromRatio(1 - got / all) };
+  }
+  function columnCells(view, fmt5) {
+    const s = view && view.stats;
+    const e = s ? s.enemy : null;
+    const o = s ? s.offense : null;
+    const rc = o ? o.overall.res : null;
+    const battle = {
+      outcome: s ? battleOutcome(s) : null,
+      duration: { text: s && s.battleDuration > 0 ? fmt5.time(s.battleDuration / 1e3) : "-:--", color: null },
+      base: { text: view && view.base ? view.base : "-", color: null },
+      morale: view && view.morale ? {
+        text: view.morale.text,
+        color: view.morale.level === 2 ? "#ff4d4d" : view.morale.level === 1 ? "#ff9a3c" : null
+      } : EMPTY
+    };
+    const enemy = {};
+    for (const k of ENEMY_ROWS) enemy[k] = hpCell(e && e[k]);
+    const has = o && o.overall.hp.max > 0;
+    const repair = {
+      storage: { text: view && view.storage !== null && view.storage !== void 0 ? fmt5.time(view.storage) : "-", color: null },
+      // the slowest repair type: TABS' "repair points" row, the bottleneck, glows
+      overall: { ...repairCell(o && o.overall, rc ? Math.max(rc[RES.RC_BASE], rc[RES.RC_AIR], rc[RES.RC_INF], rc[RES.RC_VEH]) : 0, fmt5), glow: true },
+      crystal: has ? { text: fmt5.number(rc[RES.CRY]), color: colorFromRatio(1) } : EMPTY,
+      infantry: repairCell(o && o.infantry, rc ? rc[RES.RC_INF] : 0, fmt5),
+      vehicle: repairCell(o && o.vehicle, rc ? rc[RES.RC_VEH] : 0, fmt5),
+      aircraft: repairCell(o && o.aircraft, rc ? rc[RES.RC_AIR] : 0, fmt5)
+    };
+    const loot = {};
+    for (const k of LOOT_ROWS) loot[k] = lootCell(s, view && view.loot, LOOT_TYPES2[k], fmt5);
+    return { battle, enemy, repair, loot };
+  }
+
+  // plugins/stabs-window.js
+  var IMG = {
+    stats: "FactionUI/icons/icn_build_slots.png",
+    simulate: "FactionUI/icons/icon_attack_simulate_combat.png",
+    play: "webfrontend/theme/arrows/right.png",
+    back: "FactionUI/icons/icon_return.png",
+    "total-defeat": "FactionUI/icons/icon_reports_total_defeat.png",
+    victory: "FactionUI/icons/icon_reports_victory.png",
+    "total-victory": "FactionUI/icons/icon_reports_total_victory.png",
+    enemyAll: "FactionUI/icons/icon_arsnl_show_all.png",
+    enemyBase: "FactionUI/icons/icon_arsnl_base_buildings.png",
+    enemyDefense: "FactionUI/icons/icon_def_army_points.png",
+    infantry: "FactionUI/icons/icon_arsnl_off_squad.png",
+    vehicle: "FactionUI/icons/icon_arsnl_off_vehicle.png",
+    aircraft: "FactionUI/icons/icon_arsnl_off_plane.png",
+    rcBase: "webfrontend/ui/icons/icn_repair_points.png",
+    rcOffense: "webfrontend/ui/icons/icn_repair_off_points.png",
+    rcInf: "webfrontend/ui/icons/icon_res_repair_inf.png",
+    rcVeh: "webfrontend/ui/icons/icon_res_repair_tnk.png",
+    rcAir: "webfrontend/ui/icons/icon_res_repair_air.png",
+    tiberium: "webfrontend/ui/common/icn_res_tiberium.png",
+    crystal: "webfrontend/ui/common/icn_res_chrystal.png",
+    credits: "webfrontend/ui/common/icn_res_dollar.png",
+    research: "webfrontend/ui/common/icn_res_research_mission.png",
+    transfer: "FactionUI/icons/icon_transfer_resource.png"
+  };
+  var WIDTH = 201;
+  var ROW_HEIGHT = 18;
+  var LABEL_COLUMN = 29;
+  var DIM_OPACITY = 0.7;
+  var SECTIONS = ["enemy", "repair", "loot"];
+  function gameText(id, fallback) {
+    try {
+      const s = String(qx.locale.Manager.tr(id));
+      return s && s !== id ? s.replace(/:\s*$/, "") : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+  function techName(name, fallback) {
+    try {
+      const tech = ClientLib.Base.Tech;
+      return tech.GetTechDisplayNameFromTechId(tech.GetTechIdFromTechNameAndFaction(name, ClientLib.Base.EFactionType.GDIFaction)) || fallback;
+    } catch {
+      return fallback;
+    }
+  }
+  function rowLabel(text, icon, tip) {
+    const atom = new qx.ui.basic.Atom(icon ? null : text, icon || null).set({
+      alignX: "center",
+      alignY: "middle",
+      gap: 0,
+      iconPosition: "top",
+      minHeight: ROW_HEIGHT,
+      show: icon ? "icon" : "label",
+      toolTipText: tip || text
+    });
+    if (icon) {
+      atom.setToolTipIcon(icon);
+      atom.getChildControl("icon").set({ width: 18, height: 18, scale: true, alignY: "middle" });
+    }
+    return atom;
+  }
+  function valueLabel(align) {
+    return new qx.ui.basic.Label("-").set({ alignX: align, alignY: "middle", minHeight: ROW_HEIGHT });
+  }
+  function iconButton(icon, tip, onClick) {
+    const btn = new qx.ui.form.Button(null, icon).set({
+      maxHeight: 22,
+      minWidth: 22,
+      toolTipText: tip,
+      show: "icon",
+      iconPosition: "top",
+      appearance: "button-addpoints"
+    });
+    btn.getChildControl("icon").set({ maxWidth: 16, maxHeight: 16, scale: true });
+    btn.addListener("click", onClick);
+    return btn;
+  }
+  var StatsWindow = class {
+    /**
+     * @param {object} opts
+     * @param {object} opts.config
+     * @param {Array<{id, name, description}>} opts.presets — the columns
+     * @param {() => void} opts.onUserClose
+     * @param {(columnId) => void} opts.onSimulate — load the column's formation and simulate
+     * @param {(columnId) => void} opts.onReplay
+     * @param {(columnId) => void} opts.onLoad — double click: load the column's formation
+     * @param {() => void} opts.onReset
+     */
+    constructor(opts) {
+      this.opts = opts;
+      this.win = null;
+      this.rows = {};
+      this.columns = [];
+      this.sections = {};
+    }
+    isOpen() {
+      return !!this.win && this.win.isVisible();
+    }
+    open() {
+      this._ensure();
+      if (!this.win.isVisible()) this.win.open();
+    }
+    close() {
+      if (this.win && this.win.isVisible()) this.win.close();
+    }
+    dispose() {
+      if (!this.win) return;
+      try {
+        this.win.close();
+        this.win.destroy();
+      } catch {
+      }
+      this.win = null;
+      this.columns = [];
+      this.rows = {};
+      this.sections = {};
+    }
+    _ensure() {
+      if (this.win) return;
+      const { config, presets } = this.opts;
+      const win = new qx.ui.window.Window(t("stabsTitle"), IMG.stats).set({
+        layout: new qx.ui.layout.VBox(),
+        contentPadding: 4,
+        contentPaddingTop: 0,
+        contentPaddingBottom: 3,
+        width: WIDTH,
+        allowMaximize: false,
+        showMaximize: false,
+        allowMinimize: false,
+        showMinimize: false,
+        resizable: false
+      });
+      win.getChildControl("icon").set({ width: 20, height: 20, scale: true, alignY: "middle" });
+      const x = Number(config.get("stabs.panel.x"));
+      const y = Number(config.get("stabs.panel.y"));
+      win.moveTo(Number.isFinite(x) ? x : 124, Number.isFinite(y) ? y : 31);
+      win.addListener("move", () => {
+        const b = win.getBounds();
+        if (b) {
+          config.set("stabs.panel.x", b.left);
+          config.set("stabs.panel.y", b.top);
+        }
+      });
+      win.getChildControl("close-button").addListener("execute", () => this.opts.onUserClose());
+      this.columns = presets.map(() => ({ boxes: [], cells: {}, outcome: null }));
+      win.add(this._section("battle", null, [
+        ["preset", rowLabel("P", null, t("stabsPreset"))],
+        ["outcome", rowLabel("O", null, gameText("tnf:combat report", t("stabsOutcome")))],
+        ["duration", rowLabel("D", null, t("stabsDuration"))],
+        ["base", rowLabel("B", null, gameText("tnf:base", t("stabsBase")))],
+        ["morale", rowLabel("M", null, t("stabsMorale"))]
+      ]));
+      const T = ClientLib.Base.ETechName;
+      const enemyLabels = {
+        overall: rowLabel(null, IMG.enemyAll, gameText("tnf:total", t("stabsTotal"))),
+        defense: rowLabel(null, IMG.enemyDefense, gameText("tnf:defense", t("stabsDefense"))),
+        structure: rowLabel(null, IMG.enemyBase, gameText("tnf:base", t("stabsStructure"))),
+        cy: rowLabel("CY", null, techName(T.Construction_Yard, "CY")),
+        df: rowLabel("DF", null, techName(T.Defense_Facility, "DF")),
+        cc: rowLabel("CC", null, techName(T.Command_Center, "CC")),
+        barracks: rowLabel("B", IMG.infantry, techName(T.Barracks, "B")),
+        factory: rowLabel("F", IMG.vehicle, techName(T.Factory, "F")),
+        airport: rowLabel("A", IMG.aircraft, techName(T.Airport, "A")),
+        support: rowLabel("S", null, gameText("tnf:support", t("stabsSupport")))
+      };
+      this._header(win, "enemy", gameText("tnf:combat target", t("stabsEnemy")));
+      win.add(this._section("enemy", true, ENEMY_ROWS.map((k) => [k, enemyLabels[k]])));
+      const repairLabels = {
+        storage: rowLabel(null, IMG.rcBase, gameText("tnf:offense repair time", t("stabsRepairStorage"))),
+        overall: rowLabel(null, IMG.rcOffense, gameText("tnf:repair points", t("stabsRepairPoints"))),
+        crystal: rowLabel(null, IMG.crystal, gameText("tnf:crystals", t("stabsCrystal"))),
+        infantry: rowLabel(null, IMG.rcInf, gameText("tnf:infantry repair title", t("stabsRepairInf"))),
+        vehicle: rowLabel(null, IMG.rcVeh, gameText("tnf:vehicle repair title", t("stabsRepairVeh"))),
+        aircraft: rowLabel(null, IMG.rcAir, gameText("tnf:aircraft repair title", t("stabsRepairAir")))
+      };
+      this._header(win, "repair", gameText("tnf:own repair cost", t("stabsRepair")));
+      win.add(this._section("repair", true, REPAIR_ROWS.map((k) => [k, repairLabels[k]])));
+      const lootLabels = {
+        tiberium: rowLabel(null, IMG.tiberium, gameText("tnf:tiberium", t("stabsTiberium"))),
+        crystal: rowLabel(null, IMG.crystal, gameText("tnf:crystals", t("stabsCrystal"))),
+        credits: rowLabel(null, IMG.credits, gameText("tnf:credits", t("stabsCredits"))),
+        research: rowLabel(null, IMG.research, gameText("tnf:research points", t("stabsResearch"))),
+        total: rowLabel(null, IMG.transfer, t("stabsLootTotal"))
+      };
+      this._header(win, "loot", gameText("tnf:lootable resources:", t("stabsLoot")));
+      win.add(this._section("loot", true, LOOT_ROWS.map((k) => [k, lootLabels[k]])));
+      win.add(this._buttons());
+      win.setShowStatusbar(true);
+      const bar = win.getChildControl("statusbar").set({ paddingBottom: 6, paddingTop: 4 });
+      win.add(bar);
+      win.getChildControl("statusbar-text").set({ textColor: "#BBBBBB" });
+      bar.add(new qx.ui.core.Spacer(), { flex: 1 });
+      const reset = new qx.ui.basic.Label(t("stabsReset")).set({ textColor: "#115274" });
+      reset.getContentElement().setStyle("text-decoration", "underline");
+      reset.addListener("click", () => this.opts.onReset());
+      bar.add(reset);
+      for (const key of SECTIONS) {
+        if (config.get(`stabs.section.${key}`, true) === false) this.sections[key].exclude();
+      }
+      this.win = win;
+    }
+    /** Section header over the section box; a click folds the section. */
+    _header(win, key, text) {
+      const header = new qx.ui.container.Composite(new qx.ui.layout.Grow()).set({ alignX: "center", alignY: "middle", zIndex: 11 });
+      header.add(new qx.ui.container.Composite(new qx.ui.layout.VBox(5)).set({
+        decorator: "pane-light-opaque",
+        allowGrowX: true,
+        allowGrowY: true
+      }));
+      header.add(new qx.ui.basic.Label(text).set({
+        paddingLeft: 9,
+        paddingBottom: 2,
+        allowGrowX: true,
+        allowGrowY: true,
+        font: "font_size_13_bold_shadow"
+      }));
+      header.addListener("click", () => {
+        const section = this.sections[key];
+        const open = !section.isVisible();
+        if (open) section.show();
+        else section.exclude();
+        this.opts.config.set(`stabs.section.${key}`, open);
+      });
+      win.add(header);
+    }
+    /**
+     * A row of boxes: the label column, then one box per preset column.
+     * @param {Array<[key, labelWidget]>} rows
+     */
+    _section(key, underHeader, rows) {
+      const section = new qx.ui.container.Composite(new qx.ui.layout.HBox(-2)).set({
+        decorator: "pane-light-plain",
+        allowGrowX: true,
+        marginTop: underHeader ? -18 : 0
+      });
+      const labels = new qx.ui.container.Composite(new qx.ui.layout.VBox()).set({
+        width: LABEL_COLUMN,
+        padding: 9,
+        marginTop: underHeader ? 10 : 0,
+        allowGrowX: true
+      });
+      this.rows[key] = {};
+      for (const [rowKey, label] of rows) {
+        labels.add(label);
+        this.rows[key][rowKey] = [label];
+      }
+      section.add(labels, { flex: 0 });
+      this.opts.presets.forEach((preset, i) => {
+        const box = new qx.ui.container.Composite(new qx.ui.layout.VBox()).set({
+          allowGrowX: true,
+          marginTop: underHeader ? 10 : 0,
+          decorator: "pane-light-opaque"
+        });
+        const col = this.columns[i];
+        col.cells[key] = {};
+        for (const [rowKey] of rows) {
+          let cell;
+          if (key === "battle" && rowKey === "preset") {
+            cell = valueLabel("center").set({ value: preset.name, toolTipText: preset.description });
+          } else if (key === "battle" && rowKey === "outcome") {
+            cell = new qx.ui.basic.Atom("-", null).set({ alignX: "center", alignY: "middle", gap: 0, iconPosition: "top", minHeight: ROW_HEIGHT, show: "label" });
+            cell.getChildControl("icon").set({ width: 18, height: 18, scale: true, alignY: "middle" });
+          } else {
+            cell = valueLabel(key === "battle" ? "center" : "right");
+          }
+          if (key === "repair" && rowKey === "overall") cell.getContentElement().setStyle("text-shadow", "0 0 3pt");
+          box.add(cell, { flex: 1 });
+          col.cells[key][rowKey] = cell;
+          this.rows[key][rowKey].push(cell);
+        }
+        box.addListener("dblclick", () => this.opts.onLoad(preset.id));
+        col.boxes.push(box);
+        section.add(box, { flex: 1 });
+      });
+      this.sections[key] = section;
+      return section;
+    }
+    _buttons() {
+      const section = new qx.ui.container.Composite(new qx.ui.layout.HBox(-2)).set({ decorator: "pane-light-plain", allowGrowX: true });
+      const labels = new qx.ui.container.Composite(new qx.ui.layout.VBox()).set({ width: LABEL_COLUMN, padding: 9, allowGrowX: true });
+      labels.add(rowLabel(null, IMG.simulate, t("stabsViewSimulation")).set({ marginTop: 1, marginBottom: 5 }));
+      section.add(labels, { flex: 0 });
+      this.opts.presets.forEach((preset, i) => {
+        const box = new qx.ui.container.Composite(new qx.ui.layout.VBox()).set({ allowGrowX: true, decorator: "pane-light-opaque" });
+        const pair = new qx.ui.container.Composite(new qx.ui.layout.HBox()).set({ allowGrowX: true });
+        pair.add(iconButton(IMG.simulate, t("stabsLoadSimulate"), () => this.opts.onSimulate(preset.id)));
+        pair.add(iconButton(IMG.play, t("stabsViewSimulation"), () => this.opts.onReplay(preset.id)));
+        box.add(pair, { flex: 1 });
+        this.columns[i].boxes.push(box);
+        section.add(box, { flex: 1 });
+      });
+      return section;
+    }
+    /**
+     * Fill the window.
+     * @param {object} s
+     * @param {Array<{cells, dim}>} s.columns — per preset, cells from columnCells()
+     * @param {string[]} s.enemyRows — Defender rows to show
+     * @param {boolean} s.moraleVisible
+     * @param {number} s.cacheCount
+     * @param {object} s.outcomeTitles — outcome key -> tooltip
+     */
+    update(s) {
+      if (!this.win) return;
+      s.columns.forEach(({ cells, dim }, i) => {
+        const col = this.columns[i];
+        if (!col) return;
+        for (const section of ["enemy", "repair", "loot"]) {
+          for (const [k, cell] of Object.entries(cells[section])) setCell(col.cells[section][k], cell);
+        }
+        for (const k of ["duration", "base", "morale"]) setCell(col.cells.battle[k], cells.battle[k]);
+        const outcome = col.cells.battle.outcome;
+        if (cells.battle.outcome) {
+          outcome.set({ icon: IMG[cells.battle.outcome], toolTipIcon: IMG[cells.battle.outcome], toolTipText: s.outcomeTitles[cells.battle.outcome], show: "icon" });
+        } else {
+          outcome.set({ show: "label" });
+          outcome.resetIcon();
+          outcome.resetToolTipText();
+        }
+        for (const box of col.boxes) {
+          box.setDecorator(dim ? "pane-light-plain" : "pane-light-opaque");
+          box.setOpacity(dim ? DIM_OPACITY : 1);
+        }
+      });
+      const shown = new Set(s.enemyRows);
+      for (const k of ENEMY_ROWS) for (const w of this.rows.enemy[k]) w.setVisibility(shown.has(k) ? "visible" : "excluded");
+      for (const w of this.rows.battle.morale) w.setVisibility(s.moraleVisible ? "visible" : "excluded");
+      this.win.setStatus(t("stabsCacheCount", { n: s.cacheCount }));
+    }
+  };
+  function setCell(widget, cell) {
+    if (!widget || !cell) return;
+    if (widget.getValue() !== cell.text) widget.setValue(cell.text);
+    if (cell.color) widget.setTextColor(cell.color);
+    else widget.resetTextColor();
+  }
+
+  // plugins/stabs.js
+  var TOOLBAR_ID3 = "stabs";
+  var SIM_LOCK_MS = 3e3;
+  var TICK_MS2 = 300;
+  var KEY_NUM0 = 96;
+  var KEY_NUM7 = 103;
+  function tabsLoaded(win = window) {
+    try {
+      if (typeof win.TABS !== "undefined") return true;
+      return !!(win.qx && win.qx.Class && win.qx.Class.getByName && win.qx.Class.getByName("TABS"));
+    } catch {
+      return false;
+    }
+  }
+  function mainData() {
+    return ClientLib.Data.MainData.GetInstance();
+  }
+  function cities() {
+    return mainData().get_Cities();
+  }
+  function viewMode() {
+    try {
+      return ClientLib.Vis.VisMain.GetInstance().get_Mode();
+    } catch {
+      return null;
+    }
+  }
+  function inReplay() {
+    try {
+      return qx.core.Init.getApplication().getPlayArea().getViewMode() === ClientLib.Data.PlayerAreaViewMode.pavmCombatReplay;
+    } catch {
+      return false;
+    }
+  }
+  function targetReady() {
+    try {
+      const city = cities().get_CurrentCity();
+      return !!city && city.get_Version() >= 0 && ClientLib.Vis.VisMain.GetInstance().GetActiveView().get_VisAreaComplete();
+    } catch {
+      return false;
+    }
+  }
+  function readFormation() {
+    try {
+      const c = cities();
+      const own = c.get_CurrentOwnCity();
+      if (!own) return null;
+      const formation = own.get_CityArmyFormationsManager().GetFormationByTargetBaseId(c.get_CurrentCityId());
+      const units = formation && formation.get_ArmyUnits();
+      if (!units) return null;
+      return units.l.map((u) => {
+        const carried = u.get_IsTransportedCityEntity();
+        const carrying = u.get_TransportedCityEntity();
+        return {
+          id: u.get_Id(),
+          gid: carried ? u.get_TransporterCityEntity().get_Id() : carrying !== null ? carrying.get_Id() : 0,
+          gs: carried ? 2 : carrying !== null ? 1 : 0,
+          i: u.get_MdbUnitId(),
+          l: u.get_CurrentLevel(),
+          h: Math.ceil(u.get_Health()),
+          enabled: u.get_Enabled(),
+          x: u.get_CoordX(),
+          y: u.get_CoordY(),
+          t: carried
+        };
+      });
+    } catch {
+      return null;
+    }
+  }
+  function cacheState(targetId, ownId) {
+    const c = cities();
+    const target = c.GetCity(targetId);
+    const own = c.GetCity(ownId);
+    let poi = null;
+    try {
+      const alliance = mainData().get_Alliance();
+      if (alliance) poi = { air: alliance.get_POIAirBonus(), inf: alliance.get_POIInfantryBonus(), veh: alliance.get_POIVehicleBonus() };
+    } catch {
+    }
+    return {
+      version: target ? target.get_Version() : -1,
+      own: own ? { version: own.get_Version(), recovery: own.get_hasRecovery(), poi } : null
+    };
+  }
+  function enums() {
+    const B = ClientLib.Base;
+    const T = B.ETechName;
+    return {
+      GDI: B.EFactionType.GDIFaction,
+      NOD: B.EFactionType.NODFaction,
+      Offense: B.EPlacementType.Offense,
+      Feet: B.EUnitMovementType.Feet,
+      Wheel: B.EUnitMovementType.Wheel,
+      Track: B.EUnitMovementType.Track,
+      Air: B.EUnitMovementType.Air,
+      Air2: B.EUnitMovementType.Air2,
+      Structure: B.EUnitMovementType.Structure,
+      ArmorNone: B.EArmorType.NONE,
+      tech: {
+        cy: T.Construction_Yard,
+        cc: T.Command_Center,
+        barracks: T.Barracks,
+        factory: T.Factory,
+        airport: T.Airport,
+        df: T.Defense_Facility,
+        dhq: T.Defense_HQ,
+        support: [T.Support_Air, T.Support_Ion, T.Support_Art]
+      }
+    };
+  }
+  function buildingInfo(targetId) {
+    const city = cities().GetCity(targetId);
+    if (!city) return {};
+    const bd = city.get_CityBuildingsData();
+    const T = ClientLib.Base.ETechName;
+    const unique = (name) => bd.GetUniqueBuildingByTechName(name);
+    const pos = (b) => b ? { x: b.get_CoordX(), y: b.get_CoordY() } : null;
+    return {
+      cy: pos(unique(T.Construction_Yard) || bd.GetBuildingByMDBId(ClientLib.Base.ETech.FOR_Fortress_ConstructionYard)),
+      cc: pos(unique(T.Command_Center)),
+      barracks: pos(unique(T.Barracks)),
+      factory: pos(unique(T.Factory)),
+      airport: pos(unique(T.Airport)),
+      df: pos(unique(T.Defense_Facility)),
+      dhq: pos(unique(T.Defense_HQ)),
+      support: pos(unique(T.Support_Air) || unique(T.Support_Art) || unique(T.Support_Ion))
+    };
+  }
+  function clientEnv(data) {
+    const E = enums();
+    const util = ClientLib.API.Util;
+    const resMain = ClientLib.Res.ResMain.GetInstance();
+    const hpOverride = ClientLib.Base.EUnitModuleType.HitpointOverride;
+    const ownCosts = typeof util.GetOwnUnitRepairCosts === "function";
+    return {
+      E,
+      unit: (mdbId) => resMain.GetUnit_Obj(mdbId),
+      maxHealth(level, unit, bonus, modules) {
+        const mod = (unit.m || []).find((m) => m.t === hpOverride);
+        const u = mod && (modules || []).indexOf(mod.i) !== -1 ? Object.assign({}, unit, { lp: mod.h }) : unit;
+        return Math.floor(util.GetUnitMaxHealthByLevel(level, u, bonus)) * 16;
+      },
+      techName: (unit) => parseInt(ClientLib.Base.Tech.GetTechNameFromTechId(unit.tl, unit.f), 10),
+      repairCosts(unit, mdbId, level, ratio) {
+        if (unit.pt !== E.Offense || !ownCosts) {
+          return cities().get_CurrentCity() !== null ? util.GetUnitRepairCosts(level, mdbId, ratio) : null;
+        }
+        return util.GetOwnUnitRepairCosts(level, mdbId, ratio);
+      },
+      buildingInfo: buildingInfo(data.d.di),
+      asAttacker(fn) {
+        if (ownCosts) return fn();
+        const c = cities();
+        c.set_CurrentCityId(data.d.ai);
+        try {
+          fn();
+        } finally {
+          c.set_CurrentCityId(data.d.di);
+        }
+      }
+    };
+  }
+  function timespan(seconds) {
+    try {
+      return webfrontend.phe.cnc.Util.getTimespanString(seconds);
+    } catch {
+      return `${Math.round(seconds)} s`;
+    }
+  }
+  function compact2(n) {
+    try {
+      return webfrontend.phe.cnc.gui.util.Numbers.formatNumbersCompact(n);
+    } catch {
+      return String(Math.round(n));
+    }
+  }
+  function lootFromCurrentCity() {
+    try {
+      const list = ClientLib.API.Battleground.GetInstance().GetLootFromCurrentCity();
+      if (list === null) return null;
+      const loot = {};
+      for (const r of list) loot[r.Type] = r.Count;
+      return loot;
+    } catch {
+      return null;
+    }
+  }
+  function morale(cityId, ownId) {
+    const c = cities();
+    const target = c.GetCity(cityId);
+    const own = c.GetCity(ownId);
+    if (!target || !own) return null;
+    const sign = ClientLib.Base.Util.GetMoralSignType(own.get_LvlOffense(), target.get_LvlBase());
+    let center = null;
+    try {
+      center = mainData().get_EndGame().GetCenter().get_CombatId();
+    } catch {
+    }
+    if (mainData().get_Server().get_CombatUseMoral() && target.IsNPC() && target.get_Id() !== center && (sign.k === 1 || sign.k === 2)) {
+      return { text: `~${100 - sign.v}%`, level: sign.k, value: sign.v };
+    }
+    return { text: "100%", level: 0, value: 0 };
+  }
+  var Stabs = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descStabs");
+    }
+    constructor(config, toolbar) {
+      this.name = "STABS";
+      this.defaultEnabled = false;
+      this.parked = true;
+      this.config = config;
+      this.toolbar = toolbar;
+      this.running = false;
+      this.tabsActive = false;
+      this.cache = new SimCache();
+      this._events = [];
+      this._timer = null;
+      this._button = null;
+      this._win = null;
+      this._backButton = null;
+      this._replayTarget = null;
+      this._lock = false;
+      this._lockUntil = 0;
+      this._lockTimer = null;
+      this._request = false;
+      this._formationSig = null;
+      this._shown = null;
+      this._columns = {};
+      this._dirty = true;
+      this._onKeyDown = (e) => this._hotkey(e);
+    }
+    async start() {
+      this.running = true;
+      this.tabsActive = false;
+      if (tabsLoaded()) {
+        this._goIdle();
+        return;
+      }
+      if (!this.parked) {
+        this.toolbar.register({
+          id: TOOLBAR_ID3,
+          icon: ICONS.sim,
+          label: () => t("toolbarStabs"),
+          onClick: () => this.togglePanel()
+        });
+      }
+      this._attach(ClientLib.Vis.VisMain.GetInstance(), "ViewModeChange", ClientLib.Vis.ViewModeChange, this._onViewChanged);
+      this._attach(cities(), "CurrentChange", ClientLib.Data.CurrentCityChange, this._onCityChange);
+      this._onViewChanged(null, viewMode());
+    }
+    stop() {
+      this.running = false;
+      this._teardown();
+      this.cache = new SimCache();
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      if (!this.running) return "/st plugin enable stabs";
+      if (this.tabsActive) return t("stabsStatusTabs");
+      return t("stabsStatus", { n: this._cacheCount() });
+    }
+    /**
+     * /st status: "inactive — TABS detected" instead of "on" while TABS runs.
+     * Checked live: TABS may load after STABS started.
+     */
+    statusState() {
+      if (!this.running) return null;
+      if (!this.tabsActive && tabsLoaded()) this._goIdle();
+      return this.tabsActive ? t("stabsInactiveTabs") : null;
+    }
+    // ── Lifecycle ──
+    /** TABS runs here: drop everything and stay idle. */
+    _goIdle() {
+      if (!this.tabsActive) chatMessage(`[ST] ${t("stabsTabsDetected")}`);
+      this.tabsActive = true;
+      this._teardown();
+      console.log("[ST] STABS: TABS is loaded - staying inactive");
+    }
+    _teardown() {
+      for (const ev of this._events) {
+        try {
+          webfrontend.phe.cnc.Util.detachNetEvent(ev.source, ev.name, ev.type, this, ev.cb);
+        } catch {
+        }
+      }
+      this._events = [];
+      this._stopTimer();
+      clearTimeout(this._lockTimer);
+      this._lockTimer = null;
+      this._lock = false;
+      this._request = false;
+      document.removeEventListener("keydown", this._onKeyDown);
+      this.toolbar.unregister(TOOLBAR_ID3);
+      if (this._button) {
+        try {
+          const parent = this._button.getLayoutParent();
+          if (parent) parent.remove(this._button);
+          this._button.dispose();
+        } catch {
+        }
+        this._button = null;
+      }
+      if (this._win) this._win.dispose();
+      this._win = null;
+      if (this._backButton) {
+        try {
+          const parent = this._backButton.getLayoutParent();
+          if (parent) parent.remove(this._backButton);
+          this._backButton.dispose();
+        } catch {
+        }
+        this._backButton = null;
+      }
+      this._shown = null;
+      this._columns = {};
+    }
+    _attach(source, name, type, cb) {
+      webfrontend.phe.cnc.Util.attachNetEvent(source, name, type, this, cb);
+      this._events.push({ source, name, type, cb });
+    }
+    _onViewChanged(oldMode, newMode) {
+      const V = ClientLib.Vis.Mode;
+      if (newMode === V.CombatSetup) {
+        this._ensureButton();
+        if (this._button) this._button.show();
+        document.addEventListener("keydown", this._onKeyDown);
+        this._formationSig = null;
+      } else if (oldMode === V.CombatSetup) {
+        if (this._button) this._button.hide();
+        document.removeEventListener("keydown", this._onKeyDown);
+      }
+      if ((newMode === V.CombatSetup || newMode === V.Battleground) && this.config.get("stabs.panel.open", true) && !inReplay() && !this.isPanelOpen()) {
+        this.openPanel();
+      }
+      if (newMode !== V.CombatSetup && newMode !== V.Battleground && newMode !== V.City) this.closePanel();
+      this._syncTimer();
+    }
+    _onCityChange(oldId, newId) {
+      if (cities().GetCity(newId) === null) this._shown = null;
+      this._dirty = true;
+    }
+    /** The tick runs while the attack setup or the panel is open. */
+    _syncTimer() {
+      const needed = viewMode() === ClientLib.Vis.Mode.CombatSetup || this.isPanelOpen();
+      if (needed && !this._timer) {
+        this._timer = setInterval(() => this._tick(), TICK_MS2);
+        this._tick();
+      } else if (!needed) {
+        this._stopTimer();
+      }
+    }
+    _stopTimer() {
+      if (this._timer) clearInterval(this._timer);
+      this._timer = null;
+    }
+    _tick() {
+      if (tabsLoaded()) {
+        this._goIdle();
+        return;
+      }
+      try {
+        if (viewMode() === ClientLib.Vis.Mode.CombatSetup) this._watchFormation();
+        this._updateButton();
+        if (this.isPanelOpen()) this._render();
+      } catch (e) {
+        console.warn("[ST] STABS: tick failed", e);
+      }
+    }
+    /** A formation change (move, enable/disable) marks the panel dirty and, with auto simulate, simulates. */
+    _watchFormation() {
+      if (!targetReady()) return;
+      const formation = readFormation();
+      const sig = formation ? `${cities().get_CurrentCityId()}#${JSON.stringify(formation.map((u) => [u.id, u.x, u.y, u.enabled, u.h]))}` : null;
+      if (sig === this._formationSig) return;
+      this._formationSig = sig;
+      this._dirty = true;
+      if (formation && formation.length && this.config.get("stabs.autoSimulate", true) && !this._cachedEntry(formation)) {
+        this.simulate();
+      }
+    }
+    _hotkey(e) {
+      const el = e.target;
+      if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
+      if (e.keyCode === KEY_NUM0) this._onSimulateClick();
+      else if (e.keyCode === KEY_NUM7) this.togglePanel();
+    }
+    // ── Simulation ──
+    _cachedEntry(formation) {
+      const c = cities();
+      const ownId = c.get_CurrentOwnCityId();
+      const targetId = c.get_CurrentCityId();
+      if (!formation || ownId === null || targetId === null) return null;
+      return this.cache.check(targetId, formationKey(formation, ownId), cacheState(targetId, ownId));
+    }
+    _onSimulateClick() {
+      if (this._cachedEntry(readFormation())) {
+        this.openPanel();
+        return;
+      }
+      this.simulate();
+    }
+    /** Simulate the current formation; during the 3 s lock it runs once the lock ends. */
+    simulate() {
+      if (this._lock) {
+        this._request = true;
+        return;
+      }
+      const c = cities();
+      const own = c.get_CurrentOwnCity();
+      const target = c.get_CurrentCity();
+      if (!own || !target || target.CheckInvokeBattle(own, true) !== ClientLib.Data.EAttackBaseResult.OK) return;
+      const formation = readFormation();
+      if (!formation) return;
+      this._lock = true;
+      this._lockUntil = 0;
+      this._restartLock();
+      const units = formation.filter((u) => u.enabled && u.h > 0).map((u) => ({ i: u.id, x: u.x, y: u.y }));
+      ClientLib.Net.CommunicationManager.GetInstance().SendSimpleCommand("SimulateBattle", {
+        battleSetup: { d: target.get_Id(), a: own.get_Id(), u: units, s: 0 }
+      }, webfrontend.phe.cnc.Util.createEventDelegate(ClientLib.Net.CommandResult, this, (ctx, result) => {
+        this._restartLock();
+        this._lockUntil = Date.now() + SIM_LOCK_MS;
+        this._onResult(result, formation);
+      }), null);
+    }
+    _restartLock() {
+      clearTimeout(this._lockTimer);
+      this._lockTimer = setTimeout(() => this._unlock(), SIM_LOCK_MS);
+    }
+    _unlock() {
+      this._lockTimer = null;
+      this._lock = false;
+      this._lockUntil = 0;
+      if (this._request && this.running && !this.tabsActive) {
+        this._request = false;
+        this.simulate();
+      }
+    }
+    _onResult(data, formation) {
+      if (!this.running || this.tabsActive || !data || cities().get_CurrentCity() === null) return;
+      try {
+        const d = data.d;
+        const merged = mergeFormation(formation, d.a);
+        const key = formationKey(merged, d.ai);
+        this.cache.check(d.di, key, cacheState(d.di, d.ai));
+        const stats = computeStats(data, clientEnv(data));
+        const own = cities().GetCity(d.ai);
+        this.cache.add(d.di, key, {
+          stats,
+          formation: merged,
+          combat: d,
+          ownId: d.ai,
+          cityId: d.di,
+          recovery: own ? own.get_hasRecovery() : void 0
+        });
+        this._dirty = true;
+      } catch (e) {
+        console.error("[ST] STABS: simulation result not readable", e);
+      }
+    }
+    _cacheCount() {
+      try {
+        return this.cache.count(cities().get_CurrentCityId());
+      } catch {
+        return 0;
+      }
+    }
+    // ── Simulate button (attack setup bar) ──
+    _ensureButton() {
+      if (this._button) return;
+      try {
+        const hud = qx.core.Init.getApplication().getPlayArea().getHUD();
+        const swap = hud.getUIItem(ClientLib.Data.Missions.PATH.WDG_COMBATSWAPVIEW);
+        const btn = new webfrontend.ui.SoundButton(null, IMG.simulate).set({
+          toolTipText: t("stabsSimulate"),
+          width: 44,
+          height: 44,
+          allowGrowX: false,
+          allowGrowY: false,
+          appearance: "button-baseviews",
+          marginRight: 6
+        });
+        btn.addListener("click", () => this._onSimulateClick());
+        swap.getLayoutParent().addAfter(btn, swap);
+        this._button = btn;
+      } catch (e) {
+        console.warn("[ST] STABS: Simulate button not placed", e && e.message);
+      }
+    }
+    /** Enabled unless locked or empty; a cached formation is always clickable. Counts down after a result. */
+    _updateButton() {
+      const btn = this._button;
+      if (!btn) return;
+      const formation = readFormation();
+      const cached = formation ? !!this._cachedEntry(formation) : false;
+      btn.setEnabled(!!formation && (cached || !this._lock && formation.length > 0));
+      const left = this._lockUntil - Date.now();
+      if (!cached && formation && formation.length && this._lock && left > 0) {
+        btn.setLabel((left / 1e3).toFixed(1));
+        btn.setShow("label");
+      } else {
+        btn.setShow("icon");
+      }
+    }
+    // ── Statistics window ──
+    isPanelOpen() {
+      return !!this._win && this._win.isOpen();
+    }
+    togglePanel() {
+      if (this.isPanelOpen()) {
+        this.config.set("stabs.panel.open", false);
+        this.closePanel();
+      } else {
+        this.config.set("stabs.panel.open", true);
+        this.openPanel();
+      }
+    }
+    openPanel() {
+      if (this.tabsActive) return;
+      this._ensureWindow();
+      if (!this._win) return;
+      this._win.open();
+      this._dirty = true;
+      this._render();
+      this._syncTimer();
+    }
+    /** Closing forgets the shown results (TABS resets its columns on close). */
+    closePanel() {
+      if (this._win) this._win.close();
+      this._shown = null;
+      this._columns = {};
+      this._syncTimer();
+    }
+    _ensureWindow() {
+      if (this._win) return;
+      try {
+        this._win = new StatsWindow({
+          config: this.config,
+          presets: [PRESETS.live, PRESETS.cy].map((p) => ({
+            id: p.id,
+            name: p.id === "live" ? t("stabsPresetLive") : p.name,
+            description: t(p.id === "live" ? "stabsPresetLiveDesc" : "stabsPresetCyDesc")
+          })),
+          onUserClose: () => {
+            this.config.set("stabs.panel.open", false);
+            this._shown = null;
+            this._columns = {};
+            this._syncTimer();
+          },
+          onSimulate: (id) => this._simulateColumn(id),
+          onReplay: (id) => this._replayColumn(id),
+          onLoad: (id) => this._loadColumn(id),
+          onReset: () => {
+            const targetId = cities().get_CurrentCityId();
+            if (targetId) this.cache.clear(targetId);
+            this._shown = null;
+            this._columns = {};
+            this._dirty = true;
+            this._render();
+          }
+        });
+      } catch (e) {
+        console.warn("[ST] STABS: statistics window not built", e && e.message);
+        this._win = null;
+      }
+    }
+    /** The live column: the cached result of the current formation, else the last one (dimmed). */
+    _refreshShown() {
+      if (!targetReady()) return false;
+      const c = cities();
+      const formation = readFormation();
+      if (formation) {
+        const ownId = c.get_CurrentOwnCityId();
+        const key = formationKey(formation, ownId);
+        const entry = this.cache.check(c.get_CurrentCityId(), key, cacheState(c.get_CurrentCityId(), ownId));
+        if (entry) this._shown = { key, entry };
+      }
+      return !!this._shown && !!formation && this._shown.key === formationKey(formation, this._shown.entry.ownId);
+    }
+    /** Key of the current formation, or null. */
+    _currentKey() {
+      const formation = readFormation();
+      if (!formation) return null;
+      return formationKey(formation, cities().get_CurrentOwnCityId());
+    }
+    _render() {
+      if (!this._win || !this._win.isOpen()) return;
+      if (this._dirty) {
+        this._dirty = false;
+        this._refreshShown();
+        this._columns = { live: this._shown };
+        if (targetReady()) {
+          const best = this.cache.best(cities().get_CurrentCityId(), PRESETS.cy.criteria);
+          if (best) this._columns.cy = best;
+        }
+      }
+      const current = targetReady() ? this._currentKey() : null;
+      const loot = lootFromCurrentCity();
+      const fmt5 = { time: timespan, number: compact2 };
+      const columns = ["live", "cy"].map((id) => {
+        const shown = this._columns[id] || null;
+        const view = shown ? this._columnView(shown.entry, loot) : null;
+        return { cells: columnCells(view, fmt5), dim: !!shown && shown.key !== current, view };
+      });
+      this._win.update({
+        columns,
+        enemyRows: visibleEnemyRows(columns[0].view && columns[0].view.stats),
+        moraleVisible: columns.some((c) => c.view && c.view.morale && c.view.morale.text !== "100%"),
+        cacheCount: this._cacheCount(),
+        outcomeTitles: { "total-defeat": t("stabsTotalDefeat"), "total-victory": t("stabsTotalVictory"), victory: t("stabsVictory") }
+      });
+    }
+    /** What one column needs from the client, for a cache entry. */
+    _columnView(entry, loot) {
+      const view = { stats: entry.stats, loot, base: "", morale: null, storage: null };
+      const own = cities().GetCity(entry.ownId);
+      if (own) {
+        view.base = own.get_Name();
+        const rc = Math.min(own.GetResourceCount(RES.RC_INF), own.GetResourceCount(RES.RC_VEH), own.GetResourceCount(RES.RC_AIR));
+        try {
+          view.storage = mainData().get_Time().GetTimeSpan(rc);
+        } catch {
+          view.storage = null;
+        }
+      }
+      try {
+        view.morale = morale(entry.cityId, entry.ownId);
+      } catch {
+        view.morale = null;
+      }
+      return view;
+    }
+    // ── Column buttons ──
+    _columnEntry(id) {
+      const shown = this._columns[id];
+      return shown ? shown.entry : null;
+    }
+    /** Double click: put the column's formation in the attack setup. */
+    _loadColumn(id) {
+      const entry = this._columnEntry(id);
+      if (entry) applyFormation(entry);
+      this._dirty = true;
+    }
+    /** ⊕: load the column's formation and simulate it (the current one when the column is empty). */
+    _simulateColumn(id) {
+      const entry = this._columnEntry(id);
+      if (entry) applyFormation(entry);
+      this._dirty = true;
+      this.simulate();
+    }
+    /** ▶: view the column's battle; the back button returns to the attack setup. */
+    _replayColumn(id) {
+      const entry = this._columnEntry(id);
+      if (!entry || !entry.combat) return;
+      try {
+        this._replayTarget = entry.cityId;
+        this._ensureBackButton();
+        if (this._win) this._win.close();
+        startReplay(entry.cityId, entry.combat);
+      } catch (e) {
+        console.warn("[ST] STABS: replay failed", e && e.message);
+      }
+    }
+    /** A back button on the game's replay overlay (that overlay belongs to the reports and has none for a simulation). */
+    _ensureBackButton() {
+      if (this._backButton) return;
+      const overlay = qx.core.Init.getApplication().getReportReplayOverlay();
+      const btn = new qx.ui.form.Button().set({
+        width: 48,
+        height: 48,
+        icon: IMG.back,
+        appearance: "button-friendlist-scroll",
+        toolTipText: t("stabsReplayBack")
+      });
+      btn.addListener("click", () => this._backToSetup());
+      overlay.add(btn, { top: 11, left: 346 });
+      this._backButton = btn;
+    }
+    _backToSetup() {
+      try {
+        const area = qx.core.Init.getApplication().getPlayArea();
+        const target = this._replayTarget || cities().get_CurrentCityId();
+        area.setView(ClientLib.Data.PlayerAreaViewMode.pavmCombatSetupDefense, target, 0, 0);
+        ClientLib.Vis.VisMain.GetInstance().get_CombatSetup().SetPosition(0, area.getHUD().getCombatSetupOffset(ClientLib.Vis.CombatSetup.CombatSetupViewMode.Defense));
+      } catch (e) {
+        console.warn("[ST] STABS: back to the attack setup failed", e && e.message);
+      }
+    }
+  };
+  function applyFormation(entry) {
+    const c = cities();
+    if (c.get_CurrentOwnCityId() !== entry.ownId) c.set_CurrentOwnCityId(entry.ownId);
+    const own = c.GetCity(entry.ownId);
+    const formation = own && own.get_CityArmyFormationsManager().GetFormationByTargetBaseId(entry.cityId);
+    const list = formation && formation.get_ArmyUnits();
+    if (!list) return false;
+    const byId = (id) => list.l.find((u) => u.get_Id() === id) || null;
+    const carried = [];
+    for (const f of entry.formation) {
+      if (f.gs === 2) {
+        carried.push(f);
+        continue;
+      }
+      const unit = byId(f.id);
+      if (!unit) continue;
+      unit.set_Enabled(f.enabled);
+      const inTheWay = formation.GetUnitByCoord(f.x, f.y);
+      if (inTheWay && inTheWay !== unit && ClientLib.Base.Unit.CanBeTransported(inTheWay.get_UnitGameData_Obj(), unit.get_UnitGameData_Obj())) {
+        inTheWay.MoveBattleUnit(unit.get_CoordX(), unit.get_CoordY());
+      }
+      unit.MoveBattleUnit(f.x, f.y);
+    }
+    for (const f of carried) {
+      const unit = byId(f.id);
+      const carrier = formation.GetUnitByCoord(f.x, f.y);
+      if (unit && carrier && carrier.get_Enabled()) unit.set_Enabled(true);
+    }
+    return true;
+  }
+  function startReplay(cityId, combat) {
+    qx.core.Init.getApplication().getPlayArea().setView(ClientLib.Data.PlayerAreaViewMode.pavmCombatReplay, cityId, 0, 0);
+    const battleground = ClientLib.Vis.VisMain.GetInstance().get_Battleground();
+    battleground.Init();
+    battleground.LoadCombatDirect(combat);
+    setTimeout(() => {
+      battleground.RestartReplay();
+      battleground.set_ReplaySpeed(1);
+    }, 0);
+  }
+
   // lib/main.js
-  var ST_VERSION = "5.26.1";
+  var ST_VERSION = "5.27.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -10008,7 +11566,8 @@ var ShockrTools = (() => {
       new LootSummary(config),
       new ChatHelper(config),
       new PvpAlert(config),
-      new TargetBoard(config, api, toolbar, cli)
+      new TargetBoard(config, api, toolbar, cli),
+      new Stabs(config, toolbar)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });
     for (const plugin of plugins) {
@@ -10054,8 +11613,9 @@ var ShockrTools = (() => {
     cli.register("status", () => {
       chatMessage(`[ST] ${t("statusHeader", { version: ST_VERSION })}`);
       for (const p of plugins) {
+        const state = typeof p.statusState === "function" && p.statusState() || t(p.running ? "pluginEnabled" : "pluginDisabled");
         const extra = typeof p.statusText === "function" ? ` \u2014 ${p.statusText()}` : "";
-        chatMessage(`[ST] ${p.name}: ${t(p.running ? "pluginEnabled" : "pluginDisabled")}${extra}`);
+        chatMessage(`[ST] ${p.name}: ${state}${extra}`);
       }
       const reg = { player: "registerStatusOn", shared: "registerStatusShared", none: "registerStatusOff" };
       chatMessage(`[ST] ${t(reg[api.registration])}`);

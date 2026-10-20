@@ -1,7 +1,25 @@
 {
-  "version": "5.26.1",
-  "date": "2026-10-18",
+  "version": "5.27.0",
+  "date": "2026-10-19",
   "changelog": [
+    {
+      "version": "5.27.0",
+      "date": "2026-10-19",
+      "changes": {
+        "en": [
+          "Shockr is now GPL-3.0-or-later; the original Shockr Tools (Blayne Chard, MIT) and other sources are credited (NOTICE, README)",
+          "Code without a compatible license replaced: PvP alarm with its own icons and a public-domain alarm sound; Sector HUD shows the cell right under the view centre (can be 1 higher than before); Chat Helper with its own code, same behaviour"
+        ],
+        "de": [
+          "Shockr steht jetzt unter GPL-3.0-or-later; die ursprünglichen Shockr Tools (Blayne Chard, MIT) und andere Quellen werden genannt (NOTICE, README)",
+          "Code ohne passende Lizenz ersetzt: PvP-Alarm mit eigenen Symbolen und einem gemeinfreien Alarmton; Sektor-HUD zeigt die Zelle genau unter der Ansichtsmitte (kann 1 höher sein als vorher); Chat Helper mit eigenem Code, gleiches Verhalten"
+        ],
+        "nl": [
+          "Shockr is nu GPL-3.0-or-later; de oorspronkelijke Shockr Tools (Blayne Chard, MIT) en andere bronnen worden vermeld (NOTICE, README)",
+          "Code zonder passende licentie vervangen: PvP-alarm met eigen iconen en een publiek-domein-alarmgeluid; Sector HUD toont de cel precies onder het midden van het beeld (kan 1 hoger zijn dan voorheen); Chat Helper met eigen code, zelfde gedrag"
+        ]
+      }
+    },
     {
       "version": "5.26.1",
       "date": "2026-10-18",
@@ -98,27 +116,6 @@
           "Nieuw: /st config export en /st config import - neem alle instellingen, incl. je key, mee naar een andere wereld of browser",
           "/st register waarschuwt als je al een key hebt: opnieuw registreren maakt de oude ongeldig, dus het gaat pas verder na jouw bevestiging",
           "Problemen oplossen: config kwijt na wisselen van wereld → /st config export op de oude wereld, /st config import op de nieuwe"
-        ]
-      }
-    },
-    {
-      "version": "5.23.2",
-      "date": "2026-10-14",
-      "changes": {
-        "en": [
-          "Info page: new Plugins section - every plugin with a short description, default on/off, which old script it replaces and the command to switch it on or off (click to expand)",
-          "Loot Summary: no more double loot table on Forgotten targets when MaelstromTools shows its own loot table (Shockr steps aside)",
-          "Troubleshooting: double loot table → turn off \"Show lootable resources\" in MaelstromTools"
-        ],
-        "de": [
-          "Info-Seite: neuer Bereich Plugins - jedes Plugin mit Kurzbeschreibung, Standard an/aus, welches alte Script es ersetzt und dem Befehl zum Ein- und Ausschalten (zum Aufklappen anklicken)",
-          "Loot Summary: keine doppelte Loot-Tabelle mehr bei Forgotten-Zielen, wenn MaelstromTools seine eigene Loot-Tabelle zeigt (Shockr tritt zurück)",
-          "Fehlerbehebung: doppelte Loot-Tabelle → \"Show lootable resources\" in MaelstromTools ausschalten"
-        ],
-        "nl": [
-          "Info-pagina: nieuwe sectie Plugins - elke plugin met een korte beschrijving, standaard aan/uit, welk oud script hij vervangt en het commando om hem aan of uit te zetten (klik om uit te klappen)",
-          "Loot Summary: geen dubbele loot-tabel meer bij Forgotten-targets als MaelstromTools zijn eigen loot-tabel toont (Shockr stapt opzij)",
-          "Problemen oplossen: dubbele loot-tabel → zet \"Show lootable resources\" uit in MaelstromTools"
         ]
       }
     }
