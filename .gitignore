@@ -18,3 +18,4 @@ config/keys.json
 data/
 __pycache__/
 *.pyc
+.claude/
