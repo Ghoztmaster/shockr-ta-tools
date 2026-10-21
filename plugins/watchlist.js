@@ -78,6 +78,8 @@ export class WatchList {
 
     stop() {
         this.running = false;
+        this.cli.unregister('watch');
+        this.cli.unregister('unwatch');
         if (this._timer) clearInterval(this._timer);
         this._timer = null;
         this._viewKey = null;
@@ -155,7 +157,7 @@ export class WatchList {
 
     /** AttackTracker hook: the server removed this claim because the attack on it was won. */
     notifyDefeated(claim) {
-        if (!claim) return;
+        if (!claim || !this.running) return;   // AttackTracker calls this whether WatchList is on or not
         this._forget([claim]);
         say(t('watchDefeated', { type: claim.targetType, x: claim.targetX, y: claim.targetY }));
     }

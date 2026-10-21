@@ -136,7 +136,7 @@ function fakeDeps() {
     const online = new mod.OnlineStateWatch(() => online._s);
     online._s = 2;
     const api = { isConfigured: true, _url: 'x', send() {}, flush: async () => {} };
-    const cli = { cmds: {}, register(n, f) { this.cmds[n] = f; } };
+    const cli = { cmds: {}, register(n, f) { this.cmds[n] = f; }, unregister(n) { delete this.cmds[n]; } };
     const config = { get: () => true, set() {} };
     return { idle, online, api, cli, config };
 }
@@ -247,7 +247,7 @@ for (const Name of ['LayoutScanner', 'AllianceScanner']) {
                 },
             };
             const idle = { isIdle: true, on() {} };
-            const cli = { register() {} };
+            const cli = { register() {}, unregister() {} };
             const s = new fake[Name]({ get: () => true, set() {} }, cli, api, idle, online);
             const log = captureLog();
             try {
@@ -303,6 +303,6 @@ test('main.js starts the online watch before the plugins', async () => {
     const src = fs.readFileSync(path.join(root, 'lib/main.js'), 'utf8');
     const startAt = src.indexOf('online.start()');
     assert.ok(startAt > 0);
-    assert.ok(startAt < src.indexOf('await plugin.start()'));
+    assert.ok(startAt < src.indexOf('await manager.start(plugin)'));   // 5.28.0: plugins start via PluginManager
     assert.equal(src.indexOf('online.start()', startAt + 1), -1);
 });

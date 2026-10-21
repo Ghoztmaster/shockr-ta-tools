@@ -154,6 +154,8 @@ export class Wavy {
 
     constructor(config) {
         this.name = 'Wavy';
+        // its info-panel block only renders on the panel's next appear: a live enable says so
+        this.appearsOnSelect = true;
         this.config = config;
         this.running = false;
         this._cache = new Map();       // "x:y" -> {at, result}

@@ -88,9 +88,9 @@ function setGame({ mode = 'CombatSetup', world = 455, army = [], target = 9001 }
 
 function plugin() {
     const commands = {};
-    const p = new mod.FormationSaver({}, { register: (n, fn) => { commands[n] = fn; } });
+    const p = new mod.FormationSaver({}, { register: (n, fn) => { commands[n] = fn; }, unregister: (n) => { delete commands[n]; } });
     p.start();
-    return { p, run: (...args) => commands.formation(args) };
+    return { p, commands, run: (...args) => commands.formation(args) };
 }
 
 beforeEach(() => {
@@ -171,13 +171,15 @@ test('refuses outside the attack setup view and writes nothing', () => {
     assert.equal(globalThis.__chat.length, 1);
 });
 
-test('usage line for a missing subcommand or name; disabled plugin is silent', () => {
+test('usage line for a missing subcommand or name; disabled plugin drops its command and is silent', () => {
     setGame({ army: makeArmy([[1, 10, 0, 0]]) });
-    const { p, run } = plugin();
+    const { p, commands, run } = plugin();
     run();
     run('save');
     assert.equal(globalThis.__chat.length, 2);
+    const handler = commands.formation;
     p.stop();
-    run('list');
+    assert.equal(commands.formation, undefined, 'unregistered on stop (5.28.0)');
+    handler(['list']);
     assert.equal(globalThis.__chat.length, 2);
 });

@@ -36,6 +36,16 @@ const USERSCRIPT_HEADER = `// ==UserScript==
 // ==/UserScript==
 `;
 
+/**
+ * 5.28.0: the info page's short plugin texts (config/plugins.json `short`) for
+ * the Plugins panel, as { name: { en, de, nl } } (lib/plugin-panel.js). Only
+ * `short`: the long texts stay on the server.
+ */
+function pluginShortTexts() {
+    const list = JSON.parse(fs.readFileSync(path.join(__dirname, 'config', 'plugins.json'), 'utf8'));
+    return Object.fromEntries(list.map(p => [p.name, p.short]));
+}
+
 async function build() {
     const distDir = path.join(__dirname, 'dist');
     if (!fs.existsSync(distDir)) fs.mkdirSync(distDir);
@@ -50,6 +60,7 @@ async function build() {
         minify: false,          // readable output for debugging
         sourcemap: false,
         write: false,
+        define: { __ST_PLUGIN_SHORT__: JSON.stringify(pluginShortTexts()) },
     });
 
     const code = result.outputFiles[0].text;

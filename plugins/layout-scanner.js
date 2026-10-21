@@ -86,6 +86,7 @@ export class LayoutScanner {
 
     stop() {
         this.running = false;
+        this.cli.unregister('scan');
         if (this._scanInterval) {
             clearInterval(this._scanInterval);
             this._scanInterval = null;

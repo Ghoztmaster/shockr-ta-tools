@@ -91,7 +91,7 @@ function fakeApi(responses = {}) {
 }
 
 function plugin(api) {
-    const cli = { commands: {}, register(n, h) { this.commands[n] = h; } };
+    const cli = { commands: {}, register(n, h) { this.commands[n] = h; }, unregister(n) { delete this.commands[n]; } };
     const p = new mod.WatchList({ get: () => undefined }, cli, api);
     p.running = true;
     return { p, cli };
@@ -230,6 +230,17 @@ test('AttackTracker passes the server\'s unclaimed claims to the hook', async ()
     console.log = () => {};
     try { await tracker.flush(); } finally { console.log = origLog; tracker.stop(); }
     assert.deepEqual(globalThis.__chat, ['[ST] WatchList: outpost @ 84:293 defeated — claim removed']);
+});
+
+test('WatchList off: no "defeated" line, and stop() drops watch/unwatch (5.28.0)', async () => {
+    setupGame();
+    const { p, cli } = plugin(fakeApi());
+    await p.start();
+    p.stop();
+    assert.equal(cli.commands.watch, undefined);
+    assert.equal(cli.commands.unwatch, undefined);
+    p.notifyDefeated({ id: 'a', playerId: 164, targetType: 'outpost', targetX: 84, targetY: 293 });
+    assert.deepEqual(globalThis.__chat, []);
 });
 
 test('ago() buckets', () => {

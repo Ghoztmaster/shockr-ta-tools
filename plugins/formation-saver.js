@@ -246,6 +246,7 @@ export class FormationSaver {
 
     stop() {
         this.running = false;
+        this.cli.unregister('formation');
     }
 
     /** `/st formation save|load|list|delete [name]` */

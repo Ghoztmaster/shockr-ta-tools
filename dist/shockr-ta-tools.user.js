@@ -101,6 +101,9 @@ var ShockrTools = (() => {
     chatMessage: () => chatMessage
   });
 
+  // <define:__ST_PLUGIN_SHORT__>
+  var define_ST_PLUGIN_SHORT_default = { CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, AttackTracker: { en: "Logs your won attacks on Forgotten targets", de: "Meldet deine gewonnenen Angriffe auf Forgotten-Ziele", nl: "Meldt je gewonnen aanvallen op Forgotten-targets" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" } };
+
   // lib/game-ready.js
   async function waitForGame({ maxAttempts = 200, intervalMs = 100 } = {}) {
     for (let i = 0; i < maxAttempts; i++) {
@@ -510,6 +513,10 @@ var ShockrTools = (() => {
       pluginEnabledMsg: "{name} enabled",
       pluginDisabledMsg: "{name} disabled",
       pluginUsage: "Usage: /st plugin list|enable|disable <name>",
+      pluginReselectHint: "{name}: visible after selecting the object again",
+      menuUsage: "Usage: /st menu add|remove <plugin>",
+      menuAdded: "{name} shown in the Plugins menu",
+      menuRemoved: "{name} hidden from the Plugins menu",
       statusHeader: "Shockr Tools v{version} \u2014 status",
       pluginEnabled: "on",
       pluginDisabled: "off",
@@ -706,6 +713,7 @@ var ShockrTools = (() => {
       formationStorageFailed: "Could not save (browser storage unavailable)",
       helpCmdFormation: "Save/load attack formations",
       helpCmdTargets: "Open/close the Target Watch panel",
+      helpCmdMenu: "Show/hide a plugin in the Plugins menu",
       descWavy: "Forgotten attack waves per base: Forgotten bases in range, level distribution, waves + distance lines on the world map",
       descPoiAnalyser: "Alliance POI bonuses: POI labels on the world map (gold = yours), the active bonuses in the base info panel and the real gain/loss of a selected POI",
       descSectorHud: "Sector HUD on the world map: view coordinates + sector, and per sector the POIs held (own green, enemy red, free grey)",
@@ -816,6 +824,16 @@ var ShockrTools = (() => {
       // ── Toolbar (5.26.0) ──
       toolbarConfig: "Config",
       toolbarConfigHint: "Export / import your Shockr settings",
+      toolbarPlugins: "Plugins",
+      toolbarPluginsHint: "Turn plugins on and off",
+      pluginPanelTitle: "Plugins",
+      pluginPanelEditTitle: "Show in the menu",
+      pluginPanelEdit: "Choose which plugins the menu shows",
+      pluginPanelDone: "Back to the list",
+      pluginPanelEmpty: "No plugins in the menu. Use the gear to choose them.",
+      pluginPanelTurnOn: "Turn on",
+      pluginPanelTurnOff: "Turn off",
+      pluginPanelShow: "Show in the menu",
       toolbarHelp: "Help",
       toolbarUpgradeCalc: "Upgrade Calculator",
       toolbarTargetBoard: "Target Watch",
@@ -892,6 +910,10 @@ var ShockrTools = (() => {
       pluginEnabledMsg: "{name} aktiviert",
       pluginDisabledMsg: "{name} deaktiviert",
       pluginUsage: "Verwendung: /st plugin list|enable|disable <name>",
+      pluginReselectHint: "{name}: sichtbar nach erneutem Ausw\xE4hlen",
+      menuUsage: "Verwendung: /st menu add|remove <plugin>",
+      menuAdded: "{name} wird im Plugins-Men\xFC angezeigt",
+      menuRemoved: "{name} wird im Plugins-Men\xFC ausgeblendet",
       statusHeader: "Shockr Tools v{version} \u2014 Status",
       pluginEnabled: "an",
       pluginDisabled: "aus",
@@ -1074,6 +1096,7 @@ var ShockrTools = (() => {
       formationStorageFailed: "Speichern fehlgeschlagen (Browserspeicher nicht verf\xFCgbar)",
       helpCmdFormation: "Angriffsformationen speichern/laden",
       helpCmdTargets: "Target-Watch-Panel \xF6ffnen/schlie\xDFen",
+      helpCmdMenu: "Plugin im Plugins-Men\xFC anzeigen/ausblenden",
       descWavy: "Forgotten-Angriffswellen pro Basis: Forgotten-Basen in Reichweite, Level-Verteilung, Wellen + Entfernungslinien auf der Weltkarte",
       descPoiAnalyser: "Allianz-POI-Boni: POI-Labels auf der Weltkarte (gold = eure), aktive Boni im Basis-Infofenster und der echte Gewinn/Verlust eines gew\xE4hlten POI",
       descSectorHud: "Sektor-HUD auf der Weltkarte: Ansichtskoordinaten + Sektor, und pro Sektor die gehaltenen POIs (eigene gr\xFCn, feindliche rot, freie grau)",
@@ -1184,6 +1207,16 @@ var ShockrTools = (() => {
       // ── Toolbar (5.26.0) ──
       toolbarConfig: "Config",
       toolbarConfigHint: "Shockr-Einstellungen exportieren / importieren",
+      toolbarPlugins: "Plugins",
+      toolbarPluginsHint: "Plugins ein- und ausschalten",
+      pluginPanelTitle: "Plugins",
+      pluginPanelEditTitle: "Im Men\xFC anzeigen",
+      pluginPanelEdit: "Ausw\xE4hlen, welche Plugins das Men\xFC zeigt",
+      pluginPanelDone: "Zur\xFCck zur Liste",
+      pluginPanelEmpty: "Keine Plugins im Men\xFC. W\xE4hle sie \xFCber das Zahnrad aus.",
+      pluginPanelTurnOn: "Einschalten",
+      pluginPanelTurnOff: "Ausschalten",
+      pluginPanelShow: "Im Men\xFC anzeigen",
       toolbarHelp: "Hilfe",
       toolbarUpgradeCalc: "Upgrade Calculator",
       toolbarTargetBoard: "Target Watch",
@@ -1260,6 +1293,10 @@ var ShockrTools = (() => {
       pluginEnabledMsg: "{name} aangezet",
       pluginDisabledMsg: "{name} uitgezet",
       pluginUsage: "Gebruik: /st plugin list|enable|disable <naam>",
+      pluginReselectHint: "{name}: zichtbaar na opnieuw selecteren",
+      menuUsage: "Gebruik: /st menu add|remove <plugin>",
+      menuAdded: "{name} staat in het Plugins-menu",
+      menuRemoved: "{name} is verborgen in het Plugins-menu",
       statusHeader: "Shockr Tools v{version} \u2014 status",
       pluginEnabled: "aan",
       pluginDisabled: "uit",
@@ -1442,6 +1479,7 @@ var ShockrTools = (() => {
       formationStorageFailed: "Opslaan mislukt (browseropslag niet beschikbaar)",
       helpCmdFormation: "Aanvalsformaties opslaan/laden",
       helpCmdTargets: "Target Watch-paneel openen/sluiten",
+      helpCmdMenu: "Plugin tonen/verbergen in het Plugins-menu",
       descWavy: "Forgotten-aanvalsgolven per base: Forgotten-bases in bereik, level-verdeling, waves + afstandslijnen op de wereldkaart",
       descPoiAnalyser: "Alliance-POI-bonussen: POI-labels op de wereldkaart (goud = van jullie), de actieve bonussen in het base-infopaneel en de echte winst/verlies van een geselecteerde POI",
       descSectorHud: "Sector-HUD op de wereldkaart: kijkco\xF6rdinaten + sector, en per sector de bezette POIs (eigen groen, vijandelijk rood, vrij grijs)",
@@ -1552,6 +1590,16 @@ var ShockrTools = (() => {
       // ── Toolbar (5.26.0) ──
       toolbarConfig: "Config",
       toolbarConfigHint: "Shockr-instellingen exporteren / importeren",
+      toolbarPlugins: "Plugins",
+      toolbarPluginsHint: "Plugins aan- en uitzetten",
+      pluginPanelTitle: "Plugins",
+      pluginPanelEditTitle: "Tonen in het menu",
+      pluginPanelEdit: "Kies welke plugins het menu toont",
+      pluginPanelDone: "Terug naar de lijst",
+      pluginPanelEmpty: "Geen plugins in het menu. Kies ze via het tandwiel.",
+      pluginPanelTurnOn: "Aanzetten",
+      pluginPanelTurnOff: "Uitzetten",
+      pluginPanelShow: "Tonen in het menu",
       toolbarHelp: "Help",
       toolbarUpgradeCalc: "Upgrade Calculator",
       toolbarTargetBoard: "Target Watch",
@@ -2163,6 +2211,10 @@ var ShockrTools = (() => {
     /** Register a command handler. */
     register(name, handler) {
       this.commands[name.toLowerCase()] = handler;
+    }
+    /** Remove a command again (a plugin's stop()): it is then unknown, as when the plugin was off at load. */
+    unregister(name) {
+      delete this.commands[name.toLowerCase()];
     }
     /**
      * Let a plugin own `/st config set <key> <value>` for one key: the hook
@@ -2930,7 +2982,8 @@ var ShockrTools = (() => {
     { cmd: "watch", usage: "/st watch [force]", key: "helpCmdWatch" },
     { cmd: "unwatch", usage: "/st unwatch [all]", key: "helpCmdUnwatch" },
     { cmd: "formation", usage: "/st formation save|load|list|delete [name]", key: "helpCmdFormation" },
-    { cmd: "targets", usage: "/st targets", key: "helpCmdTargets" }
+    { cmd: "targets", usage: "/st targets", key: "helpCmdTargets" },
+    { cmd: "menu", usage: "/st menu add|remove <plugin>", key: "helpCmdMenu" }
   ];
   var USEFUL_SETTINGS = [
     ["language", "helpSetLanguage"],
@@ -3252,10 +3305,12 @@ var ShockrTools = (() => {
      * @param {object} config
      * @param {object} opts
      * @param {Function} opts.onConfig — the "Config" button (export/import panel)
+     * @param {Function} [opts.onPlugins] — the "Plugins" button (plugin panel)
      */
-    constructor(config, { onConfig }) {
+    constructor(config, { onConfig, onPlugins }) {
       this.config = config;
       this._onConfig = onConfig;
+      this._onPlugins = onPlugins || null;
       this._items = [];
       this._button = null;
       this._grid = null;
@@ -3319,6 +3374,10 @@ var ShockrTools = (() => {
     isOpen() {
       return !!this._grid && this._grid.style.display !== "none";
     }
+    /** The main button's rect (panels opened from the grid anchor to it); null before start(). */
+    anchorRect() {
+      return this._button ? this._button.getBoundingClientRect() : null;
+    }
     toggle() {
       if (this.isOpen()) this.close();
       else this.open();
@@ -3360,16 +3419,21 @@ var ShockrTools = (() => {
         cells.appendChild(cell);
       }
       if (cells.childElementCount) grid.appendChild(cells);
-      const config = document.createElement("div");
-      config.textContent = t("toolbarConfig");
-      config.title = t("toolbarConfigHint");
-      config.style.cssText = `${BUTTON_CSS}
+      if (this._onPlugins) grid.appendChild(this._wideButton(t("toolbarPlugins"), t("toolbarPluginsHint"), this._onPlugins));
+      grid.appendChild(this._wideButton(t("toolbarConfig"), t("toolbarConfigHint"), this._onConfig));
+    }
+    /** A full-width text button under the icons ("Plugins", "Config"). */
+    _wideButton(label, hint, onClick) {
+      const btn = document.createElement("div");
+      btn.textContent = label;
+      btn.title = hint;
+      btn.style.cssText = `${BUTTON_CSS}
             width: ${COLUMNS * ITEM_SIZE + (COLUMNS - 1) * GAP}px; height: 24px;
-            margin-top: ${cells.childElementCount ? GAP : 0}px;
+            margin-top: ${this._grid.childElementCount ? GAP : 0}px;
             font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 12px; font-weight: bold;`;
-      hover(config);
-      config.addEventListener("click", () => this._run(this._onConfig));
-      grid.appendChild(config);
+      hover(btn);
+      btn.addEventListener("click", () => this._run(onClick));
+      return btn;
     }
     /** Below the button, or above it when there is no room; kept inside the viewport. */
     _placeGrid() {
@@ -3399,6 +3463,306 @@ var ShockrTools = (() => {
       el.style.borderColor = "#5f8fb4";
       el.style.color = ICON_COLOR;
     });
+  }
+
+  // lib/plugin-manager.js
+  var MENU_HIDDEN_KEY = "menu.hidden";
+  var norm = (s) => String(s || "").toLowerCase().replace(/[-_]/g, "");
+  var PluginManager = class {
+    /**
+     * @param {object} config
+     * @param {Array<object>} plugins — in /st help and info-page order
+     * @param {Function} say — chat line (main.js chatMessage)
+     */
+    constructor(config, plugins, say3) {
+      this.config = config;
+      this.plugins = plugins;
+      this._say = say3;
+    }
+    /** Plugins the player gets to see (parked ones are built but not offered). */
+    offered() {
+      return this.plugins.filter((p) => !p.parked);
+    }
+    find(name) {
+      return this.plugins.find((p) => norm(p.name) === norm(name)) || null;
+    }
+    isEnabled(plugin) {
+      return this.config.get(`${plugin.name}.enabled`, plugin.defaultEnabled !== false);
+    }
+    /**
+     * Start one plugin; a failure is reported and undone.
+     * @returns {Promise<boolean>} started
+     */
+    async start(plugin) {
+      try {
+        await plugin.start();
+        return true;
+      } catch (err) {
+        console.error(`[ST] ${plugin.name}: failed to start`, err);
+        try {
+          plugin.stop();
+        } catch {
+        }
+        plugin.running = false;
+        this._say(`[ST] ${t("pluginStartFailed", { name: plugin.name, error: err && err.message })}`);
+        return false;
+      }
+    }
+    /**
+     * Turn a plugin on or off now and remember it; confirms in the chat.
+     * A failed start is not stored as enabled.
+     * @returns {Promise<boolean>} the plugin's state matches `on`
+     */
+    async setEnabled(plugin, on) {
+      if (on) {
+        if (!plugin.running && !await this.start(plugin)) return false;
+        this.config.set(`${plugin.name}.enabled`, true);
+        this._say(`[ST] ${t("pluginEnabledMsg", { name: plugin.name })}`);
+        if (plugin.appearsOnSelect) this._say(`[ST] ${t("pluginReselectHint", { name: plugin.name })}`);
+        return true;
+      }
+      this.config.set(`${plugin.name}.enabled`, false);
+      if (plugin.running) {
+        try {
+          plugin.stop();
+        } catch (err) {
+          console.error(`[ST] ${plugin.name}: failed to stop`, err);
+        }
+      }
+      this._say(`[ST] ${t("pluginDisabledMsg", { name: plugin.name })}`);
+      return true;
+    }
+    // ─── Which plugins the panel shows ───────────────────────────────
+    _hidden() {
+      const v = this.config.get(MENU_HIDDEN_KEY, []);
+      return Array.isArray(v) ? v : [];
+    }
+    inMenu(plugin) {
+      return !this._hidden().includes(plugin.name);
+    }
+    setInMenu(plugin, show) {
+      const hidden = this._hidden().filter((n) => n !== plugin.name);
+      if (!show) hidden.push(plugin.name);
+      this.config.set(MENU_HIDDEN_KEY, hidden);
+    }
+    /** Offered plugins with inMenu() true, in order. */
+    menuPlugins() {
+      return this.offered().filter((p) => this.inMenu(p));
+    }
+  };
+
+  // lib/plugin-panel.js
+  var SHORT = typeof define_ST_PLUGIN_SHORT_default === "object" && define_ST_PLUGIN_SHORT_default ? define_ST_PLUGIN_SHORT_default : {};
+  var PANEL_ID4 = "st-plugin-panel";
+  var PANEL_WIDTH = 320;
+  var MAX_LIST_HEIGHT = 480;
+  var MARGIN = 8;
+  var GAP2 = 4;
+  var CHROME_HEIGHT = 40;
+  function shortText(plugin) {
+    const s = SHORT[plugin.name];
+    return s && (s[getLanguage()] || s.en) || plugin.description || "";
+  }
+  function placement(anchor, viewportHeight) {
+    const below = viewportHeight - anchor.bottom - GAP2 - MARGIN;
+    const above = anchor.top - GAP2 - MARGIN;
+    const useBelow = below >= above || below >= MAX_LIST_HEIGHT + CHROME_HEIGHT;
+    const room = (useBelow ? below : above) - CHROME_HEIGHT;
+    return { below: useBelow, maxHeight: Math.max(80, Math.min(MAX_LIST_HEIGHT, room)) };
+  }
+  var PluginPanel = class {
+    /**
+     * @param {import('./plugin-manager.js').PluginManager} manager
+     * @param {Function} getAnchor — the toolbar button's DOMRect (or null)
+     */
+    constructor(manager, getAnchor) {
+      this.manager = manager;
+      this._getAnchor = getAnchor;
+      this._panel = null;
+      this._list = null;
+      this._title = null;
+      this._gear = null;
+      this._editing = false;
+      this._onDocDown = (e) => {
+        if (this._panel && this._panel.contains(e.target)) return;
+        this.close();
+      };
+      this._onKeyDown = (e) => {
+        if (e.key === "Escape") this.close();
+      };
+    }
+    isOpen() {
+      return !!this._panel && this._panel.style.display !== "none";
+    }
+    toggle() {
+      if (this.isOpen()) this.close();
+      else this.open();
+    }
+    open() {
+      if (!this._panel || !document.body.contains(this._panel)) this._build();
+      this._editing = false;
+      this._panel.style.display = "block";
+      this.render();
+      this._place();
+      document.addEventListener("mousedown", this._onDocDown, true);
+      document.addEventListener("keydown", this._onKeyDown);
+    }
+    close() {
+      document.removeEventListener("mousedown", this._onDocDown, true);
+      document.removeEventListener("keydown", this._onKeyDown);
+      if (this._panel) this._panel.style.display = "none";
+    }
+    /** Redraw the rows (after a toggle, or a `/st menu` / `/st plugin` change while open). */
+    render() {
+      if (!this.isOpen()) return;
+      this._title.textContent = t(this._editing ? "pluginPanelEditTitle" : "pluginPanelTitle");
+      this._gear.title = t(this._editing ? "pluginPanelDone" : "pluginPanelEdit");
+      this._gear.dataset.active = this._editing ? "1" : "";
+      this._gear.style.color = this._editing ? "#4fc3f7" : "#999";
+      this._list.innerHTML = "";
+      if (this._editing) {
+        for (const p of this.manager.offered()) this._list.appendChild(this._checkRow(p));
+      } else {
+        const shown = this.manager.menuPlugins();
+        for (const p of shown) this._list.appendChild(this._toggleRow(p));
+        if (!shown.length) {
+          const empty = document.createElement("div");
+          empty.textContent = t("pluginPanelEmpty");
+          empty.style.cssText = "padding:8px 2px;color:#999;";
+          this._list.appendChild(empty);
+        }
+      }
+    }
+    _build() {
+      const panel = document.createElement("div");
+      panel.id = PANEL_ID4;
+      panel.style.cssText = `
+            display: none;
+            position: fixed;
+            z-index: 10001;
+            width: ${PANEL_WIDTH}px;
+            max-width: calc(100vw - ${2 * MARGIN}px);
+            box-sizing: border-box;
+            background: rgba(20, 20, 20, 0.92);
+            color: #ddd;
+            border: 1px solid #444;
+            border-radius: 4px;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 12px;
+            pointer-events: auto;
+        `;
+      const header = document.createElement("div");
+      header.style.cssText = "display:flex;align-items:center;gap:10px;padding:8px 10px 6px;user-select:none;border-bottom:1px solid #333;";
+      const title = document.createElement("div");
+      title.style.cssText = "flex:1;min-width:0;font-weight:bold;";
+      const gear = headerButton("\u2699", () => {
+        this._editing = !this._editing;
+        this.render();
+      });
+      gear.style.fontSize = "15px";
+      const close = headerButton("\u2715", () => this.close());
+      close.title = t("close");
+      header.append(title, gear, close);
+      const list = document.createElement("div");
+      list.style.cssText = "overflow-y:auto;padding:2px 6px 6px;";
+      panel.append(header, list);
+      document.body.appendChild(panel);
+      this._panel = panel;
+      this._list = list;
+      this._title = title;
+      this._gear = gear;
+    }
+    _toggleRow(plugin) {
+      const row = rowElement(plugin);
+      const sw = switchElement(!!plugin.running);
+      sw.title = t(plugin.running ? "pluginPanelTurnOff" : "pluginPanelTurnOn");
+      let busy = false;
+      sw.addEventListener("click", async () => {
+        if (busy) return;
+        busy = true;
+        sw.style.opacity = "0.5";
+        try {
+          await this.manager.setEnabled(plugin, !plugin.running);
+        } finally {
+          this.render();
+        }
+      });
+      row.appendChild(sw);
+      return row;
+    }
+    _checkRow(plugin) {
+      const row = rowElement(plugin);
+      const box = document.createElement("input");
+      box.type = "checkbox";
+      box.checked = this.manager.inMenu(plugin);
+      box.title = t("pluginPanelShow");
+      box.style.cssText = "flex:none;margin:0;cursor:pointer;";
+      box.addEventListener("change", () => this.manager.setInMenu(plugin, box.checked));
+      row.insertBefore(box, row.firstChild);
+      return row;
+    }
+    _place() {
+      const a = this._getAnchor && this._getAnchor();
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      if (!a) {
+        this._list.style.maxHeight = `${MAX_LIST_HEIGHT}px`;
+        this._panel.style.left = `${MARGIN}px`;
+        this._panel.style.top = `${MARGIN}px`;
+        return;
+      }
+      const { below, maxHeight } = placement(a, vh);
+      this._list.style.maxHeight = `${maxHeight}px`;
+      const h = this._panel.getBoundingClientRect().height;
+      const top = below ? a.bottom + GAP2 : Math.max(MARGIN, a.top - GAP2 - h);
+      const left = Math.min(Math.max(MARGIN, a.left), Math.max(MARGIN, vw - PANEL_WIDTH - MARGIN));
+      this._panel.style.left = `${Math.round(left)}px`;
+      this._panel.style.top = `${Math.round(top)}px`;
+    }
+  };
+  function headerButton(text, onClick) {
+    const b = document.createElement("div");
+    b.textContent = text;
+    b.style.cssText = "cursor:pointer;color:#999;font-size:14px;line-height:1;";
+    b.addEventListener("click", onClick);
+    b.addEventListener("mouseenter", () => {
+      b.style.color = "#fff";
+    });
+    b.addEventListener("mouseleave", () => {
+      b.style.color = b.dataset.active ? "#4fc3f7" : "#999";
+    });
+    return b;
+  }
+  function rowElement(plugin) {
+    const row = document.createElement("div");
+    row.style.cssText = "display:flex;align-items:center;gap:8px;padding:5px 4px;border-bottom:1px solid #2e2e2e;";
+    row.title = plugin.description || "";
+    const text = document.createElement("div");
+    text.style.cssText = "flex:1;min-width:0;line-height:1.3;";
+    const name = document.createElement("div");
+    name.textContent = plugin.name;
+    name.style.cssText = "color:#e0e0e0;";
+    const short = document.createElement("div");
+    short.textContent = shortText(plugin);
+    short.style.cssText = "color:#999;font-size:11px;";
+    text.append(name, short);
+    row.appendChild(text);
+    return row;
+  }
+  function switchElement(on) {
+    const sw = document.createElement("div");
+    sw.style.cssText = `
+        flex: none; position: relative; box-sizing: border-box;
+        width: 30px; height: 16px; border-radius: 8px; cursor: pointer;
+        background: ${on ? "#2e7d32" : "#444"};
+        border: 1px solid ${on ? "#4caf50" : "#666"};`;
+    const knob = document.createElement("div");
+    knob.style.cssText = `
+        position: absolute; top: 1px; left: ${on ? 15 : 1}px;
+        width: 12px; height: 12px; border-radius: 50%;
+        background: ${on ? "#c8e6c9" : "#aaa"};`;
+    sw.appendChild(knob);
+    return sw;
   }
 
   // lib/city-util.js
@@ -3533,6 +3897,7 @@ var ShockrTools = (() => {
         marker.el.remove();
       }
       this.markers.clear();
+      this._firstUpdate = true;
       if (this._updateTimer) {
         cancelAnimationFrame(this._updateTimer);
         this._updateTimer = null;
@@ -3676,7 +4041,7 @@ var ShockrTools = (() => {
   };
 
   // plugins/kill-info.js
-  var PANEL_ID4 = "mehrstrom-killinfo-panel";
+  var PANEL_ID5 = "mehrstrom-killinfo-panel";
   var RES_TIB = 2;
   var RES_CRY = 6;
   var PLAYER_FACTIONS = [1, 2];
@@ -3700,6 +4065,7 @@ var ShockrTools = (() => {
     }
     stop() {
       this.running = false;
+      this.cli.unregister("plunder");
       if (this._panel) {
         this._panel.remove();
         this._panel = null;
@@ -3733,7 +4099,7 @@ var ShockrTools = (() => {
     _ensurePanel() {
       if (this._panel && document.body.contains(this._panel)) return this._panel;
       const panel = document.createElement("div");
-      panel.id = PANEL_ID4;
+      panel.id = PANEL_ID5;
       panel.style.cssText = `
             display: none;
             position: fixed;
@@ -4398,6 +4764,7 @@ var ShockrTools = (() => {
     }
     stop() {
       this.running = false;
+      this.cli.unregister("scan");
       if (this._scanInterval) {
         clearInterval(this._scanInterval);
         this._scanInterval = null;
@@ -4550,6 +4917,7 @@ var ShockrTools = (() => {
     }
     stop() {
       this.running = false;
+      this.cli.unregister("scanalliance");
       if (this._scanInterval) {
         clearInterval(this._scanInterval);
         this._scanInterval = null;
@@ -4808,7 +5176,7 @@ var ShockrTools = (() => {
   }
 
   // plugins/upgrade-calc.js
-  var PANEL_ID5 = "st-upgradecalc-panel";
+  var PANEL_ID6 = "st-upgradecalc-panel";
   var TOOLBAR_ID = "upgradecalc";
   var RES_TIB2 = 1;
   var RES_POWER = 5;
@@ -4909,7 +5277,7 @@ var ShockrTools = (() => {
     _ensurePanel() {
       if (this._panel && document.body.contains(this._panel)) return this._panel;
       const panel = document.createElement("div");
-      panel.id = PANEL_ID5;
+      panel.id = PANEL_ID6;
       panel.style.cssText = `
             display: none;
             position: fixed;
@@ -5589,6 +5957,8 @@ var ShockrTools = (() => {
     }
     stop() {
       this.running = false;
+      this.cli.unregister("watch");
+      this.cli.unregister("unwatch");
       if (this._timer) clearInterval(this._timer);
       this._timer = null;
       this._viewKey = null;
@@ -5666,7 +6036,7 @@ var ShockrTools = (() => {
     }
     /** AttackTracker hook: the server removed this claim because the attack on it was won. */
     notifyDefeated(claim) {
-      if (!claim) return;
+      if (!claim || !this.running) return;
       this._forget([claim]);
       say(t("watchDefeated", { type: claim.targetType, x: claim.targetX, y: claim.targetY }));
     }
@@ -7060,6 +7430,7 @@ var ShockrTools = (() => {
     }
     stop() {
       this.running = false;
+      this.cli.unregister("formation");
     }
     /** `/st formation save|load|list|delete [name]` */
     command(args) {
@@ -7259,6 +7630,7 @@ var ShockrTools = (() => {
     }
     constructor(config) {
       this.name = "Wavy";
+      this.appearsOnSelect = true;
       this.config = config;
       this.running = false;
       this._cache = /* @__PURE__ */ new Map();
@@ -7734,6 +8106,7 @@ var ShockrTools = (() => {
     }
     constructor(config) {
       this.name = "PoiAnalyser";
+      this.appearsOnSelect = true;
       this.config = config;
       this.running = false;
       this.labels = /* @__PURE__ */ new Map();
@@ -8937,6 +9310,7 @@ var ShockrTools = (() => {
     }
     constructor(config) {
       this.name = "LootSummary";
+      this.appearsOnSelect = true;
       this.config = config;
       this.running = false;
       this._listeners = [];
@@ -9902,10 +10276,10 @@ var ShockrTools = (() => {
   }
 
   // plugins/target-board.js
-  var PANEL_ID6 = "st-targetboard-panel";
+  var PANEL_ID7 = "st-targetboard-panel";
   var TOOLBAR_ID2 = "targetboard";
   var REFRESH_INTERVAL_MS2 = 2e4;
-  var PANEL_WIDTH = 400;
+  var PANEL_WIDTH2 = 400;
   var DEFAULT_POSITION2 = { x: 130, y: 46 };
   var DOUBLE_WATCHERS = 2;
   var TargetBoard = class {
@@ -9947,7 +10321,7 @@ var ShockrTools = (() => {
       this.running = false;
       this.close();
       this.toolbar.unregister(TOOLBAR_ID2);
-      delete this.cli.commands.targets;
+      this.cli.unregister("targets");
       if (this._panel) this._panel.remove();
       this._panel = null;
     }
@@ -10023,18 +10397,18 @@ var ShockrTools = (() => {
       if (this._panel && document.body.contains(this._panel)) return;
       const pos = clampPosition(
         loadPosition(this.config, "TargetBoard", DEFAULT_POSITION2),
-        { w: PANEL_WIDTH, h: 40 },
+        { w: PANEL_WIDTH2, h: 40 },
         { w: window.innerWidth, h: window.innerHeight }
       );
       const panel = document.createElement("div");
-      panel.id = PANEL_ID6;
+      panel.id = PANEL_ID7;
       panel.style.cssText = `
             display: none;
             position: fixed;
             left: ${pos.x}px;
             top: ${pos.y}px;
             z-index: 10000;
-            width: ${PANEL_WIDTH}px;
+            width: ${PANEL_WIDTH2}px;
             max-width: calc(100vw - 16px);
             box-sizing: border-box;
             background: rgba(20, 20, 20, 0.92);
@@ -11585,7 +11959,11 @@ var ShockrTools = (() => {
     api.setSendGate(() => online.isPaused);
     online.on("resume", () => api.resumeQueue());
     online.start();
-    const toolbar = new Toolbar(config, { onConfig: () => cli.openConfigMenu() });
+    let pluginPanel = null;
+    const toolbar = new Toolbar(config, {
+      onConfig: () => cli.openConfigMenu(),
+      onPlugins: () => pluginPanel && pluginPanel.toggle()
+    });
     const attackTracker = new AttackTracker(config, api);
     const watchList = new WatchList(config, cli, api);
     const targetWatcher = new TargetWatcher(config, api);
@@ -11618,45 +11996,50 @@ var ShockrTools = (() => {
       new Stabs(config, toolbar)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });
+    const manager = new PluginManager(config, plugins, chatMessage);
     for (const plugin of plugins) {
-      const enabled = config.get(`${plugin.name}.enabled`, plugin.defaultEnabled !== false);
-      if (!enabled) {
+      if (!manager.isEnabled(plugin)) {
         console.log(`[ST] ${plugin.name}: disabled`);
         continue;
       }
-      try {
-        await plugin.start();
-        console.log(`[ST] ${plugin.name}: started`);
-      } catch (err) {
-        console.error(`[ST] ${plugin.name}: failed to start`, err);
-        chatMessage(`[ST] ${t("pluginStartFailed", { name: plugin.name, error: err.message })}`);
-      }
+      if (await manager.start(plugin)) console.log(`[ST] ${plugin.name}: started`);
     }
-    cli.register("plugin", (args) => {
+    pluginPanel = new PluginPanel(manager, () => toolbar.anchorRect());
+    const unknownPlugin = () => chatMessage(`[ST] ${t("unknownPlugin", { names: manager.offered().map((p) => p.name).join(", ") })}`);
+    cli.register("plugin", async (args) => {
       const [action, name] = args;
-      const norm = (s) => (s || "").toLowerCase().replace(/[-_]/g, "");
       if (action === "list") {
         for (const p of plugins) {
           chatMessage(`[ST] ${kebab(p.name)}: ${t(p.running ? "pluginEnabled" : "pluginDisabled")}`);
         }
         return;
       }
-      const plugin = plugins.find((p) => norm(p.name) === norm(name));
-      if (!plugin) {
-        chatMessage(`[ST] ${t("unknownPlugin", { names: plugins.map((p) => p.name).join(", ") })}`);
+      if (action !== "enable" && action !== "disable") {
+        chatMessage(`[ST] ${escapeHtml(t("pluginUsage"))}`);
         return;
       }
-      if (action === "enable") {
-        config.set(`${plugin.name}.enabled`, true);
-        if (!plugin.running) plugin.start();
-        chatMessage(`[ST] ${t("pluginEnabledMsg", { name: plugin.name })}`);
-      } else if (action === "disable") {
-        config.set(`${plugin.name}.enabled`, false);
-        if (plugin.running) plugin.stop();
-        chatMessage(`[ST] ${t("pluginDisabledMsg", { name: plugin.name })}`);
-      } else {
-        chatMessage(`[ST] ${escapeHtml(t("pluginUsage"))}`);
+      const plugin = manager.find(name);
+      if (!plugin) {
+        unknownPlugin();
+        return;
       }
+      await manager.setEnabled(plugin, action === "enable");
+      pluginPanel.render();
+    });
+    cli.register("menu", (args) => {
+      const [action, name] = args;
+      if (action !== "add" && action !== "remove") {
+        chatMessage(`[ST] ${escapeHtml(t("menuUsage"))}`);
+        return;
+      }
+      const plugin = manager.find(name);
+      if (!plugin || plugin.parked) {
+        unknownPlugin();
+        return;
+      }
+      manager.setInMenu(plugin, action === "add");
+      chatMessage(`[ST] ${t(action === "add" ? "menuAdded" : "menuRemoved", { name: plugin.name })}`);
+      pluginPanel.render();
     });
     cli.register("status", () => {
       chatMessage(`[ST] ${t("statusHeader", { version: ST_VERSION })}`);

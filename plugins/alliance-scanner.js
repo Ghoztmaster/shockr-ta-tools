@@ -92,6 +92,7 @@ export class AllianceScanner {
 
     stop() {
         this.running = false;
+        this.cli.unregister('scanalliance');
         if (this._scanInterval) {
             clearInterval(this._scanInterval);
             this._scanInterval = null;

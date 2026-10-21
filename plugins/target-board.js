@@ -76,7 +76,7 @@ export class TargetBoard {
         this.running = false;
         this.close();
         this.toolbar.unregister(TOOLBAR_ID);
-        delete this.cli.commands.targets;
+        this.cli.unregister('targets');
         if (this._panel) this._panel.remove();
         this._panel = null;
     }

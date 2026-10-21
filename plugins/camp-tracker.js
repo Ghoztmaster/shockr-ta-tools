@@ -103,6 +103,8 @@ export class CampTracker {
             marker.el.remove();
         }
         this.markers.clear();
+        // a restart starts from an empty marker list: without this its first update alerts the #1 camp as new
+        this._firstUpdate = true;
 
         if (this._updateTimer) {
             cancelAnimationFrame(this._updateTimer);

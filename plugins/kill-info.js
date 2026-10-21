@@ -51,6 +51,7 @@ export class KillInfo {
 
     stop() {
         this.running = false;
+        this.cli.unregister('plunder');
         if (this._panel) {
             this._panel.remove();
             this._panel = null;
