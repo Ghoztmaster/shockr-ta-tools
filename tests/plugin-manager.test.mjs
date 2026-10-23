@@ -165,6 +165,52 @@ test('find / offered / isEnabled', () => {
     assert.equal(new mod.PluginManager(fakeConfig(), [off], () => {}).isEnabled(off), false);
 });
 
+test('excludes: enabling one turns the other off first (stopped + stored off), both directions, with a chat line', async () => {
+    const said = [];
+    const config = fakeConfig();
+    const guard = fakePlugin('RepairGuard', { defaultEnabled: false, excludes: ['AutoRepair'] });
+    const auto = fakePlugin('AutoRepair', { defaultEnabled: false, excludes: ['RepairGuard'], yieldsOnConflict: true });
+    const m = new mod.PluginManager(config, [guard, auto], (s) => said.push(s));
+
+    await m.setEnabled(guard, true);
+    said.length = 0;
+    assert.equal(await m.setEnabled(auto, true), true);
+    assert.equal(guard.running, false, 'RepairGuard stopped');
+    assert.equal(config.get('RepairGuard.enabled'), false, 'and stored off');
+    assert.equal(auto.running, true);
+    assert.deepEqual(said, ['[ST] RepairGuard disabled', '[ST] RepairGuard turned off — cannot run together with AutoRepair', '[ST] AutoRepair enabled']);
+
+    said.length = 0;
+    await m.setEnabled(guard, true);
+    assert.equal(auto.running, false);
+    assert.equal(config.get('AutoRepair.enabled'), false);
+    assert.equal(guard.running, true);
+    assert.match(said[1], /AutoRepair turned off — cannot run together with RepairGuard/);
+
+    said.length = 0;
+    await m.setEnabled(guard, false);
+    await m.setEnabled(auto, true);
+    assert.deepEqual(said, ['[ST] RepairGuard disabled', '[ST] AutoRepair enabled'], 'other already off: no extra line');
+});
+
+test('resolveConflicts: both stored on at startup -> the yielding one (AutoRepair) is stored off, nothing started', () => {
+    const said = [];
+    const config = fakeConfig({ 'repairguard.enabled': true, 'autorepair.enabled': true });
+    const guard = fakePlugin('RepairGuard', { defaultEnabled: false, excludes: ['AutoRepair'] });
+    const auto = fakePlugin('AutoRepair', { defaultEnabled: false, excludes: ['RepairGuard'], yieldsOnConflict: true });
+    const m = new mod.PluginManager(config, [guard, auto], (s) => said.push(s));
+    assert.deepEqual(m.resolveConflicts(), ['AutoRepair']);
+    assert.equal(m.isEnabled(auto), false);
+    assert.equal(m.isEnabled(guard), true, 'RepairGuard wins');
+    assert.equal(auto.starts + guard.starts, 0);
+    assert.deepEqual(said, ['[ST] AutoRepair turned off — cannot run together with RepairGuard']);
+    said.length = 0;
+    assert.deepEqual(m.resolveConflicts(), [], 'no conflict left');
+    config.set('RepairGuard.enabled', false);
+    config.set('AutoRepair.enabled', true);
+    assert.deepEqual(new mod.PluginManager(config, [guard, auto], () => {}).resolveConflicts(), [], 'only AutoRepair on: stays on');
+});
+
 test('menu: all plugins by default; hide / show stored as a list in menu.hidden', () => {
     const config = fakeConfig();
     const a = fakePlugin('Alpha');

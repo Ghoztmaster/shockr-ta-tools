@@ -96,6 +96,22 @@
     }
   },
   {
+    "name": "AutoRepair",
+    "slug": "auto-repair",
+    "defaultEnabled": false,
+    "replaces": null,
+    "short": {
+      "en": "Repairs damaged units right after every attack",
+      "de": "Repariert beschädigte Einheiten direkt nach jedem Angriff",
+      "nl": "Repareert beschadigde units direct na elke aanval"
+    },
+    "long": {
+      "en": "Repairs the units of the attacking base with Repair All right after every own attack, as soon as the base is no longer locked. A check every few minutes (/st config set autorepair.interval <min>, default 5) catches whatever that missed. Never while the attack screen is open. Cannot run together with RepairGuard: turning one on turns the other off. Off by default.",
+      "de": "Repariert die Einheiten der angreifenden Basis mit Repair All direkt nach jedem eigenen Angriff, sobald die Basis nicht mehr gesperrt ist. Eine Prüfung alle paar Minuten (/st config set autorepair.interval <Min.>, Standard 5) fängt ab, was dabei verpasst wurde. Nie bei offenem Angriffsbildschirm. Läuft nicht zusammen mit RepairGuard: einschalten des einen schaltet das andere aus. Standardmäßig aus.",
+      "nl": "Repareert de units van de aanvallende base met Repair All direct na elke eigen aanval, zodra de base niet meer op slot staat. Een check elke paar minuten (/st config set autorepair.interval <min>, standaard 5) vangt op wat daarbij gemist wordt. Nooit als het aanvalsscherm open staat. Kan niet samen met RepairGuard: de een aanzetten zet de ander uit. Standaard uit."
+    }
+  },
+  {
     "name": "UpgradeCalc",
     "slug": "upgrade-calc",
     "defaultEnabled": false,

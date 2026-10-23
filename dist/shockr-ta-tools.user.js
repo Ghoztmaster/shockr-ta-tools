@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.27.4
+// @version         5.29.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -102,7 +102,7 @@ var ShockrTools = (() => {
   });
 
   // <define:__ST_PLUGIN_SHORT__>
-  var define_ST_PLUGIN_SHORT_default = { CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, AttackTracker: { en: "Logs your won attacks on Forgotten targets", de: "Meldet deine gewonnenen Angriffe auf Forgotten-Ziele", nl: "Meldt je gewonnen aanvallen op Forgotten-targets" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" } };
+  var define_ST_PLUGIN_SHORT_default = { CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, AttackTracker: { en: "Logs your won attacks on Forgotten targets", de: "Meldet deine gewonnenen Angriffe auf Forgotten-Ziele", nl: "Meldt je gewonnen aanvallen op Forgotten-targets" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" } };
 
   // lib/game-ready.js
   async function waitForGame({ maxAttempts = 200, intervalMs = 100 } = {}) {
@@ -512,6 +512,7 @@ var ShockrTools = (() => {
       unknownPlugin: "Unknown plugin. Available: {names}",
       pluginEnabledMsg: "{name} enabled",
       pluginDisabledMsg: "{name} disabled",
+      pluginExcludedOff: "{off} turned off \u2014 cannot run together with {on}",
       pluginUsage: "Usage: /st plugin list|enable|disable <name>",
       pluginReselectHint: "{name}: visible after selecting the object again",
       menuUsage: "Usage: /st menu add|remove <plugin>",
@@ -575,6 +576,7 @@ var ShockrTools = (() => {
       descLayoutScanner: "Scan FG base layouts",
       descAllianceScanner: "Scan alliance base layouts",
       descRepairGuard: "Block Repair All buttons",
+      descAutoRepair: "Repair damaged units automatically",
       descUpgradeCalc: "Building upgrade cost & time panel",
       descTargetWatcher: "Report viewed targets to alliance server",
       descAttackTracker: "Log your won attacks on Forgotten targets to the alliance server",
@@ -658,6 +660,14 @@ var ShockrTools = (() => {
       repairGuardBlocked: "Repair Guard: Repair All blocked \u2014 repair per unit or /st plugin disable repair-guard",
       repairGuardStatusOff: "Repair All allowed",
       repairGuardStatusOn: "Repair All blocked ({count} patches)",
+      autoRepairEnabled: "Auto Repair active \u2014 damaged units are repaired right after every attack (safety net: every {min} min)",
+      autoRepairRepaired: "Auto Repair: units repaired in {bases}",
+      autoRepairAfterAttack: "Auto Repair: units repaired in {bases} (after the attack)",
+      autoRepairStatusOff: "off",
+      autoRepairStatusOn: "every {min} min \xB7 last repair {last} \xB7 {count} repair(s)",
+      autoRepairNever: "none yet",
+      autoRepairSkipCombat: "skipped: attack screen open",
+      autoRepairSkipLocked: "skipped (lockdown): {bases}",
       // ── UpgradeCalc ──
       upgradeCalcTitle: "Upgrades",
       upgradeCalcError: "Upgrade Calculator: error \u2014 {error}",
@@ -909,6 +919,7 @@ var ShockrTools = (() => {
       unknownPlugin: "Unbekanntes Plugin. Verf\xFCgbar: {names}",
       pluginEnabledMsg: "{name} aktiviert",
       pluginDisabledMsg: "{name} deaktiviert",
+      pluginExcludedOff: "{off} ausgeschaltet \u2014 l\xE4uft nicht zusammen mit {on}",
       pluginUsage: "Verwendung: /st plugin list|enable|disable <name>",
       pluginReselectHint: "{name}: sichtbar nach erneutem Ausw\xE4hlen",
       menuUsage: "Verwendung: /st menu add|remove <plugin>",
@@ -969,6 +980,7 @@ var ShockrTools = (() => {
       descLayoutScanner: "FG-Basis-Layouts scannen",
       descAllianceScanner: "Allianz-Basis-Layouts scannen",
       descRepairGuard: "Repair-All-Buttons blockieren",
+      descAutoRepair: "Besch\xE4digte Einheiten automatisch reparieren",
       descUpgradeCalc: "Panel mit Upgrade-Kosten & -Dauer der Geb\xE4ude",
       descTargetWatcher: "Angesehene Ziele an den Allianz-Server melden",
       descAttackTracker: "Gewonnene Angriffe auf Forgotten-Ziele an den Allianz-Server melden",
@@ -1044,6 +1056,14 @@ var ShockrTools = (() => {
       repairGuardBlocked: "Repair Guard: Repair All blockiert \u2014 einzeln reparieren oder /st plugin disable repair-guard",
       repairGuardStatusOff: "Repair All erlaubt",
       repairGuardStatusOn: "Repair All blockiert ({count} Patches)",
+      autoRepairEnabled: "Auto Repair aktiv \u2014 besch\xE4digte Einheiten werden direkt nach jedem Angriff repariert (Sicherheitsnetz: alle {min} Min.)",
+      autoRepairRepaired: "Auto Repair: Einheiten repariert in {bases}",
+      autoRepairAfterAttack: "Auto Repair: Einheiten repariert in {bases} (nach dem Angriff)",
+      autoRepairStatusOff: "aus",
+      autoRepairStatusOn: "alle {min} Min. \xB7 letzte Reparatur {last} \xB7 {count} Reparatur(en)",
+      autoRepairNever: "noch keine",
+      autoRepairSkipCombat: "\xFCbersprungen: Angriffsbildschirm offen",
+      autoRepairSkipLocked: "\xFCbersprungen (Lockdown): {bases}",
       upgradeCalcTitle: "Upgrades",
       upgradeCalcError: "Upgrade Calculator: Fehler \u2014 {error}",
       upgradeCalcPerHour: "/h",
@@ -1292,6 +1312,7 @@ var ShockrTools = (() => {
       unknownPlugin: "Onbekende plugin. Beschikbaar: {names}",
       pluginEnabledMsg: "{name} aangezet",
       pluginDisabledMsg: "{name} uitgezet",
+      pluginExcludedOff: "{off} uitgezet \u2014 kan niet samen met {on}",
       pluginUsage: "Gebruik: /st plugin list|enable|disable <naam>",
       pluginReselectHint: "{name}: zichtbaar na opnieuw selecteren",
       menuUsage: "Gebruik: /st menu add|remove <plugin>",
@@ -1352,6 +1373,7 @@ var ShockrTools = (() => {
       descLayoutScanner: "FG-base-layouts scannen",
       descAllianceScanner: "Alliance-base-layouts scannen",
       descRepairGuard: "Repair All-knoppen blokkeren",
+      descAutoRepair: "Beschadigde units automatisch repareren",
       descUpgradeCalc: "Paneel met upgrade-kosten & -tijd van gebouwen",
       descTargetWatcher: "Bekeken targets melden aan de alliance-server",
       descAttackTracker: "Gewonnen aanvallen op Forgotten-targets melden aan de alliance-server",
@@ -1427,6 +1449,14 @@ var ShockrTools = (() => {
       repairGuardBlocked: "Repair Guard: Repair All geblokkeerd \u2014 repareer per unit of /st plugin disable repair-guard",
       repairGuardStatusOff: "Repair All toegestaan",
       repairGuardStatusOn: "Repair All geblokkeerd ({count} patches)",
+      autoRepairEnabled: "Auto Repair actief \u2014 beschadigde units worden direct na elke aanval gerepareerd (vangnet: elke {min} min)",
+      autoRepairRepaired: "Auto Repair: units gerepareerd in {bases}",
+      autoRepairAfterAttack: "Auto Repair: units gerepareerd in {bases} (na de aanval)",
+      autoRepairStatusOff: "uit",
+      autoRepairStatusOn: "elke {min} min \xB7 laatste reparatie {last} \xB7 {count} reparatie(s)",
+      autoRepairNever: "nog geen",
+      autoRepairSkipCombat: "overgeslagen: aanvalsscherm open",
+      autoRepairSkipLocked: "overgeslagen (lockdown): {bases}",
       upgradeCalcTitle: "Upgrades",
       upgradeCalcError: "Upgrade Calculator: fout \u2014 {error}",
       upgradeCalcPerHour: "/u",
@@ -3515,6 +3545,11 @@ var ShockrTools = (() => {
      */
     async setEnabled(plugin, on) {
       if (on) {
+        for (const other of this._excluded(plugin)) {
+          if (!other.running && !this.isEnabled(other)) continue;
+          await this.setEnabled(other, false);
+          this._say(`[ST] ${t("pluginExcludedOff", { off: other.name, on: plugin.name })}`);
+        }
         if (!plugin.running && !await this.start(plugin)) return false;
         this.config.set(`${plugin.name}.enabled`, true);
         this._say(`[ST] ${t("pluginEnabledMsg", { name: plugin.name })}`);
@@ -3531,6 +3566,28 @@ var ShockrTools = (() => {
       }
       this._say(`[ST] ${t("pluginDisabledMsg", { name: plugin.name })}`);
       return true;
+    }
+    /** The plugins named in `plugin.excludes` (both sides should name each other). */
+    _excluded(plugin) {
+      return (plugin.excludes || []).map((n) => this.find(n)).filter((p) => p && p !== plugin);
+    }
+    /**
+     * At startup, before any plugin starts: two enabled plugins that exclude each
+     * other (an old config, or one edited by hand) - the one marked
+     * `yieldsOnConflict` is stored off, with a chat line. Nothing is started here.
+     * @returns {Array<string>} names turned off
+     */
+    resolveConflicts() {
+      const off = [];
+      for (const plugin of this.plugins) {
+        if (!plugin.yieldsOnConflict || !this.isEnabled(plugin)) continue;
+        const winner = this._excluded(plugin).find((o) => this.isEnabled(o));
+        if (!winner) continue;
+        this.config.set(`${plugin.name}.enabled`, false);
+        off.push(plugin.name);
+        this._say(`[ST] ${t("pluginExcludedOff", { off: plugin.name, on: winner.name })}`);
+      }
+      return off;
     }
     // ─── Which plugins the panel shows ───────────────────────────────
     _hidden() {
@@ -5065,6 +5122,7 @@ var ShockrTools = (() => {
     constructor(config) {
       this.name = "RepairGuard";
       this.defaultEnabled = false;
+      this.excludes = ["AutoRepair"];
       this.config = config;
       this.running = false;
       this._patches = [];
@@ -5144,7 +5202,9 @@ var ShockrTools = (() => {
       const candidates = [
         () => ClientLib.Data.City.prototype,
         () => ClientLib.Data.CityUnits.prototype,
-        () => ClientLib.Data.CityBuildings.prototype
+        () => ClientLib.Data.CityBuildings.prototype,
+        // RepairAll / RepairAllUnits on city.get_CityRepairData(); CanRepairAll does not match /^RepairAll/
+        () => ClientLib.Data.CityRepair.prototype
       ];
       for (const get of candidates) {
         try {
@@ -5174,6 +5234,221 @@ var ShockrTools = (() => {
     }
     return texts.some((t2) => REPAIR_ALL_TEXT.test(t2));
   }
+
+  // plugins/auto-repair.js
+  var DEFAULT_INTERVAL_MIN = 5;
+  var MIN_INTERVAL_MIN = 1;
+  var FIRST_CHECK_DELAY_MS = 10 * 1e3;
+  var TRIGGER_POLL_MS = 3 * 1e3;
+  var TRIGGER_WINDOW_MS = 3 * 60 * 1e3;
+  var BATTLE_COMMAND = "InvokeBattle";
+  var HOOKED_FUNCTIONS = ["SendCommand", "SendSimpleCommand"];
+  var AutoRepair = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descAutoRepair");
+    }
+    constructor(config) {
+      this.name = "AutoRepair";
+      this.defaultEnabled = false;
+      this.excludes = ["RepairGuard"];
+      this.yieldsOnConflict = true;
+      this.config = config;
+      this.running = false;
+      this._timer = null;
+      this._triggerTimer = null;
+      this._pending = /* @__PURE__ */ new Map();
+      this._hooks = [];
+      this._lastRepairAt = 0;
+      this._lastSkip = null;
+      this._repairs = 0;
+    }
+    async start() {
+      this.running = true;
+      this._installHook();
+      this._schedule(FIRST_CHECK_DELAY_MS);
+      chatMessage(`[ST] ${t("autoRepairEnabled", { min: this.intervalMin() })}`);
+      console.log(`[ST] AutoRepair: started (after every attack + every ${this.intervalMin()} min)`);
+    }
+    stop() {
+      this.running = false;
+      if (this._timer) clearTimeout(this._timer);
+      if (this._triggerTimer) clearTimeout(this._triggerTimer);
+      this._timer = this._triggerTimer = null;
+      this._pending.clear();
+      this._removeHook();
+      console.log("[ST] AutoRepair: stopped");
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      if (!this.running) return t("autoRepairStatusOff");
+      const last = this._lastRepairAt ? new Date(this._lastRepairAt).toLocaleTimeString("de-DE", { hour12: false }) : t("autoRepairNever");
+      return t("autoRepairStatusOn", { min: this.intervalMin(), last, count: this._repairs }) + (this._lastSkip ? ` \xB7 ${this._lastSkip}` : "");
+    }
+    /** Interval from `autorepair.interval`, default 5, at least 1 minute. */
+    intervalMin() {
+      const v = Number(this.config.get("autorepair.interval", DEFAULT_INTERVAL_MIN));
+      if (!Number.isFinite(v)) return DEFAULT_INTERVAL_MIN;
+      return Math.max(MIN_INTERVAL_MIN, v);
+    }
+    // ─── Trigger 1: after an own attack ──────────────────────────────
+    /** Wrap SendCommand / SendSimpleCommand once; the wrappers only watch. */
+    _installHook() {
+      let cm = null;
+      try {
+        cm = ClientLib.Net.CommunicationManager.GetInstance();
+      } catch {
+        cm = null;
+      }
+      if (!cm) {
+        console.warn("[ST] AutoRepair: CommunicationManager not found - only the interval runs");
+        return;
+      }
+      const plugin = this;
+      for (const fn of HOOKED_FUNCTIONS) {
+        const original = cm[fn];
+        if (typeof original !== "function") continue;
+        const wrapper = function(name, args) {
+          try {
+            if (plugin.running && name === BATTLE_COMMAND) plugin._onBattle(args, fn);
+          } catch (err) {
+            console.error("[ST] AutoRepair: battle observer failed", err);
+          }
+          return original.apply(this, arguments);
+        };
+        cm[fn] = wrapper;
+        this._hooks.push({ cm, fn, original, wrapper });
+      }
+    }
+    /** Put the originals back - only where nobody wrapped on top of us since. */
+    _removeHook() {
+      for (const h of this._hooks) {
+        if (h.cm[h.fn] === h.wrapper) h.cm[h.fn] = h.original;
+      }
+      this._hooks = [];
+    }
+    /** InvokeBattle seen: try the attacking base until repaired or the window ends. */
+    _onBattle(args, via) {
+      const setup = args && args.battleSetup || args || {};
+      let id = setup && setup.a !== void 0 && setup.a !== null ? setup.a : null;
+      if (id === null) {
+        try {
+          id = ClientLib.Data.MainData.GetInstance().get_Cities().get_CurrentOwnCityId();
+        } catch {
+          id = null;
+        }
+      }
+      if (id === null) return;
+      this._pending.set(id, Date.now() + TRIGGER_WINDOW_MS);
+      console.log(`[ST] AutoRepair: attack from ${id} seen (${via}) - repairing as soon as possible`);
+      if (!this._triggerTimer) this._triggerTimer = setTimeout(() => this._triggerTick(), TRIGGER_POLL_MS);
+    }
+    _triggerTick() {
+      this._triggerTimer = null;
+      if (!this.running) return;
+      const now = Date.now();
+      const repaired = [];
+      for (const [id, until] of [...this._pending]) {
+        let status = "wait";
+        try {
+          status = this._tryCity(id);
+        } catch (err) {
+          console.error(`[ST] AutoRepair: ${id} - repair failed`, err);
+        }
+        if (status === "repaired" || status === "gone") {
+          this._pending.delete(id);
+          if (status === "repaired") repaired.push(this._name(id));
+        } else if (now >= until) {
+          this._pending.delete(id);
+          console.log(`[ST] AutoRepair: ${this._name(id)} - nothing repaired within ${TRIGGER_WINDOW_MS / 1e3} s after the attack (${status}); the interval takes over`);
+        }
+      }
+      if (repaired.length) this._repaired(repaired, true);
+      if (this._pending.size) this._triggerTimer = setTimeout(() => this._triggerTick(), TRIGGER_POLL_MS);
+    }
+    /** 'repaired' | 'wait' (attack screen, locked or no damage yet) | 'gone' (no own base). */
+    _tryCity(id) {
+      if (this._inAttackScreen()) return "wait";
+      const city = ClientLib.Data.MainData.GetInstance().get_Cities().GetCity(id);
+      if (!city || !city.IsOwnBase() || city.get_IsGhostMode()) return "gone";
+      if (city.get_IsLocked()) return "wait";
+      return this._repairCity(city) ? "repaired" : "wait";
+    }
+    // ─── Trigger 2: the interval ─────────────────────────────────────
+    _schedule(ms) {
+      if (this._timer) clearTimeout(this._timer);
+      this._timer = setTimeout(() => {
+        this._timer = null;
+        if (!this.running) return;
+        try {
+          this.check();
+        } catch (err) {
+          console.error("[ST] AutoRepair: check failed", err);
+        }
+        if (this.running) this._schedule(this.intervalMin() * 60 * 1e3);
+      }, ms);
+    }
+    /**
+     * One interval check: repair every own base whose units can be repaired.
+     * @returns {{skipped: ?string, repaired: Array<string>, locked: Array<string>}}
+     */
+    check() {
+      const result = { skipped: null, repaired: [], locked: [] };
+      if (this._inAttackScreen()) {
+        result.skipped = t("autoRepairSkipCombat");
+        this._lastSkip = result.skipped;
+        return result;
+      }
+      this._lastSkip = null;
+      const all = ClientLib.Data.MainData.GetInstance().get_Cities().get_AllCities().d;
+      for (const city of Object.values(all)) {
+        let name = "?";
+        try {
+          if (!city || !city.IsOwnBase() || city.get_IsGhostMode()) continue;
+          name = city.get_Name();
+          if (city.get_IsLocked()) {
+            result.locked.push(name);
+            continue;
+          }
+          if (this._repairCity(city)) result.repaired.push(name);
+        } catch (err) {
+          console.error(`[ST] AutoRepair: ${name} - repair failed`, err);
+        }
+      }
+      if (result.locked.length) {
+        this._lastSkip = t("autoRepairSkipLocked", { bases: result.locked.join(", ") });
+      }
+      if (result.repaired.length) this._repaired(result.repaired, false);
+      return result;
+    }
+    // ─── Shared ──────────────────────────────────────────────────────
+    _inAttackScreen() {
+      return ClientLib.Vis.VisMain.GetInstance().get_Mode() === ClientLib.Vis.Mode.CombatSetup;
+    }
+    /** RepairAll(ArmySetup) if there is something to repair. @returns {boolean} repaired */
+    _repairCity(city) {
+      const Mode = ClientLib.Vis.Mode;
+      const rep = city.get_CityRepairData();
+      if (!rep || !rep.CanRepairAll(Mode.ArmySetup)) return false;
+      rep.RepairAll(Mode.ArmySetup);
+      const still = rep.CanRepairAll(Mode.ArmySetup);
+      console.log(`[ST] AutoRepair: ${city.get_Name()} - RepairAll(ArmySetup) called; CanRepairAll before true, after ${still}`);
+      return true;
+    }
+    _repaired(names2, afterAttack) {
+      this._lastRepairAt = Date.now();
+      this._repairs += names2.length;
+      chatMessage(`[ST] ${t(afterAttack ? "autoRepairAfterAttack" : "autoRepairRepaired", { bases: names2.join(", ") })}`);
+    }
+    _name(id) {
+      try {
+        const c = ClientLib.Data.MainData.GetInstance().get_Cities().GetCity(id);
+        return c ? c.get_Name() : String(id);
+      } catch {
+        return String(id);
+      }
+    }
+  };
 
   // plugins/upgrade-calc.js
   var PANEL_ID6 = "st-upgradecalc-panel";
@@ -11935,7 +12210,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.27.4";
+  var ST_VERSION = "5.29.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -11975,6 +12250,7 @@ var ShockrTools = (() => {
       new LayoutScanner(config, cli, api, idle, online),
       new AllianceScanner(config, cli, api, idle, online),
       new RepairGuard(config),
+      new AutoRepair(config),
       new UpgradeCalc(config, toolbar),
       targetWatcher,
       attackTracker,
@@ -11997,6 +12273,7 @@ var ShockrTools = (() => {
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });
     const manager = new PluginManager(config, plugins, chatMessage);
+    manager.resolveConflicts();
     for (const plugin of plugins) {
       if (!manager.isEnabled(plugin)) {
         console.log(`[ST] ${plugin.name}: disabled`);

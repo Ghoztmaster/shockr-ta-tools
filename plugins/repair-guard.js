@@ -12,7 +12,10 @@
  * Two layers, neither depends on obfuscated names:
  *
  * 1. Function patch — every readable `RepairAll*` method on the city data
- *    prototypes is wrapped with a no-op. Obfuscated aliases are found by
+ *    prototypes is wrapped with a no-op. That includes ClientLib.Data.CityRepair
+ *    (`city.get_CityRepairData().RepairAll(visMode)` - the route MaelstromTools'
+ *    auto-repair and AutoRepair use; before that it was only caught by the
+ *    button fallback). Obfuscated aliases are found by
  *    reference (any prototype key pointing at the same function), so the
  *    UI is blocked whichever name it calls.
  * 2. Button patch — fallback if the client exposes no readable `RepairAll*`
@@ -21,6 +24,9 @@
  *    or document-wide listener).
  *
  * Both patches are removed on stop().
+ *
+ * Mutually exclusive with AutoRepair (`excludes`): enabling one turns the other
+ * off; if both are stored on at startup, RepairGuard wins.
  */
 import { chatMessage } from '../lib/main.js';
 import { t } from '../lib/i18n.js';
@@ -41,6 +47,7 @@ export class RepairGuard {
     constructor(config) {
         this.name = 'RepairGuard';
         this.defaultEnabled = false;
+        this.excludes = ['AutoRepair'];
         this.config = config;
         this.running = false;
         this._patches = [];     // { proto, key, original }
@@ -131,6 +138,8 @@ export class RepairGuard {
             () => ClientLib.Data.City.prototype,
             () => ClientLib.Data.CityUnits.prototype,
             () => ClientLib.Data.CityBuildings.prototype,
+            // RepairAll / RepairAllUnits on city.get_CityRepairData(); CanRepairAll does not match /^RepairAll/
+            () => ClientLib.Data.CityRepair.prototype,
         ];
         for (const get of candidates) {
             try {

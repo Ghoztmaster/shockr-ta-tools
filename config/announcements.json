@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.27.4 released — removing a reservation marker no longer crashes the game. Sector HUD shows your own reservation marker (📌 116:318) and follows it within a second. Tampermonkey updates by itself; never update via Import.",
-      "de": "v5.27.4 veröffentlicht — das Entfernen einer Reservierungsmarkierung lässt das Spiel nicht mehr abstürzen. Sektor-HUD zeigt deine eigene Reservierungsmarkierung (📌 116:318) und folgt ihr innerhalb einer Sekunde. Tampermonkey aktualisiert selbst; nie über Importieren aktualisieren.",
-      "nl": "v5.27.4 uitgebracht — een reserveringsmarker verwijderen laat het spel niet meer crashen. Sector HUD toont je eigen reserveringsmarker (📌 116:318) en volgt hem binnen een seconde. Tampermonkey werkt zelf bij; werk nooit bij via Importeren."
+      "en": "v5.29.0 released — new plugin AutoRepair: repairs your units right after every attack (off by default, /st plugin enable auto-repair; cannot run together with RepairGuard). RepairGuard now also blocks Repair All from scripts. Also new since 5.28.0: the Plugins button in the toolbar — turn plugins on and off live. Tampermonkey updates by itself; never update via Import.",
+      "de": "v5.29.0 veröffentlicht — neues Plugin AutoRepair: repariert deine Einheiten direkt nach jedem Angriff (standardmäßig aus, /st plugin enable auto-repair; läuft nicht zusammen mit RepairGuard). RepairGuard blockiert Repair All jetzt auch aus Skripten. Ebenfalls neu seit 5.28.0: der Plugins-Knopf in der Toolbar — Plugins live ein- und ausschalten. Tampermonkey aktualisiert selbst; nie über Importieren aktualisieren.",
+      "nl": "v5.29.0 uitgebracht — nieuwe plugin AutoRepair: repareert je units direct na elke aanval (standaard uit, /st plugin enable auto-repair; kan niet samen met RepairGuard). RepairGuard blokkeert Repair All nu ook vanuit scripts. Ook nieuw sinds 5.28.0: de Plugins-knop in de toolbar — zet plugins live aan en uit. Tampermonkey werkt zelf bij; werk nooit bij via Importeren."
     },
     "type": "info",
     "active": true

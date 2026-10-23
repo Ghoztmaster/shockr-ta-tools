@@ -92,7 +92,7 @@ class TestSiteInfo:
         plugins = SiteInfo(cfg).plugins()
         # class names in lib/main.js; the plugin name may differ in case only (Stabs -> "STABS")
         assert [p["name"].lower() for p in plugins] == [n.lower() for n in PLUGIN_NAMES], "same plugins and order as lib/main.js"
-        off = {"RepairGuard", "UpgradeCalc"}   # the only plugins with defaultEnabled = false
+        off = {"RepairGuard", "AutoRepair", "UpgradeCalc"}   # the only plugins with defaultEnabled = false
         for p in plugins:
             kebab = re.sub(r"([a-z0-9])([A-Z])", r"\1-\2", p["name"]).lower()
             assert p["slug"] == kebab, "slug = what /st plugin list shows"

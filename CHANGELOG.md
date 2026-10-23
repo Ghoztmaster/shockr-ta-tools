@@ -2,6 +2,39 @@
 
 ## [Unreleased]
 
+## [5.29.0] — 2026-10-23
+
+Userscript + `config/plugins.json`, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`. Bevat ook 5.28.0, waarvan de versiebump nooit op `main` landde (de code wel, in 7b7dfeb).
+
+### Nieuwe plugin: AutoRepair
+- `plugins/auto-repair.js`, standaard uit (`/st plugin enable auto-repair`). Repareert alleen offense-units: `city.get_CityRepairData().CanRepairAll(Vis.Mode.ArmySetup)` → `RepairAll(ArmySetup)` - de weergave wordt nooit omgezet
+- Direct na een eigen aanval: een doorgeefluik op `SendCommand`/`SendSimpleCommand` ziet `InvokeBattle` en probeert de aanvallende basis (`battleSetup.a`) elke 3 s tot hij gerepareerd is of 3 min voorbij zijn. Vangnet: elke `autorepair.interval` minuten alle eigen bases (standaard 5, minimaal 1)
+- Nooit als het aanvalsscherm open staat (CombatSetup) of de basis `get_IsLocked()` is. Chatregel per reparatie; `/st status` toont interval, laatste reparatie en reden van overslaan
+- Live getest door Wilco (2026-10-23)
+
+### Wederzijdse uitsluiting
+- `PluginManager`: plugin-eigenschap `excludes` - aanzetten zet de andere eerst uit (opgeslagen) met een chatregel; `resolveConflicts()` bij het opstarten: staan beide aan, dan gaat de plugin met `yieldsOnConflict` uit. AutoRepair ↔ RepairGuard, RepairGuard wint
+
+### Fix: RepairGuard
+- `ClientLib.Data.CityRepair.prototype` staat nu in de lijst gewrapte prototypes: `RepairAll`/`RepairAllUnits` daarop waren alleen via de knop-terugval geblokkeerd (`CanRepairAll` blijft ongemoeid)
+
+- Tests: `tests/auto-repair.test.mjs`, `tests/plugin-manager.test.mjs`, `tests/test_siteinfo.py`
+
+## [5.28.0] — 2026-10-21
+
+Userscript + website (`server/static/info.html`, `server/static/i18n.js`); `config/version.json` en `config/announcements.json` gewijzigd. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Plugins-paneel in de toolbar
+- Nieuwe knop "Plugins" in de toolbar-grid, boven "Config": één rij per plugin (naam, korte beschrijving, aan/uit-schakelaar), in `/st help`- en info-pagina-volgorde. Een schakelaar doet hetzelfde als `/st plugin enable|disable`, inclusief de chatregel (`lib/plugin-panel.js`)
+- Korte beschrijvingen uit `config/plugins.json` `short`, door `build.js` ingebakken als `__ST_PLUGIN_SHORT__` (alleen `short`; de lange teksten blijven op de server)
+- Het tandwiel wisselt de lijst voor een checklist van welke plugins het paneel toont; ook via `/st menu add|remove <plugin>` (nieuw commando, in `/st help` en op de info-pagina). Opgeslagen als config `menu.hidden` (standaard leeg: een nieuwe plugin verschijnt vanzelf)
+
+### Plugins live aan/uit
+- `lib/plugin-manager.js` (`PluginManager`): gedeeld door startup, `/st plugin enable|disable` en het paneel. Een start die faalt wordt weer gestopt (`running` false, volgende enable probeert opnieuw) en niet als aan opgeslagen; de speler krijgt de fout in de chat i.p.v. "aangezet"
+- `stop()` ruimt nu ook de eigen `/st`-commando's op (`Cli.unregister`): AllianceScanner, FormationSaver, KillInfo, LayoutScanner, TargetBoard, WatchList. CampTracker meldt na herstart niet meer het #1-kamp als nieuw; WatchList reageert niet meer op `notifyDefeated` als hij uit staat
+- Plugins met een blok in het info-paneel van de game (Wavy, LootSummary, PoiAnalyser: `appearsOnSelect`) tonen het pas bij opnieuw selecteren; live aanzetten zegt dat in de chat
+- Tests: `tests/plugin-manager.test.mjs`, `tests/formation-saver.test.mjs`, `tests/online-state.test.mjs`, `tests/watchlist.test.mjs`
+
 ## [5.27.4] — 2026-10-20
 
 Userscript-only (geen server-wijziging; `config/version.json` en `config/announcements.json` zijn wel gewijzigd). Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

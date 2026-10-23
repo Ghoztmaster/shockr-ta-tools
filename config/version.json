@@ -1,7 +1,46 @@
 {
-  "version": "5.27.4",
-  "date": "2026-10-20",
+  "version": "5.29.0",
+  "date": "2026-10-23",
   "changelog": [
+    {
+      "version": "5.29.0",
+      "date": "2026-10-23",
+      "changes": {
+        "en": [
+          "New plugin AutoRepair (off by default): repairs the units of the attacking base right after every own attack, as soon as the base is unlocked; a check every few minutes as a safety net (/st config set autorepair.interval <min>, default 5). Never while the attack screen is open",
+          "AutoRepair and RepairGuard exclude each other: turning one on turns the other off (both on at startup → RepairGuard wins)",
+          "Fix RepairGuard: also blocks Repair All via the city repair data (the route repair scripts use), not only via the buttons"
+        ],
+        "de": [
+          "Neues Plugin AutoRepair (standardmäßig aus): repariert die Einheiten der angreifenden Basis direkt nach jedem eigenen Angriff, sobald die Basis nicht mehr gesperrt ist; eine Prüfung alle paar Minuten als Sicherheitsnetz (/st config set autorepair.interval <Min.>, Standard 5). Nie bei offenem Angriffsbildschirm",
+          "AutoRepair und RepairGuard schließen sich gegenseitig aus: einschalten des einen schaltet das andere aus (beide beim Start an → RepairGuard gewinnt)",
+          "Fix RepairGuard: blockiert Repair All jetzt auch über die Reparaturdaten der Basis (der Weg von Reparatur-Skripten), nicht nur über die Buttons"
+        ],
+        "nl": [
+          "Nieuwe plugin AutoRepair (standaard uit): repareert de units van de aanvallende base direct na elke eigen aanval, zodra de base niet meer op slot staat; een check elke paar minuten als vangnet (/st config set autorepair.interval <min>, standaard 5). Nooit als het aanvalsscherm open staat",
+          "AutoRepair en RepairGuard sluiten elkaar uit: de een aanzetten zet de ander uit (allebei aan bij het opstarten → RepairGuard wint)",
+          "Fix RepairGuard: blokkeert Repair All nu ook via de reparatiedata van de base (de route van reparatiescripts), niet alleen via de knoppen"
+        ]
+      }
+    },
+    {
+      "version": "5.28.0",
+      "date": "2026-10-21",
+      "changes": {
+        "en": [
+          "New Plugins button in the toolbar: turn every plugin on and off with a switch, live without F5",
+          "Choose which plugins the Plugins panel shows (gear in the panel, or /st menu add|remove <plugin>)"
+        ],
+        "de": [
+          "Neuer Plugins-Knopf in der Toolbar: jedes Plugin per Schalter ein- und ausschalten, live ohne F5",
+          "Auswählen, welche Plugins das Plugins-Panel zeigt (Zahnrad im Panel oder /st menu add|remove <plugin>)"
+        ],
+        "nl": [
+          "Nieuwe Plugins-knop in de toolbar: zet elke plugin aan en uit met een schakelaar, live zonder F5",
+          "Kies welke plugins het Plugins-paneel toont (tandwiel in het paneel, of /st menu add|remove <plugin>)"
+        ]
+      }
+    },
     {
       "version": "5.27.4",
       "date": "2026-10-20",
@@ -44,39 +83,6 @@
         ],
         "nl": [
           "Target Watch toont het level van het target met één decimaal, zoals de game (L30.9 in plaats van L30) - in de game en op de website"
-        ]
-      }
-    },
-    {
-      "version": "5.27.0",
-      "date": "2026-10-19",
-      "changes": {
-        "en": [
-          "Shockr is now GPL-3.0-or-later; the original Shockr Tools (Blayne Chard, MIT) and other sources are credited (NOTICE, README)",
-          "Code without a compatible license replaced: PvP alarm with its own icons and a public-domain alarm sound; Sector HUD shows the cell right under the view centre (can be 1 higher than before); Chat Helper with its own code, same behaviour"
-        ],
-        "de": [
-          "Shockr steht jetzt unter GPL-3.0-or-later; die ursprünglichen Shockr Tools (Blayne Chard, MIT) und andere Quellen werden genannt (NOTICE, README)",
-          "Code ohne passende Lizenz ersetzt: PvP-Alarm mit eigenen Symbolen und einem gemeinfreien Alarmton; Sektor-HUD zeigt die Zelle genau unter der Ansichtsmitte (kann 1 höher sein als vorher); Chat Helper mit eigenem Code, gleiches Verhalten"
-        ],
-        "nl": [
-          "Shockr is nu GPL-3.0-or-later; de oorspronkelijke Shockr Tools (Blayne Chard, MIT) en andere bronnen worden vermeld (NOTICE, README)",
-          "Code zonder passende licentie vervangen: PvP-alarm met eigen iconen en een publiek-domein-alarmgeluid; Sector HUD toont de cel precies onder het midden van het beeld (kan 1 hoger zijn dan voorheen); Chat Helper met eigen code, zelfde gedrag"
-        ]
-      }
-    },
-    {
-      "version": "5.26.1",
-      "date": "2026-10-18",
-      "changes": {
-        "en": [
-          "The Shockr button is now 40×40 (was 32×32), the same size as the MaelstromTools button next to it"
-        ],
-        "de": [
-          "Der Shockr-Knopf ist jetzt 40×40 (war 32×32), so groß wie der MaelstromTools-Knopf daneben"
-        ],
-        "nl": [
-          "De Shockr-knop is nu 40×40 (was 32×32), even groot als de MaelstromTools-knop ernaast"
         ]
       }
     }
