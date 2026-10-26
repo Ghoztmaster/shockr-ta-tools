@@ -13,7 +13,7 @@
  *   no new automatic batch starts and a running one stops at its next base;
  *   resumes on Away/Offline. Manual /st scanalliance is never paused
  * - Restores original city view after scanning
- * - 2 second delay between individual base scans
+ * - 100 ms between base scans on the world map, 2 s in any other view
  * - Shares a scan lock with LayoutScanner (both switch the city view)
  *
  * Member bases are fetched with the GetPublicPlayerInfo server command,
@@ -26,9 +26,8 @@
 import { chatMessage } from '../lib/main.js';
 import { t } from '../lib/i18n.js';
 import { waitForCity } from '../lib/city-util.js';
-import { extractScan, acquireScanLock, releaseScanLock, scanLockHolder } from '../lib/scanner-util.js';
+import { extractScan, scanDelayMs, acquireScanLock, releaseScanLock, scanLockHolder } from '../lib/scanner-util.js';
 
-const SCAN_DELAY_MS = 2000;       // 2s between each base scan
 const SCAN_INTERVAL_MS = 3600000; // re-scan every 60 minutes when idle
 const PLAYER_INFO_DELAY_MS = 300; // pacing between GetPublicPlayerInfo calls
 const PLAYER_INFO_TIMEOUT_MS = 10000;
@@ -125,6 +124,9 @@ export class AllianceScanner {
         let scanned = 0;
         let skipped = 0;
         let aborted = false;
+        let loaded = 0;
+        let loadMs = 0;
+        let loadFailed = 0;
 
         // Remember current city so we can restore it after scanning
         let originalCityId = null;
@@ -154,8 +156,11 @@ export class AllianceScanner {
 
                 // Load city data
                 cities.set_CurrentCityId(cityId);
-                const city = await waitForCity(cityId, 20);
-                if (!city) continue;
+                const loadStart = Date.now();
+                const city = await waitForCity(cityId);
+                if (!city) { loadFailed++; continue; }
+                loadMs += Date.now() - loadStart;
+                loaded++;
 
                 // Version-based dedup (double check after load)
                 const version = city.get_Version();
@@ -180,8 +185,7 @@ export class AllianceScanner {
                 }
                 scanned++;
 
-                // Pacing: 2 seconds between scans to avoid screen flickering
-                await sleep(SCAN_DELAY_MS);
+                await sleep(scanDelayMs());
             }
 
             // Flush remaining
@@ -191,7 +195,7 @@ export class AllianceScanner {
             if (manual || scanned > 0) {
                 chatMessage(`[ST] ${t('allianceScanComplete', { scanned, skipped, duration })}`);
             }
-            console.log(`[ST] AllianceScanner: ${scanned} sent, ${skipped} skipped, ${duration}s${aborted ? ` (aborted: ${aborted})` : ''}`);
+            console.log(`[ST] AllianceScanner: ${scanned} sent, ${skipped} skipped, ${duration}s, city load avg ${loaded ? Math.round(loadMs / loaded) : '-'} ms (${loadFailed} not loaded)${aborted ? ` (aborted: ${aborted})` : ''}`);
 
         } catch (e) {
             console.error('[ST] AllianceScanner error:', e);

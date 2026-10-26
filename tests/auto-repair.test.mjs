@@ -32,9 +32,9 @@ function fakeConfig(data = {}) {
 }
 
 /** A base whose CityRepair answers CanRepairAll(mode) from `damaged[mode]`; RepairAll repairs. */
-function city(id, name, { own = true, ghost = false, locked = false, damaged = { [MODE.ArmySetup]: true } } = {}) {
+function city(id, name, { own = true, ghost = false, locked = false, alerted = false, damaged = { [MODE.ArmySetup]: true } } = {}) {
     const calls = [];
-    const state = { ...damaged, locked };
+    const state = { ...damaged, locked, alerted };
     const rep = {
         CanRepairAll(mode) { calls.push(['can', mode]); return !!state[mode]; },
         RepairAll(mode) { calls.push(['repair', mode]); state[mode] = false; },
@@ -42,6 +42,7 @@ function city(id, name, { own = true, ghost = false, locked = false, damaged = {
     return {
         id, calls, state,
         IsOwnBase: () => own, get_IsGhostMode: () => ghost, get_IsLocked: () => state.locked,
+        get_isAlerted: () => state.alerted, get_Id: () => id,
         get_Name: () => name, get_CityRepairData: () => rep,
     };
 }
@@ -162,10 +163,10 @@ test('timer: first check after 10 s, then every interval (re-read each time); st
 
 /** Start the plugin with fake timers; returns { p, view, restore }. */
 async function started(cities, opts = {}) {
-    mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 1_000_000 });
+    mock.timers.enable({ apis: ['setTimeout', 'setInterval', 'Date'], now: 1_000_000 });
     const restoreLog = quiet();
     const view = setup(cities, opts.mode, opts.currentOwn);
-    const p = new mod.AutoRepair(fakeConfig({ 'autorepair.interval': 60 }));   // interval out of the way
+    const p = new mod.AutoRepair(fakeConfig({ 'autorepair.interval': 60, ...(opts.config || {}) }));   // interval out of the way
     await p.start();
     chat.length = 0;
     return { p, view, restore: () => { p.stop(); restoreLog(); mock.timers.reset(); } };
@@ -249,6 +250,86 @@ test('stop: the original SendCommand / SendSimpleCommand are back; a wrapper on 
     }
 });
 
+// ─── Buildings (autorepair.buildings) ───────────────────────────────
+
+const BOTH = { [MODE.ArmySetup]: true, [MODE.City]: true };
+const repairsOf = (c, mode) => c.calls.filter(x => x[0] === 'repair' && x[1] === mode).length;
+
+test('buildings off (default): the interval repairs units only - CanRepairAll(City) is never even asked', () => {
+    const a = city(1, 'Ghozt', { damaged: { ...BOTH } });
+    setup([a]);
+    const restore = quiet();
+    const p = new mod.AutoRepair(fakeConfig());
+    const r = p.check();
+    restore();
+    assert.equal(p.buildingsOn(), false);
+    assert.deepEqual(r.buildings, []);
+    assert.equal(repairsOf(a, MODE.ArmySetup), 1);
+    assert.equal(a.calls.some(x => x[1] === MODE.City), false, 'no City call at all');
+});
+
+test('buildings on: the interval also repairs buildings via CanRepairAll(City) -> RepairAll(City), with its own chat line', () => {
+    const a = city(1, 'Ghozt', { damaged: { ...BOTH } });
+    const b = city(2, 'Ghozt 2', { damaged: { [MODE.City]: true }, alerted: true });   // still under attack
+    setup([a, b]);
+    chat.length = 0;
+    const restore = quiet();
+    const r = new mod.AutoRepair(fakeConfig({ 'autorepair.buildings': true })).check();
+    restore();
+    assert.deepEqual(r.repaired, ['Ghozt']);
+    assert.deepEqual(r.buildings, ['Ghozt']);
+    assert.deepEqual(a.calls.filter(x => x[1] === MODE.City), [['can', MODE.City], ['repair', MODE.City], ['can', MODE.City]], 'CanRepairAll before and after');
+    assert.equal(repairsOf(b, MODE.City), 0, 'a base under attack waits');
+    assert.ok(chat.some(m => /Auto Repair: buildings repaired in Ghozt</.test(m) || /Auto Repair: buildings repaired in Ghozt$/.test(m.replace(/<[^>]+>/g, ''))));
+});
+
+test('buildingsOn: true / "true" / 1 on; false / "false" / missing off', () => {
+    const on = (v) => new mod.AutoRepair(fakeConfig(v === undefined ? {} : { 'autorepair.buildings': v })).buildingsOn();
+    assert.equal(on(true), true);
+    assert.equal(on('true'), true);
+    assert.equal(on(1), true);
+    assert.equal(on(false), false);
+    assert.equal(on('false'), false);
+    assert.equal(on(undefined), false);
+});
+
+test('after an attack on a base: get_isAlerted -> buildings repaired once the attack and the lockdown are over', async () => {
+    const a = city(1, 'Ghozt', { damaged: { [MODE.City]: true } });   // units intact: the interval has nothing to do
+    const { view, restore } = await started([a], { config: { 'autorepair.buildings': true } });
+    try {
+        a.state.alerted = true;
+        mock.timers.tick(5000);                              // alert poll sees it
+        for (let i = 0; i < 4; i++) mock.timers.tick(3000);
+        assert.equal(repairsOf(a, MODE.City), 0, 'under attack: waits');
+        a.state.alerted = false;
+        a.state.locked = true;
+        for (let i = 0; i < 80; i++) mock.timers.tick(3000);  // 4 min locked: the window must not run out meanwhile
+        assert.equal(repairsOf(a, MODE.City), 0, 'locked: waits');
+        a.state.locked = false;
+        mock.timers.tick(3000);
+        assert.equal(repairsOf(a, MODE.City), 1, 'repaired after the lockdown');
+        assert.equal(repairsOf(a, MODE.ArmySetup), 0, 'no unit repair');
+        assert.equal(a.calls.filter(x => x[1] === MODE.City && x[0] === 'can').length >= 2, true);
+        assert.ok(chat.some(m => /buildings repaired in Ghozt \(after the attack on your base\)/.test(m)));
+        void view;
+    } finally {
+        restore();
+    }
+});
+
+test('after an attack on a base: nothing when autorepair.buildings is off', async () => {
+    const a = city(1, 'Ghozt', { damaged: { ...BOTH }, alerted: true });
+    const { restore } = await started([a]);
+    try {
+        for (let i = 0; i < 5; i++) mock.timers.tick(5000);
+        a.state.alerted = false;
+        for (let i = 0; i < 10; i++) mock.timers.tick(3000);
+        assert.equal(a.calls.some(x => x[1] === MODE.City), false);
+    } finally {
+        restore();
+    }
+});
+
 test('AutoRepair / RepairGuard declare each other as excluded; AutoRepair yields on conflict', () => {
     const ar = new mod.AutoRepair(fakeConfig());
     const rg = new mod.RepairGuard(fakeConfig());
@@ -276,8 +357,9 @@ test('RepairGuard wraps CityRepair.RepairAll and RepairAllUnits (not CanRepairAl
         assert.notEqual(proto.RepairAllUnits, original.RepairAllUnits);
         assert.equal(proto.CanRepairAll, original.CanRepairAll, 'CanRepairAll is not a repair');
         proto.RepairAll(MODE.ArmySetup);
+        proto.RepairAll(MODE.City);
         proto.RepairAllUnits();
-        assert.deepEqual(calls, [], 'blocked');
+        assert.deepEqual(calls, [], 'blocked - units and buildings');
         rg.stop();
         assert.equal(proto.RepairAll, original.RepairAll);
         assert.equal(proto.RepairAllUnits, original.RepairAllUnits);

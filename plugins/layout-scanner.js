@@ -11,7 +11,8 @@
  *   resumes on Away/Offline. Manual /st scan is never paused
  * - Manual scan via /st scan (always works)
  * - Restores original city view after scanning
- * - 2 second delay between individual base scans to avoid flickering
+ * - 100 ms between base scans on the world map, 2 s in any other view
+ *   (there set_CurrentCityId swaps the displayed base - avoids flicker)
  * - Skips if player is in a base/battle view
  *
  * Config keys:
@@ -21,9 +22,8 @@
 import { chatMessage } from '../lib/main.js';
 import { t } from '../lib/i18n.js';
 import { getAllNearbyObjects, waitForCity } from '../lib/city-util.js';
-import { extractScan, acquireScanLock, releaseScanLock } from '../lib/scanner-util.js';
+import { extractScan, scanDelayMs, acquireScanLock, releaseScanLock } from '../lib/scanner-util.js';
 
-const SCAN_DELAY_MS = 2000;      // 2s between each base scan
 const SCAN_INTERVAL_MS = 3600000; // re-scan every 60 minutes when idle
 
 /** Local version cache to avoid re-scanning identical bases. */
@@ -111,6 +111,9 @@ export class LayoutScanner {
         let scanned = 0;
         let skipped = 0;
         let aborted = false;
+        let loaded = 0;
+        let loadMs = 0;
+        let loadFailed = 0;
 
         // Remember current city so we can restore it after scanning
         let originalCityId = null;
@@ -154,8 +157,11 @@ export class LayoutScanner {
                 const cities = ClientLib.Data.MainData.GetInstance().get_Cities();
                 cities.set_CurrentCityId(cityId);
 
-                const city = await waitForCity(cityId, 20);
-                if (!city) continue;
+                const loadStart = Date.now();
+                const city = await waitForCity(cityId);
+                if (!city) { loadFailed++; continue; }
+                loadMs += Date.now() - loadStart;
+                loaded++;
 
                 // Version-based dedup (double check after load)
                 const version = city.get_Version();
@@ -180,8 +186,7 @@ export class LayoutScanner {
                 }
                 scanned++;
 
-                // Pacing: 2 seconds between scans to avoid screen flickering
-                await sleep(SCAN_DELAY_MS);
+                await sleep(scanDelayMs());
             }
 
             // Flush remaining
@@ -191,7 +196,7 @@ export class LayoutScanner {
             if (scanned > 0) {
                 chatMessage(`[ST] ${t('scanComplete', { scanned, skipped, duration })}`);
             }
-            console.log(`[ST] LayoutScanner: ${scanned} sent, ${skipped} skipped, ${duration}s${aborted ? ' (aborted: player online)' : ''}`);
+            console.log(`[ST] LayoutScanner: ${scanned} sent, ${skipped} skipped, ${duration}s, city load avg ${loaded ? Math.round(loadMs / loaded) : '-'} ms (${loadFailed} not loaded)${aborted ? ' (aborted: player online)' : ''}`);
 
         } catch (e) {
             console.error('[ST] LayoutScanner error:', e);

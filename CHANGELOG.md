@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### AutoRepair: buildings (nog niet live getest)
+- Nieuwe config `autorepair.buildings` (standaard uit; `/st config set autorepair.buildings true|false`, elke keer opnieuw gelezen): `CityRepair.CanRepairAll(Vis.Mode.City)` → `RepairAll(City)`, per eigen basis, geen ghost/vreemde bases, console-log met CanRepairAll voor/na, chatregel "Auto Repair: buildings gerepareerd in Ghozt"
+- Trigger na een aanval OP je basis: elke 5 s de spelvlag `city.get_isAlerted()` (dezelfde die PvpAlert leest, hier direct gelezen - werkt ook zonder PvpAlert); zo'n basis wordt elke 3 s geprobeerd tot hij gerepareerd is. Zolang hij nog aangevallen wordt of op slot staat schuift het venster van 3 min mee. Vangnet: de interval-check repareert ook buildings (niet bij een basis die nog aangevallen wordt)
+- Zelfde guards als units: niet bij CombatSetup, niet bij `get_IsLocked()`. RepairGuard blokkeert `RepairAll(City)` al (CityRepair-fix in 5.29.0)
+- Units-trigger: een basis op slot laat het venster nu ook meeschuiven i.p.v. na 3 min op te geven
+- Tests: `tests/auto-repair.test.mjs` (City-route, config aan/uit, geen City-aanroep als hij uit staat, defensieve trigger met aanval + lockdown)
+
 ## [5.29.0] — 2026-10-23
 
 Userscript + `config/plugins.json`, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`. Bevat ook 5.28.0, waarvan de versiebump nooit op `main` landde (de code wel, in 7b7dfeb).

@@ -663,6 +663,11 @@ var ShockrTools = (() => {
       autoRepairEnabled: "Auto Repair active \u2014 damaged units are repaired right after every attack (safety net: every {min} min)",
       autoRepairRepaired: "Auto Repair: units repaired in {bases}",
       autoRepairAfterAttack: "Auto Repair: units repaired in {bases} (after the attack)",
+      autoRepairBuildingsRepaired: "Auto Repair: buildings repaired in {bases}",
+      autoRepairBuildingsAfterAttack: "Auto Repair: buildings repaired in {bases} (after the attack on your base)",
+      autoRepairBuildingsOn: "Auto Repair: buildings too (autorepair.buildings)",
+      autoRepairStatusBuildingsOn: "buildings on",
+      autoRepairStatusBuildingsOff: "buildings off",
       autoRepairStatusOff: "off",
       autoRepairStatusOn: "every {min} min \xB7 last repair {last} \xB7 {count} repair(s)",
       autoRepairNever: "none yet",
@@ -1059,6 +1064,11 @@ var ShockrTools = (() => {
       autoRepairEnabled: "Auto Repair aktiv \u2014 besch\xE4digte Einheiten werden direkt nach jedem Angriff repariert (Sicherheitsnetz: alle {min} Min.)",
       autoRepairRepaired: "Auto Repair: Einheiten repariert in {bases}",
       autoRepairAfterAttack: "Auto Repair: Einheiten repariert in {bases} (nach dem Angriff)",
+      autoRepairBuildingsRepaired: "Auto Repair: Geb\xE4ude repariert in {bases}",
+      autoRepairBuildingsAfterAttack: "Auto Repair: Geb\xE4ude repariert in {bases} (nach dem Angriff auf deine Basis)",
+      autoRepairBuildingsOn: "Auto Repair: auch Geb\xE4ude (autorepair.buildings)",
+      autoRepairStatusBuildingsOn: "Geb\xE4ude an",
+      autoRepairStatusBuildingsOff: "Geb\xE4ude aus",
       autoRepairStatusOff: "aus",
       autoRepairStatusOn: "alle {min} Min. \xB7 letzte Reparatur {last} \xB7 {count} Reparatur(en)",
       autoRepairNever: "noch keine",
@@ -1452,6 +1462,11 @@ var ShockrTools = (() => {
       autoRepairEnabled: "Auto Repair actief \u2014 beschadigde units worden direct na elke aanval gerepareerd (vangnet: elke {min} min)",
       autoRepairRepaired: "Auto Repair: units gerepareerd in {bases}",
       autoRepairAfterAttack: "Auto Repair: units gerepareerd in {bases} (na de aanval)",
+      autoRepairBuildingsRepaired: "Auto Repair: buildings gerepareerd in {bases}",
+      autoRepairBuildingsAfterAttack: "Auto Repair: buildings gerepareerd in {bases} (na de aanval op je base)",
+      autoRepairBuildingsOn: "Auto Repair: ook buildings (autorepair.buildings)",
+      autoRepairStatusBuildingsOn: "buildings aan",
+      autoRepairStatusBuildingsOff: "buildings uit",
       autoRepairStatusOff: "uit",
       autoRepairStatusOn: "elke {min} min \xB7 laatste reparatie {last} \xB7 {count} reparatie(s)",
       autoRepairNever: "nog geen",
@@ -3867,23 +3882,30 @@ var ShockrTools = (() => {
     }
     return Array.from(combined.values());
   }
-  async function waitForCity(cityId, maxAttempts = 30) {
+  var CITY_CHECK_MS = 20;
+  var CITY_POLL_MIN_GAP_MS = 70;
+  var CITY_LOAD_TIMEOUT_MS = 2e3;
+  async function waitForCity(cityId, timeoutMs = CITY_LOAD_TIMEOUT_MS) {
     const cities2 = ClientLib.Data.MainData.GetInstance().get_Cities();
-    for (let i = 0; i < maxAttempts; i++) {
+    const start = Date.now();
+    let lastPoll = -Infinity;
+    for (; ; ) {
       const city = cities2.GetCity(cityId);
       if (city && !city.get_IsGhostMode() && city.GetBuildingsConditionInPercent() > 0) {
         return city;
       }
-      await new Promise((r) => setTimeout(r, 50 + 5 * i));
-      if (i > 3) {
+      const now = Date.now();
+      if (now - start >= timeoutMs) return null;
+      if (now - lastPoll >= CITY_POLL_MIN_GAP_MS) {
+        lastPoll = now;
         try {
           const comm = ClientLib.Net.CommunicationManager.GetInstance();
           if (typeof comm.$Poll === "function") comm.$Poll();
         } catch {
         }
       }
+      await new Promise((r) => setTimeout(r, CITY_CHECK_MS));
     }
-    return null;
   }
 
   // plugins/camp-tracker.js
@@ -4569,7 +4591,91 @@ var ShockrTools = (() => {
     return y * 9 + x;
   }
 
+  // lib/map-overlay.js
+  function isWorldMapVisible() {
+    try {
+      const vis = ClientLib.Vis.VisMain.GetInstance();
+      return vis.get_Mode() === ClientLib.Vis.Mode.Region;
+    } catch {
+      return false;
+    }
+  }
+  function cellToScreen(x, y, fx = 0.5, fy = 0.5) {
+    const visMain = ClientLib.Vis.VisMain.GetInstance();
+    const region = visMain.get_Region();
+    return {
+      left: visMain.ScreenPosFromWorldPosX((x + fx) * region.get_GridWidth()),
+      top: visMain.ScreenPosFromWorldPosY((y + fy) * region.get_GridHeight())
+    };
+  }
+  function viewSize() {
+    const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
+    return { width: region.get_ViewWidth(), height: region.get_ViewHeight() };
+  }
+  function visibleCellRange(margin = 1, maxCells = 80) {
+    const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
+    const gw = region.get_GridWidth();
+    const gh = region.get_GridHeight();
+    const zoom = region.get_ZoomFactor() || 1;
+    const x0 = region.get_PosX() / gw;
+    const y0 = region.get_PosY() / gh;
+    const w = Math.min(region.get_ViewWidth() / zoom / gw, maxCells);
+    const h = Math.min(region.get_ViewHeight() / zoom / gh, maxCells);
+    return {
+      minX: Math.floor(x0) - margin,
+      minY: Math.floor(y0) - margin,
+      maxX: Math.ceil(x0 + w) + margin,
+      maxY: Math.ceil(y0 + h) + margin
+    };
+  }
+  function addToMap(el) {
+    try {
+      const canvas = document.querySelector("canvas");
+      if (canvas && canvas.parentElement && el.parentElement !== canvas.parentElement) {
+        canvas.parentElement.appendChild(el);
+      }
+    } catch {
+    }
+  }
+  function attachMapEvents(owner, onMove, onData) {
+    const events = [];
+    const attach = (source, name, type, cb) => {
+      try {
+        webfrontend.phe.cnc.Util.attachNetEvent(source, name, type, owner, cb);
+        events.push({ source, name, type, cb });
+      } catch {
+      }
+    };
+    const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
+    attach(region, "PositionChange", ClientLib.Vis.PositionChange, onMove);
+    attach(region, "ZoomFactorChange", ClientLib.Vis.ZoomFactorChange, onMove);
+    attach(region, "SectorUpdated", ClientLib.Vis.Region.SectorUpdated, onData);
+    attach(ClientLib.Data.MainData.GetInstance().get_Cities(), "Change", ClientLib.Data.CitiesChange, onData);
+    return events;
+  }
+  function detachMapEvents(owner, events) {
+    for (const ev of events) {
+      try {
+        webfrontend.phe.cnc.Util.detachNetEvent(ev.source, ev.name, ev.type, owner, ev.cb);
+      } catch {
+      }
+    }
+  }
+  function cityObjectType() {
+    try {
+      const t2 = ClientLib.Data.WorldSector.ObjectType.City;
+      if (typeof t2 === "number") return t2;
+    } catch {
+    }
+    return 1;
+  }
+
   // lib/scanner-util.js
+  var SCAN_DELAY_FAST_MS = 100;
+  var SCAN_DELAY_SAFE_MS = 2e3;
+  function scanDelayMs() {
+    return isWorldMapVisible() ? SCAN_DELAY_FAST_MS : SCAN_DELAY_SAFE_MS;
+  }
   function extractScan(city) {
     try {
       const md = ClientLib.Data.MainData.GetInstance();
@@ -4769,7 +4875,6 @@ var ShockrTools = (() => {
   }
 
   // plugins/layout-scanner.js
-  var SCAN_DELAY_MS = 2e3;
   var SCAN_INTERVAL_MS = 36e5;
   var scannedVersions = /* @__PURE__ */ new Map();
   var MAX_CACHED_VERSIONS = 500;
@@ -4842,6 +4947,9 @@ var ShockrTools = (() => {
       let scanned = 0;
       let skipped = 0;
       let aborted = false;
+      let loaded = 0;
+      let loadMs = 0;
+      let loadFailed = 0;
       let originalCityId = null;
       try {
         const cities2 = ClientLib.Data.MainData.GetInstance().get_Cities();
@@ -4871,8 +4979,14 @@ var ShockrTools = (() => {
           }
           const cities2 = ClientLib.Data.MainData.GetInstance().get_Cities();
           cities2.set_CurrentCityId(cityId);
-          const city = await waitForCity(cityId, 20);
-          if (!city) continue;
+          const loadStart = Date.now();
+          const city = await waitForCity(cityId);
+          if (!city) {
+            loadFailed++;
+            continue;
+          }
+          loadMs += Date.now() - loadStart;
+          loaded++;
           const version = city.get_Version();
           if (scannedVersions.get(cityId) === version) {
             skipped++;
@@ -4891,14 +5005,14 @@ var ShockrTools = (() => {
             }
           }
           scanned++;
-          await sleep3(SCAN_DELAY_MS);
+          await sleep3(scanDelayMs());
         }
         await this.api.flush();
         const duration = ((Date.now() - startTime) / 1e3).toFixed(1);
         if (scanned > 0) {
           chatMessage(`[ST] ${t("scanComplete", { scanned, skipped, duration })}`);
         }
-        console.log(`[ST] LayoutScanner: ${scanned} sent, ${skipped} skipped, ${duration}s${aborted ? " (aborted: player online)" : ""}`);
+        console.log(`[ST] LayoutScanner: ${scanned} sent, ${skipped} skipped, ${duration}s, city load avg ${loaded ? Math.round(loadMs / loaded) : "-"} ms (${loadFailed} not loaded)${aborted ? " (aborted: player online)" : ""}`);
       } catch (e) {
         console.error("[ST] LayoutScanner error:", e);
         chatMessage(`[ST] ${t("scanFailed", { error: e.message })}`);
@@ -4919,7 +5033,6 @@ var ShockrTools = (() => {
   }
 
   // plugins/alliance-scanner.js
-  var SCAN_DELAY_MS2 = 2e3;
   var SCAN_INTERVAL_MS2 = 36e5;
   var PLAYER_INFO_DELAY_MS = 300;
   var PLAYER_INFO_TIMEOUT_MS = 1e4;
@@ -5004,6 +5117,9 @@ var ShockrTools = (() => {
       let scanned = 0;
       let skipped = 0;
       let aborted = false;
+      let loaded = 0;
+      let loadMs = 0;
+      let loadFailed = 0;
       let originalCityId = null;
       try {
         originalCityId = ClientLib.Data.MainData.GetInstance().get_Cities().get_CurrentCityId();
@@ -5026,8 +5142,14 @@ var ShockrTools = (() => {
           } catch {
           }
           cities2.set_CurrentCityId(cityId);
-          const city = await waitForCity(cityId, 20);
-          if (!city) continue;
+          const loadStart = Date.now();
+          const city = await waitForCity(cityId);
+          if (!city) {
+            loadFailed++;
+            continue;
+          }
+          loadMs += Date.now() - loadStart;
+          loaded++;
           const version = city.get_Version();
           if (scannedVersions2.get(cityId) === version) {
             skipped++;
@@ -5046,14 +5168,14 @@ var ShockrTools = (() => {
             }
           }
           scanned++;
-          await sleep4(SCAN_DELAY_MS2);
+          await sleep4(scanDelayMs());
         }
         await this.api.flush();
         const duration = ((Date.now() - startTime) / 1e3).toFixed(1);
         if (manual || scanned > 0) {
           chatMessage(`[ST] ${t("allianceScanComplete", { scanned, skipped, duration })}`);
         }
-        console.log(`[ST] AllianceScanner: ${scanned} sent, ${skipped} skipped, ${duration}s${aborted ? ` (aborted: ${aborted})` : ""}`);
+        console.log(`[ST] AllianceScanner: ${scanned} sent, ${skipped} skipped, ${duration}s, city load avg ${loaded ? Math.round(loadMs / loaded) : "-"} ms (${loadFailed} not loaded)${aborted ? ` (aborted: ${aborted})` : ""}`);
       } catch (e) {
         console.error("[ST] AllianceScanner error:", e);
         chatMessage(`[ST] ${t("allianceScanFailed", { error: e.message })}`);
@@ -5241,8 +5363,13 @@ var ShockrTools = (() => {
   var FIRST_CHECK_DELAY_MS = 10 * 1e3;
   var TRIGGER_POLL_MS = 3 * 1e3;
   var TRIGGER_WINDOW_MS = 3 * 60 * 1e3;
+  var ALERT_POLL_MS = 5 * 1e3;
   var BATTLE_COMMAND = "InvokeBattle";
   var HOOKED_FUNCTIONS = ["SendCommand", "SendSimpleCommand"];
+  var KINDS = {
+    units: { mode: "ArmySetup", repaired: "autoRepairRepaired", triggered: "autoRepairAfterAttack" },
+    buildings: { mode: "City", repaired: "autoRepairBuildingsRepaired", triggered: "autoRepairBuildingsAfterAttack" }
+  };
   var AutoRepair = class {
     /** Short description for `/st help`. */
     get description() {
@@ -5257,6 +5384,7 @@ var ShockrTools = (() => {
       this.running = false;
       this._timer = null;
       this._triggerTimer = null;
+      this._alertTimer = null;
       this._pending = /* @__PURE__ */ new Map();
       this._hooks = [];
       this._lastRepairAt = 0;
@@ -5267,14 +5395,17 @@ var ShockrTools = (() => {
       this.running = true;
       this._installHook();
       this._schedule(FIRST_CHECK_DELAY_MS);
+      this._alertTimer = setInterval(() => this._alertTick(), ALERT_POLL_MS);
       chatMessage(`[ST] ${t("autoRepairEnabled", { min: this.intervalMin() })}`);
-      console.log(`[ST] AutoRepair: started (after every attack + every ${this.intervalMin()} min)`);
+      if (this.buildingsOn()) chatMessage(`[ST] ${t("autoRepairBuildingsOn")}`);
+      console.log(`[ST] AutoRepair: started (units after every attack + every ${this.intervalMin()} min; buildings ${this.buildingsOn() ? "on" : "off"})`);
     }
     stop() {
       this.running = false;
       if (this._timer) clearTimeout(this._timer);
       if (this._triggerTimer) clearTimeout(this._triggerTimer);
-      this._timer = this._triggerTimer = null;
+      if (this._alertTimer) clearInterval(this._alertTimer);
+      this._timer = this._triggerTimer = this._alertTimer = null;
       this._pending.clear();
       this._removeHook();
       console.log("[ST] AutoRepair: stopped");
@@ -5283,7 +5414,7 @@ var ShockrTools = (() => {
     statusText() {
       if (!this.running) return t("autoRepairStatusOff");
       const last = this._lastRepairAt ? new Date(this._lastRepairAt).toLocaleTimeString("de-DE", { hour12: false }) : t("autoRepairNever");
-      return t("autoRepairStatusOn", { min: this.intervalMin(), last, count: this._repairs }) + (this._lastSkip ? ` \xB7 ${this._lastSkip}` : "");
+      return t("autoRepairStatusOn", { min: this.intervalMin(), last, count: this._repairs }) + ` \xB7 ${t(this.buildingsOn() ? "autoRepairStatusBuildingsOn" : "autoRepairStatusBuildingsOff")}` + (this._lastSkip ? ` \xB7 ${this._lastSkip}` : "");
     }
     /** Interval from `autorepair.interval`, default 5, at least 1 minute. */
     intervalMin() {
@@ -5291,7 +5422,12 @@ var ShockrTools = (() => {
       if (!Number.isFinite(v)) return DEFAULT_INTERVAL_MIN;
       return Math.max(MIN_INTERVAL_MIN, v);
     }
-    // ─── Trigger 1: after an own attack ──────────────────────────────
+    /** `autorepair.buildings` (default off); read every time, so a change applies at once. */
+    buildingsOn() {
+      const v = this.config.get("autorepair.buildings", false);
+      return v === true || v === "true" || v === 1;
+    }
+    // ─── Trigger 1: units, after an own attack ───────────────────────
     /** Wrap SendCommand / SendSimpleCommand once; the wrappers only watch. */
     _installHook() {
       let cm = null;
@@ -5301,7 +5437,7 @@ var ShockrTools = (() => {
         cm = null;
       }
       if (!cm) {
-        console.warn("[ST] AutoRepair: CommunicationManager not found - only the interval runs");
+        console.warn("[ST] AutoRepair: CommunicationManager not found - no repair right after an attack, only the interval");
         return;
       }
       const plugin = this;
@@ -5327,7 +5463,6 @@ var ShockrTools = (() => {
       }
       this._hooks = [];
     }
-    /** InvokeBattle seen: try the attacking base until repaired or the window ends. */
     _onBattle(args, via) {
       const setup = args && args.battleSetup || args || {};
       let id = setup && setup.a !== void 0 && setup.a !== null ? setup.a : null;
@@ -5339,42 +5474,78 @@ var ShockrTools = (() => {
         }
       }
       if (id === null) return;
-      this._pending.set(id, Date.now() + TRIGGER_WINDOW_MS);
-      console.log(`[ST] AutoRepair: attack from ${id} seen (${via}) - repairing as soon as possible`);
+      console.log(`[ST] AutoRepair: attack from ${id} seen (${via}) - repairing units as soon as possible`);
+      this._remember("units", id);
+    }
+    // ─── Trigger 2: buildings, after an attack on a base ─────────────
+    _alertTick() {
+      if (!this.running || !this.buildingsOn()) return;
+      let all;
+      try {
+        all = ClientLib.Data.MainData.GetInstance().get_Cities().get_AllCities().d;
+      } catch {
+        return;
+      }
+      for (const city of Object.values(all)) {
+        try {
+          if (!city || !city.IsOwnBase() || city.get_IsGhostMode()) continue;
+          if (typeof city.get_isAlerted !== "function" || !city.get_isAlerted()) continue;
+          const id = city.get_Id();
+          if (!this._pending.has(`buildings:${id}`)) {
+            console.log(`[ST] AutoRepair: ${city.get_Name()} is under attack - repairing buildings once it is over`);
+          }
+          this._remember("buildings", id);
+        } catch (err) {
+          console.error("[ST] AutoRepair: alert check failed", err);
+        }
+      }
+    }
+    // ─── Remembered bases: try until repaired or the window ends ─────
+    _remember(kind, id) {
+      this._pending.set(`${kind}:${id}`, { kind, id, until: Date.now() + TRIGGER_WINDOW_MS });
       if (!this._triggerTimer) this._triggerTimer = setTimeout(() => this._triggerTick(), TRIGGER_POLL_MS);
     }
     _triggerTick() {
       this._triggerTimer = null;
       if (!this.running) return;
       const now = Date.now();
-      const repaired = [];
-      for (const [id, until] of [...this._pending]) {
+      const repaired = { units: [], buildings: [] };
+      for (const [key, p] of [...this._pending]) {
+        if (p.kind === "buildings" && !this.buildingsOn()) {
+          this._pending.delete(key);
+          continue;
+        }
         let status = "wait";
         try {
-          status = this._tryCity(id);
+          status = this._tryCity(p.id, p.kind);
         } catch (err) {
-          console.error(`[ST] AutoRepair: ${id} - repair failed`, err);
+          console.error(`[ST] AutoRepair: ${p.id} - ${p.kind} repair failed`, err);
         }
         if (status === "repaired" || status === "gone") {
-          this._pending.delete(id);
-          if (status === "repaired") repaired.push(this._name(id));
-        } else if (now >= until) {
-          this._pending.delete(id);
-          console.log(`[ST] AutoRepair: ${this._name(id)} - nothing repaired within ${TRIGGER_WINDOW_MS / 1e3} s after the attack (${status}); the interval takes over`);
+          this._pending.delete(key);
+          if (status === "repaired") repaired[p.kind].push(this._name(p.id));
+        } else if (status === "held") {
+          p.until = now + TRIGGER_WINDOW_MS;
+        } else if (now >= p.until) {
+          this._pending.delete(key);
+          console.log(`[ST] AutoRepair: ${this._name(p.id)} - no ${p.kind} repaired within ${TRIGGER_WINDOW_MS / 1e3} s; the interval takes over`);
         }
       }
-      if (repaired.length) this._repaired(repaired, true);
+      for (const kind of Object.keys(repaired)) {
+        if (repaired[kind].length) this._repaired(kind, repaired[kind], true);
+      }
       if (this._pending.size) this._triggerTimer = setTimeout(() => this._triggerTick(), TRIGGER_POLL_MS);
     }
-    /** 'repaired' | 'wait' (attack screen, locked or no damage yet) | 'gone' (no own base). */
-    _tryCity(id) {
+    /** 'repaired' | 'held' (locked / under attack) | 'wait' (attack screen, nothing to repair yet) | 'gone' */
+    _tryCity(id, kind) {
       if (this._inAttackScreen()) return "wait";
       const city = ClientLib.Data.MainData.GetInstance().get_Cities().GetCity(id);
       if (!city || !city.IsOwnBase() || city.get_IsGhostMode()) return "gone";
-      if (city.get_IsLocked()) return "wait";
-      return this._repairCity(city) ? "repaired" : "wait";
+      if (city.get_IsLocked()) return "held";
+      if (kind === "buildings" && typeof city.get_isAlerted === "function" && city.get_isAlerted()) return "held";
+      return this._repairCity(city, kind) ? "repaired" : "wait";
     }
-    // ─── Trigger 2: the interval ─────────────────────────────────────
+    // ─── Trigger 3: the interval ─────────────────────────────────────
     _schedule(ms) {
       if (this._timer) clearTimeout(this._timer);
       this._timer = setTimeout(() => {
@@ -5389,17 +5560,19 @@ var ShockrTools = (() => {
       }, ms);
     }
     /**
-     * One interval check: repair every own base whose units can be repaired.
-     * @returns {{skipped: ?string, repaired: Array<string>, locked: Array<string>}}
+     * One interval check: units of every own base, plus buildings when
+     * autorepair.buildings is on.
+     * @returns {{skipped: ?string, repaired: Array<string>, buildings: Array<string>, locked: Array<string>}}
      */
     check() {
-      const result = { skipped: null, repaired: [], locked: [] };
+      const result = { skipped: null, repaired: [], buildings: [], locked: [] };
       if (this._inAttackScreen()) {
         result.skipped = t("autoRepairSkipCombat");
         this._lastSkip = result.skipped;
         return result;
       }
       this._lastSkip = null;
+      const withBuildings = this.buildingsOn();
       const all = ClientLib.Data.MainData.GetInstance().get_Cities().get_AllCities().d;
       for (const city of Object.values(all)) {
         let name = "?";
@@ -5410,7 +5583,9 @@ var ShockrTools = (() => {
             result.locked.push(name);
             continue;
           }
-          if (this._repairCity(city)) result.repaired.push(name);
+          if (this._repairCity(city, "units")) result.repaired.push(name);
+          const attacked = typeof city.get_isAlerted === "function" && city.get_isAlerted();
+          if (withBuildings && !attacked && this._repairCity(city, "buildings")) result.buildings.push(name);
         } catch (err) {
           console.error(`[ST] AutoRepair: ${name} - repair failed`, err);
         }
@@ -5418,27 +5593,30 @@ var ShockrTools = (() => {
       if (result.locked.length) {
         this._lastSkip = t("autoRepairSkipLocked", { bases: result.locked.join(", ") });
       }
-      if (result.repaired.length) this._repaired(result.repaired, false);
+      if (result.repaired.length) this._repaired("units", result.repaired, false);
+      if (result.buildings.length) this._repaired("buildings", result.buildings, false);
       return result;
     }
     // ─── Shared ──────────────────────────────────────────────────────
     _inAttackScreen() {
       return ClientLib.Vis.VisMain.GetInstance().get_Mode() === ClientLib.Vis.Mode.CombatSetup;
     }
-    /** RepairAll(ArmySetup) if there is something to repair. @returns {boolean} repaired */
-    _repairCity(city) {
-      const Mode = ClientLib.Vis.Mode;
+    /** RepairAll(<vis mode of kind>) if there is something to repair. @returns {boolean} repaired */
+    _repairCity(city, kind) {
+      const modeName = KINDS[kind].mode;
+      const mode = ClientLib.Vis.Mode[modeName];
       const rep = city.get_CityRepairData();
-      if (!rep || !rep.CanRepairAll(Mode.ArmySetup)) return false;
-      rep.RepairAll(Mode.ArmySetup);
-      const still = rep.CanRepairAll(Mode.ArmySetup);
-      console.log(`[ST] AutoRepair: ${city.get_Name()} - RepairAll(ArmySetup) called; CanRepairAll before true, after ${still}`);
+      if (!rep || !rep.CanRepairAll(mode)) return false;
+      rep.RepairAll(mode);
+      const still = rep.CanRepairAll(mode);
+      console.log(`[ST] AutoRepair: ${city.get_Name()} - RepairAll(${modeName}) called (${kind}); CanRepairAll before true, after ${still}`);
       return true;
     }
-    _repaired(names2, afterAttack) {
+    _repaired(kind, names2, triggered) {
       this._lastRepairAt = Date.now();
       this._repairs += names2.length;
-      chatMessage(`[ST] ${t(afterAttack ? "autoRepairAfterAttack" : "autoRepairRepaired", { bases: names2.join(", ") })}`);
+      const k = KINDS[kind];
+      chatMessage(`[ST] ${t(triggered ? k.triggered : k.repaired, { bases: names2.join(", ") })}`);
     }
     _name(id) {
       try {
@@ -6486,85 +6664,6 @@ var ShockrTools = (() => {
     const text = `[ST] ${withPrefix ? "WatchList: " : ""}${msg}`;
     chatMessage(text);
     console.log(text.replace(/<[^>]*>/g, "").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'"));
-  }
-
-  // lib/map-overlay.js
-  function isWorldMapVisible() {
-    try {
-      const vis = ClientLib.Vis.VisMain.GetInstance();
-      return vis.get_Mode() === ClientLib.Vis.Mode.Region;
-    } catch {
-      return false;
-    }
-  }
-  function cellToScreen(x, y, fx = 0.5, fy = 0.5) {
-    const visMain = ClientLib.Vis.VisMain.GetInstance();
-    const region = visMain.get_Region();
-    return {
-      left: visMain.ScreenPosFromWorldPosX((x + fx) * region.get_GridWidth()),
-      top: visMain.ScreenPosFromWorldPosY((y + fy) * region.get_GridHeight())
-    };
-  }
-  function viewSize() {
-    const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
-    return { width: region.get_ViewWidth(), height: region.get_ViewHeight() };
-  }
-  function visibleCellRange(margin = 1, maxCells = 80) {
-    const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
-    const gw = region.get_GridWidth();
-    const gh = region.get_GridHeight();
-    const zoom = region.get_ZoomFactor() || 1;
-    const x0 = region.get_PosX() / gw;
-    const y0 = region.get_PosY() / gh;
-    const w = Math.min(region.get_ViewWidth() / zoom / gw, maxCells);
-    const h = Math.min(region.get_ViewHeight() / zoom / gh, maxCells);
-    return {
-      minX: Math.floor(x0) - margin,
-      minY: Math.floor(y0) - margin,
-      maxX: Math.ceil(x0 + w) + margin,
-      maxY: Math.ceil(y0 + h) + margin
-    };
-  }
-  function addToMap(el) {
-    try {
-      const canvas = document.querySelector("canvas");
-      if (canvas && canvas.parentElement && el.parentElement !== canvas.parentElement) {
-        canvas.parentElement.appendChild(el);
-      }
-    } catch {
-    }
-  }
-  function attachMapEvents(owner, onMove, onData) {
-    const events = [];
-    const attach = (source, name, type, cb) => {
-      try {
-        webfrontend.phe.cnc.Util.attachNetEvent(source, name, type, owner, cb);
-        events.push({ source, name, type, cb });
-      } catch {
-      }
-    };
-    const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
-    attach(region, "PositionChange", ClientLib.Vis.PositionChange, onMove);
-    attach(region, "ZoomFactorChange", ClientLib.Vis.ZoomFactorChange, onMove);
-    attach(region, "SectorUpdated", ClientLib.Vis.Region.SectorUpdated, onData);
-    attach(ClientLib.Data.MainData.GetInstance().get_Cities(), "Change", ClientLib.Data.CitiesChange, onData);
-    return events;
-  }
-  function detachMapEvents(owner, events) {
-    for (const ev of events) {
-      try {
-        webfrontend.phe.cnc.Util.detachNetEvent(ev.source, ev.name, ev.type, owner, ev.cb);
-      } catch {
-      }
-    }
-  }
-  function cityObjectType() {
-    try {
-      const t2 = ClientLib.Data.WorldSector.ObjectType.City;
-      if (typeof t2 === "number") return t2;
-    } catch {
-    }
-    return 1;
   }
 
   // plugins/base-info.js

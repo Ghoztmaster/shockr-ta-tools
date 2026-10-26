@@ -191,7 +191,8 @@ async function loadWithFakeScanUtils() {
                          export function extractScan(city) { return { city_id: city.get_Id() }; }
                          export function acquireScanLock(o) { if (holder) return false; holder = o; return true; }
                          export function releaseScanLock(o) { if (holder === o) holder = null; }
-                         export function scanLockHolder() { return holder; }`,
+                         export function scanLockHolder() { return holder; }
+                         export function scanDelayMs() { return 0; }`,
         main: 'export function chatMessage() {}',
     };
     const out = await esbuild.build({
