@@ -19,7 +19,8 @@
  * stops the timer. Needs a server + key (api.isConfigured, the TargetWatcher
  * check) — without them the toolbar item is hidden.
  *
- * Click on a row: world map, centred on that target.
+ * Click on a row: world map, centred on that target (centerMap, also used by
+ * plugins/marker-nav.js).
  */
 import { chatMessage } from '../lib/main.js';
 import { t, escapeHtml } from '../lib/i18n.js';
@@ -283,7 +284,7 @@ function currentWorldId() {
  * World map centred on (x, y). From a base view, first back to the world map
  * (setView pavmNone - what the game's own "World" button does), then centre.
  */
-function centerMap(x, y) {
+export function centerMap(x, y) {
     if (!Number.isFinite(x) || !Number.isFinite(y)) return;
     try {
         const vis = ClientLib.Vis.VisMain.GetInstance();

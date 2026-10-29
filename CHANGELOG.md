@@ -1,6 +1,23 @@
 # Changelog
 
-## [Unreleased]
+## [5.30.0] — 2026-10-29
+
+Userscript + `config/plugins.json`, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Nieuwe plugin: Marker-navigator
+- `plugins/marker-nav.js`, standaard aan: pin-icoon in de toolbar (of `/st markers`) opent een paneel (stijl Target Watch) met de eigen kaartmarkers uit `alliance.get_Markers()` (gefilterd op `get_NamePlayerCreated()` = eigen speler): type (5 = Layout-reservering), tekst en coördinaten. Klik op een rij centreert de wereldkaart (`centerMap` uit target-board, nu geëxporteerd)
+- Alleen gelezen zolang het paneel open is (elke 2 s, geen re-render zonder wijziging); geen `AllianceMarkerChange`-listener (crashte het spel), half-verwijderde markers worden overgeslagen
+- Naam/omschrijving-getter nog niet bevestigd: `markerText()` probeert een paar namen; het eerste openen logt de `get_*`-methodes van een marker in de console
+- Tests: `tests/marker-nav.test.mjs`
+
+### Sector HUD: terug naar het beeldcentrum
+- De reserveringsmarker-focus (5.27.1-5.29.0) is verwijderd: coördinaten = midden van het beeld, sector = richting vanaf het wereldcentrum (hub). Tooltip-regel `sectorHudReserveNote` en de marker-zin in `config/plugins.json` weg
+
+### Scanners: poll-on-demand
+- LayoutScanner/AllianceScanner: 100 ms tussen twee base-scans op de wereldkaart, 2 s in andere views (daar wisselt `set_CurrentCityId` de getoonde base - geen flikkering) (`scanDelayMs()` in `lib/scanner-util.js`)
+
+### Tunnel Info
+- Rode cirkel ("niet bereikbaar") dekkend en standaard 3 px; instelbaar met `tunnel.color` (#rrggbb) en `tunnel.width` (1-10)
 
 ### AutoRepair: buildings (nog niet live getest)
 - Nieuwe config `autorepair.buildings` (standaard uit; `/st config set autorepair.buildings true|false`, elke keer opnieuw gelezen): `CityRepair.CanRepairAll(Vis.Mode.City)` → `RepairAll(City)`, per eigen basis, geen ghost/vreemde bases, console-log met CanRepairAll voor/na, chatregel "Auto Repair: buildings gerepareerd in Ghozt"

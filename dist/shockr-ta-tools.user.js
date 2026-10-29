@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.29.0
+// @version         5.30.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -102,7 +102,7 @@ var ShockrTools = (() => {
   });
 
   // <define:__ST_PLUGIN_SHORT__>
-  var define_ST_PLUGIN_SHORT_default = { CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, AttackTracker: { en: "Logs your won attacks on Forgotten targets", de: "Meldet deine gewonnenen Angriffe auf Forgotten-Ziele", nl: "Meldt je gewonnen aanvallen op Forgotten-targets" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" } };
+  var define_ST_PLUGIN_SHORT_default = { CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, AttackTracker: { en: "Logs your won attacks on Forgotten targets", de: "Meldet deine gewonnenen Angriffe auf Forgotten-Ziele", nl: "Meldt je gewonnen aanvallen op Forgotten-targets" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" } };
 
   // lib/game-ready.js
   async function waitForGame({ maxAttempts = 200, intervalMs = 100 } = {}) {
@@ -581,6 +581,7 @@ var ShockrTools = (() => {
       descTargetWatcher: "Report viewed targets to alliance server",
       descAttackTracker: "Log your won attacks on Forgotten targets to the alliance server",
       descTargetBoard: "In-game overview of alliance targets \u2014 who is watching and who is attacking",
+      descMarkerNav: "Marker Navigator: list of your map markers, click to jump",
       descStabs: "STABS battle simulator (replaces TABS): simulate an attack and see HP, repair and loot",
       // ── Shared ──
       close: "Close",
@@ -806,7 +807,6 @@ var ShockrTools = (() => {
       poiLoading: "loading\u2026",
       poiStatus: "{labels} POI label(s) \xB7 {types} bonus type(s) active",
       sectorHudPoi: "POI {own} own \xB7 {enemy} enemy \xB7 {free} free",
-      sectorHudReserveNote: "\u{1F4CC} = your reservation marker (no marker: the view centre)",
       sectorHudSeenNote: "Own POIs: complete list. Enemy/free: POIs seen on the map this session.",
       sectorHudClickNote: "Left click: coordinates into the chat \xB7 right click: jump to coordinates",
       sectorHudJumpPrompt: "Jump to coordinates (x:y):",
@@ -852,6 +852,7 @@ var ShockrTools = (() => {
       toolbarHelp: "Help",
       toolbarUpgradeCalc: "Upgrade Calculator",
       toolbarTargetBoard: "Target Watch",
+      toolbarMarkerNav: "Markers",
       toolbarStabs: "Battle Simulator",
       configMenuTitle: "Shockr config",
       configMenuIntro: "Export: take all settings incl. your key to another world or browser. Import: paste an export.",
@@ -874,6 +875,17 @@ var ShockrTools = (() => {
       targetBoardColWatchers: "Watchers",
       targetBoardColSeen: "Last seen",
       targetBoardCenterHint: "Click: centre the map on this target",
+      // ── MarkerNav ──
+      markerNavTitle: "\u{1F4CD} Markers",
+      markerNavStatusOpen: "panel open, {n} marker(s)",
+      markerNavStatusClosed: "panel closed (/st markers)",
+      markerNavEmpty: "You have no markers on the map. Place one via a base or empty field \u2192 Marker.",
+      markerNavNoData: "No marker data yet (no alliance?)",
+      markerNavTypeReserve: "Layout reservation",
+      markerNavTypeOther: "Marker (type {n})",
+      markerNavColMarker: "Marker",
+      markerNavColCoords: "Coordinates",
+      markerNavCenterHint: "Click: centre the map on this marker",
       // ── STABS ──
       stabsTitle: "STABS: Statistic",
       stabsSimulate: "Simulate battle [NUM 0]",
@@ -990,6 +1002,7 @@ var ShockrTools = (() => {
       descTargetWatcher: "Angesehene Ziele an den Allianz-Server melden",
       descAttackTracker: "Gewonnene Angriffe auf Forgotten-Ziele an den Allianz-Server melden",
       descTargetBoard: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an",
+      descMarkerNav: "Marker-Navigator: Liste deiner Kartenmarkierungen, Klick springt hin",
       descStabs: "STABS-Kampfsimulator (ersetzt TABS): Angriff simulieren, HP, Reparatur und Beute sehen",
       close: "Schlie\xDFen",
       apiKeyRejected: "\u26A0 API-Key abgelehnt \u2014 pr\xFCfe /st config set api.key",
@@ -1204,7 +1217,6 @@ var ShockrTools = (() => {
       poiLoading: "l\xE4dt\u2026",
       poiStatus: "{labels} POI-Label(s) \xB7 {types} Bonusart(en) aktiv",
       sectorHudPoi: "POI {own} eigene \xB7 {enemy} feindl. \xB7 {free} frei",
-      sectorHudReserveNote: "\u{1F4CC} = deine Reservierungsmarkierung (keine Markierung: die Ansichtsmitte)",
       sectorHudSeenNote: "Eigene POIs: vollst\xE4ndige Liste. Feindlich/frei: in dieser Sitzung auf der Karte gesehene POIs.",
       sectorHudClickNote: "Linksklick: Koordinaten in den Chat \xB7 Rechtsklick: zu Koordinaten springen",
       sectorHudJumpPrompt: "Zu Koordinaten springen (x:y):",
@@ -1250,6 +1262,7 @@ var ShockrTools = (() => {
       toolbarHelp: "Hilfe",
       toolbarUpgradeCalc: "Upgrade Calculator",
       toolbarTargetBoard: "Target Watch",
+      toolbarMarkerNav: "Markierungen",
       toolbarStabs: "Kampfsimulator",
       configMenuTitle: "Shockr-Einstellungen",
       configMenuIntro: "Exportieren: alle Einstellungen inkl. Key in eine andere Welt oder einen anderen Browser mitnehmen. Importieren: einen Export einf\xFCgen.",
@@ -1272,6 +1285,17 @@ var ShockrTools = (() => {
       targetBoardColWatchers: "Beobachter",
       targetBoardColSeen: "Zuletzt",
       targetBoardCenterHint: "Klick: Karte auf dieses Ziel zentrieren",
+      // ── MarkerNav ──
+      markerNavTitle: "\u{1F4CD} Markierungen",
+      markerNavStatusOpen: "Panel offen, {n} Markierung(en)",
+      markerNavStatusClosed: "Panel zu (/st markers)",
+      markerNavEmpty: "Du hast keine Markierungen auf der Karte. Setze eine \xFCber eine Basis oder ein leeres Feld \u2192 Markierung.",
+      markerNavNoData: "Noch keine Markierungsdaten (keine Allianz?)",
+      markerNavTypeReserve: "Layout-Reservierung",
+      markerNavTypeOther: "Markierung (Typ {n})",
+      markerNavColMarker: "Markierung",
+      markerNavColCoords: "Koordinaten",
+      markerNavCenterHint: "Klick: Karte auf diese Markierung zentrieren",
       // ── STABS ──
       stabsTitle: "STABS: Statistik",
       stabsSimulate: "Kampf simulieren [NUM 0]",
@@ -1388,6 +1412,7 @@ var ShockrTools = (() => {
       descTargetWatcher: "Bekeken targets melden aan de alliance-server",
       descAttackTracker: "Gewonnen aanvallen op Forgotten-targets melden aan de alliance-server",
       descTargetBoard: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan",
+      descMarkerNav: "Marker-navigator: lijst van je kaartmarkers, klik om erheen te springen",
       descStabs: "STABS-gevechtssimulator (vervangt TABS): simuleer een aanval en zie HP, repair en loot",
       close: "Sluiten",
       apiKeyRejected: "\u26A0 API-key geweigerd \u2014 controleer /st config set api.key",
@@ -1602,7 +1627,6 @@ var ShockrTools = (() => {
       poiLoading: "laden\u2026",
       poiStatus: "{labels} POI-label(s) \xB7 {types} bonustype(s) actief",
       sectorHudPoi: "POI {own} eigen \xB7 {enemy} vijandelijk \xB7 {free} vrij",
-      sectorHudReserveNote: "\u{1F4CC} = je reserveringsmarker (geen marker: het midden van het beeld)",
       sectorHudSeenNote: "Eigen POIs: volledige lijst. Vijandelijk/vrij: POIs die je deze sessie op de kaart zag.",
       sectorHudClickNote: "Linksklik: co\xF6rdinaten in de chat \xB7 rechtsklik: naar co\xF6rdinaten springen",
       sectorHudJumpPrompt: "Spring naar co\xF6rdinaten (x:y):",
@@ -1648,6 +1672,7 @@ var ShockrTools = (() => {
       toolbarHelp: "Help",
       toolbarUpgradeCalc: "Upgrade Calculator",
       toolbarTargetBoard: "Target Watch",
+      toolbarMarkerNav: "Markers",
       toolbarStabs: "Gevechtssimulator",
       configMenuTitle: "Shockr-config",
       configMenuIntro: "Exporteren: neem alle instellingen incl. je key mee naar een andere wereld of browser. Importeren: plak een export.",
@@ -1670,6 +1695,17 @@ var ShockrTools = (() => {
       targetBoardColWatchers: "Kijkers",
       targetBoardColSeen: "Laatst gezien",
       targetBoardCenterHint: "Klik: centreer de kaart op dit target",
+      // ── MarkerNav ──
+      markerNavTitle: "\u{1F4CD} Markers",
+      markerNavStatusOpen: "paneel open, {n} marker(s)",
+      markerNavStatusClosed: "paneel dicht (/st markers)",
+      markerNavEmpty: "Je hebt geen markers op de kaart. Zet er een via een base of leeg veld \u2192 Marker.",
+      markerNavNoData: "Nog geen markerdata (geen alliance?)",
+      markerNavTypeReserve: "Layout-reservering",
+      markerNavTypeOther: "Marker (type {n})",
+      markerNavColMarker: "Marker",
+      markerNavColCoords: "Co\xF6rdinaten",
+      markerNavCenterHint: "Klik: centreer de kaart op deze marker",
       // ── STABS ──
       stabsTitle: "STABS: Statistiek",
       stabsSimulate: "Gevecht simuleren [NUM 0]",
@@ -3343,7 +3379,8 @@ var ShockrTools = (() => {
     calc: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="5" y="2.5" width="14" height="19" rx="2"/><rect x="8" y="5.5" width="8" height="4" rx="0.5"/><path d="M8.5 13h1M12 13h0M15.5 13h0M8.5 16.5h0M12 16.5h0M15.5 16.5h0" stroke-width="2.4" stroke-linecap="round"/></svg>',
     help: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.2 9.3a2.9 2.9 0 0 1 5.6 1c0 1.9-2.8 2.4-2.8 4.2"/><circle cx="12" cy="17.6" r="0.6" fill="currentColor"/></svg>',
     sim: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3.5l9.5 9.5M3.5 3.5h3l9 9M20 3.5L10.5 13M20.5 3.5h-3l-9 9"/><path d="M6.5 15.5l2 2M15.5 15.5l-2 2M4.5 19.5l3-3M19.5 19.5l-3-3"/></svg>',
-    radar: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="5"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/></svg>'
+    radar: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="5"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/></svg>',
+    pin: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 22s-7-7.2-7-12.5a7 7 0 0 1 14 0C19 14.8 12 22 12 22z"/><circle cx="12" cy="9.5" r="2.6" fill="currentColor" stroke="none"/></svg>'
   };
   var Toolbar = class {
     /**
@@ -8864,20 +8901,6 @@ var ShockrTools = (() => {
     const midY = region.get_PosY() + region.get_ViewHeight() / (2 * zoom);
     return { x: Math.floor(midX / region.get_GridWidth()), y: Math.floor(midY / region.get_GridHeight()) };
   }
-  var RESERVE_MARKER_TYPE = 5;
-  function ownReserveMarker(markers, playerName) {
-    if (!playerName) return null;
-    for (const m of markers || []) {
-      try {
-        if (m.get_Type() !== RESERVE_MARKER_TYPE || m.get_NamePlayerCreated() !== playerName) continue;
-        const x = m.get_CoordX();
-        const y = m.get_CoordY();
-        if (Number.isFinite(x) && Number.isFinite(y)) return { x, y };
-      } catch {
-      }
-    }
-    return null;
-  }
   function parseCoords(text) {
     const nums = String(text || "").match(/\d+/g);
     if (!nums || nums.length < 2) return null;
@@ -8902,11 +8925,9 @@ var ShockrTools = (() => {
       this._timer = null;
       this._lastScan = 0;
       this._warned = false;
-      this.reserve = null;
     }
     async start() {
       this.running = true;
-      this._readMarkers();
       this._timer = setInterval(() => this.tick(), TICK_MS);
       this.tick();
       console.log("[ST] SectorHud: started");
@@ -8919,26 +8940,6 @@ var ShockrTools = (() => {
         this.el.remove();
         this.el = null;
       }
-    }
-    /**
-     * Own reservation marker (null: none valid, the HUD shows the view centre),
-     * re-read every tick from the local (~26 item) marker list. No
-     * AllianceMarkerChange listener: a handler on that event crashed the game
-     * when a marker was deleted.
-     */
-    _readMarkers() {
-      let next = null;
-      try {
-        const md = ClientLib.Data.MainData.GetInstance();
-        next = ownReserveMarker(md.get_Alliance().get_Markers().l, md.get_Player().get_Name());
-      } catch {
-      }
-      this.reserve = next;
-    }
-    /** Cell shown in the HUD: the own reservation marker, else the view centre. */
-    focus() {
-      if (this.reserve) return { ...this.reserve, reserve: true };
-      return viewCenter(ClientLib.Vis.VisMain.GetInstance().get_Region());
     }
     /** One-line status for `/st status`. */
     statusText() {
@@ -8961,7 +8962,6 @@ var ShockrTools = (() => {
           this._lastScan = now;
           for (const p of visiblePois()) this.seen.set(`${p.x}:${p.y}`, { x: p.x, y: p.y, ownerId: p.ownerId });
         }
-        this._readMarkers();
         this.render();
       } catch (e) {
         if (!this._warned) {
@@ -8973,7 +8973,7 @@ var ShockrTools = (() => {
     render() {
       const geo = worldGeometry();
       if (!geo) return;
-      const c = this.focus();
+      const c = viewCenter(ClientLib.Vis.VisMain.GetInstance().get_Region());
       const here = sectorNo(c.x, c.y, geo.width, geo.height, geo.count);
       const own = ownAlliance();
       const summary = sectorSummary(this.knownPois(own && own.id), own && own.id, geo);
@@ -8983,7 +8983,7 @@ var ShockrTools = (() => {
       el.textContent = "";
       const line1 = document.createElement("div");
       const coords = document.createElement("span");
-      coords.textContent = `${c.reserve ? "\u{1F4CC} " : ""}${c.x}:${c.y} `;
+      coords.textContent = `${c.x}:${c.y} `;
       const sec = document.createElement("span");
       sec.textContent = `[${sectorAbbr(here)}]`;
       sec.style.color = STATUS_COLORS[cur.status];
@@ -9004,7 +9004,6 @@ var ShockrTools = (() => {
       el.append(line1, line2);
       el.title = [
         ...summary.map((s) => `${sectorAbbr(s.sector)}: ${t("sectorHudPoi", { own: s.own, enemy: s.enemy, free: s.free })}`),
-        ...c.reserve ? [t("sectorHudReserveNote")] : [],
         t("sectorHudSeenNote"),
         t("sectorHudClickNote")
       ].join("\n");
@@ -9042,7 +9041,7 @@ var ShockrTools = (() => {
     /** Left click: "[coords]x:y[/coords]" into the chat input at the cursor. */
     _pasteCoords() {
       try {
-        const c = this.focus();
+        const c = viewCenter(ClientLib.Vis.VisMain.GetInstance().get_Region());
         const input = qx.core.Init.getApplication().getChat().getChatWidget().getEditable();
         const dom = input.getContentElement().getDomElement();
         const value = dom.value || "";
@@ -10905,6 +10904,219 @@ var ShockrTools = (() => {
     }
   }
 
+  // plugins/marker-nav.js
+  var PANEL_ID8 = "st-markernav-panel";
+  var TOOLBAR_ID3 = "markernav";
+  var REFRESH_INTERVAL_MS3 = 2e3;
+  var PANEL_WIDTH3 = 340;
+  var DEFAULT_POSITION3 = { x: 130, y: 90 };
+  var RESERVE_MARKER_TYPE = 5;
+  var TEXT_GETTERS = ["get_Name", "get_Title", "get_Caption", "get_Description", "get_Text", "get_Comment", "get_Message"];
+  function markerText(m) {
+    for (const g of TEXT_GETTERS) {
+      try {
+        if (typeof m[g] !== "function") continue;
+        const v = m[g]();
+        if (typeof v === "string" && v.trim()) return v.trim();
+      } catch {
+      }
+    }
+    return "";
+  }
+  function ownMarkers(markers, playerName) {
+    if (!playerName) return [];
+    const out = [];
+    for (const m of markers || []) {
+      try {
+        if (m.get_NamePlayerCreated() !== playerName) continue;
+        const x = m.get_CoordX();
+        const y = m.get_CoordY();
+        if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+        out.push({ x, y, type: m.get_Type(), text: markerText(m) });
+      } catch {
+      }
+    }
+    return out;
+  }
+  function typeLabel(type) {
+    return type === RESERVE_MARKER_TYPE ? t("markerNavTypeReserve") : t("markerNavTypeOther", { n: type });
+  }
+  function renderList(rows) {
+    if (!rows.length) {
+      return `<div style="color:#999;padding:12px 0;text-align:center;">${escapeHtml(t("markerNavEmpty"))}</div>`;
+    }
+    const th = "padding:3px 4px;text-align:left;font-weight:normal;color:#999;border-bottom:1px solid #444;";
+    const td = "padding:3px 4px;vertical-align:top;";
+    let html = '<table style="width:100%;border-collapse:collapse;">';
+    html += `<tr><th style="${th}">${escapeHtml(t("markerNavColMarker"))}</th><th style="${th}">${escapeHtml(t("markerNavColCoords"))}</th></tr>`;
+    for (const m of rows) {
+      html += `<tr data-x="${m.x}" data-y="${m.y}" title="${escapeHtml(t("markerNavCenterHint"))}" style="box-shadow:inset 3px 0 0 #555;cursor:pointer;border-bottom:1px solid #2a2a2a;"><td style="${td}padding-left:8px;"><div style="color:#e0e0e0;">${escapeHtml(typeLabel(m.type))}</div>` + (m.text ? `<div style="color:#aaa;">${escapeHtml(m.text)}</div>` : "") + `</td><td style="${td}white-space:nowrap;color:#4fc3f7;">${m.x}:${m.y}</td></tr>`;
+    }
+    return html + "</table>";
+  }
+  var MarkerNav = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descMarkerNav");
+    }
+    constructor(config, toolbar, cli) {
+      this.name = "MarkerNav";
+      this.config = config;
+      this.toolbar = toolbar;
+      this.cli = cli;
+      this.running = false;
+      this._panel = null;
+      this._title = null;
+      this._content = null;
+      this._timer = null;
+      this._rows = null;
+      this._shown = null;
+      this._logged = false;
+      this._onKeyDown = (e) => {
+        if (e.key === "Escape") this.close();
+      };
+    }
+    async start() {
+      this.running = true;
+      this.toolbar.register({
+        id: TOOLBAR_ID3,
+        icon: ICONS.pin,
+        label: () => t("toolbarMarkerNav"),
+        onClick: () => this.toggle()
+      });
+      this.cli.register("markers", () => this.toggle());
+    }
+    stop() {
+      this.running = false;
+      this.close();
+      this.toolbar.unregister(TOOLBAR_ID3);
+      this.cli.unregister("markers");
+      if (this._panel) this._panel.remove();
+      this._panel = null;
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      if (!this.isOpen()) return t("markerNavStatusClosed");
+      return t("markerNavStatusOpen", { n: this._rows ? this._rows.length : 0 });
+    }
+    isOpen() {
+      return !!this._panel && this._panel.style.display !== "none";
+    }
+    toggle() {
+      if (this.isOpen()) this.close();
+      else this.open();
+    }
+    open() {
+      this._ensurePanel();
+      this._shown = null;
+      this._panel.style.display = "block";
+      document.addEventListener("keydown", this._onKeyDown);
+      this._refresh();
+      this._timer = setInterval(() => this._refresh(), REFRESH_INTERVAL_MS3);
+    }
+    close() {
+      document.removeEventListener("keydown", this._onKeyDown);
+      if (this._timer) {
+        clearInterval(this._timer);
+        this._timer = null;
+      }
+      if (this._panel) this._panel.style.display = "none";
+    }
+    /** Own markers from the client, or null when there is no alliance / player data. */
+    _read() {
+      try {
+        const md = ClientLib.Data.MainData.GetInstance();
+        const list = md.get_Alliance().get_Markers().l;
+        if (!this._logged && list && list.length) {
+          this._logged = true;
+          logGetters(list[0]);
+        }
+        return ownMarkers(list, md.get_Player().get_Name());
+      } catch {
+        return null;
+      }
+    }
+    _refresh() {
+      if (!this.isOpen()) return;
+      this._rows = this._read();
+      const key = JSON.stringify(this._rows);
+      if (key === this._shown) return;
+      this._shown = key;
+      const count = this._rows ? ` <span style="color:#aaa;">(${this._rows.length})</span>` : "";
+      this._title.innerHTML = `<b style="color:#fff;">${escapeHtml(t("markerNavTitle"))}</b>${count}`;
+      if (!this._rows) {
+        this._content.innerHTML = `<div style="color:#999;padding:12px 0;text-align:center;">${escapeHtml(t("markerNavNoData"))}</div>`;
+        return;
+      }
+      this._content.innerHTML = renderList(this._rows);
+      this._content.querySelectorAll("tr[data-x]").forEach((tr2) => {
+        tr2.addEventListener("click", () => centerMap(Number(tr2.dataset.x), Number(tr2.dataset.y)));
+      });
+    }
+    _ensurePanel() {
+      if (this._panel && document.body.contains(this._panel)) return;
+      const pos = clampPosition(
+        loadPosition(this.config, "MarkerNav", DEFAULT_POSITION3),
+        { w: PANEL_WIDTH3, h: 40 },
+        { w: window.innerWidth, h: window.innerHeight }
+      );
+      const panel = document.createElement("div");
+      panel.id = PANEL_ID8;
+      panel.style.cssText = `
+            display: none;
+            position: fixed;
+            left: ${pos.x}px;
+            top: ${pos.y}px;
+            z-index: 10000;
+            width: ${PANEL_WIDTH3}px;
+            max-width: calc(100vw - 16px);
+            box-sizing: border-box;
+            background: rgba(20, 20, 20, 0.92);
+            color: #ddd;
+            border: 1px solid #444;
+            border-radius: 4px;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 12px;
+            pointer-events: auto;
+        `;
+      const header = document.createElement("div");
+      header.style.cssText = "display:flex;align-items:baseline;gap:8px;padding:8px 10px 6px;cursor:move;user-select:none;border-bottom:1px solid #333;";
+      const title = document.createElement("div");
+      title.style.cssText = "flex:1;min-width:0;";
+      const close = document.createElement("div");
+      close.textContent = "\u2715";
+      close.title = t("close");
+      close.style.cssText = "cursor:pointer;color:#999;font-size:14px;line-height:1;";
+      close.addEventListener("mousedown", (e) => e.stopPropagation());
+      close.addEventListener("click", () => this.close());
+      close.addEventListener("mouseenter", () => {
+        close.style.color = "#fff";
+      });
+      close.addEventListener("mouseleave", () => {
+        close.style.color = "#999";
+      });
+      header.append(title, close);
+      const content = document.createElement("div");
+      content.style.cssText = "max-height:60vh;overflow-y:auto;padding:4px 10px 8px;";
+      panel.append(header, content);
+      document.body.appendChild(panel);
+      makeDraggable(panel, header, { config: this.config, prefix: "MarkerNav" });
+      this._panel = panel;
+      this._title = title;
+      this._content = content;
+    }
+  };
+  function logGetters(m) {
+    try {
+      const names2 = /* @__PURE__ */ new Set();
+      for (let o = m; o && o !== Object.prototype; o = Object.getPrototypeOf(o)) {
+        for (const k of Object.getOwnPropertyNames(o)) if (k.startsWith("get_")) names2.add(k);
+      }
+      console.log("[ST] MarkerNav: marker getters", [...names2].sort().join(", "));
+    } catch {
+    }
+  }
+
   // plugins/stabs-stats.js
   var RES = { TIB: 1, CRY: 2, CREDITS: 3, RP: 6, RC_BASE: 7, RC_AIR: 8, RC_INF: 9, RC_VEH: 10 };
   var RES_KEYS = Object.values(RES);
@@ -11597,7 +11809,7 @@ var ShockrTools = (() => {
   }
 
   // plugins/stabs.js
-  var TOOLBAR_ID3 = "stabs";
+  var TOOLBAR_ID4 = "stabs";
   var SIM_LOCK_MS = 3e3;
   var TICK_MS2 = 300;
   var KEY_NUM0 = 96;
@@ -11839,7 +12051,7 @@ var ShockrTools = (() => {
       }
       if (!this.parked) {
         this.toolbar.register({
-          id: TOOLBAR_ID3,
+          id: TOOLBAR_ID4,
           icon: ICONS.sim,
           label: () => t("toolbarStabs"),
           onClick: () => this.togglePanel()
@@ -11891,7 +12103,7 @@ var ShockrTools = (() => {
       this._lock = false;
       this._request = false;
       document.removeEventListener("keydown", this._onKeyDown);
-      this.toolbar.unregister(TOOLBAR_ID3);
+      this.toolbar.unregister(TOOLBAR_ID4);
       if (this._button) {
         try {
           const parent = this._button.getLayoutParent();
@@ -12330,7 +12542,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.29.0";
+  var ST_VERSION = "5.30.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -12389,6 +12601,7 @@ var ShockrTools = (() => {
       new ChatHelper(config),
       new PvpAlert(config),
       new TargetBoard(config, api, toolbar, cli),
+      new MarkerNav(config, toolbar, cli),
       new Stabs(config, toolbar)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });

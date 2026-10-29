@@ -15,7 +15,7 @@ async function load() {
         stdin: {
             contents: `export * as util from './lib/poi-util.js';
                        export { PoiAnalyser, labelText, ownerKind, bonusLines, COLORS } from './plugins/poi-analyser.js';
-                       export { SectorHud, ownReserveMarker, viewCenter, parseCoords, insertAt, STATUS_COLORS } from './plugins/sector-hud.js';`,
+                       export { SectorHud, viewCenter, parseCoords, insertAt, STATUS_COLORS } from './plugins/sector-hud.js';`,
             resolveDir: root,
         },
         bundle: true, format: 'esm', write: false,
@@ -279,54 +279,15 @@ test('SectorHud: coords + sector + POI counts; own sector green, enemy red; hidd
     assert.equal(body.children.length, 0, 'disable removes the HUD');
 });
 
-const marker = (type, by, x, y) => ({ get_Type: () => type, get_NamePlayerCreated: () => by, get_CoordX: () => x, get_CoordY: () => y });
-
-test('ownReserveMarker: type 5 placed by the own player, else null', () => {
-    const ms = [marker(5, 'Other', 1, 1), marker(3, 'GhoztMasters', 2, 2), marker(5, 'GhoztMasters', 116, 318)];
-    assert.deepEqual(mod.ownReserveMarker(ms, 'GhoztMasters'), { x: 116, y: 318 });
-    assert.equal(mod.ownReserveMarker(ms.slice(0, 2), 'GhoztMasters'), null);
-    assert.equal(mod.ownReserveMarker(ms, ''), null);
-    assert.equal(mod.ownReserveMarker(undefined, 'GhoztMasters'), null);
-});
-
-test('ownReserveMarker: a marker whose getters throw is skipped', () => {
-    const broken = { get_Type: () => { throw new Error('deleted'); } };
-    const noCoords = { ...marker(5, 'GhoztMasters', 0, 0), get_CoordX: () => { throw new Error('deleted'); } };
-    assert.equal(mod.ownReserveMarker([broken, noCoords], 'GhoztMasters'), null, 'none valid: view centre');
-    assert.deepEqual(mod.ownReserveMarker([broken, noCoords, marker(5, 'GhoztMasters', 116, 318)], 'GhoztMasters'), { x: 116, y: 318 });
-});
-
-test('SectorHud: the tick follows the own reservation marker (placed, moved, broken, removed) and an Alliance swap', async () => {
+test('SectorHud: an own reservation marker does not move the HUD off the view centre', async () => {
     const { body } = fakeDom();
-    const state = { mode: 'region', posX: 4950, posY: 950, pois: {}, markers: [marker(5, 'Other', 10, 10)] };
+    const marker = { get_Type: () => 5, get_NamePlayerCreated: () => 'GhoztMasters', get_CoordX: () => 900, get_CoordY: () => 500 };
+    const state = { mode: 'region', posX: 4950, posY: 950, pois: {}, markers: [marker] };
     fakeGame(state);
     const p = new mod.SectorHud({ get: (k, d) => d });
     try {
         await p.start();
-        const el = body.children[0];
-        assert.match(el.textContent, /^500:100 \[N\]/, 'no own marker: view centre');
-
-        state.markers.push(marker(5, 'GhoztMasters', 900, 500));    // placed
-        p.tick();
-        assert.match(el.textContent, /^📌 900:500 \[E\]/);
-        assert.match(el.title, /reservation marker/);
-
-        state.markers[1] = marker(5, 'GhoztMasters', 500, 900);     // moved
-        p.tick();
-        assert.match(el.textContent, /^📌 500:900 \[S\]/);
-
-        state.markers[1] = { get_Type: () => { throw new Error('deleted'); } };   // half-deleted object
-        p.tick();
-        assert.match(el.textContent, /^500:100 \[N\]/, 'broken marker skipped: view centre');
-
-        state.markers.pop();                                         // removed
-        p.tick();
-        assert.match(el.textContent, /^500:100 \[N\]/);
-
-        state.allianceObj = state.makeAlliance();                   // client swapped the Alliance object
-        state.markers = [marker(5, 'GhoztMasters', 100, 500)];
-        p.tick();
-        assert.match(el.textContent, /^📌 100:500 \[W\]/);
+        assert.match(body.children[0].textContent, /^500:100 \[N\]/);
     } finally {
         p.stop();
     }

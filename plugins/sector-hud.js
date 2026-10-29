@@ -22,8 +22,10 @@
  *   - enemy / free: only the POIs SEEN on the map this session (the client
  *     only knows loaded regions) - the tooltip says so
  *
- * The coordinates are those of the own reservation marker ("📌 116:318")
- * when there is one, else the view centre; the marker is re-read every tick.
+ * The coordinates are always the view centre; the sector is its direction
+ * from the world centre (the hub). 5.27.1-5.29.x showed the own reservation
+ * marker instead; that is gone again - markers are in the Marker Navigator
+ * (plugins/marker-nav.js).
  *
  * Only while the world map is shown; the view centre is read every second,
  * the visible POIs every 3 s. DOM overlay under document.body
@@ -50,26 +52,6 @@ export function viewCenter(region) {
     const midX = region.get_PosX() + region.get_ViewWidth() / (2 * zoom);
     const midY = region.get_PosY() + region.get_ViewHeight() / (2 * zoom);
     return { x: Math.floor(midX / region.get_GridWidth()), y: Math.floor(midY / region.get_GridHeight()) };
-}
-
-/** Alliance marker type of a reservation (seen live 2026-10-20; the game has no named enum for it). */
-export const RESERVE_MARKER_TYPE = 5;
-
-/**
- * First reservation marker placed by `playerName`, as {x, y}, or null. A
- * marker whose getters throw (seen right after a marker is deleted) is skipped.
- */
-export function ownReserveMarker(markers, playerName) {
-    if (!playerName) return null;
-    for (const m of markers || []) {
-        try {
-            if (m.get_Type() !== RESERVE_MARKER_TYPE || m.get_NamePlayerCreated() !== playerName) continue;
-            const x = m.get_CoordX();
-            const y = m.get_CoordY();
-            if (Number.isFinite(x) && Number.isFinite(y)) return { x, y };
-        } catch { /* broken marker object: skip */ }
-    }
-    return null;
 }
 
 /** First two numbers in the jump prompt's text: "[coords]450:620[/coords]", "450:620", "450 620". */
@@ -99,12 +81,10 @@ export class SectorHud {
         this._timer = null;
         this._lastScan = 0;
         this._warned = false;
-        this.reserve = null;          // {x, y} of the own reservation marker, or null
     }
 
     async start() {
         this.running = true;
-        this._readMarkers();
         this._timer = setInterval(() => this.tick(), TICK_MS);
         this.tick();
         console.log('[ST] SectorHud: started');
@@ -118,27 +98,6 @@ export class SectorHud {
             this.el.remove();
             this.el = null;
         }
-    }
-
-    /**
-     * Own reservation marker (null: none valid, the HUD shows the view centre),
-     * re-read every tick from the local (~26 item) marker list. No
-     * AllianceMarkerChange listener: a handler on that event crashed the game
-     * when a marker was deleted.
-     */
-    _readMarkers() {
-        let next = null;
-        try {
-            const md = ClientLib.Data.MainData.GetInstance();
-            next = ownReserveMarker(md.get_Alliance().get_Markers().l, md.get_Player().get_Name());
-        } catch { /* no alliance data (yet) */ }
-        this.reserve = next;
-    }
-
-    /** Cell shown in the HUD: the own reservation marker, else the view centre. */
-    focus() {
-        if (this.reserve) return { ...this.reserve, reserve: true };
-        return viewCenter(ClientLib.Vis.VisMain.GetInstance().get_Region());
     }
 
     /** One-line status for `/st status`. */
@@ -164,8 +123,7 @@ export class SectorHud {
                 this._lastScan = now;
                 for (const p of visiblePois()) this.seen.set(`${p.x}:${p.y}`, { x: p.x, y: p.y, ownerId: p.ownerId });
             }
-            this._readMarkers();
-            this.render();                  // every tick: the view centre moves too
+            this.render();                 // every tick: the view centre moves too
         } catch (e) {
             if (!this._warned) {
                 this._warned = true;
@@ -177,7 +135,7 @@ export class SectorHud {
     render() {
         const geo = worldGeometry();
         if (!geo) return;
-        const c = this.focus();
+        const c = viewCenter(ClientLib.Vis.VisMain.GetInstance().get_Region());
         const here = sectorNo(c.x, c.y, geo.width, geo.height, geo.count);
         const own = ownAlliance();
         const summary = sectorSummary(this.knownPois(own && own.id), own && own.id, geo);
@@ -188,7 +146,7 @@ export class SectorHud {
         el.textContent = '';
         const line1 = document.createElement('div');
         const coords = document.createElement('span');
-        coords.textContent = `${c.reserve ? '📌 ' : ''}${c.x}:${c.y} `;
+        coords.textContent = `${c.x}:${c.y} `;
         const sec = document.createElement('span');
         sec.textContent = `[${sectorAbbr(here)}]`;
         sec.style.color = STATUS_COLORS[cur.status];
@@ -210,7 +168,6 @@ export class SectorHud {
         el.append(line1, line2);
         el.title = [
             ...summary.map(s => `${sectorAbbr(s.sector)}: ${t('sectorHudPoi', { own: s.own, enemy: s.enemy, free: s.free })}`),
-            ...(c.reserve ? [t('sectorHudReserveNote')] : []),
             t('sectorHudSeenNote'),
             t('sectorHudClickNote'),
         ].join('\n');
@@ -249,7 +206,7 @@ export class SectorHud {
     /** Left click: "[coords]x:y[/coords]" into the chat input at the cursor. */
     _pasteCoords() {
         try {
-            const c = this.focus();
+            const c = viewCenter(ClientLib.Vis.VisMain.GetInstance().get_Region());
             const input = qx.core.Init.getApplication().getChat().getChatWidget().getEditable();
             const dom = input.getContentElement().getDomElement();
             const value = dom.value || '';

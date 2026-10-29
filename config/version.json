@@ -1,7 +1,34 @@
 {
-  "version": "5.29.0",
-  "date": "2026-10-23",
+  "version": "5.30.0",
+  "date": "2026-10-29",
   "changelog": [
+    {
+      "version": "5.30.0",
+      "date": "2026-10-29",
+      "changes": {
+        "en": [
+          "New plugin Marker Navigator: the pin icon in the Shockr button (or /st markers) lists your map markers; click a row to centre the map on it",
+          "Sector HUD shows the view centre again (no longer your reservation marker); the sector is the direction from the world centre",
+          "Scanners scan 100 ms per base on the world map (2 s in other views, no flicker)",
+          "AutoRepair can also repair buildings after an attack on your base (off by default: /st config set autorepair.buildings true)",
+          "Tunnel Info: the red circle is opaque and 3 px wide; colour and width configurable (tunnel.color, tunnel.width)"
+        ],
+        "de": [
+          "Neues Plugin Marker-Navigator: das Pin-Symbol im Shockr-Knopf (oder /st markers) listet deine Kartenmarkierungen; Klick auf eine Zeile zentriert die Karte darauf",
+          "Sektor-HUD zeigt wieder die Ansichtsmitte (nicht mehr deine Reservierungsmarkierung); der Sektor ist die Richtung vom Weltzentrum",
+          "Scanner scannen auf der Weltkarte 100 ms pro Basis (2 s in anderen Ansichten, kein Flackern)",
+          "AutoRepair kann nach einem Angriff auf deine Basis auch Gebäude reparieren (standardmäßig aus: /st config set autorepair.buildings true)",
+          "Tunnel Info: der rote Kreis ist deckend und 3 px breit; Farbe und Breite einstellbar (tunnel.color, tunnel.width)"
+        ],
+        "nl": [
+          "Nieuwe plugin Marker-navigator: het pin-icoon in de Shockr-knop (of /st markers) toont je kaartmarkers; klik op een rij om de kaart erop te centreren",
+          "Sector HUD toont weer het midden van het beeld (niet meer je reserveringsmarker); de sector is de richting vanaf het wereldcentrum",
+          "Scanners scannen op de wereldkaart 100 ms per base (2 s in andere views, geen flikkering)",
+          "AutoRepair kan na een aanval op je base ook gebouwen repareren (standaard uit: /st config set autorepair.buildings true)",
+          "Tunnel Info: de rode cirkel is dekkend en 3 px breed; kleur en breedte instelbaar (tunnel.color, tunnel.width)"
+        ]
+      }
+    },
     {
       "version": "5.29.0",
       "date": "2026-10-23",
@@ -68,21 +95,6 @@
         ],
         "nl": [
           "Sector HUD toont de coördinaat van je eigen reserveringsmarker (📌 116:318), live als je hem verplaatst; zonder marker zoals voorheen het midden van het beeld"
-        ]
-      }
-    },
-    {
-      "version": "5.27.1",
-      "date": "2026-10-20",
-      "changes": {
-        "en": [
-          "Target Watch shows the target level with one decimal, as the game does (L30.9 instead of L30) - in the game and on the website"
-        ],
-        "de": [
-          "Target Watch zeigt das Ziel-Level mit einer Nachkommastelle, wie das Spiel (L30.9 statt L30) - im Spiel und auf der Website"
-        ],
-        "nl": [
-          "Target Watch toont het level van het target met één decimaal, zoals de game (L30.9 in plaats van L30) - in de game en op de website"
         ]
       }
     }

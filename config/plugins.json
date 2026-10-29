@@ -298,9 +298,9 @@
       "nl": "Sector-HUD met kijkcoördinaten en POI's per sector"
     },
     "long": {
-      "en": "A line top left on the world map with the coordinates and sector of the view (e.g. \"450:620 [NE]\"), plus the POIs held per sector: own green, enemy red, free grey. With your own reservation marker on the map it shows that marker instead (\"📌 116:318\"). Left click pastes the coordinates into the chat, right click jumps to coordinates.",
-      "de": "Eine Zeile oben links auf der Weltkarte mit den Koordinaten und dem Sektor der Ansicht (z. B. \"450:620 [NE]\"), plus die gehaltenen POIs pro Sektor: eigene grün, feindliche rot, freie grau. Mit deiner eigenen Reservierungsmarkierung auf der Karte steht stattdessen diese da (\"📌 116:318\"). Linksklick fügt die Koordinaten in den Chat ein, Rechtsklick springt zu Koordinaten.",
-      "nl": "Een regel linksboven op de wereldkaart met de coördinaten en sector van het beeld (bijv. \"450:620 [NE]\"), plus de bezette POI's per sector: eigen groen, vijandelijk rood, vrij grijs. Staat je eigen reserveringsmarker op de kaart, dan toont hij die (\"📌 116:318\"). Linksklik plakt de coördinaten in de chat, rechtsklik springt naar coördinaten."
+      "en": "A line top left on the world map with the coordinates and sector of the view (e.g. \"450:620 [NE]\"), plus the POIs held per sector: own green, enemy red, free grey. Left click pastes the coordinates into the chat, right click jumps to coordinates.",
+      "de": "Eine Zeile oben links auf der Weltkarte mit den Koordinaten und dem Sektor der Ansicht (z. B. \"450:620 [NE]\"), plus die gehaltenen POIs pro Sektor: eigene grün, feindliche rot, freie grau. Linksklick fügt die Koordinaten in den Chat ein, Rechtsklick springt zu Koordinaten.",
+      "nl": "Een regel linksboven op de wereldkaart met de coördinaten en sector van het beeld (bijv. \"450:620 [NE]\"), plus de bezette POI's per sector: eigen groen, vijandelijk rood, vrij grijs. Linksklik plakt de coördinaten in de chat, rechtsklik springt naar coördinaten."
     }
   },
   {
@@ -397,6 +397,22 @@
       "en": "The Target Watch page, in the game: the radar icon in the Shockr button (or /st targets) opens a panel with every target your alliance is looking at right now — level, who watches it and since when. Two or more watchers = orange row. Click a row to centre the map on it. Refreshes every 20 s while open. Needs the alliance server (/st register).",
       "de": "Die Target-Watch-Seite im Spiel: das Radar-Symbol im Shockr-Knopf (oder /st targets) öffnet ein Panel mit jedem Ziel, das deine Allianz gerade ansieht — Level, wer schaut und seit wann. Zwei oder mehr Beobachter = orange Zeile. Klick auf eine Zeile zentriert die Karte darauf. Aktualisiert alle 20 s, solange es offen ist. Braucht den Allianz-Server (/st register).",
       "nl": "De Target Watch-pagina, in de game: het radar-icoon in de Shockr-knop (of /st targets) opent een paneel met elk target waar je alliance nu naar kijkt — level, wie kijkt en sinds wanneer. Twee of meer kijkers = oranje rij. Klik op een rij om de kaart erop te centreren. Ververst elke 20 s zolang het open is. Heeft de alliance-server nodig (/st register)."
+    }
+  },
+  {
+    "name": "MarkerNav",
+    "slug": "marker-nav",
+    "defaultEnabled": true,
+    "replaces": null,
+    "short": {
+      "en": "List of your map markers, click to jump to one",
+      "de": "Liste deiner Kartenmarkierungen, Klick springt hin",
+      "nl": "Lijst van je kaartmarkers, klik om erheen te springen"
+    },
+    "long": {
+      "en": "The pin icon in the Shockr button (or /st markers) opens a panel with every marker you placed on the map (e.g. a Layout reservation): type, text and coordinates. Click a row to centre the map on that marker. The list follows new, moved and deleted markers while the panel is open.",
+      "de": "Das Pin-Symbol im Shockr-Knopf (oder /st markers) öffnet ein Panel mit jeder Markierung, die du auf der Karte gesetzt hast (z. B. eine Layout-Reservierung): Typ, Text und Koordinaten. Klick auf eine Zeile zentriert die Karte auf diese Markierung. Solange das Panel offen ist, folgt die Liste neuen, verschobenen und gelöschten Markierungen.",
+      "nl": "Het pin-icoon in de Shockr-knop (of /st markers) opent een paneel met elke marker die je op de kaart hebt gezet (bijv. een Layout-reservering): type, tekst en coördinaten. Klik op een rij om de kaart op die marker te centreren. Zolang het paneel open is volgt de lijst nieuwe, verplaatste en verwijderde markers."
     }
   }
 ]
