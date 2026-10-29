@@ -7377,6 +7377,16 @@ var ShockrTools = (() => {
   var COLOR_ACTIVE = "#06ff00";
   var COLOR_BLOCKED = "#ff3600";
   var TIR_TAG = /\[tir\]([0-9])\[\/tir\]/;
+  var HEX_COLOR = /^#[0-9a-f]{6}$/i;
+  var DEFAULT_WIDTH = 3;
+  var MAX_WIDTH = 10;
+  function blockedColor(value) {
+    return typeof value === "string" && HEX_COLOR.test(value.trim()) ? value.trim() : COLOR_BLOCKED;
+  }
+  function blockedWidth(value) {
+    const n = Number(value);
+    return n >= 1 ? Math.min(MAX_WIDTH, n) : DEFAULT_WIDTH;
+  }
   function parseInfluenceRange(announcement) {
     const m = typeof announcement === "string" ? announcement.match(TIR_TAG) : null;
     const n = m ? parseInt(m[1], 10) : NaN;
@@ -7388,8 +7398,8 @@ var ShockrTools = (() => {
   function labelText2(level, required) {
     return `T${fmt3(level)} \xB7 \u2265${fmt3(required)}`;
   }
-  function tunnelColor(offense, required) {
-    return offense >= required ? COLOR_ACTIVE : COLOR_BLOCKED;
+  function tunnelColor(offense, required, blocked = COLOR_BLOCKED) {
+    return offense >= required ? COLOR_ACTIVE : blocked;
   }
   function fmt3(n) {
     return Number.isInteger(n) ? String(n) : n.toFixed(1);
@@ -7521,6 +7531,8 @@ var ShockrTools = (() => {
         const influence = readInfluenceRange();
         const diff = readActivationDiff();
         const offense = maxOwnOffense();
+        const blocked = blockedColor(this._cfg("tunnel.color"));
+        const width = blockedWidth(this._cfg("tunnel.width"));
         const keep = /* @__PURE__ */ new Set();
         for (const [key, tunnel] of this.collect()) {
           keep.add(key);
@@ -7530,12 +7542,14 @@ var ShockrTools = (() => {
             this.tunnels.set(key, tn);
           }
           const required = requiredOffense(tunnel.level, diff);
-          const color = tunnelColor(offense, required);
+          const color = tunnelColor(offense, required, blocked);
+          const active = offense >= required;
           tn.range = influence;
           tn.label.textContent = labelText2(tunnel.level, required);
           tn.label.style.color = color;
           tn.label.title = t("tunnelInfoTitle", { level: fmt3(tunnel.level), required: fmt3(required), range: influence });
-          tn.circle.style.borderColor = rgba(color, 0.6);
+          tn.circle.style.borderColor = rgba(color, active ? 0.6 : 1);
+          tn.circle.style.borderWidth = (active ? 2 : width) + "px";
           tn.circle.style.background = rgba(color, 0.05);
           this._place(tn);
         }
@@ -7548,6 +7562,13 @@ var ShockrTools = (() => {
         }
       } catch (e) {
         console.warn("[ST] TunnelInfo: update failed", e);
+      }
+    }
+    _cfg(key) {
+      try {
+        return this.config && typeof this.config.get === "function" ? this.config.get(key) : void 0;
+      } catch {
+        return void 0;
       }
     }
     _reposition() {

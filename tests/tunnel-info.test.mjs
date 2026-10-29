@@ -159,3 +159,47 @@ test('stop() removes everything', async () => {
     p.update();   // after stop: no-op
     assert.equal(parent.children.length, 0);
 });
+
+test('tunnel.color / tunnel.width: validated, defaults #ff3600 and 3', () => {
+    assert.equal(mod.blockedColor('#ffeb00'), '#ffeb00');
+    assert.equal(mod.blockedColor(' #FFEB00 '), '#FFEB00');
+    assert.equal(mod.blockedColor('yellow'), '#ff3600');
+    assert.equal(mod.blockedColor(undefined), '#ff3600');
+    assert.equal(mod.blockedWidth(4), 4);
+    assert.equal(mod.blockedWidth('2'), 2);
+    assert.equal(mod.blockedWidth(0), 3);
+    assert.equal(mod.blockedWidth('x'), 3);
+    assert.equal(mod.blockedWidth(50), 10);
+});
+
+test('red circle opaque in tunnel.color / tunnel.width; green circle unchanged', async () => {
+    const parent = fakeDom();
+    fakeGame({ objects: { '2:2': poi(2, 2, 42), '5:3': poi(5, 3, 45) }, offense: [40], diff: 3 });
+    const cfg = { 'tunnel.color': '#ffeb00', 'tunnel.width': 4 };
+    const p = new mod.TunnelInfo({ get: (k) => cfg[k] });
+    await p.start();
+    try {
+        const [green, red] = ['2:2', '5:3'].map(k => p.tunnels.get(k).circle.style);
+        assert.equal(green.borderColor, 'rgba(6,255,0,0.6)');
+        assert.equal(green.borderWidth, '2px');
+        assert.equal(red.borderColor, 'rgba(255,235,0,1)');
+        assert.equal(red.borderWidth, '4px');
+        assert.equal(p.tunnels.get('5:3').label.style.color, '#ffeb00');
+    } finally {
+        p.stop();
+    }
+});
+
+test('defaults without config: red circle opaque #ff3600, 3px', async () => {
+    fakeDom();
+    fakeGame({ objects: { '5:3': poi(5, 3, 45) }, offense: [40], diff: 3 });
+    const p = new mod.TunnelInfo({});
+    await p.start();
+    try {
+        const s = p.tunnels.get('5:3').circle.style;
+        assert.equal(s.borderColor, 'rgba(255,54,0,1)');
+        assert.equal(s.borderWidth, '3px');
+    } finally {
+        p.stop();
+    }
+});

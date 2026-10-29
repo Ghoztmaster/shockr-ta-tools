@@ -27,6 +27,12 @@
  *
  * Only while the world map is shown; scroll/zoom repositions, sector changes
  * rescan, plus a 2 s interval (view mode, newly loaded sectors).
+ *
+ * Circle style: the red ("not reachable") circle was barely visible on land at
+ * 60% opacity / 2px, so it is drawn opaque in `tunnel.color` (default #ff3600)
+ * and `tunnel.width` px (default 3; CSS dashes grow with the width). The green
+ * circle stays as it was. At normal zoom only part of a circle's edge is in
+ * view, which reads as a dashed line between tunnel exits.
  */
 import { t } from '../lib/i18n.js';
 import {
@@ -39,6 +45,20 @@ const DEFAULT_INFLUENCE_RANGE = 6;
 const COLOR_ACTIVE = '#06ff00';
 const COLOR_BLOCKED = '#ff3600';
 const TIR_TAG = /\[tir\]([0-9])\[\/tir\]/;
+const HEX_COLOR = /^#[0-9a-f]{6}$/i;
+const DEFAULT_WIDTH = 3;
+const MAX_WIDTH = 10;
+
+/** `tunnel.color`: a #rrggbb colour, else the default red. */
+export function blockedColor(value) {
+    return typeof value === 'string' && HEX_COLOR.test(value.trim()) ? value.trim() : COLOR_BLOCKED;
+}
+
+/** `tunnel.width`: 1..10 px, else 3. */
+export function blockedWidth(value) {
+    const n = Number(value);
+    return n >= 1 ? Math.min(MAX_WIDTH, n) : DEFAULT_WIDTH;
+}
 
 /** Influence range from the alliance announcement's [tir]N[/tir] tag, else 6. */
 export function parseInfluenceRange(announcement) {
@@ -58,8 +78,8 @@ export function labelText(level, required) {
 }
 
 /** Tunnel colour: green when the offense reaches the required level. */
-export function tunnelColor(offense, required) {
-    return offense >= required ? COLOR_ACTIVE : COLOR_BLOCKED;
+export function tunnelColor(offense, required, blocked = COLOR_BLOCKED) {
+    return offense >= required ? COLOR_ACTIVE : blocked;
 }
 
 function fmt(n) {
@@ -201,6 +221,8 @@ export class TunnelInfo {
             const influence = readInfluenceRange();
             const diff = readActivationDiff();
             const offense = maxOwnOffense();
+            const blocked = blockedColor(this._cfg('tunnel.color'));
+            const width = blockedWidth(this._cfg('tunnel.width'));
             const keep = new Set();
             for (const [key, tunnel] of this.collect()) {
                 keep.add(key);
@@ -210,12 +232,14 @@ export class TunnelInfo {
                     this.tunnels.set(key, tn);
                 }
                 const required = requiredOffense(tunnel.level, diff);
-                const color = tunnelColor(offense, required);
+                const color = tunnelColor(offense, required, blocked);
+                const active = offense >= required;
                 tn.range = influence;
                 tn.label.textContent = labelText(tunnel.level, required);
                 tn.label.style.color = color;
                 tn.label.title = t('tunnelInfoTitle', { level: fmt(tunnel.level), required: fmt(required), range: influence });
-                tn.circle.style.borderColor = rgba(color, 0.6);
+                tn.circle.style.borderColor = rgba(color, active ? 0.6 : 1);
+                tn.circle.style.borderWidth = (active ? 2 : width) + 'px';
                 tn.circle.style.background = rgba(color, 0.05);
                 this._place(tn);
             }
@@ -228,6 +252,14 @@ export class TunnelInfo {
             }
         } catch (e) {
             console.warn('[ST] TunnelInfo: update failed', e);
+        }
+    }
+
+    _cfg(key) {
+        try {
+            return this.config && typeof this.config.get === 'function' ? this.config.get(key) : undefined;
+        } catch {
+            return undefined;
         }
     }
 
