@@ -3,7 +3,7 @@
 // Free software under the GNU General Public License v3 or later; see LICENSE. No warranty.
 /**
  * tunnel-poi-analyzer.js — Tunnel & POI Analyzer: per tunnel exit who helps
- * activate it and who blocks it; per own POI whether it is worth anything and
+ * activate it and which low bases are a spawn risk; per own POI whether it is worth anything and
  * which bases near it could move. A panel in the Shockr toolbar (Target Watch /
  * Marker Nav style), `/st tunnels`. Click on a row centres the map.
  *
@@ -11,16 +11,16 @@
  *   - A tunnel exit is active when ≥ `tpa.players` (5) different alliance
  *     players each have a base within `tpa.range` (5) fields of the exit
  *     (Euclidean, as Tunnel Info's circle).
- *   - Potential blocker: an alliance base in that zone whose BASE level is
- *     more than `tpa.blockmargin` (5) below the tunnel's required offense
+ *   - Spawn risk: an alliance base in that zone whose BASE level is
+ *     more than `tpa.spawnmargin` (5) below the tunnel's required offense
  *     level (Tunnel Info's level − POIActivationLevelDifference): required 30
  *     -> below 25. Low bases spawn low camps that fill the zone. (Without the
- *     margin almost every base was a blocker, seen live 2026-10-29.) Base level, not offense: another player's offense level is not
- *     readable client-side. A blocker still counts as a player (the rule above).
+ *     margin almost every base was a spawn risk, seen live 2026-10-29.) Base level, not offense: another player's offense level is not
+ *     readable client-side. A spawn-risk base still counts as a player (the rule above).
  *   - POI: the own alliance's REAL loss of that POI (PoiAnalyser's
  *     calculation, lib/poi-util.js). 0 = worthless: the bases within
  *     `tpa.guardrange` (5) fields can move. > 0 = keep. A guard that is also a
- *     tunnel blocker is flagged.
+ *     tunnel spawn risk is flagged.
  *
  * Data (ClientLib, read only while the panel is open, every 3 s; checked live
  * 2026-10-29 with docs/probes/tunnel-poi-probe.js):
@@ -55,7 +55,7 @@ const TOOLBAR_ID = 'tunnelpoi';
 const REFRESH_INTERVAL_MS = 3000;
 const PANEL_WIDTH = 620;
 const DEFAULT_POSITION = { x: 150, y: 110 };
-export const DEFAULTS = { players: 5, range: 5, guardRange: 5, blockMargin: 5 };
+export const DEFAULTS = { players: 5, range: 5, guardRange: 5, spawnMargin: 5 };
 const STATUS_COLORS = { active: '#66bb6a', inactive: '#ef5350', worthless: '#ffa726', valuable: '#66bb6a', unknown: '#999' };
 
 /** Integer config value in [min, max], else `def`. */
@@ -75,16 +75,16 @@ const byName = (a, b) => String(a).localeCompare(String(b));
 
 /**
  * One tunnel exit against the alliance bases [{x, y, playerId, name, level}].
- * @returns {{count, players: string[], needed, active, blockers: object[]}}
+ * @returns {{count, players: string[], needed, active, spawnRisks: object[]}}
  */
-export function analyzeTunnel(tunnel, bases, { players = DEFAULTS.players, range = DEFAULTS.range, required, margin = DEFAULTS.blockMargin }) {
+export function analyzeTunnel(tunnel, bases, { players = DEFAULTS.players, range = DEFAULTS.range, required, margin = DEFAULTS.spawnMargin }) {
     const threshold = required - margin;
     const names = new Map();
-    const blockers = [];
+    const spawnRisks = [];
     for (const b of bases) {
         if (!inRange(b, tunnel, range)) continue;
         if (!names.has(b.playerId)) names.set(b.playerId, b.name);
-        if (Number.isFinite(b.level) && Number.isFinite(threshold) && b.level < threshold) blockers.push(b);
+        if (Number.isFinite(b.level) && Number.isFinite(threshold) && b.level < threshold) spawnRisks.push(b);
     }
     const list = [...names.values()].sort(byName);
     return {
@@ -93,7 +93,7 @@ export function analyzeTunnel(tunnel, bases, { players = DEFAULTS.players, range
         needed: Math.max(0, players - list.length),
         threshold,
         active: list.length >= players,
-        blockers: blockers.sort((a, b) => a.level - b.level),
+        spawnRisks: spawnRisks.sort((a, b) => a.level - b.level),
     };
 }
 
@@ -103,11 +103,11 @@ export function poiStatus(loss) {
     return Math.round(loss * 10) / 10 <= 0 ? 'worthless' : 'valuable';
 }
 
-/** Alliance bases within `range` of the POI, each with `blocksTunnel`. */
-export function poiGuards(poi, bases, range, blockerKeys) {
+/** Alliance bases within `range` of the POI, each with `spawnRisk` (a tunnel spawn risk). */
+export function poiGuards(poi, bases, range, spawnRiskKeys) {
     return bases
         .filter(b => inRange(b, poi, range))
-        .map(b => ({ ...b, blocksTunnel: blockerKeys.has(baseKey(b)) }))
+        .map(b => ({ ...b, spawnRisk: spawnRiskKeys.has(baseKey(b)) }))
         .sort((a, b) => byName(a.name, b.name));
 }
 
@@ -122,18 +122,18 @@ export function poiTypeFromOwned(t) {
  */
 export function buildRows({ tunnels, pois, bases, opts, diff, inView }) {
     const rows = [];
-    const blockerKeys = new Set();
+    const spawnRiskKeys = new Set();
     for (const tn of tunnels) {
         const required = requiredOffense(tn.level, diff);
-        const a = analyzeTunnel(tn, bases, { players: opts.players, range: opts.range, required, margin: opts.blockMargin });
-        for (const b of a.blockers) blockerKeys.add(baseKey(b));
+        const a = analyzeTunnel(tn, bases, { players: opts.players, range: opts.range, required, margin: opts.spawnMargin });
+        for (const b of a.spawnRisks) spawnRiskKeys.add(baseKey(b));
         rows.push({ kind: 'tunnel', x: tn.x, y: tn.y, level: tn.level, required, ...a,
             status: a.active ? 'active' : 'inactive', stale: !inView(tn.x, tn.y), seen: tn.seen });
     }
     for (const p of pois) {
         const status = poiStatus(p.loss);
         rows.push({ kind: 'poi', x: p.x, y: p.y, level: p.level, key: p.key, loss: p.loss, status,
-            guards: poiGuards(p, bases, opts.guardRange, blockerKeys), stale: !inView(p.x, p.y), seen: p.seen });
+            guards: poiGuards(p, bases, opts.guardRange, spawnRiskKeys), stale: !inView(p.x, p.y), seen: p.seen });
     }
     const tunnelOrder = (r) => (r.active ? 1 : 0);
     const poiOrder = { worthless: 0, unknown: 1, valuable: 2 };
@@ -157,7 +157,7 @@ export function rowTexts(r, opts) {
     if (r.kind === 'tunnel') {
         const advice = [];
         if (r.needed > 0) advice.push(t('tpaAdviceNeed', { n: r.needed, range: opts.range }));
-        if (r.blockers.length) advice.push(t('tpaAdviceBlockers', { threshold: fmtLevel(r.threshold), list: r.blockers.map(baseText).join(', ') }));
+        if (r.spawnRisks.length) advice.push(t('tpaAdviceSpawnRisk', { threshold: fmtLevel(r.threshold), list: r.spawnRisks.map(baseText).join(', ') }));
         if (!advice.length) advice.push(t('tpaAdviceActive'));
         return {
             name: t('tpaTunnelName', { level: fmtLevel(r.level) }),
@@ -170,21 +170,21 @@ export function rowTexts(r, opts) {
     let advice;
     if (r.status === 'worthless') {
         advice = r.guards.length
-            ? t('tpaAdviceMovable', { list: r.guards.map(g => g.name + (g.blocksTunnel ? ` ${t('tpaAlsoBlocks')}` : '')).join(', ') })
+            ? t('tpaAdviceMovable', { list: r.guards.map(g => g.name + (g.spawnRisk ? ` ${t('tpaAlsoSpawnRisk')}` : '')).join(', ') })
             : t('tpaAdviceNoGuards', { range: opts.guardRange });
     } else if (r.status === 'valuable') {
         advice = t('tpaAdviceKeep');
     } else {
         advice = t('tpaAdviceUnknown');
     }
-    const blocking = r.guards.filter(g => g.blocksTunnel);
+    const risky = r.guards.filter(g => g.spawnRisk);
     return {
         name: `${t(`poiShort_${r.key}`)} ${Math.floor(r.level)}`,
         status: r.status === 'unknown' ? t('tpaStatusUnknown') : `${t(r.status === 'worthless' ? 'tpaStatusWorthless' : 'tpaStatusValuable')} · ${fmtBonus(r.key, r.loss)}`,
         count: '',
-        players: [...new Set(r.guards.map(g => g.name + (g.blocksTunnel ? ' ⚠' : '')))],
-        advice: blocking.length && r.status !== 'worthless'
-            ? [advice, t('tpaGuardBlocks', { list: blocking.map(baseText).join(', ') })]
+        players: [...new Set(r.guards.map(g => g.name + (g.spawnRisk ? ' ⚠' : '')))],
+        advice: risky.length && r.status !== 'worthless'
+            ? [advice, t('tpaGuardSpawnRisk', { list: risky.map(baseText).join(', ') })]
             : [advice],
     };
 }
@@ -311,7 +311,7 @@ export class TunnelPoiAnalyzer {
             players: cfgInt(get('tpa.players'), DEFAULTS.players, 1, 50),
             range: cfgInt(get('tpa.range'), DEFAULTS.range, 1, 30),
             guardRange: cfgInt(get('tpa.guardrange'), DEFAULTS.guardRange, 1, 30),
-            blockMargin: cfgInt(get('tpa.blockmargin'), DEFAULTS.blockMargin, 0, 50),
+            spawnMargin: cfgInt(get('tpa.spawnmargin'), DEFAULTS.spawnMargin, 0, 50),
         };
     }
 
@@ -370,7 +370,7 @@ export class TunnelPoiAnalyzer {
         if (Number(vis.get_AllianceId()) !== ownId) return null;
         const playerId = Number(vis.get_PlayerId());
         let level = NaN;
-        try { level = Number(vis.get_BaseLevel()); } catch { /* unknown: never a blocker */ }
+        try { level = Number(vis.get_BaseLevel()); } catch { /* unknown: never a spawn risk */ }
         let name = '';
         try { name = String(vis.get_PlayerName() || ''); } catch { /* member data */ }
         const member = members[playerId];

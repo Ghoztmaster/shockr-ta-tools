@@ -532,12 +532,12 @@ h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25r
       <p>Tampermonkey werkt het script zelf bij. Werk nooit bij via <em>Importeren</em>.</p>
       <h3>v5.31.0 <span class="version-tag">— 29-10-2026</span></h3>
       <ul class="features">
-        <li><strong>Tunnel &amp; POI Analyzer</strong> (nieuw): het tunnel-icoon in de Shockr-knop (of <code>/st tunnels</code>) toont per tunnel exit hoeveel alliance-spelers een base binnen 5 velden hebben (5 nodig = actief), wie dat zijn en hoeveel er nog missen. Lage bases in de zone (base level meer dan 5 onder het vereiste tunnellevel) staan erbij als mogelijke blokkeerder. Alliance-POI's met een <em>real loss</em> van 0/h zijn waardeloos: de bases ernaast kunnen verhuizen. Klik op een rij om de kaart te centreren.</li>
+        <li><strong>Tunnel &amp; POI Analyzer</strong> (nieuw): het tunnel-icoon in de Shockr-knop (of <code>/st tunnels</code>) toont per tunnel exit hoeveel alliance-spelers een base binnen 5 velden hebben (5 nodig = actief), wie dat zijn en hoeveel er nog missen. Lage bases in de zone (base level meer dan 5 onder het vereiste tunnellevel) staan erbij als <em>spawn-risico</em>: daardoor spawnen er lage camps in de zone. Alliance-POI's met een <em>real loss</em> van 0/h zijn waardeloos: de bases ernaast kunnen verhuizen. Klik op een rij om de kaart te centreren.</li>
       </ul>
       <code class="cmd">/st config set tpa.players 5</code>
       <code class="cmd">/st config set tpa.range 5</code>
       <code class="cmd">/st config set tpa.guardrange 5</code>
-      <code class="cmd">/st config set tpa.blockmargin 5</code>
+      <code class="cmd">/st config set tpa.spawnmargin 5</code>
       <h3>v5.30.0 <span class="version-tag">— 29-10-2026</span></h3>
       <ul class="features">
         <li><strong>Marker-navigator</strong> (nieuw): het pin-icoon in de Shockr-knop (of <code>/st markers</code>) toont je kaartmarkers, zoals een Layout-reservering. Klik op een rij om de kaart erop te centreren.</li>
@@ -560,12 +560,12 @@ h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25r
       <p>Tampermonkey aktualisiert das Script selbst. Nie über <em>Importieren</em> aktualisieren.</p>
       <h3>v5.31.0 <span class="version-tag">— 29.10.2026</span></h3>
       <ul class="features">
-        <li><strong>Tunnel- &amp; POI-Analyse</strong> (neu): das Tunnel-Symbol im Shockr-Knopf (oder <code>/st tunnels</code>) zeigt pro Tunnelausgang, wie viele Allianzspieler eine Basis innerhalb von 5 Feldern haben (5 nötig = aktiv), wer das ist und wie viele noch fehlen. Niedrige Basen in der Zone (Basislevel mehr als 5 unter dem nötigen Tunnellevel) stehen als mögliche Blockierer dabei. Allianz-POIs mit einem <em>realen Verlust</em> von 0/h sind wertlos: die Basen daneben können umziehen. Klick auf eine Zeile zentriert die Karte.</li>
+        <li><strong>Tunnel- &amp; POI-Analyse</strong> (neu): das Tunnel-Symbol im Shockr-Knopf (oder <code>/st tunnels</code>) zeigt pro Tunnelausgang, wie viele Allianzspieler eine Basis innerhalb von 5 Feldern haben (5 nötig = aktiv), wer das ist und wie viele noch fehlen. Niedrige Basen in der Zone (Basislevel mehr als 5 unter dem nötigen Tunnellevel) stehen als <em>Spawn-Risiko</em> dabei: durch sie spawnen niedrige Camps in der Zone. Allianz-POIs mit einem <em>realen Verlust</em> von 0/h sind wertlos: die Basen daneben können umziehen. Klick auf eine Zeile zentriert die Karte.</li>
       </ul>
       <code class="cmd">/st config set tpa.players 5</code>
       <code class="cmd">/st config set tpa.range 5</code>
       <code class="cmd">/st config set tpa.guardrange 5</code>
-      <code class="cmd">/st config set tpa.blockmargin 5</code>
+      <code class="cmd">/st config set tpa.spawnmargin 5</code>
       <h3>v5.30.0 <span class="version-tag">— 29.10.2026</span></h3>
       <ul class="features">
         <li><strong>Marker-Navigator</strong> (neu): das Pin-Symbol im Shockr-Knopf (oder <code>/st markers</code>) listet deine Kartenmarkierungen, z. B. eine Layout-Reservierung. Klick auf eine Zeile zentriert die Karte darauf.</li>
@@ -588,12 +588,12 @@ h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25r
       <p>Tampermonkey updates the script by itself. Never update via <em>Import</em>.</p>
       <h3>v5.31.0 <span class="version-tag">— 2026-10-29</span></h3>
       <ul class="features">
-        <li><strong>Tunnel &amp; POI Analyzer</strong> (new): the tunnel icon in the Shockr button (or <code>/st tunnels</code>) shows per tunnel exit how many alliance players have a base within 5 fields (5 needed = active), who they are and how many are still missing. Low bases in the zone (base level more than 5 below the tunnel's required level) are listed as possible blockers. Alliance POIs with a <em>real loss</em> of 0/h are worthless: the bases next to them can move. Click a row to centre the map.</li>
+        <li><strong>Tunnel &amp; POI Analyzer</strong> (new): the tunnel icon in the Shockr button (or <code>/st tunnels</code>) shows per tunnel exit how many alliance players have a base within 5 fields (5 needed = active), who they are and how many are still missing. Low bases in the zone (base level more than 5 below the tunnel's required level) are listed as a <em>spawn risk</em>: they make low camps spawn in the zone. Alliance POIs with a <em>real loss</em> of 0/h are worthless: the bases next to them can move. Click a row to centre the map.</li>
       </ul>
       <code class="cmd">/st config set tpa.players 5</code>
       <code class="cmd">/st config set tpa.range 5</code>
       <code class="cmd">/st config set tpa.guardrange 5</code>
-      <code class="cmd">/st config set tpa.blockmargin 5</code>
+      <code class="cmd">/st config set tpa.spawnmargin 5</code>
       <h3>v5.30.0 <span class="version-tag">— 2026-10-29</span></h3>
       <ul class="features">
         <li><strong>Marker Navigator</strong> (new): the pin icon in the Shockr button (or <code>/st markers</code>) lists your map markers, such as a Layout reservation. Click a row to centre the map on it.</li>

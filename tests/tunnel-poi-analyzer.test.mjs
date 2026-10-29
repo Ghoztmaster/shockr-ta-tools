@@ -1,4 +1,4 @@
-// TunnelPoiAnalyzer (plugins/tunnel-poi-analyzer.js): tunnel activation, blockers, worthless POIs.
+// TunnelPoiAnalyzer (plugins/tunnel-poi-analyzer.js): tunnel activation, spawn risk, worthless POIs.
 // Run: npm test
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -42,15 +42,15 @@ test('analyzeTunnel: active at 5 different players, two bases of one player coun
     assert.equal(a.active, true);
 });
 
-test('analyzeTunnel: blocker = more than blockmargin (default 5) below the required level; unknown level is not', () => {
+test('analyzeTunnel: spawn risk = more than spawnmargin (default 5) below the required level; unknown level is not', () => {
     const tn = { x: 0, y: 0 };
     const bases = [base(1, 1, 0, 25), base(2, 0, 1, 12), base(3, 2, 2, 40), base(4, 1, 1, NaN), base(5, 30, 0, 5), base(6, 2, 0, 24.9)];
     let a = mod.analyzeTunnel(tn, bases, { players: 5, range: 5, required: 30 });
     assert.equal(a.threshold, 25);
-    assert.deepEqual(a.blockers.map(b => b.playerId), [2, 6]);   // 25 itself is not below 25
-    assert.equal(a.count, 5);   // blockers still count as players
+    assert.deepEqual(a.spawnRisks.map(b => b.playerId), [2, 6]);   // 25 itself is not below 25
+    assert.equal(a.count, 5);   // spawn-risk bases still count as players
     a = mod.analyzeTunnel(tn, bases, { players: 5, range: 5, required: 30, margin: 0 });
-    assert.deepEqual(a.blockers.map(b => b.playerId), [2, 6, 1]);
+    assert.deepEqual(a.spawnRisks.map(b => b.playerId), [2, 6, 1]);
 });
 
 test('poiStatus: 0 (rounded) is worthless, > 0 valuable, missing unknown', () => {
@@ -76,10 +76,10 @@ test('cfgInt: in range or the default', () => {
     assert.equal(mod.cfgInt(0, 5, 1, 50), 5);
 });
 
-test('buildRows: a POI guard that blocks a tunnel is flagged; tunnels first, inactive first, worthless POIs first', () => {
+test('buildRows: a POI guard that is a tunnel spawn risk is flagged; tunnels first, inactive first, worthless POIs first', () => {
     const tunnels = [{ x: 10, y: 10, level: 40 }, { x: 50, y: 50, level: 30 }];
     const bases = [
-        base(1, 11, 10, 20, 'Low'),                                          // blocker of tunnel 1 (req 40 - 2 = 38)
+        base(1, 11, 10, 20, 'Low'),                                          // spawn risk of tunnel 1 (req 40 - 2 = 38)
         ...[2, 3, 4, 5, 6].map(id => base(id, 50 + (id % 3), 50, 45)),      // tunnel 2 active
     ];
     const pois = [
@@ -91,11 +91,11 @@ test('buildRows: a POI guard that blocks a tunnel is flagged; tunnels first, ina
     assert.deepEqual(rows.map(r => `${r.kind}:${r.x}`), ['tunnel:10', 'tunnel:50', 'poi:12', 'poi:90', 'poi:60']);
     assert.equal(rows[0].status, 'inactive');
     assert.equal(rows[0].required, 38);
-    assert.deepEqual(rows[0].blockers.map(b => b.name), ['Low']);
+    assert.deepEqual(rows[0].spawnRisks.map(b => b.name), ['Low']);
     assert.equal(rows[1].status, 'active');
     const worthless = rows[2];
     assert.equal(worthless.status, 'worthless');
-    assert.deepEqual(worthless.guards.map(g => [g.name, g.blocksTunnel]), [['Low', true]]);
+    assert.deepEqual(worthless.guards.map(g => [g.name, g.spawnRisk]), [['Low', true]]);
     assert.equal(rows[3].stale, true);
     assert.equal(rows[4].status, 'valuable');
 });
@@ -228,12 +228,12 @@ test('panel: scans the map, tunnel active with names, low base flagged, worthles
         assert.equal(tunnel.active, true);
         assert.equal(tunnel.required, 28);
         assert.deepEqual(tunnel.players, ['Alpha', 'Lowbie', 'map2', 'map3', 'map5']);
-        assert.deepEqual(tunnel.blockers.map(b => b.name), ['Lowbie']);
+        assert.deepEqual(tunnel.spawnRisks.map(b => b.name), ['Lowbie']);
 
         const pois = p._rows.filter(r => r.kind === 'poi');
         assert.deepEqual(pois.map(r => [r.x, r.status]), [[13, 'worthless'], [200, 'worthless'], [15, 'valuable']]);
         assert.equal(pois[1].stale, true);   // off-screen own POI from get_OwnedPOIs
-        assert.deepEqual(pois[0].guards.map(g => [g.name, g.blocksTunnel]),
+        assert.deepEqual(pois[0].guards.map(g => [g.name, g.spawnRisk]),
             [['Alpha', false], ['Lowbie', true], ['map2', false], ['map3', false]]);
         assert.match(p._content.innerHTML, /Lowbie/);
 
@@ -243,6 +243,15 @@ test('panel: scans the map, tunnel active with names, low base flagged, worthles
         const t2 = p._rows.find(r => r.kind === 'tunnel');
         assert.equal(t2.active, false);
         assert.equal(t2.needed, 1);
+
+        // tpa.spawnmargin: margin 0 -> spawn risk below 28 (35 is not); default 5 -> below 23
+        store['tpa.players'] = 5;
+        store['tpa.spawnmargin'] = 0;
+        p._refresh();
+        assert.equal(p._rows.find(r => r.kind === 'tunnel').threshold, 28);
+        store['tpa.spawnmargin'] = 'x';
+        p._refresh();
+        assert.equal(p._rows.find(r => r.kind === 'tunnel').threshold, 23);
     } finally {
         p.close();
     }
