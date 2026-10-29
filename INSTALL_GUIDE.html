@@ -182,6 +182,10 @@ p { margin-bottom: 0.75rem; }
 .trouble[open] summary::before { transform: rotate(90deg); }
 .trouble .trouble-body { padding: 0 1rem 1rem; font-size: 0.9rem; }
 
+h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25rem 0 0.5rem; }
+.features { padding-left: 1.2rem; margin-bottom: 0.75rem; }
+.features li { margin-bottom: 0.6rem; }
+.version-tag { color: var(--text-dim); font-size: 0.85rem; font-weight: 400; }
 .footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); text-align: center; color: var(--text-dim); font-size: 0.8rem; }
 .footer a { color: var(--accent); text-decoration: none; }
 
@@ -514,6 +518,96 @@ p { margin-bottom: 0.75rem; }
       <div class="callout callout-info">
         <span class="callout-icon">🔌</span>
         <div><strong>Toggle plugins on/off:</strong> click the shield icon (🛡️⚡) in the top-left → you'll see buttons for each plugin. Or type <code>/st status</code> in the game chat to see what's active.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== WHAT'S NEW (5.30.0 / 5.31.0) ==================== -->
+  <div class="section">
+    <div class="section-label"><span class="num">6</span> Nieuw · Neu · New</div>
+
+    <!-- NL -->
+    <div data-lang="nl">
+      <h2>Nieuw in v5.30 en v5.31</h2>
+      <p>Tampermonkey werkt het script zelf bij. Werk nooit bij via <em>Importeren</em>.</p>
+      <h3>v5.31.0 <span class="version-tag">— 29-10-2026</span></h3>
+      <ul class="features">
+        <li><strong>Tunnel &amp; POI Analyzer</strong> (nieuw): het tunnel-icoon in de Shockr-knop (of <code>/st tunnels</code>) toont per tunnel exit hoeveel alliance-spelers een base binnen 5 velden hebben (5 nodig = actief), wie dat zijn en hoeveel er nog missen. Lage bases in de zone (base level meer dan 5 onder het vereiste tunnellevel) staan erbij als mogelijke blokkeerder. Alliance-POI's met een <em>real loss</em> van 0/h zijn waardeloos: de bases ernaast kunnen verhuizen. Klik op een rij om de kaart te centreren.</li>
+      </ul>
+      <code class="cmd">/st config set tpa.players 5</code>
+      <code class="cmd">/st config set tpa.range 5</code>
+      <code class="cmd">/st config set tpa.guardrange 5</code>
+      <code class="cmd">/st config set tpa.blockmargin 5</code>
+      <h3>v5.30.0 <span class="version-tag">— 29-10-2026</span></h3>
+      <ul class="features">
+        <li><strong>Marker-navigator</strong> (nieuw): het pin-icoon in de Shockr-knop (of <code>/st markers</code>) toont je kaartmarkers, zoals een Layout-reservering. Klik op een rij om de kaart erop te centreren.</li>
+        <li><strong>Sector HUD</strong>: toont weer het midden van het beeld (niet meer je reserveringsmarker). De sector is de richting vanaf het wereldcentrum.</li>
+        <li><strong>Snelle scanners</strong>: LayoutScanner en AllianceScanner scannen op de wereldkaart 100 ms per base (2 s in andere views, zonder flikkering).</li>
+        <li><strong>AutoRepair</strong>: kan na een aanval op je base ook gebouwen repareren (standaard uit).</li>
+        <li><strong>Tunnel Info</strong>: de rode cirkel is dekkend en 3 px breed; kleur en breedte zijn instelbaar.</li>
+      </ul>
+      <code class="cmd">/st config set autorepair.buildings true</code>
+      <code class="cmd">/st config set tunnel.color #ff3600</code>
+      <code class="cmd">/st config set tunnel.width 3</code>
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div>Alle commando's en instellingen staan ook in het spel: typ <code>/st help</code>.</div>
+      </div>
+    </div>
+    <!-- DE -->
+    <div data-lang="de">
+      <h2>Neu in v5.30 und v5.31</h2>
+      <p>Tampermonkey aktualisiert das Script selbst. Nie über <em>Importieren</em> aktualisieren.</p>
+      <h3>v5.31.0 <span class="version-tag">— 29.10.2026</span></h3>
+      <ul class="features">
+        <li><strong>Tunnel- &amp; POI-Analyse</strong> (neu): das Tunnel-Symbol im Shockr-Knopf (oder <code>/st tunnels</code>) zeigt pro Tunnelausgang, wie viele Allianzspieler eine Basis innerhalb von 5 Feldern haben (5 nötig = aktiv), wer das ist und wie viele noch fehlen. Niedrige Basen in der Zone (Basislevel mehr als 5 unter dem nötigen Tunnellevel) stehen als mögliche Blockierer dabei. Allianz-POIs mit einem <em>realen Verlust</em> von 0/h sind wertlos: die Basen daneben können umziehen. Klick auf eine Zeile zentriert die Karte.</li>
+      </ul>
+      <code class="cmd">/st config set tpa.players 5</code>
+      <code class="cmd">/st config set tpa.range 5</code>
+      <code class="cmd">/st config set tpa.guardrange 5</code>
+      <code class="cmd">/st config set tpa.blockmargin 5</code>
+      <h3>v5.30.0 <span class="version-tag">— 29.10.2026</span></h3>
+      <ul class="features">
+        <li><strong>Marker-Navigator</strong> (neu): das Pin-Symbol im Shockr-Knopf (oder <code>/st markers</code>) listet deine Kartenmarkierungen, z. B. eine Layout-Reservierung. Klick auf eine Zeile zentriert die Karte darauf.</li>
+        <li><strong>Sektor-HUD</strong>: zeigt wieder die Ansichtsmitte (nicht mehr deine Reservierungsmarkierung). Der Sektor ist die Richtung vom Weltzentrum.</li>
+        <li><strong>Schnelle Scanner</strong>: LayoutScanner und AllianceScanner scannen auf der Weltkarte 100 ms pro Basis (2 s in anderen Ansichten, ohne Flackern).</li>
+        <li><strong>AutoRepair</strong>: kann nach einem Angriff auf deine Basis auch Gebäude reparieren (standardmäßig aus).</li>
+        <li><strong>Tunnel Info</strong>: der rote Kreis ist deckend und 3 px breit; Farbe und Breite sind einstellbar.</li>
+      </ul>
+      <code class="cmd">/st config set autorepair.buildings true</code>
+      <code class="cmd">/st config set tunnel.color #ff3600</code>
+      <code class="cmd">/st config set tunnel.width 3</code>
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div>Alle Befehle und Einstellungen stehen auch im Spiel: tippe <code>/st help</code>.</div>
+      </div>
+    </div>
+    <!-- EN -->
+    <div data-lang="en">
+      <h2>New in v5.30 and v5.31</h2>
+      <p>Tampermonkey updates the script by itself. Never update via <em>Import</em>.</p>
+      <h3>v5.31.0 <span class="version-tag">— 2026-10-29</span></h3>
+      <ul class="features">
+        <li><strong>Tunnel &amp; POI Analyzer</strong> (new): the tunnel icon in the Shockr button (or <code>/st tunnels</code>) shows per tunnel exit how many alliance players have a base within 5 fields (5 needed = active), who they are and how many are still missing. Low bases in the zone (base level more than 5 below the tunnel's required level) are listed as possible blockers. Alliance POIs with a <em>real loss</em> of 0/h are worthless: the bases next to them can move. Click a row to centre the map.</li>
+      </ul>
+      <code class="cmd">/st config set tpa.players 5</code>
+      <code class="cmd">/st config set tpa.range 5</code>
+      <code class="cmd">/st config set tpa.guardrange 5</code>
+      <code class="cmd">/st config set tpa.blockmargin 5</code>
+      <h3>v5.30.0 <span class="version-tag">— 2026-10-29</span></h3>
+      <ul class="features">
+        <li><strong>Marker Navigator</strong> (new): the pin icon in the Shockr button (or <code>/st markers</code>) lists your map markers, such as a Layout reservation. Click a row to centre the map on it.</li>
+        <li><strong>Sector HUD</strong>: shows the view centre again (no longer your reservation marker). The sector is the direction from the world centre.</li>
+        <li><strong>Fast scanners</strong>: LayoutScanner and AllianceScanner scan 100 ms per base on the world map (2 s in other views, no flicker).</li>
+        <li><strong>AutoRepair</strong>: can also repair buildings after an attack on your base (off by default).</li>
+        <li><strong>Tunnel Info</strong>: the red circle is opaque and 3 px wide; colour and width are configurable.</li>
+      </ul>
+      <code class="cmd">/st config set autorepair.buildings true</code>
+      <code class="cmd">/st config set tunnel.color #ff3600</code>
+      <code class="cmd">/st config set tunnel.width 3</code>
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div>All commands and settings are also in the game: type <code>/st help</code>.</div>
       </div>
     </div>
   </div>

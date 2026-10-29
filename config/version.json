@@ -1,7 +1,28 @@
 {
-  "version": "5.30.0",
+  "version": "5.31.0",
   "date": "2026-10-29",
   "changelog": [
+    {
+      "version": "5.31.0",
+      "date": "2026-10-29",
+      "changes": {
+        "en": [
+          "New plugin Tunnel & POI Analyzer: the tunnel icon in the Shockr button (or /st tunnels) shows per tunnel exit who activates it (5 players within 5 fields), how many are missing and which low bases may block it",
+          "Same panel: alliance POIs with their real loss; 0/h = worthless, the bases next to it can move (flagged when they also block a tunnel). Click a row to centre the map",
+          "Fix Base Info: the base numbers per player no longer mix up the bases of different players"
+        ],
+        "de": [
+          "Neues Plugin Tunnel- & POI-Analyse: das Tunnel-Symbol im Shockr-Knopf (oder /st tunnels) zeigt pro Tunnelausgang, wer ihn aktiviert (5 Spieler innerhalb von 5 Feldern), wie viele fehlen und welche niedrigen Basen ihn blockieren können",
+          "Im selben Panel: Allianz-POIs mit ihrem realen Verlust; 0/h = wertlos, die Basen daneben können umziehen (markiert, wenn sie auch einen Tunnel blockieren). Klick auf eine Zeile zentriert die Karte",
+          "Fix Base Info: die Basisnummern pro Spieler mischen nicht mehr die Basen verschiedener Spieler"
+        ],
+        "nl": [
+          "Nieuwe plugin Tunnel & POI Analyzer: het tunnel-icoon in de Shockr-knop (of /st tunnels) toont per tunnel exit wie hem activeert (5 spelers binnen 5 velden), hoeveel er nog missen en welke lage bases hem kunnen blokkeren",
+          "In hetzelfde paneel: alliance-POI's met hun real loss; 0/h = waardeloos, de bases ernaast kunnen verhuizen (gemarkeerd als ze ook een tunnel blokkeren). Klik op een rij om de kaart te centreren",
+          "Fix Base Info: de basenummers per speler halen de bases van verschillende spelers niet meer door elkaar"
+        ]
+      }
+    },
     {
       "version": "5.30.0",
       "date": "2026-10-29",
@@ -80,21 +101,6 @@
         ],
         "nl": [
           "Fix: een reserveringsmarker verwijderen laat het spel niet meer crashen; Sector HUD neemt marker-wijzigingen binnen een seconde over"
-        ]
-      }
-    },
-    {
-      "version": "5.27.2",
-      "date": "2026-10-20",
-      "changes": {
-        "en": [
-          "Sector HUD shows the coordinates of your own reservation marker (📌 116:318), live when you move it; without a marker it shows the view centre as before"
-        ],
-        "de": [
-          "Sektor-HUD zeigt die Koordinaten deiner eigenen Reservierungsmarkierung (📌 116:318), live beim Verschieben; ohne Markierung wie bisher die Ansichtsmitte"
-        ],
-        "nl": [
-          "Sector HUD toont de coördinaat van je eigen reserveringsmarker (📌 116:318), live als je hem verplaatst; zonder marker zoals voorheen het midden van het beeld"
         ]
       }
     }

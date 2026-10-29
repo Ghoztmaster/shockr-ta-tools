@@ -13,7 +13,7 @@ const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 async function load() {
     const out = await esbuild.build({
         stdin: {
-            contents: `export { BaseInfo, labelText, baseNumber } from './plugins/base-info.js';`,
+            contents: `export { BaseInfo, labelText, baseNumber, visPlayerId } from './plugins/base-info.js';`,
             resolveDir: root,
         },
         bundle: true, format: 'esm', write: false,
@@ -67,6 +67,11 @@ function fakeGame({ objects, ownCities = [], loaded = {}, mode = 'region' }) {
                 get_Region: () => ({
                     get_GridWidth: () => 10, get_GridHeight: () => 10, get_ZoomFactor: () => 1,
                     get_PosX: () => 0, get_PosY: () => 0, get_ViewWidth: () => 100, get_ViewHeight: () => 100,
+                    // the owner comes from the vis object (world px = cell * 10)
+                    GetObjectFromPosition: (px, py) => {
+                        const o = objects[`${px / 10}:${py / 10}`];
+                        return o && o.visPlayerId ? { get_PlayerId: () => o.visPlayerId } : null;
+                    },
                 }),
                 ScreenPosFromWorldPosX: (px) => px,
                 ScreenPosFromWorldPosY: (py) => py,
@@ -88,7 +93,8 @@ function fakeGame({ objects, ownCities = [], loaded = {}, mode = 'region' }) {
     };
 }
 
-const city = (id, playerId) => ({ Type: 1, $Id: id, $PlayerId: playerId });
+// $PlayerId deliberately wrong (live it was a small index): the vis object's get_PlayerId counts
+const city = (id, playerId) => ({ Type: 1, $Id: id, $PlayerId: 3, visPlayerId: playerId });
 
 function texts(parent) {
     return parent.children.map(el => el.textContent).sort();
@@ -119,6 +125,22 @@ test('own bases numbered from the full own list, others from bases seen; FG skip
     assert.deepEqual(texts(parent), ['#1 18.0/15.5', '#2', '#2 25.6/22.0']);
     const own = parent.children.find(el => el.textContent.startsWith('#2 25'));
     assert.equal(own.style.color, '#00bcd4');
+});
+
+test('numbering per player follows the vis player id, not the world $PlayerId', () => {
+    const parent = fakeDom();
+    fakeGame({ objects: { '1:1': city(300, 7), '2:2': city(200, 8), '3:3': city(100, 7) } });
+    const p = new mod.BaseInfo({ get: () => undefined });
+    p.running = true;
+    p.update();
+    // player 7: 100 -> #1, 300 -> #2; player 8: 200 -> #1 (a shared $PlayerId would give #1 #2 #3)
+    assert.deepEqual(texts(parent), ['#1', '#1', '#2']);
+});
+
+test('visPlayerId: getter value, null when missing or throwing', () => {
+    assert.equal(mod.visPlayerId({ get_PlayerId: () => 387 }), 387);
+    assert.equal(mod.visPlayerId(null), null);
+    assert.equal(mod.visPlayerId({ get_PlayerId: () => { throw new Error('x'); } }), null);
 });
 
 test('levels are cached once the client had the base loaded', () => {

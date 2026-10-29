@@ -58,9 +58,9 @@
       "nl": "Scant layouts van Forgotten-bases in de buurt voor de alliance"
     },
     "long": {
-      "en": "Scans the layouts of Forgotten bases around you and sends them to the alliance server. Runs automatically only after 20 minutes of inactivity and pauses while you are online; /st scan starts a scan by hand.",
-      "de": "Scannt die Layouts der Forgotten-Basen in deiner Umgebung und schickt sie an den Allianz-Server. Läuft automatisch nur nach 20 Minuten Inaktivität und pausiert, solange du online bist; /st scan startet einen Scan von Hand.",
-      "nl": "Scant de layouts van Forgotten-bases om je heen en stuurt ze naar de alliance-server. Draait automatisch alleen na 20 minuten inactiviteit en pauzeert zolang je online bent; /st scan start een scan met de hand."
+      "en": "Scans the layouts of Forgotten bases around you and sends them to the alliance server. Runs automatically only after 20 minutes of inactivity and pauses while you are online; /st scan starts a scan by hand. On the world map a scan takes 100 ms per base (2 s in other views, so the shown base does not flicker).",
+      "de": "Scannt die Layouts der Forgotten-Basen in deiner Umgebung und schickt sie an den Allianz-Server. Läuft automatisch nur nach 20 Minuten Inaktivität und pausiert, solange du online bist; /st scan startet einen Scan von Hand. Auf der Weltkarte dauert ein Scan 100 ms pro Basis (2 s in anderen Ansichten, damit die angezeigte Basis nicht flackert).",
+      "nl": "Scant de layouts van Forgotten-bases om je heen en stuurt ze naar de alliance-server. Draait automatisch alleen na 20 minuten inactiviteit en pauzeert zolang je online bent; /st scan start een scan met de hand. Op de wereldkaart duurt een scan 100 ms per base (2 s in andere views, zodat de getoonde base niet flikkert)."
     }
   },
   {
@@ -74,9 +74,9 @@
       "nl": "Scant de bases van je alliance-leden"
     },
     "long": {
-      "en": "Scans the base layouts of all members of your own alliance and sends them to the alliance server. Same rules as the Layout Scanner: automatic only when idle, paused while you are online; /st scanalliance starts it by hand.",
-      "de": "Scannt die Basis-Layouts aller Mitglieder deiner eigenen Allianz und schickt sie an den Allianz-Server. Gleiche Regeln wie der Layout Scanner: automatisch nur bei Inaktivität, pausiert, solange du online bist; /st scanalliance startet ihn von Hand.",
-      "nl": "Scant de base-layouts van alle leden van je eigen alliance en stuurt ze naar de alliance-server. Zelfde regels als de Layout Scanner: automatisch alleen bij inactiviteit, gepauzeerd zolang je online bent; /st scanalliance start hem met de hand."
+      "en": "Scans the base layouts of all members of your own alliance and sends them to the alliance server. Same rules as the Layout Scanner: automatic only when idle, paused while you are online; /st scanalliance starts it by hand. On the world map 100 ms per base, 2 s in other views.",
+      "de": "Scannt die Basis-Layouts aller Mitglieder deiner eigenen Allianz und schickt sie an den Allianz-Server. Gleiche Regeln wie der Layout Scanner: automatisch nur bei Inaktivität, pausiert, solange du online bist; /st scanalliance startet ihn von Hand. Auf der Weltkarte 100 ms pro Basis, 2 s in anderen Ansichten.",
+      "nl": "Scant de base-layouts van alle leden van je eigen alliance en stuurt ze naar de alliance-server. Zelfde regels als de Layout Scanner: automatisch alleen bij inactiviteit, gepauzeerd zolang je online bent; /st scanalliance start hem met de hand. Op de wereldkaart 100 ms per base, 2 s in andere views."
     }
   },
   {
@@ -234,9 +234,9 @@
       "nl": "Tunnel-level, benodigde offense en invloedsbereik"
     },
     "long": {
-      "en": "Every tunnel on the world map gets a label with its level and the offense you need, plus a dotted circle of its influence range. Green if your strongest offense makes it, red if not. The original only showed this while moving a base.",
-      "de": "Jeder Tunnel auf der Weltkarte bekommt ein Label mit Level und benötigter Offensive, plus einen gepunkteten Kreis seines Einflussbereichs. Grün, wenn deine stärkste Offensive reicht, sonst rot. Das Original zeigte das nur beim Verlegen einer Basis.",
-      "nl": "Elke tunnel op de wereldkaart krijgt een label met het level en de benodigde offense, plus een gestippelde cirkel van het invloedsbereik. Groen als je sterkste offense het haalt, anders rood. Het origineel toonde dit alleen tijdens het verplaatsen van een base."
+      "en": "Every tunnel on the world map gets a label with its level and the offense you need, plus a dotted circle of its influence range. Green if your strongest offense makes it, red if not. The original only showed this while moving a base. The red circle is opaque and 3 px wide; change its colour and width with /st config set tunnel.color #rrggbb and tunnel.width 1-10.",
+      "de": "Jeder Tunnel auf der Weltkarte bekommt ein Label mit Level und benötigter Offensive, plus einen gepunkteten Kreis seines Einflussbereichs. Grün, wenn deine stärkste Offensive reicht, sonst rot. Das Original zeigte das nur beim Verlegen einer Basis. Der rote Kreis ist deckend und 3 px breit; Farbe und Breite änderst du mit /st config set tunnel.color #rrggbb und tunnel.width 1-10.",
+      "nl": "Elke tunnel op de wereldkaart krijgt een label met het level en de benodigde offense, plus een gestippelde cirkel van het invloedsbereik. Groen als je sterkste offense het haalt, anders rood. Het origineel toonde dit alleen tijdens het verplaatsen van een base. De rode cirkel is dekkend en 3 px breed; kleur en breedte wijzig je met /st config set tunnel.color #rrggbb en tunnel.width 1-10."
     }
   },
   {
@@ -298,9 +298,9 @@
       "nl": "Sector-HUD met kijkcoördinaten en POI's per sector"
     },
     "long": {
-      "en": "A line top left on the world map with the coordinates and sector of the view (e.g. \"450:620 [NE]\"), plus the POIs held per sector: own green, enemy red, free grey. Left click pastes the coordinates into the chat, right click jumps to coordinates.",
-      "de": "Eine Zeile oben links auf der Weltkarte mit den Koordinaten und dem Sektor der Ansicht (z. B. \"450:620 [NE]\"), plus die gehaltenen POIs pro Sektor: eigene grün, feindliche rot, freie grau. Linksklick fügt die Koordinaten in den Chat ein, Rechtsklick springt zu Koordinaten.",
-      "nl": "Een regel linksboven op de wereldkaart met de coördinaten en sector van het beeld (bijv. \"450:620 [NE]\"), plus de bezette POI's per sector: eigen groen, vijandelijk rood, vrij grijs. Linksklik plakt de coördinaten in de chat, rechtsklik springt naar coördinaten."
+      "en": "A line top left on the world map with the coordinates and sector of the view (e.g. \"450:620 [NE]\"), plus the POIs held per sector: own green, enemy red, free grey. Left click pastes the coordinates into the chat, right click jumps to coordinates. The sector is the direction of the view centre from the world centre.",
+      "de": "Eine Zeile oben links auf der Weltkarte mit den Koordinaten und dem Sektor der Ansicht (z. B. \"450:620 [NE]\"), plus die gehaltenen POIs pro Sektor: eigene grün, feindliche rot, freie grau. Linksklick fügt die Koordinaten in den Chat ein, Rechtsklick springt zu Koordinaten. Der Sektor ist die Richtung der Ansichtsmitte vom Weltzentrum aus.",
+      "nl": "Een regel linksboven op de wereldkaart met de coördinaten en sector van het beeld (bijv. \"450:620 [NE]\"), plus de bezette POI's per sector: eigen groen, vijandelijk rood, vrij grijs. Linksklik plakt de coördinaten in de chat, rechtsklik springt naar coördinaten. De sector is de richting van het midden van het beeld vanaf het wereldcentrum."
     }
   },
   {
@@ -413,6 +413,22 @@
       "en": "The pin icon in the Shockr button (or /st markers) opens a panel with every marker you placed on the map (e.g. a Layout reservation): type, text and coordinates. Click a row to centre the map on that marker. The list follows new, moved and deleted markers while the panel is open.",
       "de": "Das Pin-Symbol im Shockr-Knopf (oder /st markers) öffnet ein Panel mit jeder Markierung, die du auf der Karte gesetzt hast (z. B. eine Layout-Reservierung): Typ, Text und Koordinaten. Klick auf eine Zeile zentriert die Karte auf diese Markierung. Solange das Panel offen ist, folgt die Liste neuen, verschobenen und gelöschten Markierungen.",
       "nl": "Het pin-icoon in de Shockr-knop (of /st markers) opent een paneel met elke marker die je op de kaart hebt gezet (bijv. een Layout-reservering): type, tekst en coördinaten. Klik op een rij om de kaart op die marker te centreren. Zolang het paneel open is volgt de lijst nieuwe, verplaatste en verwijderde markers."
+    }
+  },
+  {
+    "name": "TunnelPoiAnalyzer",
+    "slug": "tunnel-poi-analyzer",
+    "defaultEnabled": true,
+    "replaces": null,
+    "short": {
+      "en": "Who activates and blocks each tunnel exit; worthless POIs",
+      "de": "Wer Tunnelausgänge aktiviert und blockiert; wertlose POIs",
+      "nl": "Wie tunnel exits activeert en blokkeert; waardeloze POI's"
+    },
+    "long": {
+      "en": "The tunnel icon in the Shockr button (or /st tunnels) opens a panel with every tunnel exit and alliance POI you have seen on the world map. Tunnel: active once 5 different alliance players each have a base within 5 fields; shows who, how many are still missing, and low bases in the zone that may block it (base level more than 5 below the tunnel's required level). POI: its real loss for the alliance; 0/h = worthless, the bases next to it can move (flagged when they also block a tunnel). Click a row to centre the map. Settings: /st config set tpa.players | tpa.range | tpa.guardrange | tpa.blockmargin.",
+      "de": "Das Tunnel-Symbol im Shockr-Knopf (oder /st tunnels) öffnet ein Panel mit jedem Tunnelausgang und Allianz-POI, den du auf der Weltkarte gesehen hast. Tunnel: aktiv, sobald 5 verschiedene Allianzspieler je eine Basis innerhalb von 5 Feldern haben; zeigt wer, wie viele noch fehlen und niedrige Basen in der Zone, die ihn blockieren können (Basislevel mehr als 5 unter dem nötigen Tunnellevel). POI: sein realer Verlust für die Allianz; 0/h = wertlos, die Basen daneben können umziehen (markiert, wenn sie auch einen Tunnel blockieren). Klick auf eine Zeile zentriert die Karte. Einstellungen: /st config set tpa.players | tpa.range | tpa.guardrange | tpa.blockmargin.",
+      "nl": "Het tunnel-icoon in de Shockr-knop (of /st tunnels) opent een paneel met elke tunnel exit en alliance-POI die je op de wereldkaart hebt gezien. Tunnel: actief zodra 5 verschillende alliance-spelers elk een base binnen 5 velden hebben; toont wie, hoeveel er nog missen en lage bases in de zone die hem kunnen blokkeren (base level meer dan 5 onder het vereiste tunnellevel). POI: de real loss voor de alliance; 0/h = waardeloos, de bases ernaast kunnen verhuizen (gemarkeerd als ze ook een tunnel blokkeren). Klik op een rij om de kaart te centreren. Instellingen: /st config set tpa.players | tpa.range | tpa.guardrange | tpa.blockmargin."
     }
   }
 ]

@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.30.0
+// @version         5.31.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -102,7 +102,7 @@ var ShockrTools = (() => {
   });
 
   // <define:__ST_PLUGIN_SHORT__>
-  var define_ST_PLUGIN_SHORT_default = { CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, AttackTracker: { en: "Logs your won attacks on Forgotten targets", de: "Meldet deine gewonnenen Angriffe auf Forgotten-Ziele", nl: "Meldt je gewonnen aanvallen op Forgotten-targets" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" } };
+  var define_ST_PLUGIN_SHORT_default = { CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, AttackTracker: { en: "Logs your won attacks on Forgotten targets", de: "Meldet deine gewonnenen Angriffe auf Forgotten-Ziele", nl: "Meldt je gewonnen aanvallen op Forgotten-targets" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, TunnelPoiAnalyzer: { en: "Who activates and blocks each tunnel exit; worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert und blockiert; wertlose POIs", nl: "Wie tunnel exits activeert en blokkeert; waardeloze POI's" } };
 
   // lib/game-ready.js
   async function waitForGame({ maxAttempts = 200, intervalMs = 100 } = {}) {
@@ -268,26 +268,10 @@ var ShockrTools = (() => {
       name: "WorldObjectCity",
       getProto: () => ClientLib.Data.WorldSector.WorldObjectCity.prototype,
       properties: [
-        {
-          publicName: "$PlayerId",
-          funcName: "$ctor",
-          patterns: [
-            // 2026-09: this.PMHSXF=e>>22&1023
-            /this\.([A-Z]{6})=e>>22&(?:1023|0x3ff)/,
-            // older: &(0x3ff|1023))?;this.XXXX
-            /&(?:0x3ff|1023)\)?[;,]this\.([A-Z]{6})/
-          ]
-        },
-        {
-          publicName: "$AllianceId",
-          funcName: "$ctor",
-          patterns: [
-            // 2026-09: this.YMHXCE=t.KZYIAU(this.PMHSXF)
-            // AllianceId is always a method call on the result of PlayerId
-            /this\.([A-Z]{6})=t\.[A-Z]{6}\(this\.[A-Z]{6}\)/,
-            /.*[a-z]\+=[a-z][;,,]?this\.([A-Z]{6})=\(/
-          ]
-        },
+        // $PlayerId / $AllianceId removed in 5.31.0: seen live (2026-10-29) the field
+        // matched as $PlayerId was a small index (e>>22&1023) and the one matched as
+        // $AllianceId held the PLAYER id. Use the region vis object's
+        // get_PlayerId() / get_AllianceId() instead (base-info, tunnel-poi-analyzer).
         {
           publicName: "$Id",
           funcName: "$ctor",
@@ -565,6 +549,14 @@ var ShockrTools = (() => {
       helpSetApiUrl: "Server URL for scanners/watcher (default https://packetlab.nl/shockr)",
       helpSetApiKey: "Shared alliance key (transition \u2014 use /st register)",
       helpSetPvpSound: "PvP Alert siren on/off (default: true)",
+      helpSetTpaBlockMargin: "Blocker = base level more than this below the tunnel level (default 5)",
+      helpSetTpaGuardRange: "Fields around a POI for the bases next to it (default 5)",
+      helpSetTpaRange: "Fields around a tunnel exit that count (default 5)",
+      helpSetTpaPlayers: "Players needed to activate a tunnel exit (default 5)",
+      helpSetAutoRepairBuildings: "AutoRepair also repairs buildings after an attack on your base (default false)",
+      helpSetAutoRepairInterval: "AutoRepair safety-net check, minutes (default 5)",
+      helpSetTunnelWidth: "Width of the red tunnel circle, 1-10 px (default 3)",
+      helpSetTunnelColor: "Colour of the red tunnel circle, #rrggbb (default #ff3600)",
       helpHelp: "This message",
       helpCloseHint: "Press Escape, click \u2715 or type /st help again to close. Show help in the chat instead: /st config set help.popup false",
       // ── Plugin descriptions ──
@@ -573,15 +565,16 @@ var ShockrTools = (() => {
       descPlayerStatus: "Alliance base colors by online status",
       colorSchemeSet: "Color scheme set to: {scheme}",
       colorSchemeUnknown: "Unknown color scheme: {scheme} (choose: {schemes})",
-      descLayoutScanner: "Scan FG base layouts",
-      descAllianceScanner: "Scan alliance base layouts",
+      descLayoutScanner: "Scan FG base layouts (100 ms per base on the world map)",
+      descAllianceScanner: "Scan alliance base layouts (100 ms per base on the world map)",
       descRepairGuard: "Block Repair All buttons",
-      descAutoRepair: "Repair damaged units automatically",
+      descAutoRepair: "Repair damaged units right after every attack; buildings too with autorepair.buildings",
       descUpgradeCalc: "Building upgrade cost & time panel",
       descTargetWatcher: "Report viewed targets to alliance server",
       descAttackTracker: "Log your won attacks on Forgotten targets to the alliance server",
       descTargetBoard: "In-game overview of alliance targets \u2014 who is watching and who is attacking",
       descMarkerNav: "Marker Navigator: list of your map markers, click to jump",
+      descTunnelPoi: "Tunnel & POI Analyzer: who activates each tunnel exit, who blocks it, which POI bases can move",
       descStabs: "STABS battle simulator (replaces TABS): simulate an attack and see HP, repair and loot",
       // ── Shared ──
       close: "Close",
@@ -711,7 +704,7 @@ var ShockrTools = (() => {
       scannerPauseUnknown: "Scanners: online status not readable \u2014 not paused",
       scannerPauseStopped: "Scanners: online watch not running",
       descMapLabels: "Who is viewing \u{1F441}, has claimed \u{1F4CC} or attacked \u2694 Forgotten targets, on the world map",
-      descTunnelInfo: "Tunnel level, required offense and influence range on the world map",
+      descTunnelInfo: "Tunnel level, required offense and influence range on the world map (red circle colour/width: tunnel.color, tunnel.width)",
       tunnelInfoTitle: "Tunnel level {level} \xB7 active from offense {required} \xB7 range {range}",
       descFormationSaver: "Save attack formations by name and load them back (/st formation)",
       formationUsage: "Usage: /st formation save|load|delete <name> \xB7 /st formation list",
@@ -729,6 +722,8 @@ var ShockrTools = (() => {
       formationStorageFailed: "Could not save (browser storage unavailable)",
       helpCmdFormation: "Save/load attack formations",
       helpCmdTargets: "Open/close the Target Watch panel",
+      helpCmdTunnels: "Open/close the Tunnel & POI Analyzer",
+      helpCmdMarkers: "Open/close the Marker Navigator (your map markers)",
       helpCmdMenu: "Show/hide a plugin in the Plugins menu",
       descWavy: "Forgotten attack waves per base: Forgotten bases in range, level distribution, waves + distance lines on the world map",
       descPoiAnalyser: "Alliance POI bonuses: POI labels on the world map (gold = yours), the active bonuses in the base info panel and the real gain/loss of a selected POI",
@@ -853,6 +848,7 @@ var ShockrTools = (() => {
       toolbarUpgradeCalc: "Upgrade Calculator",
       toolbarTargetBoard: "Target Watch",
       toolbarMarkerNav: "Markers",
+      toolbarTunnelPoi: "Tunnels & POIs",
       toolbarStabs: "Battle Simulator",
       configMenuTitle: "Shockr config",
       configMenuIntro: "Export: take all settings incl. your key to another world or browser. Import: paste an export.",
@@ -886,6 +882,40 @@ var ShockrTools = (() => {
       markerNavColMarker: "Marker",
       markerNavColCoords: "Coordinates",
       markerNavCenterHint: "Click: centre the map on this marker",
+      // ── TunnelPoiAnalyzer ──
+      tpaTitle: "\u{1F573} Tunnels & POIs",
+      tpaTitleCount: "{active}/{tunnels} tunnels active, {worthless} worthless POI(s)",
+      tpaStatusOpen: "panel open, {t} tunnel(s), {p} POI(s)",
+      tpaStatusClosed: "panel closed (/st tunnels)",
+      tpaNoAlliance: "No alliance data (no alliance?)",
+      tpaEmpty: "No tunnels or alliance POIs seen yet \u2014 open the world map and scroll over the area",
+      tpaMapHint: "Not on the world map: showing the last scan. Open the world map to refresh.",
+      tpaColName: "Tunnel / POI",
+      tpaColCoords: "Coordinates",
+      tpaColStatus: "Status",
+      tpaColPlayers: "Players",
+      tpaColAdvice: "Advice",
+      tpaSectionTunnels: "Tunnel exits",
+      tpaSectionPois: "Alliance POIs",
+      tpaTunnelName: "Tunnel T{level}",
+      tpaStatusActive: "active",
+      tpaStatusInactive: "inactive",
+      tpaStatusWorthless: "worthless",
+      tpaStatusValuable: "valuable",
+      tpaStatusUnknown: "loss unknown",
+      tpaPlayersCount: "{n}/{need} players",
+      tpaAdviceActive: "OK",
+      tpaAdviceNeed: "{n} more player(s) needed within {range} fields",
+      tpaAdviceBlockers: "Possible blockers (base level below {threshold}): {list}",
+      tpaAdviceMovable: "Real loss 0: can move: {list}",
+      tpaAdviceNoGuards: "Real loss 0; no alliance base within {range} fields",
+      tpaAdviceKeep: "Keep: the POI is worth something",
+      tpaAdviceUnknown: "Real loss not known yet (ranking loading or POI type unknown)",
+      tpaAlsoBlocks: "(also blocks a tunnel)",
+      tpaGuardBlocks: "Also blocks a tunnel: {list}",
+      tpaNotInView: "Not in view since {time} \u2014 scroll the map there to refresh. Click: centre the map here",
+      tpaNeverInView: "Not seen on the map yet \u2014 click to centre the map here",
+      tpaCenterHint: "Click: centre the map here",
       // ── STABS ──
       stabsTitle: "STABS: Statistic",
       stabsSimulate: "Simulate battle [NUM 0]",
@@ -987,6 +1017,14 @@ var ShockrTools = (() => {
       helpSetApiUrl: "Server-URL f\xFCr Scanner/Watcher (Standard https://packetlab.nl/shockr)",
       helpSetApiKey: "Gemeinsamer Allianz-Key (\xDCbergang \u2014 nutze /st register)",
       helpSetPvpSound: "PvP-Alarm-Sirene an/aus (Standard: true)",
+      helpSetTpaBlockMargin: "Blockierer = Basislevel mehr als dies unter dem Tunnellevel (Standard 5)",
+      helpSetTpaGuardRange: "Felder um einen POI f\xFCr die Basen daneben (Standard 5)",
+      helpSetTpaRange: "Felder um einen Tunnelausgang, die z\xE4hlen (Standard 5)",
+      helpSetTpaPlayers: "Spieler, die einen Tunnelausgang aktivieren (Standard 5)",
+      helpSetAutoRepairBuildings: "AutoRepair repariert nach einem Angriff auf deine Basis auch Geb\xE4ude (Standard false)",
+      helpSetAutoRepairInterval: "AutoRepair-Sicherheitspr\xFCfung, Minuten (Standard 5)",
+      helpSetTunnelWidth: "Breite des roten Tunnelkreises, 1-10 px (Standard 3)",
+      helpSetTunnelColor: "Farbe des roten Tunnelkreises, #rrggbb (Standard #ff3600)",
       helpHelp: "Diese Hilfe",
       helpCloseHint: "Schlie\xDFen mit Escape, \u2715 oder erneut /st help. Hilfe stattdessen im Chat: /st config set help.popup false",
       descCampTracker: "FG-Basis-Markierungen auf der Weltkarte",
@@ -994,15 +1032,16 @@ var ShockrTools = (() => {
       descPlayerStatus: "Allianz-Basisfarben nach Online-Status",
       colorSchemeSet: "Farbschema gesetzt auf: {scheme}",
       colorSchemeUnknown: "Unbekanntes Farbschema: {scheme} (Auswahl: {schemes})",
-      descLayoutScanner: "FG-Basis-Layouts scannen",
-      descAllianceScanner: "Allianz-Basis-Layouts scannen",
+      descLayoutScanner: "FG-Basis-Layouts scannen (100 ms pro Basis auf der Weltkarte)",
+      descAllianceScanner: "Allianz-Basis-Layouts scannen (100 ms pro Basis auf der Weltkarte)",
       descRepairGuard: "Repair-All-Buttons blockieren",
-      descAutoRepair: "Besch\xE4digte Einheiten automatisch reparieren",
+      descAutoRepair: "Besch\xE4digte Einheiten direkt nach jedem Angriff reparieren; mit autorepair.buildings auch Geb\xE4ude",
       descUpgradeCalc: "Panel mit Upgrade-Kosten & -Dauer der Geb\xE4ude",
       descTargetWatcher: "Angesehene Ziele an den Allianz-Server melden",
       descAttackTracker: "Gewonnene Angriffe auf Forgotten-Ziele an den Allianz-Server melden",
       descTargetBoard: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an",
       descMarkerNav: "Marker-Navigator: Liste deiner Kartenmarkierungen, Klick springt hin",
+      descTunnelPoi: "Tunnel- & POI-Analyse: wer welchen Tunnelausgang aktiviert, wer ihn blockiert, welche POI-Basen umziehen k\xF6nnen",
       descStabs: "STABS-Kampfsimulator (ersetzt TABS): Angriff simulieren, HP, Reparatur und Beute sehen",
       close: "Schlie\xDFen",
       apiKeyRejected: "\u26A0 API-Key abgelehnt \u2014 pr\xFCfe /st config set api.key",
@@ -1121,7 +1160,7 @@ var ShockrTools = (() => {
       scannerPauseUnknown: "Scanner: Online-Status nicht lesbar \u2014 nicht pausiert",
       scannerPauseStopped: "Scanner: Online-\xDCberwachung l\xE4uft nicht",
       descMapLabels: "Wer Forgotten-Ziele ansieht \u{1F441}, reserviert hat \u{1F4CC} oder angegriffen hat \u2694, auf der Weltkarte",
-      descTunnelInfo: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich auf der Weltkarte",
+      descTunnelInfo: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich auf der Weltkarte (Farbe/Breite des roten Kreises: tunnel.color, tunnel.width)",
       tunnelInfoTitle: "Tunnel-Level {level} \xB7 aktiv ab Offensive {required} \xB7 Reichweite {range}",
       descFormationSaver: "Angriffsformationen unter einem Namen speichern und wieder laden (/st formation)",
       formationUsage: "Verwendung: /st formation save|load|delete <Name> \xB7 /st formation list",
@@ -1139,6 +1178,8 @@ var ShockrTools = (() => {
       formationStorageFailed: "Speichern fehlgeschlagen (Browserspeicher nicht verf\xFCgbar)",
       helpCmdFormation: "Angriffsformationen speichern/laden",
       helpCmdTargets: "Target-Watch-Panel \xF6ffnen/schlie\xDFen",
+      helpCmdTunnels: "Tunnel- & POI-Analyse \xF6ffnen/schlie\xDFen",
+      helpCmdMarkers: "Marker-Navigator \xF6ffnen/schlie\xDFen (deine Kartenmarkierungen)",
       helpCmdMenu: "Plugin im Plugins-Men\xFC anzeigen/ausblenden",
       descWavy: "Forgotten-Angriffswellen pro Basis: Forgotten-Basen in Reichweite, Level-Verteilung, Wellen + Entfernungslinien auf der Weltkarte",
       descPoiAnalyser: "Allianz-POI-Boni: POI-Labels auf der Weltkarte (gold = eure), aktive Boni im Basis-Infofenster und der echte Gewinn/Verlust eines gew\xE4hlten POI",
@@ -1263,6 +1304,7 @@ var ShockrTools = (() => {
       toolbarUpgradeCalc: "Upgrade Calculator",
       toolbarTargetBoard: "Target Watch",
       toolbarMarkerNav: "Markierungen",
+      toolbarTunnelPoi: "Tunnel & POIs",
       toolbarStabs: "Kampfsimulator",
       configMenuTitle: "Shockr-Einstellungen",
       configMenuIntro: "Exportieren: alle Einstellungen inkl. Key in eine andere Welt oder einen anderen Browser mitnehmen. Importieren: einen Export einf\xFCgen.",
@@ -1296,6 +1338,40 @@ var ShockrTools = (() => {
       markerNavColMarker: "Markierung",
       markerNavColCoords: "Koordinaten",
       markerNavCenterHint: "Klick: Karte auf diese Markierung zentrieren",
+      // ── TunnelPoiAnalyzer ──
+      tpaTitle: "\u{1F573} Tunnel & POIs",
+      tpaTitleCount: "{active}/{tunnels} Tunnel aktiv, {worthless} wertlose(r) POI(s)",
+      tpaStatusOpen: "Panel offen, {t} Tunnel, {p} POI(s)",
+      tpaStatusClosed: "Panel zu (/st tunnels)",
+      tpaNoAlliance: "Keine Allianzdaten (keine Allianz?)",
+      tpaEmpty: "Noch keine Tunnel oder Allianz-POIs gesehen \u2014 \xF6ffne die Weltkarte und scrolle \xFCber das Gebiet",
+      tpaMapHint: "Nicht auf der Weltkarte: letzter Scan. \xD6ffne die Weltkarte zum Aktualisieren.",
+      tpaColName: "Tunnel / POI",
+      tpaColCoords: "Koordinaten",
+      tpaColStatus: "Status",
+      tpaColPlayers: "Spieler",
+      tpaColAdvice: "Empfehlung",
+      tpaSectionTunnels: "Tunnelausg\xE4nge",
+      tpaSectionPois: "Allianz-POIs",
+      tpaTunnelName: "Tunnel T{level}",
+      tpaStatusActive: "aktiv",
+      tpaStatusInactive: "inaktiv",
+      tpaStatusWorthless: "wertlos",
+      tpaStatusValuable: "wertvoll",
+      tpaStatusUnknown: "Verlust unbekannt",
+      tpaPlayersCount: "{n}/{need} Spieler",
+      tpaAdviceActive: "OK",
+      tpaAdviceNeed: "noch {n} Spieler innerhalb von {range} Feldern n\xF6tig",
+      tpaAdviceBlockers: "M\xF6gliche Blockierer (Basislevel unter {threshold}): {list}",
+      tpaAdviceMovable: "Realer Verlust 0: kann umziehen: {list}",
+      tpaAdviceNoGuards: "Realer Verlust 0; keine Allianzbasis innerhalb von {range} Feldern",
+      tpaAdviceKeep: "Behalten: der POI bringt etwas",
+      tpaAdviceUnknown: "Realer Verlust noch unbekannt (Rangliste l\xE4dt oder POI-Typ unbekannt)",
+      tpaAlsoBlocks: "(blockiert auch einen Tunnel)",
+      tpaGuardBlocks: "Blockiert auch einen Tunnel: {list}",
+      tpaNotInView: "Seit {time} nicht im Bild \u2014 scrolle die Karte dorthin zum Aktualisieren. Klick: Karte hierauf zentrieren",
+      tpaNeverInView: "Noch nicht auf der Karte gesehen \u2014 Klick zentriert die Karte hierauf",
+      tpaCenterHint: "Klick: Karte hierauf zentrieren",
       // ── STABS ──
       stabsTitle: "STABS: Statistik",
       stabsSimulate: "Kampf simulieren [NUM 0]",
@@ -1397,6 +1473,14 @@ var ShockrTools = (() => {
       helpSetApiUrl: "Server-URL voor scanners/watcher (standaard https://packetlab.nl/shockr)",
       helpSetApiKey: "Gedeelde alliance-key (overgang \u2014 gebruik /st register)",
       helpSetPvpSound: "PvP Alert-sirene aan/uit (standaard: true)",
+      helpSetTpaBlockMargin: "Blokkeerder = base level meer dan dit onder het tunnellevel (standaard 5)",
+      helpSetTpaGuardRange: "Velden rond een POI voor de bases ernaast (standaard 5)",
+      helpSetTpaRange: "Velden rond een tunnel exit die meetellen (standaard 5)",
+      helpSetTpaPlayers: "Spelers nodig om een tunnel exit te activeren (standaard 5)",
+      helpSetAutoRepairBuildings: "AutoRepair repareert na een aanval op je base ook gebouwen (standaard false)",
+      helpSetAutoRepairInterval: "AutoRepair-vangnetcheck, minuten (standaard 5)",
+      helpSetTunnelWidth: "Breedte van de rode tunnelcirkel, 1-10 px (standaard 3)",
+      helpSetTunnelColor: "Kleur van de rode tunnelcirkel, #rrggbb (standaard #ff3600)",
       helpHelp: "Dit bericht",
       helpCloseHint: "Sluiten met Escape, \u2715 of nogmaals /st help. Help liever in de chat: /st config set help.popup false",
       descCampTracker: "FG-base-markeringen op de wereldkaart",
@@ -1404,15 +1488,16 @@ var ShockrTools = (() => {
       descPlayerStatus: "Alliance-basekleuren op online-status",
       colorSchemeSet: "Kleurschema ingesteld op: {scheme}",
       colorSchemeUnknown: "Onbekend kleurschema: {scheme} (kies: {schemes})",
-      descLayoutScanner: "FG-base-layouts scannen",
-      descAllianceScanner: "Alliance-base-layouts scannen",
+      descLayoutScanner: "FG-base-layouts scannen (100 ms per base op de wereldkaart)",
+      descAllianceScanner: "Alliance-base-layouts scannen (100 ms per base op de wereldkaart)",
       descRepairGuard: "Repair All-knoppen blokkeren",
-      descAutoRepair: "Beschadigde units automatisch repareren",
+      descAutoRepair: "Beschadigde units direct na elke aanval repareren; met autorepair.buildings ook gebouwen",
       descUpgradeCalc: "Paneel met upgrade-kosten & -tijd van gebouwen",
       descTargetWatcher: "Bekeken targets melden aan de alliance-server",
       descAttackTracker: "Gewonnen aanvallen op Forgotten-targets melden aan de alliance-server",
       descTargetBoard: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan",
       descMarkerNav: "Marker-navigator: lijst van je kaartmarkers, klik om erheen te springen",
+      descTunnelPoi: "Tunnel & POI Analyzer: wie elke tunnel exit activeert, wie hem blokkeert, welke POI-bases kunnen verhuizen",
       descStabs: "STABS-gevechtssimulator (vervangt TABS): simuleer een aanval en zie HP, repair en loot",
       close: "Sluiten",
       apiKeyRejected: "\u26A0 API-key geweigerd \u2014 controleer /st config set api.key",
@@ -1531,7 +1616,7 @@ var ShockrTools = (() => {
       scannerPauseUnknown: "Scanners: online-status niet leesbaar \u2014 niet gepauzeerd",
       scannerPauseStopped: "Scanners: online-bewaking draait niet",
       descMapLabels: "Wie Forgotten-targets bekijkt \u{1F441}, geclaimd heeft \u{1F4CC} of aangevallen heeft \u2694, op de wereldkaart",
-      descTunnelInfo: "Tunnel-level, benodigde offense en invloedsbereik op de wereldkaart",
+      descTunnelInfo: "Tunnel-level, benodigde offense en invloedsbereik op de wereldkaart (kleur/breedte rode cirkel: tunnel.color, tunnel.width)",
       tunnelInfoTitle: "Tunnel level {level} \xB7 actief vanaf offense {required} \xB7 bereik {range}",
       descFormationSaver: "Aanvalsformaties op naam opslaan en terugladen (/st formation)",
       formationUsage: "Gebruik: /st formation save|load|delete <naam> \xB7 /st formation list",
@@ -1549,6 +1634,8 @@ var ShockrTools = (() => {
       formationStorageFailed: "Opslaan mislukt (browseropslag niet beschikbaar)",
       helpCmdFormation: "Aanvalsformaties opslaan/laden",
       helpCmdTargets: "Target Watch-paneel openen/sluiten",
+      helpCmdTunnels: "Tunnel & POI Analyzer openen/sluiten",
+      helpCmdMarkers: "Marker-navigator openen/sluiten (je kaartmarkers)",
       helpCmdMenu: "Plugin tonen/verbergen in het Plugins-menu",
       descWavy: "Forgotten-aanvalsgolven per base: Forgotten-bases in bereik, level-verdeling, waves + afstandslijnen op de wereldkaart",
       descPoiAnalyser: "Alliance-POI-bonussen: POI-labels op de wereldkaart (goud = van jullie), de actieve bonussen in het base-infopaneel en de echte winst/verlies van een geselecteerde POI",
@@ -1673,6 +1760,7 @@ var ShockrTools = (() => {
       toolbarUpgradeCalc: "Upgrade Calculator",
       toolbarTargetBoard: "Target Watch",
       toolbarMarkerNav: "Markers",
+      toolbarTunnelPoi: "Tunnels & POIs",
       toolbarStabs: "Gevechtssimulator",
       configMenuTitle: "Shockr-config",
       configMenuIntro: "Exporteren: neem alle instellingen incl. je key mee naar een andere wereld of browser. Importeren: plak een export.",
@@ -1706,6 +1794,40 @@ var ShockrTools = (() => {
       markerNavColMarker: "Marker",
       markerNavColCoords: "Co\xF6rdinaten",
       markerNavCenterHint: "Klik: centreer de kaart op deze marker",
+      // ── TunnelPoiAnalyzer ──
+      tpaTitle: "\u{1F573} Tunnels & POIs",
+      tpaTitleCount: "{active}/{tunnels} tunnels actief, {worthless} waardeloze POI('s)",
+      tpaStatusOpen: "paneel open, {t} tunnel(s), {p} POI('s)",
+      tpaStatusClosed: "paneel dicht (/st tunnels)",
+      tpaNoAlliance: "Geen alliance-data (geen alliance?)",
+      tpaEmpty: "Nog geen tunnels of alliance-POI's gezien \u2014 open de wereldkaart en scroll over het gebied",
+      tpaMapHint: "Niet op de wereldkaart: laatste scan. Open de wereldkaart om te verversen.",
+      tpaColName: "Tunnel / POI",
+      tpaColCoords: "Co\xF6rdinaten",
+      tpaColStatus: "Status",
+      tpaColPlayers: "Spelers",
+      tpaColAdvice: "Advies",
+      tpaSectionTunnels: "Tunnel exits",
+      tpaSectionPois: "Alliance-POI's",
+      tpaTunnelName: "Tunnel T{level}",
+      tpaStatusActive: "actief",
+      tpaStatusInactive: "inactief",
+      tpaStatusWorthless: "waardeloos",
+      tpaStatusValuable: "waardevol",
+      tpaStatusUnknown: "loss onbekend",
+      tpaPlayersCount: "{n}/{need} spelers",
+      tpaAdviceActive: "OK",
+      tpaAdviceNeed: "nog {n} speler(s) nodig binnen {range} velden",
+      tpaAdviceBlockers: "Mogelijke blokkeerders (base level onder {threshold}): {list}",
+      tpaAdviceMovable: "Real loss 0: kan verhuizen: {list}",
+      tpaAdviceNoGuards: "Real loss 0; geen alliance-base binnen {range} velden",
+      tpaAdviceKeep: "Laten staan: de POI levert iets op",
+      tpaAdviceUnknown: "Real loss nog onbekend (ranking laadt of POI-type onbekend)",
+      tpaAlsoBlocks: "(blokkeert ook een tunnel)",
+      tpaGuardBlocks: "Blokkeert ook een tunnel: {list}",
+      tpaNotInView: "Sinds {time} niet in beeld \u2014 scroll de kaart erheen om te verversen. Klik: centreer de kaart hier",
+      tpaNeverInView: "Nog niet op de kaart gezien \u2014 klik om de kaart hier te centreren",
+      tpaCenterHint: "Klik: centreer de kaart hier",
       // ── STABS ──
       stabsTitle: "STABS: Statistiek",
       stabsSimulate: "Gevecht simuleren [NUM 0]",
@@ -3064,6 +3186,8 @@ var ShockrTools = (() => {
     { cmd: "unwatch", usage: "/st unwatch [all]", key: "helpCmdUnwatch" },
     { cmd: "formation", usage: "/st formation save|load|list|delete [name]", key: "helpCmdFormation" },
     { cmd: "targets", usage: "/st targets", key: "helpCmdTargets" },
+    { cmd: "markers", usage: "/st markers", key: "helpCmdMarkers" },
+    { cmd: "tunnels", usage: "/st tunnels", key: "helpCmdTunnels" },
     { cmd: "menu", usage: "/st menu add|remove <plugin>", key: "helpCmdMenu" }
   ];
   var USEFUL_SETTINGS = [
@@ -3071,7 +3195,15 @@ var ShockrTools = (() => {
     ["colors", "helpSetColors"],
     ["api.url", "helpSetApiUrl"],
     ["api.key", "helpSetApiKey"],
-    ["PvpAlert.sound", "helpSetPvpSound"]
+    ["PvpAlert.sound", "helpSetPvpSound"],
+    ["tunnel.color", "helpSetTunnelColor"],
+    ["tunnel.width", "helpSetTunnelWidth"],
+    ["autorepair.interval", "helpSetAutoRepairInterval"],
+    ["autorepair.buildings", "helpSetAutoRepairBuildings"],
+    ["tpa.players", "helpSetTpaPlayers"],
+    ["tpa.range", "helpSetTpaRange"],
+    ["tpa.guardrange", "helpSetTpaGuardRange"],
+    ["tpa.blockmargin", "helpSetTpaBlockMargin"]
   ];
   function getHelpModel(version, plugins, commands) {
     const sections = [{
@@ -3380,7 +3512,8 @@ var ShockrTools = (() => {
     help: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.2 9.3a2.9 2.9 0 0 1 5.6 1c0 1.9-2.8 2.4-2.8 4.2"/><circle cx="12" cy="17.6" r="0.6" fill="currentColor"/></svg>',
     sim: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3.5l9.5 9.5M3.5 3.5h3l9 9M20 3.5L10.5 13M20.5 3.5h-3l-9 9"/><path d="M6.5 15.5l2 2M15.5 15.5l-2 2M4.5 19.5l3-3M19.5 19.5l-3-3"/></svg>',
     radar: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="5"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/></svg>',
-    pin: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 22s-7-7.2-7-12.5a7 7 0 0 1 14 0C19 14.8 12 22 12 22z"/><circle cx="12" cy="9.5" r="2.6" fill="currentColor" stroke="none"/></svg>'
+    pin: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 22s-7-7.2-7-12.5a7 7 0 0 1 14 0C19 14.8 12 22 12 22z"/><circle cx="12" cy="9.5" r="2.6" fill="currentColor" stroke="none"/></svg>',
+    tunnel: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2.5 21.5v-9a9.5 9.5 0 0 1 19 0v9z"/><path d="M7 21.5v-8a5 5 0 0 1 10 0v8"/><path d="M12 17.5v4" stroke-linecap="round"/></svg>'
   };
   var Toolbar = class {
     /**
@@ -6715,6 +6848,14 @@ var ShockrTools = (() => {
     const sorted = Array.from(ids).sort((a, b) => a - b);
     return sorted.indexOf(id) + 1;
   }
+  function visPlayerId(vis) {
+    try {
+      const id = vis && typeof vis.get_PlayerId === "function" ? Number(vis.get_PlayerId()) : NaN;
+      return id > 0 ? id : null;
+    } catch {
+      return null;
+    }
+  }
   var BaseInfo = class {
     /** Short description for `/st help`. */
     get description() {
@@ -6772,6 +6913,9 @@ var ShockrTools = (() => {
       const world = md.get_World();
       const cities2 = md.get_Cities();
       const cityType = cityObjectType();
+      const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
+      const gw = region.get_GridWidth();
+      const gh = region.get_GridHeight();
       let ownPlayerId2 = null;
       try {
         ownPlayerId2 = md.get_Player().id;
@@ -6791,7 +6935,7 @@ var ShockrTools = (() => {
             if (!obj || obj.Type !== cityType) continue;
             if (typeof obj.$Id === "undefined") continue;
             const id = obj.$Id;
-            const playerId = obj.$PlayerId;
+            const playerId = visPlayerId(region.GetObjectFromPosition(x * gw, y * gh));
             const own = ownIds.includes(id) || ownPlayerId2 !== null && playerId === ownPlayerId2;
             if (!own) {
               if (!this.seen.has(playerId)) this.seen.set(playerId, /* @__PURE__ */ new Set());
@@ -8395,7 +8539,7 @@ var ShockrTools = (() => {
     try {
       const a = ClientLib.Data.MainData.GetInstance().get_Alliance();
       if (!ownAlliance()) return [];
-      return (a.get_OwnedPOIs() || []).map((p) => ({ x: Number(p.x), y: Number(p.y), level: Number(p.l) }));
+      return (a.get_OwnedPOIs() || []).map((p) => ({ x: Number(p.x), y: Number(p.y), level: Number(p.l), worldType: p.t }));
     } catch {
       return [];
     }
@@ -8495,6 +8639,91 @@ var ShockrTools = (() => {
     const next = total(i + 1, newScore);
     return { kind: isGain ? "gain" : "loss", value: isGain ? next - current : current - next };
   }
+  function poiDeltaContext(poiType, poiOwnerId, ownId, poiScoreValue) {
+    try {
+      const md = ClientLib.Data.MainData.GetInstance();
+      const rs = md.get_Alliance().get_POIRankScore()[poiType - ClientLib.Base.EPOIType.RankedTypeBegin];
+      if (!rs) return null;
+      const factor = md.get_Server().get_POIGlobalBonusFactor();
+      const util = ClientLib.Base.PointOfInterestTypes;
+      let noAlliance = 0;
+      try {
+        noAlliance = webfrontend.gui.widgets.AllianceLabel.ESpecialNoAllianceName;
+      } catch {
+      }
+      return {
+        own: poiOwnerId === ownId,
+        ownerIsAlliance: !!poiOwnerId && poiOwnerId !== noAlliance,
+        poiScore: poiScoreValue,
+        rank: rs.r,
+        score: rs.s,
+        nextScore: rs.ns,
+        prevScore: rs.ps,
+        total: (rank, s) => util.GetTotalBonusByType(poiType, rank, s, factor)
+      };
+    } catch {
+      return null;
+    }
+  }
+  var RANKING_CACHE_MS = 10 * 60 * 1e3;
+  var RANKING_RETRY_MS = 30 * 1e3;
+  var rankingCache = {};
+  var rankingInflight = {};
+  function fetchPoiRanking(poiType, ownId, done) {
+    const hit = rankingCache[poiType];
+    if (hit && hit.expire >= Date.now()) {
+      done(hit.rows);
+      return true;
+    }
+    const busy = rankingInflight[poiType];
+    if (busy && Date.now() - busy.since < RANKING_RETRY_MS) {
+      busy.waiting.push(done);
+      return true;
+    }
+    rankingInflight[poiType] = { since: Date.now(), waiting: [done] };
+    try {
+      const R = ClientLib.Data.Ranking;
+      const E = ClientLib.Base.EPOIType;
+      const rankingType = {
+        [E.TiberiumBonus]: R.ERankingType.BonusTiberium,
+        [E.CrystalBonus]: R.ERankingType.BonusCrystal,
+        [E.PowerBonus]: R.ERankingType.BonusPower,
+        [E.InfanteryBonus]: R.ERankingType.BonusInfantry,
+        [E.VehicleBonus]: R.ERankingType.BonusVehicles,
+        [E.AirBonus]: R.ERankingType.BonusAircraft,
+        [E.DefenseBonus]: R.ERankingType.BonusDefense
+      }[poiType];
+      const sortColumn = {
+        [R.ERankingType.BonusTiberium]: R.ESortColumn.TiberiumScore,
+        [R.ERankingType.BonusCrystal]: R.ESortColumn.CrystalScore,
+        [R.ERankingType.BonusPower]: R.ESortColumn.PowerScore,
+        [R.ERankingType.BonusInfantry]: R.ESortColumn.InfantryScore,
+        [R.ERankingType.BonusVehicles]: R.ESortColumn.VehicleScore,
+        [R.ERankingType.BonusAircraft]: R.ESortColumn.AircraftScore,
+        [R.ERankingType.BonusDefense]: R.ESortColumn.DefenseScore
+      }[rankingType];
+      const lastIndex = Object.keys(ClientLib.Res.ResMain.GetInstance().GetGamedata().poibmbr).length;
+      ClientLib.Net.CommunicationManager.GetInstance().SendSimpleCommand("RankingGetData", {
+        firstIndex: 0,
+        lastIndex,
+        view: R.EViewType.Alliance,
+        rankingType,
+        sortColumn,
+        ascending: true
+      }, webfrontend.phe.cnc.Util.createEventDelegate(ClientLib.Net.CommandResult, null, (ctx, data) => {
+        const waiting = rankingInflight[poiType] ? rankingInflight[poiType].waiting : [];
+        delete rankingInflight[poiType];
+        if (!data || !Array.isArray(data.a)) return;
+        const rows = data.a.filter((r) => r.a !== ownId).map((r) => ({ a: r.a, pois: r.pois || 0 }));
+        rankingCache[poiType] = { expire: Date.now() + RANKING_CACHE_MS, rows };
+        for (const fn of waiting) fn(rows);
+      }), null);
+      return true;
+    } catch {
+      delete rankingInflight[poiType];
+      return false;
+    }
+  }
   function sectorSummary(pois, ownId, geo) {
     const out = [];
     for (let i = 0; i < geo.count; i++) out.push({ sector: i, own: 0, enemy: 0, free: 0, status: "none" });
@@ -8514,7 +8743,6 @@ var ShockrTools = (() => {
 
   // plugins/poi-analyser.js
   var REFRESH_MS4 = 3e3;
-  var RANKING_CACHE_MS = 10 * 60 * 1e3;
   var COLORS = { own: "#ffc107", enemy: "#ef5350", free: "#bdbdbd" };
   var BASE_INFOS = ["RegionCityStatusInfoOwn", "RegionCityStatusInfoAlliance"];
   var POI_INFO = "RegionPointOfInterestStatusInfo";
@@ -8547,7 +8775,6 @@ var ShockrTools = (() => {
       this._raf = null;
       this._listeners = [];
       this._panel = null;
-      this._rankingCache = {};
       this._poiPanelKey = null;
       this._warned = false;
     }
@@ -8815,76 +9042,11 @@ var ShockrTools = (() => {
     }
     /** Rank/score of the own alliance for this POI type + the game's bonus formula. */
     _deltaContext(poi, own, score) {
-      try {
-        const md = ClientLib.Data.MainData.GetInstance();
-        const rs = md.get_Alliance().get_POIRankScore()[poi.poiType - ClientLib.Base.EPOIType.RankedTypeBegin];
-        if (!rs) return null;
-        const factor = md.get_Server().get_POIGlobalBonusFactor();
-        const util = ClientLib.Base.PointOfInterestTypes;
-        let noAlliance = 0;
-        try {
-          noAlliance = webfrontend.gui.widgets.AllianceLabel.ESpecialNoAllianceName;
-        } catch {
-        }
-        return {
-          own: poi.ownerId === own.id,
-          ownerIsAlliance: !!poi.ownerId && poi.ownerId !== noAlliance,
-          poiScore: score,
-          rank: rs.r,
-          score: rs.s,
-          nextScore: rs.ns,
-          prevScore: rs.ps,
-          total: (rank, s) => util.GetTotalBonusByType(poi.poiType, rank, s, factor)
-        };
-      } catch {
-        return null;
-      }
+      return poiDeltaContext(poi.poiType, poi.ownerId, own.id, score);
     }
     /** Other alliances' scores for this POI type (RankingGetData, read-only), cached 10 min. */
     _fetchRanking(poiType, ownId, done) {
-      const hit = this._rankingCache[poiType];
-      if (hit && hit.expire >= Date.now()) {
-        done(hit.rows);
-        return;
-      }
-      try {
-        const R = ClientLib.Data.Ranking;
-        const E = ClientLib.Base.EPOIType;
-        const rankingType = {
-          [E.TiberiumBonus]: R.ERankingType.BonusTiberium,
-          [E.CrystalBonus]: R.ERankingType.BonusCrystal,
-          [E.PowerBonus]: R.ERankingType.BonusPower,
-          [E.InfanteryBonus]: R.ERankingType.BonusInfantry,
-          [E.VehicleBonus]: R.ERankingType.BonusVehicles,
-          [E.AirBonus]: R.ERankingType.BonusAircraft,
-          [E.DefenseBonus]: R.ERankingType.BonusDefense
-        }[poiType];
-        const sortColumn = {
-          [R.ERankingType.BonusTiberium]: R.ESortColumn.TiberiumScore,
-          [R.ERankingType.BonusCrystal]: R.ESortColumn.CrystalScore,
-          [R.ERankingType.BonusPower]: R.ESortColumn.PowerScore,
-          [R.ERankingType.BonusInfantry]: R.ESortColumn.InfantryScore,
-          [R.ERankingType.BonusVehicles]: R.ESortColumn.VehicleScore,
-          [R.ERankingType.BonusAircraft]: R.ESortColumn.AircraftScore,
-          [R.ERankingType.BonusDefense]: R.ESortColumn.DefenseScore
-        }[rankingType];
-        const lastIndex = Object.keys(ClientLib.Res.ResMain.GetInstance().GetGamedata().poibmbr).length;
-        ClientLib.Net.CommunicationManager.GetInstance().SendSimpleCommand("RankingGetData", {
-          firstIndex: 0,
-          lastIndex,
-          view: R.EViewType.Alliance,
-          rankingType,
-          sortColumn,
-          ascending: true
-        }, webfrontend.phe.cnc.Util.createEventDelegate(ClientLib.Net.CommandResult, this, (ctx, data) => {
-          if (!data || !Array.isArray(data.a)) return;
-          const rows = data.a.filter((r) => r.a !== ownId).map((r) => ({ a: r.a, pois: r.pois || 0 }));
-          this._rankingCache[poiType] = { expire: Date.now() + RANKING_CACHE_MS, rows };
-          done(rows);
-        }), null);
-      } catch (e) {
-        this._warn("RankingGetData failed", e);
-      }
+      if (!fetchPoiRanking(poiType, ownId, done)) this._warn("RankingGetData failed");
     }
   };
   function escape(s) {
@@ -11117,6 +11279,453 @@ var ShockrTools = (() => {
     }
   }
 
+  // plugins/tunnel-poi-analyzer.js
+  var PANEL_ID9 = "st-tpa-panel";
+  var TOOLBAR_ID4 = "tunnelpoi";
+  var REFRESH_INTERVAL_MS4 = 3e3;
+  var PANEL_WIDTH4 = 620;
+  var DEFAULT_POSITION4 = { x: 150, y: 110 };
+  var DEFAULTS2 = { players: 5, range: 5, guardRange: 5, blockMargin: 5 };
+  var STATUS_COLORS2 = { active: "#66bb6a", inactive: "#ef5350", worthless: "#ffa726", valuable: "#66bb6a", unknown: "#999" };
+  function cfgInt(value, def, min, max) {
+    const n = Math.floor(Number(value));
+    return Number.isFinite(n) && n >= min && n <= max ? n : def;
+  }
+  function inRange(a, b, range) {
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+    return dx * dx + dy * dy <= range * range;
+  }
+  var baseKey = (b) => `${b.x}:${b.y}`;
+  var byName = (a, b) => String(a).localeCompare(String(b));
+  function analyzeTunnel(tunnel, bases, { players = DEFAULTS2.players, range = DEFAULTS2.range, required, margin = DEFAULTS2.blockMargin }) {
+    const threshold = required - margin;
+    const names2 = /* @__PURE__ */ new Map();
+    const blockers = [];
+    for (const b of bases) {
+      if (!inRange(b, tunnel, range)) continue;
+      if (!names2.has(b.playerId)) names2.set(b.playerId, b.name);
+      if (Number.isFinite(b.level) && Number.isFinite(threshold) && b.level < threshold) blockers.push(b);
+    }
+    const list = [...names2.values()].sort(byName);
+    return {
+      count: list.length,
+      players: list,
+      needed: Math.max(0, players - list.length),
+      threshold,
+      active: list.length >= players,
+      blockers: blockers.sort((a, b) => a.level - b.level)
+    };
+  }
+  function poiStatus(loss) {
+    if (typeof loss !== "number" || !Number.isFinite(loss)) return "unknown";
+    return Math.round(loss * 10) / 10 <= 0 ? "worthless" : "valuable";
+  }
+  function poiGuards(poi, bases, range, blockerKeys) {
+    return bases.filter((b) => inRange(b, poi, range)).map((b) => ({ ...b, blocksTunnel: blockerKeys.has(baseKey(b)) })).sort((a, b) => byName(a.name, b.name));
+  }
+  function poiTypeFromOwned(t2) {
+    return t2 != null && poiKey(t2) ? t2 : null;
+  }
+  function buildRows({ tunnels, pois, bases, opts, diff, inView }) {
+    const rows = [];
+    const blockerKeys = /* @__PURE__ */ new Set();
+    for (const tn of tunnels) {
+      const required = requiredOffense(tn.level, diff);
+      const a = analyzeTunnel(tn, bases, { players: opts.players, range: opts.range, required, margin: opts.blockMargin });
+      for (const b of a.blockers) blockerKeys.add(baseKey(b));
+      rows.push({
+        kind: "tunnel",
+        x: tn.x,
+        y: tn.y,
+        level: tn.level,
+        required,
+        ...a,
+        status: a.active ? "active" : "inactive",
+        stale: !inView(tn.x, tn.y),
+        seen: tn.seen
+      });
+    }
+    for (const p of pois) {
+      const status = poiStatus(p.loss);
+      rows.push({
+        kind: "poi",
+        x: p.x,
+        y: p.y,
+        level: p.level,
+        key: p.key,
+        loss: p.loss,
+        status,
+        guards: poiGuards(p, bases, opts.guardRange, blockerKeys),
+        stale: !inView(p.x, p.y),
+        seen: p.seen
+      });
+    }
+    const tunnelOrder = (r) => r.active ? 1 : 0;
+    const poiOrder = { worthless: 0, unknown: 1, valuable: 2 };
+    return rows.sort((a, b) => {
+      if (a.kind !== b.kind) return a.kind === "tunnel" ? -1 : 1;
+      if (a.kind === "tunnel") return tunnelOrder(a) - tunnelOrder(b) || a.needed - b.needed || b.level - a.level;
+      return poiOrder[a.status] - poiOrder[b.status] || b.level - a.level;
+    });
+  }
+  function fmtLevel(n) {
+    return Number.isInteger(n) ? String(n) : Number(n).toFixed(1);
+  }
+  function baseText(b) {
+    return `${b.name} (L${fmtLevel(b.level)} ${b.x}:${b.y})`;
+  }
+  function rowTexts(r, opts) {
+    if (r.kind === "tunnel") {
+      const advice2 = [];
+      if (r.needed > 0) advice2.push(t("tpaAdviceNeed", { n: r.needed, range: opts.range }));
+      if (r.blockers.length) advice2.push(t("tpaAdviceBlockers", { threshold: fmtLevel(r.threshold), list: r.blockers.map(baseText).join(", ") }));
+      if (!advice2.length) advice2.push(t("tpaAdviceActive"));
+      return {
+        name: t("tpaTunnelName", { level: fmtLevel(r.level) }),
+        status: t(r.active ? "tpaStatusActive" : "tpaStatusInactive"),
+        count: t("tpaPlayersCount", { n: r.count, need: opts.players }),
+        players: r.players,
+        advice: advice2
+      };
+    }
+    let advice;
+    if (r.status === "worthless") {
+      advice = r.guards.length ? t("tpaAdviceMovable", { list: r.guards.map((g) => g.name + (g.blocksTunnel ? ` ${t("tpaAlsoBlocks")}` : "")).join(", ") }) : t("tpaAdviceNoGuards", { range: opts.guardRange });
+    } else if (r.status === "valuable") {
+      advice = t("tpaAdviceKeep");
+    } else {
+      advice = t("tpaAdviceUnknown");
+    }
+    const blocking = r.guards.filter((g) => g.blocksTunnel);
+    return {
+      name: `${t(`poiShort_${r.key}`)} ${Math.floor(r.level)}`,
+      status: r.status === "unknown" ? t("tpaStatusUnknown") : `${t(r.status === "worthless" ? "tpaStatusWorthless" : "tpaStatusValuable")} \xB7 ${fmtBonus(r.key, r.loss)}`,
+      count: "",
+      players: [...new Set(r.guards.map((g) => g.name + (g.blocksTunnel ? " \u26A0" : "")))],
+      advice: blocking.length && r.status !== "worthless" ? [advice, t("tpaGuardBlocks", { list: blocking.map(baseText).join(", ") })] : [advice]
+    };
+  }
+  function seenText(ts) {
+    if (!ts) return "";
+    const d = new Date(ts);
+    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  }
+  function renderTable2(rows, opts) {
+    if (!rows.length) {
+      return `<div style="color:#999;padding:12px 0;text-align:center;">${escapeHtml(t("tpaEmpty"))}</div>`;
+    }
+    const th = "padding:3px 4px;text-align:left;font-weight:normal;color:#999;border-bottom:1px solid #444;";
+    const td = "padding:3px 4px;vertical-align:top;";
+    const cols = ["tpaColName", "tpaColCoords", "tpaColStatus", "tpaColPlayers", "tpaColAdvice"];
+    let html = '<table style="width:100%;border-collapse:collapse;"><tr>' + cols.map((c) => `<th style="${th}">${escapeHtml(t(c))}</th>`).join("") + "</tr>";
+    let section = null;
+    for (const r of rows) {
+      if (r.kind !== section) {
+        section = r.kind;
+        html += `<tr><td colspan="5" style="${td}padding-top:8px;color:#fff;font-weight:bold;">${escapeHtml(t(section === "tunnel" ? "tpaSectionTunnels" : "tpaSectionPois"))}</td></tr>`;
+      }
+      const x = rowTexts(r, opts);
+      const color = STATUS_COLORS2[r.status];
+      const hint = !r.stale ? t("tpaCenterHint") : r.seen ? t("tpaNotInView", { time: seenText(r.seen) }) : t("tpaNeverInView");
+      html += `<tr data-x="${r.x}" data-y="${r.y}" title="${escapeHtml(hint)}" style="box-shadow:inset 3px 0 0 ${color};cursor:pointer;border-bottom:1px solid #2a2a2a;${r.stale ? "opacity:0.55;" : ""}"><td style="${td}padding-left:8px;white-space:nowrap;color:#e0e0e0;">${escapeHtml(x.name)}</td><td style="${td}white-space:nowrap;color:#4fc3f7;">${r.x}:${r.y}</td><td style="${td}white-space:nowrap;color:${color};">${escapeHtml(x.status)}` + (x.count ? `<div style="color:#aaa;">${escapeHtml(x.count)}</div>` : "") + `</td><td style="${td}color:#ccc;">${x.players.length ? x.players.map(escapeHtml).join(", ") : '<span style="color:#666;">\u2013</span>'}</td><td style="${td}color:#aaa;">${x.advice.map(escapeHtml).join("<br>")}</td></tr>`;
+    }
+    return html + "</table>";
+  }
+  var TunnelPoiAnalyzer = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descTunnelPoi");
+    }
+    constructor(config, toolbar, cli) {
+      this.name = "TunnelPoiAnalyzer";
+      this.config = config;
+      this.toolbar = toolbar;
+      this.cli = cli;
+      this.running = false;
+      this._panel = null;
+      this._title = null;
+      this._content = null;
+      this._timer = null;
+      this._shown = null;
+      this._rows = [];
+      this._bases = /* @__PURE__ */ new Map();
+      this._tunnels = /* @__PURE__ */ new Map();
+      this._pois = /* @__PURE__ */ new Map();
+      this._view = null;
+      this._onKeyDown = (e) => {
+        if (e.key === "Escape") this.close();
+      };
+    }
+    async start() {
+      this.running = true;
+      this.toolbar.register({
+        id: TOOLBAR_ID4,
+        icon: ICONS.tunnel,
+        label: () => t("toolbarTunnelPoi"),
+        onClick: () => this.toggle()
+      });
+      this.cli.register("tunnels", () => this.toggle());
+    }
+    stop() {
+      this.running = false;
+      this.close();
+      this.toolbar.unregister(TOOLBAR_ID4);
+      this.cli.unregister("tunnels");
+      if (this._panel) this._panel.remove();
+      this._panel = null;
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      if (!this.isOpen()) return t("tpaStatusClosed");
+      return t("tpaStatusOpen", { t: this._tunnels.size, p: this._rows.filter((r) => r.kind === "poi").length });
+    }
+    isOpen() {
+      return !!this._panel && this._panel.style.display !== "none";
+    }
+    toggle() {
+      if (this.isOpen()) this.close();
+      else this.open();
+    }
+    open() {
+      this._ensurePanel();
+      this._shown = null;
+      this._panel.style.display = "block";
+      document.addEventListener("keydown", this._onKeyDown);
+      this._refresh();
+      this._timer = setInterval(() => this._refresh(), REFRESH_INTERVAL_MS4);
+    }
+    close() {
+      document.removeEventListener("keydown", this._onKeyDown);
+      if (this._timer) {
+        clearInterval(this._timer);
+        this._timer = null;
+      }
+      if (this._panel) this._panel.style.display = "none";
+    }
+    _opts() {
+      const get = (k) => {
+        try {
+          return this.config.get(k);
+        } catch {
+          return void 0;
+        }
+      };
+      return {
+        players: cfgInt(get("tpa.players"), DEFAULTS2.players, 1, 50),
+        range: cfgInt(get("tpa.range"), DEFAULTS2.range, 1, 30),
+        guardRange: cfgInt(get("tpa.guardrange"), DEFAULTS2.guardRange, 1, 30),
+        blockMargin: cfgInt(get("tpa.blockmargin"), DEFAULTS2.blockMargin, 0, 50)
+      };
+    }
+    /**
+     * Scan the visible map (+ a margin so bases around an edge tunnel count) into
+     * the remembered maps. Entries inside the view that are gone now are dropped.
+     */
+    _scan(own, opts) {
+      const md = ClientLib.Data.MainData.GetInstance();
+      const world = md.get_World();
+      const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
+      const gw = region.get_GridWidth();
+      const gh = region.get_GridHeight();
+      const visTypes = ClientLib.Vis.VisObject.EObjectType;
+      const cityType = cityObjectType();
+      let members = {};
+      try {
+        members = md.get_Alliance().get_MemberData().d || {};
+      } catch {
+      }
+      const view = visibleCellRange();
+      const scan = visibleCellRange(Math.max(opts.range, opts.guardRange) + 1);
+      const inside = (o) => o.x >= view.minX && o.x <= view.maxX && o.y >= view.minY && o.y <= view.maxY;
+      for (const m of [this._bases, this._tunnels, this._pois]) {
+        for (const [k, o] of m) if (inside(o)) m.delete(k);
+      }
+      const now = Date.now();
+      for (let y = scan.minY; y <= scan.maxY; y++) {
+        for (let x = scan.minX; x <= scan.maxX; x++) {
+          try {
+            const w = world.GetObjectFromPosition(x, y);
+            const vis = region.GetObjectFromPosition(x * gw, y * gh);
+            if (w && w.Type === cityType) {
+              const base = this._readBase(vis, x, y, own.id, members, visTypes);
+              if (base) this._bases.set(baseKey(base), base);
+              continue;
+            }
+            if (!vis || vis.get_VisObjectType() !== visTypes.RegionPointOfInterest) continue;
+            if (vis.get_Type() === 0) {
+              const tx = vis.get_RawX();
+              const ty = vis.get_RawY();
+              this._tunnels.set(`${tx}:${ty}`, { x: tx, y: ty, level: Number(vis.get_Level()), seen: now });
+              continue;
+            }
+            const poi = poiFromVisObject(vis);
+            if (poi && poi.ownerId === own.id) {
+              this._pois.set(`${x}:${y}`, { x, y, level: poi.level, poiType: poi.poiType, key: poi.key, seen: now });
+            }
+          } catch {
+          }
+        }
+      }
+      this._view = view;
+    }
+    /** Alliance base at (x, y) from its map object, or null (another alliance, not loaded). */
+    _readBase(vis, x, y, ownId, members, visTypes) {
+      if (!vis || vis.get_VisObjectType() !== visTypes.RegionCityType) return null;
+      if (Number(vis.get_AllianceId()) !== ownId) return null;
+      const playerId = Number(vis.get_PlayerId());
+      let level = NaN;
+      try {
+        level = Number(vis.get_BaseLevel());
+      } catch {
+      }
+      let name = "";
+      try {
+        name = String(vis.get_PlayerName() || "");
+      } catch {
+      }
+      const member = members[playerId];
+      if (!name && member && member.Name) name = String(member.Name);
+      return { x, y, playerId, name: name || `#${playerId}`, level: level > 0 ? level : NaN };
+    }
+    /** Own POIs (world-wide list + the ones seen on the map), each with its real loss or undefined. */
+    _ownPois(own) {
+      const out = /* @__PURE__ */ new Map();
+      for (const p of ownedPois()) {
+        const poiType = poiTypeFromOwned(p.worldType);
+        out.set(`${p.x}:${p.y}`, { x: p.x, y: p.y, level: p.level, poiType, key: poiType == null ? null : poiKey(poiType), seen: null });
+      }
+      for (const [k, p] of this._pois) out.set(k, { ...out.get(k), ...p });
+      const list = [];
+      for (const p of out.values()) {
+        if (!p.key) continue;
+        list.push({ ...p, loss: this._loss(p, own.id) });
+      }
+      return list;
+    }
+    /** Real loss of an own POI; a ranking that is still on its way re-renders when it arrives. */
+    _loss(p, ownId) {
+      const ctx = poiDeltaContext(p.poiType, ownId, ownId, poiScore(p.level));
+      if (!ctx) return void 0;
+      const direct = realPoiDelta(ctx, ctx.total);
+      if (direct.value !== null) return direct.value;
+      let value;
+      let sync = true;
+      fetchPoiRanking(p.poiType, ownId, (rows) => {
+        if (sync) {
+          value = rankedPoiDelta({ ...ctx, poiOwnerId: ownId }, rows, ctx.total).value;
+        } else if (this.isOpen()) {
+          this._shown = null;
+          this._refresh();
+        }
+      });
+      sync = false;
+      return value;
+    }
+    _readDiff() {
+      try {
+        return Number(ClientLib.Data.MainData.GetInstance().get_Server().get_POIActivationLevelDifference()) || 0;
+      } catch {
+        return 0;
+      }
+    }
+    _refresh() {
+      if (!this.isOpen()) return;
+      const own = ownAlliance();
+      const onMap = isWorldMapVisible();
+      let html;
+      if (!own) {
+        this._rows = [];
+        html = `<div style="color:#999;padding:12px 0;text-align:center;">${escapeHtml(t("tpaNoAlliance"))}</div>`;
+      } else {
+        const opts = this._opts();
+        if (onMap) {
+          try {
+            this._scan(own, opts);
+          } catch (e) {
+            console.warn("[ST] TunnelPoiAnalyzer: scan failed", e && e.message);
+          }
+        }
+        const view = onMap ? this._view : null;
+        const inView = (x, y) => !!view && x >= view.minX && x <= view.maxX && y >= view.minY && y <= view.maxY;
+        this._rows = buildRows({
+          tunnels: [...this._tunnels.values()],
+          pois: this._ownPois(own),
+          bases: [...this._bases.values()],
+          opts,
+          diff: this._readDiff(),
+          inView
+        });
+        html = (onMap ? "" : `<div style="color:#ffb74d;padding:4px 0;">${escapeHtml(t("tpaMapHint"))}</div>`) + renderTable2(this._rows, opts);
+      }
+      if (html === this._shown) return;
+      this._shown = html;
+      const tunnels = this._rows.filter((r) => r.kind === "tunnel");
+      const count = own ? ` <span style="color:#aaa;">(${t("tpaTitleCount", {
+        active: tunnels.filter((r) => r.active).length,
+        tunnels: tunnels.length,
+        worthless: this._rows.filter((r) => r.status === "worthless").length
+      })})</span>` : "";
+      this._title.innerHTML = `<b style="color:#fff;">${escapeHtml(t("tpaTitle"))}</b>${count}`;
+      this._content.innerHTML = html;
+      this._content.querySelectorAll("tr[data-x]").forEach((tr2) => {
+        tr2.addEventListener("click", () => centerMap(Number(tr2.dataset.x), Number(tr2.dataset.y)));
+      });
+    }
+    _ensurePanel() {
+      if (this._panel && document.body.contains(this._panel)) return;
+      const pos = clampPosition(
+        loadPosition(this.config, "TunnelPoiAnalyzer", DEFAULT_POSITION4),
+        { w: PANEL_WIDTH4, h: 40 },
+        { w: window.innerWidth, h: window.innerHeight }
+      );
+      const panel = document.createElement("div");
+      panel.id = PANEL_ID9;
+      panel.style.cssText = `
+            display: none;
+            position: fixed;
+            left: ${pos.x}px;
+            top: ${pos.y}px;
+            z-index: 10000;
+            width: ${PANEL_WIDTH4}px;
+            max-width: calc(100vw - 16px);
+            box-sizing: border-box;
+            background: rgba(20, 20, 20, 0.92);
+            color: #ddd;
+            border: 1px solid #444;
+            border-radius: 4px;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 12px;
+            pointer-events: auto;
+        `;
+      const header = document.createElement("div");
+      header.style.cssText = "display:flex;align-items:baseline;gap:8px;padding:8px 10px 6px;cursor:move;user-select:none;border-bottom:1px solid #333;";
+      const title = document.createElement("div");
+      title.style.cssText = "flex:1;min-width:0;";
+      const close = document.createElement("div");
+      close.textContent = "\u2715";
+      close.title = t("close");
+      close.style.cssText = "cursor:pointer;color:#999;font-size:14px;line-height:1;";
+      close.addEventListener("mousedown", (e) => e.stopPropagation());
+      close.addEventListener("click", () => this.close());
+      close.addEventListener("mouseenter", () => {
+        close.style.color = "#fff";
+      });
+      close.addEventListener("mouseleave", () => {
+        close.style.color = "#999";
+      });
+      header.append(title, close);
+      const content = document.createElement("div");
+      content.style.cssText = "max-height:60vh;overflow-y:auto;padding:4px 10px 8px;";
+      panel.append(header, content);
+      document.body.appendChild(panel);
+      makeDraggable(panel, header, { config: this.config, prefix: "TunnelPoiAnalyzer" });
+      this._panel = panel;
+      this._title = title;
+      this._content = content;
+    }
+  };
+
   // plugins/stabs-stats.js
   var RES = { TIB: 1, CRY: 2, CREDITS: 3, RP: 6, RC_BASE: 7, RC_AIR: 8, RC_INF: 9, RC_VEH: 10 };
   var RES_KEYS = Object.values(RES);
@@ -11809,7 +12418,7 @@ var ShockrTools = (() => {
   }
 
   // plugins/stabs.js
-  var TOOLBAR_ID4 = "stabs";
+  var TOOLBAR_ID5 = "stabs";
   var SIM_LOCK_MS = 3e3;
   var TICK_MS2 = 300;
   var KEY_NUM0 = 96;
@@ -12051,7 +12660,7 @@ var ShockrTools = (() => {
       }
       if (!this.parked) {
         this.toolbar.register({
-          id: TOOLBAR_ID4,
+          id: TOOLBAR_ID5,
           icon: ICONS.sim,
           label: () => t("toolbarStabs"),
           onClick: () => this.togglePanel()
@@ -12103,7 +12712,7 @@ var ShockrTools = (() => {
       this._lock = false;
       this._request = false;
       document.removeEventListener("keydown", this._onKeyDown);
-      this.toolbar.unregister(TOOLBAR_ID4);
+      this.toolbar.unregister(TOOLBAR_ID5);
       if (this._button) {
         try {
           const parent = this._button.getLayoutParent();
@@ -12542,7 +13151,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.30.0";
+  var ST_VERSION = "5.31.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -12602,6 +13211,7 @@ var ShockrTools = (() => {
       new PvpAlert(config),
       new TargetBoard(config, api, toolbar, cli),
       new MarkerNav(config, toolbar, cli),
+      new TunnelPoiAnalyzer(config, toolbar, cli),
       new Stabs(config, toolbar)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });

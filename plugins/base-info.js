@@ -11,6 +11,9 @@
  * cell): `#2 23.4/21.0` = base number of that player, offense/defense level.
  *
  * - Only player bases (world object Type City), never Forgotten bases/camps.
+ * - Owner: the region vis object's get_PlayerId() (5.31.0). The world object's
+ *   patched $PlayerId was a small index, not the player id (seen live), so
+ *   bases of different players could share a numbering.
  * - Numbering: city id ascending (lower id = founded earlier). Own bases:
  *   the complete list from get_AllCities(). Other players: the client has no
  *   cheap "all bases of player X" list, so the number reflects the bases of
@@ -43,6 +46,16 @@ export function labelText(number, levels) {
 export function baseNumber(ids, id) {
     const sorted = Array.from(ids).sort((a, b) => a - b);
     return sorted.indexOf(id) + 1;
+}
+
+/** Owner player id of a base's region vis object, null if unknown. */
+export function visPlayerId(vis) {
+    try {
+        const id = vis && typeof vis.get_PlayerId === 'function' ? Number(vis.get_PlayerId()) : NaN;
+        return id > 0 ? id : null;
+    } catch {
+        return null;
+    }
 }
 
 export class BaseInfo {
@@ -106,6 +119,9 @@ export class BaseInfo {
         const world = md.get_World();
         const cities = md.get_Cities();
         const cityType = cityObjectType();
+        const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
+        const gw = region.get_GridWidth();
+        const gh = region.get_GridHeight();
 
         let ownPlayerId = null;
         try { ownPlayerId = md.get_Player().id; } catch { /* unknown */ }
@@ -123,7 +139,7 @@ export class BaseInfo {
                     if (!obj || obj.Type !== cityType) continue;
                     if (typeof obj.$Id === 'undefined') continue;
                     const id = obj.$Id;
-                    const playerId = obj.$PlayerId;
+                    const playerId = visPlayerId(region.GetObjectFromPosition(x * gw, y * gh));
                     const own = ownIds.includes(id) || (ownPlayerId !== null && playerId === ownPlayerId);
                     if (!own) {
                         if (!this.seen.has(playerId)) this.seen.set(playerId, new Set());

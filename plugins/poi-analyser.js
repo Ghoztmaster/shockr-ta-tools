@@ -35,10 +35,10 @@ import {
 import {
     KEY_ORDER, fmtBonus, fmtNumber, ownAlliance, allianceBonuses,
     visiblePois, poiFromVisObject, poiScore, realPoiDelta, rankedPoiDelta,
+    poiDeltaContext, fetchPoiRanking,
 } from '../lib/poi-util.js';
 
 const REFRESH_MS = 3000;
-const RANKING_CACHE_MS = 10 * 60 * 1000;
 export const COLORS = { own: '#ffc107', enemy: '#ef5350', free: '#bdbdbd' };
 /** Info widgets of own / alliance bases (webfrontend.gui.region.*): the alliance bonus applies there. */
 const BASE_INFOS = ['RegionCityStatusInfoOwn', 'RegionCityStatusInfoAlliance'];
@@ -80,7 +80,6 @@ export class PoiAnalyser {
         this._raf = null;
         this._listeners = [];         // {widget, id}
         this._panel = null;           // qx container + labels
-        this._rankingCache = {};      // poiType -> {expire, rows}
         this._poiPanelKey = null;     // "x:y" of the POI whose panel is open
         this._warned = false;
     }
@@ -350,60 +349,12 @@ export class PoiAnalyser {
 
     /** Rank/score of the own alliance for this POI type + the game's bonus formula. */
     _deltaContext(poi, own, score) {
-        try {
-            const md = ClientLib.Data.MainData.GetInstance();
-            const rs = md.get_Alliance().get_POIRankScore()[poi.poiType - ClientLib.Base.EPOIType.RankedTypeBegin];
-            if (!rs) return null;
-            const factor = md.get_Server().get_POIGlobalBonusFactor();
-            const util = ClientLib.Base.PointOfInterestTypes;
-            let noAlliance = 0;
-            try { noAlliance = webfrontend.gui.widgets.AllianceLabel.ESpecialNoAllianceName; } catch { /* 0 */ }
-            return {
-                own: poi.ownerId === own.id,
-                ownerIsAlliance: !!poi.ownerId && poi.ownerId !== noAlliance,
-                poiScore: score,
-                rank: rs.r, score: rs.s, nextScore: rs.ns, prevScore: rs.ps,
-                total: (rank, s) => util.GetTotalBonusByType(poi.poiType, rank, s, factor),
-            };
-        } catch {
-            return null;
-        }
+        return poiDeltaContext(poi.poiType, poi.ownerId, own.id, score);
     }
 
     /** Other alliances' scores for this POI type (RankingGetData, read-only), cached 10 min. */
     _fetchRanking(poiType, ownId, done) {
-        const hit = this._rankingCache[poiType];
-        if (hit && hit.expire >= Date.now()) {
-            done(hit.rows);
-            return;
-        }
-        try {
-            const R = ClientLib.Data.Ranking;
-            const E = ClientLib.Base.EPOIType;
-            const rankingType = {
-                [E.TiberiumBonus]: R.ERankingType.BonusTiberium, [E.CrystalBonus]: R.ERankingType.BonusCrystal,
-                [E.PowerBonus]: R.ERankingType.BonusPower, [E.InfanteryBonus]: R.ERankingType.BonusInfantry,
-                [E.VehicleBonus]: R.ERankingType.BonusVehicles, [E.AirBonus]: R.ERankingType.BonusAircraft,
-                [E.DefenseBonus]: R.ERankingType.BonusDefense,
-            }[poiType];
-            const sortColumn = {
-                [R.ERankingType.BonusTiberium]: R.ESortColumn.TiberiumScore, [R.ERankingType.BonusCrystal]: R.ESortColumn.CrystalScore,
-                [R.ERankingType.BonusPower]: R.ESortColumn.PowerScore, [R.ERankingType.BonusInfantry]: R.ESortColumn.InfantryScore,
-                [R.ERankingType.BonusVehicles]: R.ESortColumn.VehicleScore, [R.ERankingType.BonusAircraft]: R.ESortColumn.AircraftScore,
-                [R.ERankingType.BonusDefense]: R.ESortColumn.DefenseScore,
-            }[rankingType];
-            const lastIndex = Object.keys(ClientLib.Res.ResMain.GetInstance().GetGamedata().poibmbr).length;
-            ClientLib.Net.CommunicationManager.GetInstance().SendSimpleCommand('RankingGetData', {
-                firstIndex: 0, lastIndex, view: R.EViewType.Alliance, rankingType, sortColumn, ascending: true,
-            }, webfrontend.phe.cnc.Util.createEventDelegate(ClientLib.Net.CommandResult, this, (ctx, data) => {
-                if (!data || !Array.isArray(data.a)) return;
-                const rows = data.a.filter(r => r.a !== ownId).map(r => ({ a: r.a, pois: r.pois || 0 }));
-                this._rankingCache[poiType] = { expire: Date.now() + RANKING_CACHE_MS, rows };
-                done(rows);
-            }), null);
-        } catch (e) {
-            this._warn('RankingGetData failed', e);
-        }
+        if (!fetchPoiRanking(poiType, ownId, done)) this._warn('RankingGetData failed');
     }
 }
 

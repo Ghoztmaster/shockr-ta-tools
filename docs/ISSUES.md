@@ -41,7 +41,7 @@ The script patches obfuscated ClientLib classes using regex matching on minified
 PatchCityUnits:       $OffenseUnits, $DefenseUnits  — regex on HasUnitMdbId
 PatchWorldObjectNPCCamp: $CampType, $Id, $Level     — regex on $ctor
 PatchWorldObjectNPCBase: $Id, $Level                 — regex on $ctor
-PatchWorldObjectCity:    $PlayerId, $AllianceId, $Id — regex on $ctor
+PatchWorldObjectCity:    $Id                         — regex on $ctor ($PlayerId/$AllianceId removed in 5.31.0: wrong fields, use the vis getters)
 PatchCommunicationManager: $Poll                     — string match on "Poll"
 ```
 

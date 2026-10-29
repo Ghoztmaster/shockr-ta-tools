@@ -1,5 +1,29 @@
 # Changelog
 
+## [5.31.0] — 2026-10-29
+
+Userscript + `config/plugins.json`, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Nieuwe plugin: Tunnel & POI Analyzer
+- `plugins/tunnel-poi-analyzer.js`, standaard aan: tunnel-icoon in de toolbar (of `/st tunnels`) opent een paneel (stijl Target Watch / Marker Nav). Kolommen: tunnel/POI, coördinaten, status, spelers, advies. Klik op een rij centreert de kaart (`centerMap`)
+- Tunnel exit actief bij ≥ `tpa.players` (5) verschillende alliance-spelers met een base binnen `tpa.range` (5) velden (Euclidisch, zoals de Tunnel Info-cirkel). Per tunnel: aantal, namen, hoeveel er nog nodig zijn
+- Mogelijke blokkeerder: alliance-base in de zone met base level meer dan `tpa.blockmargin` (5) onder het vereiste offense level van de tunnel (level − `POIActivationLevelDifference`, als Tunnel Info): vereist 30 → onder 25. Zonder marge was live bijna elke base een blokkeerder. Base level, geen offense: andermans offense is client-side niet leesbaar. Een blokkeerder telt wel mee als speler (regel uit de werkorder)
+- Alliance-POI's: real loss uit PoiAnalyser's berekening; 0/h = waardeloos, bases binnen `tpa.guardrange` (5) velden kunnen verhuizen; een bewaker die ook een tunnel blokkeert wordt gemarkeerd (⚠)
+- Alleen gescand zolang het paneel open is (elke 3 s, alleen op de wereldkaart); wat gescand is wordt per sessie onthouden, rijen buiten beeld worden gedimd met hun laatst-gezien-tijd. Eigen POI's buiten beeld komen uit `get_OwnedPOIs()`
+- Live gecontroleerd met `docs/probes/tunnel-poi-probe.js` (wereld 477): bases via de vis-getters `get_AllianceId`/`get_PlayerId`/`get_PlayerName`/`get_BaseLevel` (geen `get_BaseLevelFloat`); `get_OwnedPOIs()` `t` is al het EPOIType. Let op: de gepatchte `$AllianceId`/`$PlayerId` van het world-object geven live andere waarden (`$AllianceId` = player id, `$PlayerId` = kleine index) en worden hier niet gebruikt
+- `lib/poi-util.js`: `poiDeltaContext` en `fetchPoiRanking` (uit PoiAnalyser gehaald, gedeelde ranking-cache, één request per POI-type tegelijk); `ownedPois()` geeft ook `worldType`
+- Tests: `tests/tunnel-poi-analyzer.test.mjs`
+
+### BaseInfo: nummering per speler gefixt
+- De eigenaar van een base komt nu uit de vis-getter `get_PlayerId()`. De gepatchte `$PlayerId` was live een kleine index, waardoor bases van verschillende spelers één nummering konden delen (#1, #2, #3 over spelers heen)
+- `lib/clientlib-patch.js`: de patch-definities `$PlayerId` en `$AllianceId` van `WorldObjectCity` verwijderd (verkeerde velden: `$AllianceId` bevatte het player id); `$Id` blijft
+- Tests: `tests/base-info.test.mjs`
+
+### Help en documentatie (v5.30.0 + v5.31.0)
+- `/st help`: commando's `/st markers` en `/st tunnels`; nuttige instellingen `tunnel.color`, `tunnel.width`, `autorepair.interval`, `autorepair.buildings`, `tpa.players`, `tpa.range`, `tpa.guardrange`, `tpa.blockmargin`; plugin-omschrijvingen TunnelInfo, AutoRepair en de scanners bijgewerkt (en/de/nl)
+- Info-pagina (`config/plugins.json`): LayoutScanner/AllianceScanner (100 ms per base), TunnelInfo (kleur/breedte), SectorHud (sector vanaf het wereldcentrum), TunnelPoiAnalyzer (blockmargin)
+- `INSTALL_GUIDE.html`: nieuwe sectie "Nieuw in v5.30 en v5.31" in alle drie de talen
+
 ## [5.30.0] — 2026-10-29
 
 Userscript + `config/plugins.json`, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
