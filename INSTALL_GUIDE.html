@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shockr TA Tools — Installatie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #1a1a1f;
+  --bg-card: #232329;
+  --bg-card-hover: #2a2a31;
+  --border: #333339;
+  --text: #d4d4d8;
+  --text-dim: #8b8b95;
+  --text-bright: #f0f0f3;
+  --accent: #4ade80;
+  --accent-dim: #22c55e;
+  --amber: #f59e0b;
+  --red: #ef4444;
+  --cyan: #22d3ee;
+  --font: 'Inter', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f5f5f7;
+    --bg-card: #fff;
+    --bg-card-hover: #f9f9fb;
+    --border: #d4d4d8;
+    --text: #3f3f46;
+    --text-dim: #71717a;
+    --text-bright: #18181b;
+    --accent: #16a34a;
+    --accent-dim: #15803d;
+    color-scheme: light;
+  }
+}
+:root[data-theme="dark"] {
+    --bg: #1a1a1f;
+    --bg-card: #232329;
+    --bg-card-hover: #2a2a31;
+    --border: #333339;
+    --text: #d4d4d8;
+    --text-dim: #8b8b95;
+    --text-bright: #f0f0f3;
+    --accent: #4ade80;
+    --accent-dim: #22c55e;
+    color-scheme: dark;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  min-height: 100vh;
+}
+
+.container { max-width: 680px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+/* Language switcher */
+.lang-bar {
+  display: flex;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0;
+}
+.lang-btn {
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.lang-btn:hover { border-color: var(--accent); color: var(--text-bright); }
+.lang-btn.active {
+  background: var(--accent);
+  color: #111;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+/* Hide inactive languages */
+[data-lang] { display: none; }
+[data-lang].visible { display: block; }
+
+/* Hero */
+.hero { text-align: center; padding: 2.5rem 0 2rem; }
+.hero-icon { font-size: 3rem; margin-bottom: 0.75rem; }
+.hero h1 { font-size: 1.6rem; font-weight: 700; color: var(--text-bright); letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+.hero .subtitle { color: var(--text-dim); font-size: 0.95rem; }
+
+/* Sections */
+.section { margin-top: 2.5rem; }
+.section-label {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-size: 0.8rem; font-weight: 600; color: var(--accent);
+  letter-spacing: 0.04em; margin-bottom: 0.75rem;
+}
+.section-label .num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.5rem; height: 1.5rem; border-radius: 50%;
+  background: var(--accent); color: var(--bg);
+  font-size: 0.75rem; font-weight: 700;
+}
+h2 { font-size: 1.25rem; font-weight: 700; color: var(--text-bright); margin-bottom: 0.75rem; letter-spacing: -0.01em; }
+p { margin-bottom: 0.75rem; }
+
+/* Browser buttons */
+.browser-links { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0; }
+.browser-link {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.45rem 0.85rem; background: var(--bg-card);
+  border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text-bright); text-decoration: none;
+  font-size: 0.85rem; font-weight: 500; transition: border-color 0.15s;
+}
+.browser-link:hover { border-color: var(--accent); }
+
+/* Install button */
+.install-btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.75rem 1.5rem; background: var(--accent); color: #111;
+  border-radius: 10px; text-decoration: none;
+  font-weight: 600; font-size: 0.95rem; margin: 0.75rem 0; transition: opacity 0.15s;
+}
+.install-btn:hover { opacity: 0.9; }
+
+/* Code blocks */
+.cmd {
+  display: block; background: #111114; border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.65rem 1rem; font-family: var(--mono);
+  font-size: 0.82rem; color: var(--cyan); margin: 0.5rem 0;
+  overflow-x: auto; white-space: nowrap;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .cmd { background: #f0f0f3; color: #0e7490; }
+}
+
+/* Checklist */
+.checklist { list-style: none; padding: 0; }
+.checklist li { display: flex; align-items: flex-start; gap: 0.65rem; padding: 0.6rem 0; }
+.checklist li + li { border-top: 1px solid var(--border); }
+.check-icon {
+  flex-shrink: 0; width: 1.4rem; height: 1.4rem; border-radius: 6px;
+  border: 2px solid var(--border); display: flex; align-items: center;
+  justify-content: center; font-size: 0.75rem; margin-top: 0.1rem;
+  cursor: pointer; transition: all 0.15s; user-select: none;
+}
+.checklist li.done .check-icon { background: var(--accent); border-color: var(--accent); color: #111; }
+.checklist li.done .check-icon::after { content: '✓'; }
+
+/* Callouts */
+.callout { display: flex; gap: 0.75rem; padding: 1rem; border-radius: 10px; margin: 0.75rem 0; font-size: 0.9rem; }
+.callout-icon { flex-shrink: 0; font-size: 1.2rem; line-height: 1.4; }
+.callout-tip { background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.2); }
+.callout-warn { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); }
+.callout-info { background: rgba(34,211,238,0.08); border: 1px solid rgba(34,211,238,0.2); }
+
+/* Troubleshoot */
+.trouble { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.5rem; overflow: hidden; }
+.trouble summary {
+  padding: 0.85rem 1rem; cursor: pointer; font-weight: 500;
+  color: var(--text-bright); background: var(--bg-card);
+  list-style: none; display: flex; align-items: center; gap: 0.5rem;
+}
+.trouble summary::before { content: '▸'; font-size: 0.8rem; color: var(--text-dim); transition: transform 0.15s; }
+.trouble[open] summary::before { transform: rotate(90deg); }
+.trouble .trouble-body { padding: 0 1rem 1rem; font-size: 0.9rem; }
+
+.footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); text-align: center; color: var(--text-dim); font-size: 0.8rem; }
+.footer a { color: var(--accent); text-decoration: none; }
+
+@media (max-width: 480px) {
+  .container { padding: 1.5rem 1rem 3rem; }
+  .hero h1 { font-size: 1.35rem; }
+  h2 { font-size: 1.1rem; }
+  .browser-links { flex-direction: column; }
+  .browser-link { justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Language switcher -->
+  <div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('nl')">🇳🇱 Nederlands</button>
+    <button class="lang-btn" onclick="setLang('de')">🇩🇪 Deutsch</button>
+    <button class="lang-btn" onclick="setLang('en')">🇬🇧 English</button>
+  </div>
+
+  <!-- ==================== HERO ==================== -->
+  <div class="hero">
+    <div class="hero-icon">🛡️⚡</div>
+    <h1>Shockr TA Tools</h1>
+    <p class="subtitle" data-lang="nl">Installatie-handleiding voor C&amp;C Tiberium Alliances</p>
+    <p class="subtitle" data-lang="de">Installationsanleitung für C&amp;C Tiberium Alliances</p>
+    <p class="subtitle" data-lang="en">Installation guide for C&amp;C Tiberium Alliances</p>
+  </div>
+
+  <!-- ==================== INTRO ==================== -->
+  <div class="section">
+    <!-- NL -->
+    <div data-lang="nl">
+      <h2>Wat is dit?</h2>
+      <p>Shockr TA Tools is een browser-uitbreiding die extra functies aan het spel toevoegt. Denk aan gekleurde markers op de kaart, plunder-info bij gevechten, en automatische verkenning van vijandelijke bases voor je alliance.</p>
+      <p>Het script draait in <strong>Tampermonkey</strong> — een gratis browser-extensie die kleine programma's (userscripts) in webpagina's kan laden. Je installeert het één keer, en daarna werkt het vanzelf als je het spel opent.</p>
+    </div>
+    <!-- DE -->
+    <div data-lang="de">
+      <h2>Was ist das?</h2>
+      <p>Shockr TA Tools ist eine Browser-Erweiterung, die dem Spiel zusätzliche Funktionen hinzufügt. Zum Beispiel farbige Markierungen auf der Weltkarte, Beute-Infos im Kampf und automatisches Scannen feindlicher Basen für deine Allianz.</p>
+      <p>Das Script läuft in <strong>Tampermonkey</strong> — einer kostenlosen Browser-Erweiterung, die kleine Programme (Userscripts) in Webseiten laden kann. Du installierst es einmal, und danach funktioniert es automatisch wenn du das Spiel öffnest.</p>
+    </div>
+    <!-- EN -->
+    <div data-lang="en">
+      <h2>What is this?</h2>
+      <p>Shockr TA Tools is a browser extension that adds extra features to the game. Think colored markers on the world map, plunder info in battles, and automatic scanning of enemy bases for your alliance.</p>
+      <p>The script runs inside <strong>Tampermonkey</strong> — a free browser extension that can load small programs (userscripts) into web pages. You install it once, and after that it works automatically whenever you open the game.</p>
+    </div>
+  </div>
+
+  <!-- ==================== STEP 1: TAMPERMONKEY ==================== -->
+  <div class="section">
+    <div class="section-label"><span class="num">1</span> Tampermonkey</div>
+
+    <!-- NL -->
+    <div data-lang="nl">
+      <h2>Browser-extensie toevoegen</h2>
+      <p>Klik op de link voor jouw browser. Je komt in de extensie-winkel — klik daar op <strong>Toevoegen</strong> (of "Add to…").</p>
+    </div>
+    <!-- DE -->
+    <div data-lang="de">
+      <h2>Browser-Erweiterung hinzufügen</h2>
+      <p>Klicke auf den Link für deinen Browser. Du landest im Erweiterungs-Shop — klicke dort auf <strong>Hinzufügen</strong>.</p>
+    </div>
+    <!-- EN -->
+    <div data-lang="en">
+      <h2>Add the browser extension</h2>
+      <p>Click the link for your browser. You'll land in the extension store — click <strong>Add</strong> (or "Add to…").</p>
+    </div>
+
+    <div class="browser-links">
+      <a class="browser-link" href="https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo" target="_blank" rel="noopener">🌐 Chrome</a>
+      <a class="browser-link" href="https://addons.mozilla.org/firefox/addon/tampermonkey/" target="_blank" rel="noopener">🦊 Firefox</a>
+      <a class="browser-link" href="https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd" target="_blank" rel="noopener">🔵 Edge</a>
+    </div>
+
+    <!-- NL -->
+    <div data-lang="nl">
+      <p>Na installatie verschijnt er een klein zwart vierkantje (<strong>TM</strong>) rechtsboven in je browser, naast de adresbalk. Dat is Tampermonkey.</p>
+      <div class="callout callout-warn">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>Chrome-gebruikers:</strong> na het installeren moet je userscripts toestaan. Klik met rechts op het Tampermonkey-icoontje → <em>Extensie beheren</em> → zet <strong>Gebruikersscripts toestaan</strong> aan. Zonder deze instelling laadt het script niet.</div>
+      </div>
+    </div>
+    <!-- DE -->
+    <div data-lang="de">
+      <p>Nach der Installation erscheint ein kleines schwarzes Quadrat (<strong>TM</strong>) oben rechts im Browser, neben der Adressleiste. Das ist Tampermonkey.</p>
+      <div class="callout callout-warn">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>Chrome-Benutzer:</strong> nach der Installation müssen Userscripts erlaubt werden. Rechtsklick auf das Tampermonkey-Icon → <em>Erweiterung verwalten</em> → <strong>Zugriff auf Datei-URLs erlauben</strong> aktivieren. Ohne diese Einstellung wird das Script nicht geladen.</div>
+      </div>
+    </div>
+    <!-- EN -->
+    <div data-lang="en">
+      <p>After installation, a small black square (<strong>TM</strong>) appears in the top-right corner of your browser, next to the address bar. That's Tampermonkey.</p>
+      <div class="callout callout-warn">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>Chrome users:</strong> after installing, you need to allow userscripts. Right-click the Tampermonkey icon → <em>Manage extension</em> → turn on <strong>Allow access to file URLs</strong>. Without this setting, the script won't load.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== STEP 2: INSTALL SCRIPT ==================== -->
+  <div class="section">
+    <div class="section-label"><span class="num">2</span> Script</div>
+
+    <!-- NL -->
+    <div data-lang="nl">
+      <h2>Shockr TA Tools toevoegen</h2>
+      <p>Klik op de groene knop hieronder. Tampermonkey opent vanzelf een installatie-venster.</p>
+    </div>
+    <!-- DE -->
+    <div data-lang="de">
+      <h2>Shockr TA Tools installieren</h2>
+      <p>Klicke auf den grünen Button unten. Tampermonkey öffnet automatisch ein Installationsfenster.</p>
+    </div>
+    <!-- EN -->
+    <div data-lang="en">
+      <h2>Add Shockr TA Tools</h2>
+      <p>Click the green button below. Tampermonkey will automatically open an installation window.</p>
+    </div>
+
+    <a class="install-btn" href="https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js" target="_blank" rel="noopener">⬇️ Script installeren / Install script</a>
+
+    <!-- NL -->
+    <div data-lang="nl">
+      <p>Klik in het Tampermonkey-venster op <strong>Installeren</strong> (of "Install"). Dat is alles — het script zit er nu in.</p>
+      <div class="callout callout-tip">
+        <span class="callout-icon">✅</span>
+        <div><strong>Updates gaan automatisch.</strong> Tampermonkey checkt dagelijks op nieuwe versies en installeert ze vanzelf. Je hoeft hier niets voor te doen.</div>
+      </div>
+    </div>
+    <!-- DE -->
+    <div data-lang="de">
+      <p>Klicke im Tampermonkey-Fenster auf <strong>Installieren</strong> (oder "Install"). Das war's — das Script ist jetzt drin.</p>
+      <div class="callout callout-tip">
+        <span class="callout-icon">✅</span>
+        <div><strong>Updates laufen automatisch.</strong> Tampermonkey prüft täglich auf neue Versionen und installiert sie von selbst. Du brauchst nichts zu tun.</div>
+      </div>
+    </div>
+    <!-- EN -->
+    <div data-lang="en">
+      <p>In the Tampermonkey window, click <strong>Install</strong>. That's it — the script is now installed.</p>
+      <div class="callout callout-tip">
+        <span class="callout-icon">✅</span>
+        <div><strong>Updates are automatic.</strong> Tampermonkey checks daily for new versions and installs them on its own. You don't need to do anything.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== STEP 3: RELOAD GAME ==================== -->
+  <div class="section">
+    <div class="section-label"><span class="num">3</span> Game</div>
+
+    <!-- NL -->
+    <div data-lang="nl">
+      <h2>Game opnieuw laden</h2>
+      <p>Ga naar je C&amp;C Tiberium Alliances tabblad en druk <strong>F5</strong> (of klik op de herlaad-knop van je browser). Het script laadt automatisch mee.</p>
+      <p>Na een paar seconden verschijnt in de game-chat:</p>
+    </div>
+    <!-- DE -->
+    <div data-lang="de">
+      <h2>Spiel neu laden</h2>
+      <p>Gehe zu deinem C&amp;C Tiberium Alliances Tab und drücke <strong>F5</strong> (oder klicke auf den Neu-Laden-Button deines Browsers). Das Script wird automatisch mitgeladen.</p>
+      <p>Nach ein paar Sekunden erscheint im Spiel-Chat:</p>
+    </div>
+    <!-- EN -->
+    <div data-lang="en">
+      <h2>Reload the game</h2>
+      <p>Go to your C&amp;C Tiberium Alliances tab and press <strong>F5</strong> (or click your browser's reload button). The script loads automatically.</p>
+      <p>After a few seconds, the game chat shows:</p>
+    </div>
+
+    <code class="cmd">[ST] v5.x.x loaded — xx/xx plugins active</code>
+
+    <!-- NL -->
+    <div data-lang="nl">
+      <p>En linksboven op de wereldkaart zie je een klein schildje (🛡️⚡) — dat is de Shockr-toolbar.</p>
+    </div>
+    <!-- DE -->
+    <div data-lang="de">
+      <p>Und oben links auf der Weltkarte siehst du ein kleines Schildsymbol (🛡️⚡) — das ist die Shockr-Toolbar.</p>
+    </div>
+    <!-- EN -->
+    <div data-lang="en">
+      <p>And in the top-left corner of the world map you'll see a small shield icon (🛡️⚡) — that's the Shockr toolbar.</p>
+    </div>
+  </div>
+
+  <!-- ==================== STEP 4: CHECKLIST ==================== -->
+  <div class="section">
+    <div class="section-label"><span class="num">4</span> Check</div>
+
+    <!-- NL -->
+    <div data-lang="nl">
+      <h2>Werkt het?</h2>
+      <p>Loop deze checklist af. Klik op een vakje om het af te vinken.</p>
+    </div>
+    <!-- DE -->
+    <div data-lang="de">
+      <h2>Funktioniert es?</h2>
+      <p>Gehe diese Checkliste durch. Klicke auf ein Kästchen um es abzuhaken.</p>
+    </div>
+    <!-- EN -->
+    <div data-lang="en">
+      <h2>Does it work?</h2>
+      <p>Go through this checklist. Click a box to check it off.</p>
+    </div>
+
+    <!-- NL checklist -->
+    <ul class="checklist" data-lang="nl">
+      <li>
+        <span class="check-icon" onclick="this.parentElement.classList.toggle('done')"></span>
+        <div><strong>Chat-melding:</strong> na het laden staat er <code>[ST] v5.x.x loaded</code> in de game-chat</div>
+      </li>
+      <li>
+        <span class="check-icon" onclick="this.parentElement.classList.toggle('done')"></span>
+        <div><strong>Toolbar-knop:</strong> linksboven op de wereldkaart staat een klein schildje</div>
+      </li>
+      <li>
+        <span class="check-icon" onclick="this.parentElement.classList.toggle('done')"></span>
+        <div><strong>Camp-markers:</strong> op de wereldkaart staan genummerde groene/gele markers bij camps en outposts</div>
+      </li>
+      <li>
+        <span class="check-icon" onclick="this.parentElement.classList.toggle('done')"></span>
+        <div><strong>Online-status:</strong> alliance-bases op de kaart zijn gekleurd — groen (online), geel (away), grijs (offline)</div>
+      </li>
+      <li>
+        <span class="check-icon" onclick="this.parentElement.classList.toggle('done')"></span>
+        <div><strong>Help-popup:</strong> typ <code>/st help</code> in de game-chat — er opent een popup met alle commando's en plugins</div>
+      </li>
+    </ul>
+
+    <!-- DE checklist -->
+    <ul class="checklist" data-lang="de">
+      <li>
+        <span class="check-icon" onclick="this.parentElement.classList.toggle('done')"></span>
+        <div><strong>Chat-Meldung:</strong> nach dem Laden steht <code>[ST] v5.x.x loaded</code> im Spiel-Chat</div>
+      </li>
+      <li>
+        <span class="check-icon" onclick="this.parentElement.classList.toggle('done')"></span>
+        <div><strong>Toolbar-Button:</strong> oben links auf der Weltkarte ist ein kleines Schildsymbol</div>
+      </li>
+      <li>
+        <span class="check-icon" onclick="this.parentElement.classList.toggle('done')"></span>
+        <div><strong>Camp-Markierungen:</strong> auf der Weltkarte sind nummerierte grüne/gelbe Markierungen bei Camps und Außenposten</div>
+      </li>
+      <li>
+        <span class="check-icon" onclick="this.parentElement.classList.toggle('done')"></span>
+        <div><strong>Online-Status:</strong> Allianz-Basen auf der Karte sind farbig — grün (online), gelb (abwesend), grau (offline)</div>
+      </li>
+      <li>
+        <span class="check-icon" onclick="this.parentElement.classList.toggle('done')"></span>
+        <div><strong>Hilfe-Popup:</strong> tippe <code>/st help</code> im Spiel-Chat — ein Popup mit allen Befehlen und Plugins öffnet sich</div>
+      </li>
+    </ul>
+
+    <!-- EN checklist -->
+    <ul class="checklist" data-lang="en">
+      <li>
+        <span class="check-icon" onclick="this.parentElement.classList.toggle('done')"></span>
+        <div><strong>Chat message:</strong> after loading, <code>[ST] v5.x.x loaded</code> appears in the game chat</div>
+      </li>
+      <li>
+        <span class="check-icon" onclick="this.parentElement.classList.toggle('done')"></span>
+        <div><strong>Toolbar button:</strong> a small shield icon is visible in the top-left corner of the world map</div>
+      </li>
+      <li>
+        <span class="check-icon" onclick="this.parentElement.classList.toggle('done')"></span>
+        <div><strong>Camp markers:</strong> numbered green/yellow markers appear near camps and outposts on the world map</div>
+      </li>
+      <li>
+        <span class="check-icon" onclick="this.parentElement.classList.toggle('done')"></span>
+        <div><strong>Online status:</strong> alliance bases on the map are colored — green (online), yellow (away), grey (offline)</div>
+      </li>
+      <li>
+        <span class="check-icon" onclick="this.parentElement.classList.toggle('done')"></span>
+        <div><strong>Help popup:</strong> type <code>/st help</code> in the game chat — a popup opens with all commands and plugins</div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ==================== STEP 5: SCANNER ==================== -->
+  <div class="section">
+    <div class="section-label"><span class="num">5</span> Scanner</div>
+
+    <!-- NL -->
+    <div data-lang="nl">
+      <h2>Alliance-scanner instellen (optioneel)</h2>
+      <p>Het script kan automatisch vijandelijke bases scannen en delen op een gedeelde website. Zo kan iedereen in de alliance base-layouts bekijken zonder zelf naar elke base te vliegen.</p>
+      <p>Dit werkt alleen als je alliance-leider je de <strong>server-URL</strong> en een <strong>enrollment-code</strong> heeft gegeven.</p>
+      <p>Typ in de <strong>game-chat</strong>:</p>
+      <code class="cmd">/st config set api.url https://jullie-server-url</code>
+      <p>Registreer je daarna:</p>
+      <code class="cmd">/st register</code>
+      <p>Er opent een klein popup-venster in het spel. Vul daar de enrollment-code in die je van je alliance hebt gekregen.</p>
+      <div class="callout callout-info">
+        <span class="callout-icon">🔌</span>
+        <div><strong>Plugins aan/uit zetten:</strong> klik op het schildje (🛡️⚡) linksboven → je ziet knoppen voor elke plugin. Of typ <code>/st status</code> in de game-chat om te zien wat er aan staat.</div>
+      </div>
+    </div>
+    <!-- DE -->
+    <div data-lang="de">
+      <h2>Allianz-Scanner einrichten (optional)</h2>
+      <p>Das Script kann automatisch feindliche Basen scannen und auf einer gemeinsamen Website teilen. So kann jeder in der Allianz Base-Layouts ansehen, ohne selbst zu jeder Base fliegen zu müssen.</p>
+      <p>Das funktioniert nur, wenn dein Allianzleiter dir die <strong>Server-URL</strong> und einen <strong>Enrollment-Code</strong> gegeben hat.</p>
+      <p>Tippe im <strong>Spiel-Chat</strong>:</p>
+      <code class="cmd">/st config set api.url https://eure-server-url</code>
+      <p>Dann registriere dich:</p>
+      <code class="cmd">/st register</code>
+      <p>Es öffnet sich ein kleines Popup-Fenster im Spiel. Gib dort den Enrollment-Code ein, den du von deiner Allianz bekommen hast.</p>
+      <div class="callout callout-info">
+        <span class="callout-icon">🔌</span>
+        <div><strong>Plugins ein-/ausschalten:</strong> klicke auf das Schildsymbol (🛡️⚡) oben links → du siehst Buttons für jedes Plugin. Oder tippe <code>/st status</code> im Spiel-Chat um zu sehen was aktiv ist.</div>
+      </div>
+    </div>
+    <!-- EN -->
+    <div data-lang="en">
+      <h2>Set up the alliance scanner (optional)</h2>
+      <p>The script can automatically scan enemy bases and share them on a shared website. This way everyone in the alliance can view base layouts without having to fly to each base themselves.</p>
+      <p>This only works if your alliance leader has given you the <strong>server URL</strong> and an <strong>enrollment code</strong>.</p>
+      <p>Type in the <strong>game chat</strong>:</p>
+      <code class="cmd">/st config set api.url https://your-server-url</code>
+      <p>Then register:</p>
+      <code class="cmd">/st register</code>
+      <p>A small popup window opens inside the game. Enter the enrollment code you received from your alliance.</p>
+      <div class="callout callout-info">
+        <span class="callout-icon">🔌</span>
+        <div><strong>Toggle plugins on/off:</strong> click the shield icon (🛡️⚡) in the top-left → you'll see buttons for each plugin. Or type <code>/st status</code> in the game chat to see what's active.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TROUBLESHOOT ==================== -->
+  <div class="section">
+    <!-- NL -->
+    <div data-lang="nl">
+      <h2>Problemen oplossen</h2>
+
+      <details class="trouble">
+        <summary>Ik zie geen [ST]-melding in de chat</summary>
+        <div class="trouble-body">
+          <p>Controleer of Tampermonkey aan staat: klik op het TM-icoontje rechtsboven in je browser. Shockr TA Tools moet in de lijst staan met een groen vinkje.</p>
+          <p><strong>Chrome:</strong> klik rechts op het TM-icoontje → Extensie beheren → <em>Gebruikersscripts toestaan</em> moet aan staan.</p>
+          <p>Herlaad daarna de game met F5.</p>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>Geen markers op de wereldkaart</summary>
+        <div class="trouble-body">
+          <p>CampTracker heeft even nodig om de kaart te scannen. Wacht 10–15 seconden na het laden en scroll/zoom op de wereldkaart.</p>
+          <p>Check of de plugin aanstaat: typ <code>/st status</code> in de game-chat. <em>CampTracker</em> moet op <em>enabled</em> staan.</p>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>Alliance-bases zijn niet gekleurd</summary>
+        <div class="trouble-body">
+          <p>PlayerStatus heeft ~30 seconden nodig om online-status op te halen. Scroll een stukje op de kaart, dan refreshen de markers.</p>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>Scanner meldt "no server configured"</summary>
+        <div class="trouble-body">
+          <p>Je hebt de server-URL nog niet ingesteld. Vraag je alliance-leider om de URL en enrollment-code, en volg stap 5 hierboven.</p>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>Script conflicteert met een ander userscript</summary>
+        <div class="trouble-body">
+          <p>Sommige andere TA-scripts kunnen botsen met Shockr. Probeer in Tampermonkey alle andere TA-scripts tijdelijk uit te zetten, herlaad de game, en zet ze één voor één weer aan om te vinden welk script het conflict veroorzaakt.</p>
+          <p>Meld het bij je alliance-leider met de foutmelding uit de console (F12 → Console).</p>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>Ik wil het script verwijderen</summary>
+        <div class="trouble-body">
+          <p>Klik op het TM-icoontje → <em>Dashboard</em> → zoek "Shockr TA Tools" → klik op het prullenbakje. Herlaad daarna de game.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- DE -->
+    <div data-lang="de">
+      <h2>Probleme lösen</h2>
+
+      <details class="trouble">
+        <summary>Ich sehe keine [ST]-Meldung im Chat</summary>
+        <div class="trouble-body">
+          <p>Prüfe ob Tampermonkey aktiv ist: klicke auf das TM-Icon oben rechts im Browser. Shockr TA Tools muss in der Liste mit einem grünen Häkchen stehen.</p>
+          <p><strong>Chrome:</strong> Rechtsklick auf das TM-Icon → Erweiterung verwalten → <em>Zugriff auf Datei-URLs erlauben</em> muss aktiviert sein.</p>
+          <p>Danach das Spiel mit F5 neu laden.</p>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>Keine Markierungen auf der Weltkarte</summary>
+        <div class="trouble-body">
+          <p>CampTracker braucht einen Moment um die Karte zu scannen. Warte 10–15 Sekunden nach dem Laden und scrolle/zoome auf der Weltkarte.</p>
+          <p>Prüfe ob das Plugin aktiv ist: tippe <code>/st status</code> im Spiel-Chat. <em>CampTracker</em> muss auf <em>enabled</em> stehen.</p>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>Allianz-Basen sind nicht eingefärbt</summary>
+        <div class="trouble-body">
+          <p>PlayerStatus braucht ~30 Sekunden um den Online-Status abzurufen. Scrolle ein Stück auf der Karte, dann werden die Markierungen aktualisiert.</p>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>Scanner meldet "no server configured"</summary>
+        <div class="trouble-body">
+          <p>Du hast die Server-URL noch nicht eingestellt. Frage deinen Allianzleiter nach URL und Enrollment-Code, und folge Schritt 5 oben.</p>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>Script kollidiert mit einem anderen Userscript</summary>
+        <div class="trouble-body">
+          <p>Manche anderen TA-Scripts können mit Shockr kollidieren. Versuche in Tampermonkey alle anderen TA-Scripts vorübergehend zu deaktivieren, lade das Spiel neu, und aktiviere sie einzeln wieder um den Konflikt zu finden.</p>
+          <p>Melde es deinem Allianzleiter mit der Fehlermeldung aus der Konsole (F12 → Console).</p>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>Ich möchte das Script entfernen</summary>
+        <div class="trouble-body">
+          <p>Klicke auf das TM-Icon → <em>Dashboard</em> → suche "Shockr TA Tools" → klicke auf den Papierkorb. Danach das Spiel neu laden.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- EN -->
+    <div data-lang="en">
+      <h2>Troubleshooting</h2>
+
+      <details class="trouble">
+        <summary>I don't see an [ST] message in chat</summary>
+        <div class="trouble-body">
+          <p>Check that Tampermonkey is active: click the TM icon in the top-right of your browser. Shockr TA Tools should be listed with a green checkmark.</p>
+          <p><strong>Chrome:</strong> right-click the TM icon → Manage extension → <em>Allow access to file URLs</em> must be turned on.</p>
+          <p>Then reload the game with F5.</p>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>No markers on the world map</summary>
+        <div class="trouble-body">
+          <p>CampTracker needs a moment to scan the map. Wait 10–15 seconds after loading and scroll/zoom on the world map.</p>
+          <p>Check if the plugin is active: type <code>/st status</code> in the game chat. <em>CampTracker</em> should say <em>enabled</em>.</p>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>Alliance bases are not colored</summary>
+        <div class="trouble-body">
+          <p>PlayerStatus needs ~30 seconds to fetch online status. Scroll around on the map a bit, then the markers will refresh.</p>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>Scanner says "no server configured"</summary>
+        <div class="trouble-body">
+          <p>You haven't set the server URL yet. Ask your alliance leader for the URL and enrollment code, and follow step 5 above.</p>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>Script conflicts with another userscript</summary>
+        <div class="trouble-body">
+          <p>Some other TA scripts can clash with Shockr. Try disabling all other TA scripts in Tampermonkey, reload the game, and re-enable them one by one to find which script causes the conflict.</p>
+          <p>Report it to your alliance leader with the error message from the console (F12 → Console).</p>
+        </div>
+      </details>
+
+      <details class="trouble">
+        <summary>I want to remove the script</summary>
+        <div class="trouble-body">
+          <p>Click the TM icon → <em>Dashboard</em> → find "Shockr TA Tools" → click the trash icon. Then reload the game.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Shockr TA Tools — <a href="https://github.com/Ghoztmaster/shockr-ta-tools" target="_blank" rel="noopener">GitHub</a></p>
+  </div>
+</div>
+
+<script>
+function setLang(lang) {
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.classList.toggle('visible', el.dataset.lang === lang);
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.toLowerCase().includes(
+      lang === 'nl' ? 'neder' : lang === 'de' ? 'deutsch' : 'english'
+    ));
+  });
+  document.documentElement.lang = lang;
+  try { localStorage.setItem('shockr-guide-lang', lang); } catch(e) {}
+}
+
+// Init: check saved preference or default NL
+try {
+  const saved = localStorage.getItem('shockr-guide-lang');
+  setLang(saved && ['nl','de','en'].includes(saved) ? saved : 'nl');
+} catch(e) {
+  setLang('nl');
+}
+</script>
+</body>
+</html>
