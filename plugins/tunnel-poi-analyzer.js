@@ -19,7 +19,8 @@
  *     readable client-side. A spawn-risk base still counts as a player (the rule above).
  *   - POI: the own alliance's REAL loss of that POI (PoiAnalyser's
  *     calculation, lib/poi-util.js). 0 = worthless: the bases within
- *     `tpa.guardrange` (5) fields can move. > 0 = keep. A guard that is also a
+ *     `tpa.guardrange` (5) fields can move; a worthless POI without such a base
+ *     is left out (nothing to move). > 0 = keep. A guard that is also a
  *     tunnel spawn risk is flagged.
  *
  * Data (ClientLib, read only while the panel is open, every 3 s; checked live
@@ -118,7 +119,8 @@ export function poiTypeFromOwned(t) {
 
 /**
  * Panel rows: tunnels (inactive first, fewest missing first), then POIs
- * (worthless first). `inView(x, y)` false -> row is stale.
+ * (worthless first). A worthless POI without an alliance base within
+ * `guardRange` is left out: nothing to move. `inView(x, y)` false -> row is stale.
  */
 export function buildRows({ tunnels, pois, bases, opts, diff, inView }) {
     const rows = [];
@@ -132,8 +134,10 @@ export function buildRows({ tunnels, pois, bases, opts, diff, inView }) {
     }
     for (const p of pois) {
         const status = poiStatus(p.loss);
+        const guards = poiGuards(p, bases, opts.guardRange, spawnRiskKeys);
+        if (status === 'worthless' && !guards.length) continue;
         rows.push({ kind: 'poi', x: p.x, y: p.y, level: p.level, key: p.key, loss: p.loss, status,
-            guards: poiGuards(p, bases, opts.guardRange, spawnRiskKeys), stale: !inView(p.x, p.y), seen: p.seen });
+            guards, stale: !inView(p.x, p.y), seen: p.seen });
     }
     const tunnelOrder = (r) => (r.active ? 1 : 0);
     const poiOrder = { worthless: 0, unknown: 1, valuable: 2 };
@@ -169,9 +173,7 @@ export function rowTexts(r, opts) {
     }
     let advice;
     if (r.status === 'worthless') {
-        advice = r.guards.length
-            ? t('tpaAdviceMovable', { list: r.guards.map(g => g.name + (g.spawnRisk ? ` ${t('tpaAlsoSpawnRisk')}` : '')).join(', ') })
-            : t('tpaAdviceNoGuards', { range: opts.guardRange });
+        advice = t('tpaAdviceMovable', { list: r.guards.map(g => g.name + (g.spawnRisk ? ` ${t('tpaAlsoSpawnRisk')}` : '')).join(', ') });
     } else if (r.status === 'valuable') {
         advice = t('tpaAdviceKeep');
     } else {

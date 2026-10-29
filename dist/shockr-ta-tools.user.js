@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.31.1
+// @version         5.31.2
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -908,7 +908,6 @@ var ShockrTools = (() => {
       tpaAdviceNeed: "{n} more player(s) needed within {range} fields",
       tpaAdviceSpawnRisk: "Spawn risk (base level below {threshold}, low camps spawn in the zone): {list}",
       tpaAdviceMovable: "Real loss 0: can move: {list}",
-      tpaAdviceNoGuards: "Real loss 0; no alliance base within {range} fields",
       tpaAdviceKeep: "Keep: the POI is worth something",
       tpaAdviceUnknown: "Real loss not known yet (ranking loading or POI type unknown)",
       tpaAlsoSpawnRisk: "(also a tunnel spawn risk)",
@@ -1364,7 +1363,6 @@ var ShockrTools = (() => {
       tpaAdviceNeed: "noch {n} Spieler innerhalb von {range} Feldern n\xF6tig",
       tpaAdviceSpawnRisk: "Spawn-Risiko (Basislevel unter {threshold}, niedrige Camps spawnen in der Zone): {list}",
       tpaAdviceMovable: "Realer Verlust 0: kann umziehen: {list}",
-      tpaAdviceNoGuards: "Realer Verlust 0; keine Allianzbasis innerhalb von {range} Feldern",
       tpaAdviceKeep: "Behalten: der POI bringt etwas",
       tpaAdviceUnknown: "Realer Verlust noch unbekannt (Rangliste l\xE4dt oder POI-Typ unbekannt)",
       tpaAlsoSpawnRisk: "(auch Spawn-Risiko an einem Tunnel)",
@@ -1820,7 +1818,6 @@ var ShockrTools = (() => {
       tpaAdviceNeed: "nog {n} speler(s) nodig binnen {range} velden",
       tpaAdviceSpawnRisk: "Spawn-risico (base level onder {threshold}, er spawnen lage camps in de zone): {list}",
       tpaAdviceMovable: "Real loss 0: kan verhuizen: {list}",
-      tpaAdviceNoGuards: "Real loss 0; geen alliance-base binnen {range} velden",
       tpaAdviceKeep: "Laten staan: de POI levert iets op",
       tpaAdviceUnknown: "Real loss nog onbekend (ranking laadt of POI-type onbekend)",
       tpaAlsoSpawnRisk: "(ook spawn-risico bij een tunnel)",
@@ -11348,6 +11345,8 @@ var ShockrTools = (() => {
     }
     for (const p of pois) {
       const status = poiStatus(p.loss);
+      const guards = poiGuards(p, bases, opts.guardRange, spawnRiskKeys);
+      if (status === "worthless" && !guards.length) continue;
       rows.push({
         kind: "poi",
         x: p.x,
@@ -11356,7 +11355,7 @@ var ShockrTools = (() => {
         key: p.key,
         loss: p.loss,
         status,
-        guards: poiGuards(p, bases, opts.guardRange, spawnRiskKeys),
+        guards,
         stale: !inView(p.x, p.y),
         seen: p.seen
       });
@@ -11391,7 +11390,7 @@ var ShockrTools = (() => {
     }
     let advice;
     if (r.status === "worthless") {
-      advice = r.guards.length ? t("tpaAdviceMovable", { list: r.guards.map((g) => g.name + (g.spawnRisk ? ` ${t("tpaAlsoSpawnRisk")}` : "")).join(", ") }) : t("tpaAdviceNoGuards", { range: opts.guardRange });
+      advice = t("tpaAdviceMovable", { list: r.guards.map((g) => g.name + (g.spawnRisk ? ` ${t("tpaAlsoSpawnRisk")}` : "")).join(", ") });
     } else if (r.status === "valuable") {
       advice = t("tpaAdviceKeep");
     } else {
@@ -13151,7 +13150,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.31.1";
+  var ST_VERSION = "5.31.2";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });

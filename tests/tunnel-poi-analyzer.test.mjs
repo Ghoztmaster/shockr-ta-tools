@@ -100,6 +100,19 @@ test('buildRows: a POI guard that is a tunnel spawn risk is flagged; tunnels fir
     assert.equal(rows[4].status, 'valuable');
 });
 
+test('buildRows: a worthless POI without an alliance base within guardrange is left out; valuable/unknown stay', () => {
+    const pois = [
+        { x: 0, y: 0, level: 10, key: 'tib', loss: 0 },          // base at 3:4 -> distance 5: kept
+        { x: 50, y: 50, level: 10, key: 'cry', loss: 0 },        // nobody near: left out
+        { x: 60, y: 60, level: 10, key: 'pow', loss: 900 },      // valuable, nobody near: kept
+        { x: 70, y: 70, level: 10, key: 'tib', loss: undefined }, // unknown, nobody near: kept
+    ];
+    const rows = mod.buildRows({ tunnels: [], pois, bases: [base(1, 3, 4)], opts, diff: 0, inView: () => true });
+    assert.deepEqual(rows.map(r => r.x), [0, 70, 60]);
+    const wider = mod.buildRows({ tunnels: [], pois, bases: [base(1, 3, 4), base(2, 56, 50)], opts: { ...opts, guardRange: 6 }, diff: 0, inView: () => true });
+    assert.deepEqual(wider.filter(r => r.status === 'worthless').map(r => r.x), [0, 50]);
+});
+
 test('rowTexts: advice per row kind', () => {
     const rows = mod.buildRows({
         tunnels: [{ x: 0, y: 0, level: 30 }],
@@ -231,8 +244,8 @@ test('panel: scans the map, tunnel active with names, low base flagged, worthles
         assert.deepEqual(tunnel.spawnRisks.map(b => b.name), ['Lowbie']);
 
         const pois = p._rows.filter(r => r.kind === 'poi');
-        assert.deepEqual(pois.map(r => [r.x, r.status]), [[13, 'worthless'], [200, 'worthless'], [15, 'valuable']]);
-        assert.equal(pois[1].stale, true);   // off-screen own POI from get_OwnedPOIs
+        // 200:200 is worthless too but has no alliance base within guardrange: left out
+        assert.deepEqual(pois.map(r => [r.x, r.status]), [[13, 'worthless'], [15, 'valuable']]);
         assert.deepEqual(pois[0].guards.map(g => [g.name, g.spawnRisk]),
             [['Alpha', false], ['Lowbie', true], ['map2', false], ['map3', false]]);
         assert.match(p._content.innerHTML, /Lowbie/);

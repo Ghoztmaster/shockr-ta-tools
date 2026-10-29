@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.31.2] — 2026-10-29
+
+Userscript + `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Tunnel & POI Analyzer: waardeloze POI's zonder bases verborgen
+- Worthless POIs without nearby alliance bases are now hidden from the tunnel panel: een POI met real loss 0/h verschijnt alleen als er minstens één alliance-base binnen `tpa.guardrange` (5) velden staat - anders is er niets te verplaatsen. Waardevolle POI's en POI's met onbekende loss blijven altijd staan
+- Het advies "geen alliance-base binnen N velden" (`tpaAdviceNoGuards`, en/de/nl) is weg: die situatie komt niet meer in de lijst
+- Bases zijn alleen bekend uit kaartdelen die deze sessie in beeld waren: een waardeloze POI in een nog niet bekeken gebied verschijnt pas als je daar geweest bent
+- Tests: `tests/tunnel-poi-analyzer.test.mjs`
+
 ## [5.31.1] — 2026-10-29
 
 Userscript + `config/plugins.json`, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

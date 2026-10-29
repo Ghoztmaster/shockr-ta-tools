@@ -1,7 +1,22 @@
 {
-  "version": "5.31.1",
+  "version": "5.31.2",
   "date": "2026-10-29",
   "changelog": [
+    {
+      "version": "5.31.2",
+      "date": "2026-10-29",
+      "changes": {
+        "en": [
+          "Worthless POIs without nearby alliance bases are now hidden from the tunnel panel."
+        ],
+        "de": [
+          "Wertlose POIs ohne Allianzbasen in der Nähe werden im Tunnel-Panel jetzt ausgeblendet."
+        ],
+        "nl": [
+          "Waardeloze POI's zonder alliance-bases in de buurt worden nu verborgen in het tunnelpaneel."
+        ]
+      }
+    },
     {
       "version": "5.31.1",
       "date": "2026-10-29",
@@ -83,24 +98,6 @@
           "Nieuwe plugin AutoRepair (standaard uit): repareert de units van de aanvallende base direct na elke eigen aanval, zodra de base niet meer op slot staat; een check elke paar minuten als vangnet (/st config set autorepair.interval <min>, standaard 5). Nooit als het aanvalsscherm open staat",
           "AutoRepair en RepairGuard sluiten elkaar uit: de een aanzetten zet de ander uit (allebei aan bij het opstarten → RepairGuard wint)",
           "Fix RepairGuard: blokkeert Repair All nu ook via de reparatiedata van de base (de route van reparatiescripts), niet alleen via de knoppen"
-        ]
-      }
-    },
-    {
-      "version": "5.28.0",
-      "date": "2026-10-21",
-      "changes": {
-        "en": [
-          "New Plugins button in the toolbar: turn every plugin on and off with a switch, live without F5",
-          "Choose which plugins the Plugins panel shows (gear in the panel, or /st menu add|remove <plugin>)"
-        ],
-        "de": [
-          "Neuer Plugins-Knopf in der Toolbar: jedes Plugin per Schalter ein- und ausschalten, live ohne F5",
-          "Auswählen, welche Plugins das Plugins-Panel zeigt (Zahnrad im Panel oder /st menu add|remove <plugin>)"
-        ],
-        "nl": [
-          "Nieuwe Plugins-knop in de toolbar: zet elke plugin aan en uit met een schakelaar, live zonder F5",
-          "Kies welke plugins het Plugins-paneel toont (tandwiel in het paneel, of /st menu add|remove <plugin>)"
         ]
       }
     }
