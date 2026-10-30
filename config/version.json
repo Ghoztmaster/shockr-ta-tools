@@ -1,7 +1,28 @@
 {
-  "version": "5.32.0",
+  "version": "5.33.0",
   "date": "2026-10-30",
   "changelog": [
+    {
+      "version": "5.33.0",
+      "date": "2026-10-30",
+      "changes": {
+        "en": [
+          "New War page on the website for the alliance leadership (CIC, Second Commander, Officer): every Forgotten target per sector and tunnel as open, attacked or destroyed, who attacked and when, the loot, and the most active players",
+          "Attack Tracker now also logs lost attacks, plus destroyed yes/no, CP cost and the defender's health, and confirms each logged attack in chat",
+          "Attacks are kept 30 days on the server (was 7)"
+        ],
+        "de": [
+          "Neue War-Seite auf der Website für die Allianzführung (CIC, Second Commander, Officer): jedes Forgotten-Ziel pro Sektor und Tunnel als offen, angegriffen oder zerstört, wer wann angegriffen hat, die Beute und die aktivsten Spieler",
+          "Attack Tracker meldet jetzt auch verlorene Angriffe, dazu zerstört ja/nein, CP-Kosten und die Verteidiger-Gesundheit, und bestätigt jeden gemeldeten Angriff im Chat",
+          "Angriffe bleiben 30 Tage auf dem Server (bisher 7)"
+        ],
+        "nl": [
+          "Nieuwe War-pagina op de website voor de alliance-leiding (CIC, Second Commander, Officer): elk Forgotten-target per sector en tunnel als open, aangevallen of vernietigd, wie wanneer aanviel, de buit en de meest actieve spelers",
+          "Attack Tracker meldt nu ook verloren aanvallen, plus vernietigd ja/nee, CP-kosten en de gezondheid van de verdediger, en bevestigt elke gemelde aanval in de chat",
+          "Aanvallen blijven 30 dagen op de server (was 7)"
+        ]
+      }
+    },
     {
       "version": "5.32.0",
       "date": "2026-10-30",
@@ -68,33 +89,6 @@
           "Nieuwe plugin Tunnel & POI Analyzer: het tunnel-icoon in de Shockr-knop (of /st tunnels) toont per tunnel exit wie hem activeert (5 spelers binnen 5 velden), hoeveel er nog missen en welke lage bases een spawn-risico zijn",
           "In hetzelfde paneel: alliance-POI's met hun real loss; 0/h = waardeloos, de bases ernaast kunnen verhuizen (gemarkeerd als ze ook een spawn-risico bij een tunnel zijn). Klik op een rij om de kaart te centreren",
           "Fix Base Info: de basenummers per speler halen de bases van verschillende spelers niet meer door elkaar"
-        ]
-      }
-    },
-    {
-      "version": "5.30.0",
-      "date": "2026-10-29",
-      "changes": {
-        "en": [
-          "New plugin Marker Navigator: the pin icon in the Shockr button (or /st markers) lists your map markers; click a row to centre the map on it",
-          "Sector HUD shows the view centre again (no longer your reservation marker); the sector is the direction from the world centre",
-          "Scanners scan 100 ms per base on the world map (2 s in other views, no flicker)",
-          "AutoRepair can also repair buildings after an attack on your base (off by default: /st config set autorepair.buildings true)",
-          "Tunnel Info: the red circle is opaque and 3 px wide; colour and width configurable (tunnel.color, tunnel.width)"
-        ],
-        "de": [
-          "Neues Plugin Marker-Navigator: das Pin-Symbol im Shockr-Knopf (oder /st markers) listet deine Kartenmarkierungen; Klick auf eine Zeile zentriert die Karte darauf",
-          "Sektor-HUD zeigt wieder die Ansichtsmitte (nicht mehr deine Reservierungsmarkierung); der Sektor ist die Richtung vom Weltzentrum",
-          "Scanner scannen auf der Weltkarte 100 ms pro Basis (2 s in anderen Ansichten, kein Flackern)",
-          "AutoRepair kann nach einem Angriff auf deine Basis auch Gebäude reparieren (standardmäßig aus: /st config set autorepair.buildings true)",
-          "Tunnel Info: der rote Kreis ist deckend und 3 px breit; Farbe und Breite einstellbar (tunnel.color, tunnel.width)"
-        ],
-        "nl": [
-          "Nieuwe plugin Marker-navigator: het pin-icoon in de Shockr-knop (of /st markers) toont je kaartmarkers; klik op een rij om de kaart erop te centreren",
-          "Sector HUD toont weer het midden van het beeld (niet meer je reserveringsmarker); de sector is de richting vanaf het wereldcentrum",
-          "Scanners scannen op de wereldkaart 100 ms per base (2 s in andere views, geen flikkering)",
-          "AutoRepair kan na een aanval op je base ook gebouwen repareren (standaard uit: /st config set autorepair.buildings true)",
-          "Tunnel Info: de rode cirkel is dekkend en 3 px breed; kleur en breedte instelbaar (tunnel.color, tunnel.width)"
         ]
       }
     }

@@ -149,14 +149,14 @@
     "defaultEnabled": true,
     "replaces": null,
     "short": {
-      "en": "Logs your won attacks on Forgotten targets",
-      "de": "Meldet deine gewonnenen Angriffe auf Forgotten-Ziele",
-      "nl": "Meldt je gewonnen aanvallen op Forgotten-targets"
+      "en": "Logs your attacks on Forgotten targets",
+      "de": "Meldet deine Angriffe auf Forgotten-Ziele",
+      "nl": "Meldt je aanvallen op Forgotten-targets"
     },
     "long": {
-      "en": "Reads your own combat reports and sends won attacks on Forgotten camps, outposts and bases, with the loot, to the alliance server. Lost attacks and PvP never leave the browser, and your inbox is not touched. Shown on the Attacks and Loot pages and as ⚔ on the world map.",
-      "de": "Liest deine eigenen Kampfberichte und schickt gewonnene Angriffe auf Forgotten-Camps, -Außenposten und -Basen samt Beute an den Allianz-Server. Verlorene Angriffe und PvP verlassen den Browser nie, dein Posteingang wird nicht angefasst. Sichtbar auf den Seiten Attacks und Loot und als ⚔ auf der Weltkarte.",
-      "nl": "Leest je eigen gevechtsrapporten en stuurt gewonnen aanvallen op Forgotten camps, outposts en bases, met de buit, naar de alliance-server. Verloren aanvallen en PvP verlaten de browser nooit, en je inbox wordt niet aangeraakt. Zichtbaar op de pagina's Attacks en Loot en als ⚔ op de wereldkaart."
+      "en": "Reads your own combat reports and sends your attacks on Forgotten camps, outposts and bases (won and lost) to the alliance server: loot, destroyed yes/no, CP cost and your alliance role. Each logged attack gets a chat line. PvP never leaves the browser, and your inbox is not touched. Won attacks show on the Attacks and Loot pages and as ⚔ on the world map; all attacks feed the War page of the alliance leadership.",
+      "de": "Liest deine eigenen Kampfberichte und schickt deine Angriffe auf Forgotten-Camps, -Außenposten und -Basen (gewonnen und verloren) an den Allianz-Server: Beute, zerstört ja/nein, CP-Kosten und deine Allianzrolle. Jeder gemeldete Angriff bekommt eine Chatzeile. PvP verlässt den Browser nie, dein Posteingang wird nicht angefasst. Gewonnene Angriffe erscheinen auf den Seiten Attacks und Loot und als ⚔ auf der Weltkarte; alle Angriffe speisen die War-Seite der Allianzführung.",
+      "nl": "Leest je eigen gevechtsrapporten en stuurt je aanvallen op Forgotten camps, outposts en bases (gewonnen en verloren) naar de alliance-server: buit, vernietigd ja/nee, CP-kosten en je alliance-rol. Elke gemelde aanval krijgt een chatregel. PvP verlaat de browser nooit, en je inbox wordt niet aangeraakt. Gewonnen aanvallen staan op de pagina's Attacks en Loot en als ⚔ op de wereldkaart; alle aanvallen voeden de War-pagina van de alliance-leiding."
     }
   },
   {

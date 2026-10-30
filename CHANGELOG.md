@@ -1,5 +1,21 @@
 # Changelog
 
+## [5.33.0] — 2026-10-30
+
+Userscript + server + `config/plugins.json`, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`. Geen nginx-wijziging (zie `docs/DEPLOY.md`, War Tracker).
+
+### War Tracker
+- Gebouwd op de bestaande Attack Tracker (geen tweede plugin die dezelfde rapporten leest): `plugins/attack-tracker.js` meldt nu ook **verloren** aanvallen. Per aanval extra: `won`, `outcome`/`destroyed` (header `ad.cr`, 1 = target vernietigd), `targetId` (header `obi` = city id, koppelt aan de LayoutScanner-scans), `cpCost` (`CalculateAttackCommandPointCostToCoord` vanaf de eigen base `bi`, berekend bij het loggen), `defenderHpStart/End` (`get_DefenderStart/EndHealthPercent`), wereldgrootte + sectoraantal (sector) en de eigen alliance-rol
+- Chat na elke geslaagde POST: `[ST] Attack logged: Camp L27 @ 102:296` (verloren: `(lost)`); meer dan 3 tegelijk (achterstand): `[ST] 12 attacks logged`. Server onbereikbaar: de bestaande localStorage-outbox houdt ze vast tot de volgende flush
+- CY%/DF% vernietigd: geen geverifieerde getter op een offense-rapport; de server accepteert `cyPct`/`dfPct` al, de userscript vult ze nog niet. Probe: `docs/probes/war-tracker-probe.js`
+- Server: retentie 7 → **30 dagen**; de Attacks- en Loot-pagina's en Map Labels ⚔ tonen nog steeds alleen gewonnen aanvallen; de WatchList-claim vervalt alleen bij een gewonnen aanval. Oude records (zonder `won`/`destroyed`) tellen als gewonnen = vernietigd
+- `GET /api/attacks`: nieuwe filters `result` (won/lost/all, default won), `sector`, `xMin/xMax/yMin/yMax`
+- `GET /api/attacks/summary` (nieuw, `server/war.py`): alle Forgotten-targets van de scope met status open / aangevallen / vernietigd, per speler, per sector en per tunnel (voortgang). Open = gescand door een LayoutScanner (laatste 7 dagen, faction 4/5/6) en niet aangevallen in de periode; vernietigd vóór de periode = weg
+- Pagina `/war` (Engels): samenvatting (targets, % vernietigd, aanvallen won/lost, loot, CP, meest actieve spelers), sectorkaarten, tunnelkaarten, targettabel met kleur (groen vernietigd, geel aangevallen, wit open), filters periode/sector/speler/type/coördinaten
+- Toegang: rol CIC / Second Commander / Officer (`readOwnRole()`, meegestuurd bij `/st register` en met elke aanval, dus een degradatie gaat mee met de volgende aanval) of de whitelist `data/alliance/war-whitelist.json` (`{"playerIds": [...]}`, met de hand op de VPS, direct actief). Gecontroleerd bij elke paginalaad en API-call; anders 403. De 🛡 War-link in het menu verschijnt alleen bij toegang
+- Rol-mapping: `get_IsFirstLeader` → cic, `get_IsAdmin` → second, `get_IsOfficer` → officer. Dat "admin" = Second Commander is een aanname - de probe bevestigt het
+- Tests: `tests/test_war.py`, `tests/attack-tracker.test.mjs`
+
 ## [5.32.0] — 2026-10-30
 
 Userscript + `config/plugins.json`, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

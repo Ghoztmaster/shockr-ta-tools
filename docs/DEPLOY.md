@@ -418,6 +418,27 @@ curl -si https://packetlab.nl/shockr/api/version -H 'Origin: https://prodgame40.
 
 Logs: `Key restored: name (id)` on success, `Key restore refused from <ip>: player <id>` on a miss, `Key restore rate limit hit from <ip>` at the limit.
 
+## 14. War Tracker (`/war`, `/api/attacks/summary`, v5.33.0)
+
+**No nginx change.** The game page keeps posting to `POST /shockr/api/attack` (existing exact-match CORS block, section 9); the extra fields ride in the same JSON body, no new headers. The page `/shockr/war` and `GET /shockr/api/attacks/summary` are website calls (session cookie) under the broad `/shockr/` block.
+
+Access: alliance role CIC / Second Commander / Officer (sent by the userscript at `/st register` and with every attack), or the whitelist - a file edited by hand on the VPS, picked up on the next request (no restart):
+
+```bash
+# inside the data volume: data/alliance/war-whitelist.json
+echo '{"playerIds": [123456]}' > data/alliance/war-whitelist.json
+```
+
+A player who registered before 5.33.0 has no role on the server until their first attack with 5.33.0 (or a new `/st register`); until then only the whitelist gives access. Logs: `Alliance role of name (id): - -> officer`, `War whitelist loaded: N player(s)`.
+
+Retention of `data/attacks/*.jsonl` is now 30 days (pruned at startup).
+
+```bash
+curl -si https://packetlab.nl/shockr/war | grep -i '^location'                        # no session -> location: login
+curl -s -b /tmp/shockr.jar https://packetlab.nl/shockr/api/me                          # ... "warAccess": true|false
+curl -s -b /tmp/shockr.jar 'https://packetlab.nl/shockr/api/attacks/summary?days=7' | head -c 400   # 403 without access
+```
+
 ## Update
 
 ```bash

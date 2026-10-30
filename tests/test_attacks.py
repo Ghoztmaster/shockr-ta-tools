@@ -69,21 +69,21 @@ def test_dedup_report_id_wins_over_time_window():
 
 def test_stale_and_future_rejected():
     s = store_with()
-    assert s.add(AttackPayload(**attack(timestamp=NOW_MS - 8 * 86400 * 1000)), 164, "G", "SoO") == "stale"
+    assert s.add(AttackPayload(**attack(timestamp=NOW_MS - 31 * 86400 * 1000)), 164, "G", "SoO") == "stale"
     assert s.add(AttackPayload(**attack(timestamp=NOW_MS + 2 * 3600 * 1000)), 164, "G", "SoO") == "stale"
 
 
 def test_persist_and_prune_at_startup(tmp_path):
     clock = Clock()
     s = AttackStore(tmp_path, clock=clock)
-    s.add(AttackPayload(**attack(timestamp=NOW_MS - 6 * 86400 * 1000)), 164, "G", "SoO")
+    s.add(AttackPayload(**attack(timestamp=NOW_MS - 29 * 86400 * 1000)), 164, "G", "SoO")
     s.add(AttackPayload(**attack(timestamp=NOW_MS - 1000, targetX=10)), 164, "G", "SoO")
     path = tmp_path / "attacks" / "477.jsonl"
     rows = [json.loads(l) for l in path.read_text().splitlines()]
     assert {"playerId", "playerName", "scope", "receivedAt"} <= set(rows[0])
     assert rows[0]["playerName"] == "G" and rows[0]["scope"] == "SoO"
 
-    # Two days later the first record is past the 7-day retention
+    # Two days later the first record is past the 30-day retention
     clock.t += 2 * 86400
     restarted = AttackStore(tmp_path, clock=clock)
     assert restarted.prune() == 1

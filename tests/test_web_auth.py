@@ -96,7 +96,7 @@ def test_login_ok_sets_httponly_cookie_and_opens_pages(env):
     assert f"Max-Age={SESSION_TTL_SECONDS}" in cookie
     assert c.get("/", follow_redirects=False).status_code == 200
     assert c.get("/targets", follow_redirects=False).status_code == 200
-    assert c.get("/api/me").json() == {"playerName": "GhoztMasters", "playerId": 164}
+    assert c.get("/api/me").json() == {"playerName": "GhoztMasters", "playerId": 164, "warAccess": False}
     assert c.get("/api/targets").status_code == 200
 
 

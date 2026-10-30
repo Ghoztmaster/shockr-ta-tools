@@ -12,7 +12,7 @@ const esbuild = require('esbuild');
 const fs = require('fs');
 const path = require('path');
 
-const VERSION = '5.32.0';
+const VERSION = '5.33.0';
 /**
  * 5.25.0: where Tampermonkey checks for updates (daily by default) and fetches
  * the new version from. An update through this URL keeps the script id and its

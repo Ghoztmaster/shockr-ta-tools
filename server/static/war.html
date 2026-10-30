@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shockr War</title>
+<script src="static/i18n.js"></script>
+<script src="static/footer.js"></script>
+<script src="static/announcements.js"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        background: #1a1a1a;
+        color: #ccc;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        font-size: 14px;
+    }
+    a { color: #4fc3f7; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Header */
+    .header {
+        background: #252525;
+        border-bottom: 1px solid #333;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .header h1 { font-size: 18px; color: #e0e0e0; }
+    .nav { font-size: 13px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+
+    /* Filters */
+    .filters {
+        background: #222;
+        padding: 10px 20px;
+        border-bottom: 1px solid #333;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .filters label { color: #999; font-size: 12px; margin-right: 4px; }
+    .filters select, .filters input {
+        background: #333;
+        color: #ccc;
+        border: 1px solid #444;
+        padding: 4px 8px;
+        font-size: 13px;
+    }
+    .filters input { width: 62px; }
+    .filters button {
+        background: #66bb6a;
+        color: #111;
+        border: none;
+        padding: 5px 14px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+    .filters button:hover { background: #81c784; }
+    .filters button.plain { background: #444; color: #ccc; }
+    .filters button.plain:hover { background: #555; }
+    .filters .updated { color: #777; font-size: 12px; margin-left: auto; }
+    .filters .updated.error { color: #e57373; }
+
+    .content { padding: 12px 20px; }
+    h2 { font-size: 14px; color: #aaa; font-weight: normal; margin: 16px 0 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* Summary */
+    .summary {
+        background: #222;
+        border: 1px solid #333;
+        border-left: 3px solid #66bb6a;
+        padding: 10px 14px;
+        color: #e0e0e0;
+        display: flex;
+        gap: 28px;
+        flex-wrap: wrap;
+    }
+    .stat .big { font-size: 22px; color: #e0e0e0; }
+    .stat .lbl { font-size: 12px; color: #888; }
+    .stat .sub { font-size: 12px; color: #aaa; }
+    .top-players { font-size: 13px; }
+    .top-players div { white-space: nowrap; }
+    .top-players .n { color: #888; }
+
+    /* Progress */
+    .bar { height: 6px; background: #333; margin-top: 6px; display: flex; overflow: hidden; }
+    .bar .d { background: #66bb6a; }
+    .bar .a { background: #ffd54f; }
+
+    /* Sector + tunnel cards */
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+    .card {
+        background: #212121;
+        border: 1px solid #333;
+        padding: 8px 10px;
+        cursor: pointer;
+        user-select: none;
+    }
+    .card:hover { background: #262626; }
+    .card.active { border-color: #66bb6a; }
+    .card .title { color: #e0e0e0; }
+    .card .title .lvl { color: #999; font-size: 12px; }
+    .card .counts { font-size: 12px; color: #aaa; margin-top: 2px; }
+    .card .who { font-size: 12px; color: #888; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Status chips */
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; align-items: center; }
+    .chip {
+        background: #2a2a2a; border: 1px solid #444; color: #ccc;
+        padding: 3px 10px; font-size: 12px; cursor: pointer;
+    }
+    .chip.active { border-color: #66bb6a; color: #e0e0e0; }
+    .chips .clear { font-size: 12px; margin-left: 6px; }
+
+    /* Target table */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+        background: #2a2a2a;
+        color: #aaa;
+        text-align: left;
+        padding: 6px 8px;
+        border-bottom: 1px solid #444;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+    th.num, td.num { text-align: right; }
+    td { padding: 5px 8px; border-bottom: 1px solid #2a2a2a; white-space: nowrap; }
+    tr.target { cursor: pointer; }
+    tr.target:hover td { background: #252525; }
+    tr.s-destroyed td { color: #81c784; }
+    tr.s-attacked td { color: #ffd54f; }
+    tr.s-open td { color: #e0e0e0; }
+    tr.detail td { background: #1e1e1e; color: #aaa; font-size: 12px; padding: 3px 8px 3px 24px; }
+    .status { font-weight: 600; }
+    .lost { color: #e57373; }
+
+    .loading { text-align: center; padding: 40px; color: #666; }
+    .note { color: #777; font-size: 12px; margin-top: 8px; }
+
+    @media (max-width: 640px) {
+        .header, .filters, .content { padding-left: 12px; padding-right: 12px; }
+        .filters .updated { margin-left: 0; width: 100%; }
+        .summary { gap: 16px; }
+    }
+    /* Website session (session.js) */
+    .user { font-size: 12px; color: #888; display: flex; align-items: center; gap: 6px; }
+    .user strong { color: #e0e0e0; font-weight: normal; }
+    .user form { display: inline; }
+    .user button {
+        background: #444; color: #ccc; border: none; border-radius: 3px;
+        padding: 3px 8px; font-size: 12px; cursor: pointer;
+    }
+    .user button:hover { background: #666; }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>🛡 War Tracker <span id="worldTitle"></span></h1>
+    <div class="nav">
+        <a href="./" data-i18n="navBases">⚔ Bases</a>
+        <a href="targets" data-i18n="navTargetWatch">🎯 Target Watch</a>
+        <a href="attacks" data-i18n="navAttacks">🗡 Attacks</a>
+        <a href="loot" data-i18n="navLoot">💰 Loot</a>
+        <a href="watchlist" data-i18n="navWatchList">📌 WatchList</a>
+        <a href="info" data-i18n="navInfo">ℹ Info</a>
+        <span class="user" id="userBox"></span>
+        <span class="lang-switch" id="langSwitch"></span>
+    </div>
+</div>
+
+<div class="filters">
+    <div id="worldPicker" style="display:none">
+        <label for="worldSelect">World:</label>
+        <select id="worldSelect"></select>
+    </div>
+    <div>
+        <label for="periodSelect">Period:</label>
+        <select id="periodSelect">
+            <option value="today">Today</option>
+            <option value="3">3 days</option>
+            <option value="7">7 days</option>
+            <option value="14">14 days</option>
+            <option value="30">30 days</option>
+        </select>
+    </div>
+    <div>
+        <label for="sectorSelect">Sector:</label>
+        <select id="sectorSelect"></select>
+    </div>
+    <div>
+        <label for="playerSelect">Player:</label>
+        <select id="playerSelect"></select>
+    </div>
+    <div>
+        <label for="typeSelect">Type:</label>
+        <select id="typeSelect">
+            <option value="">All</option>
+            <option value="camp">Camp</option>
+            <option value="outpost">Outpost</option>
+            <option value="base">Base</option>
+        </select>
+    </div>
+    <div title="Coordinate range (empty = no limit)">
+        <label>X:</label><input id="xMin" type="number" min="0" placeholder="min"> – <input id="xMax" type="number" min="0" placeholder="max">
+        <label style="margin-left:8px">Y:</label><input id="yMin" type="number" min="0" placeholder="min"> – <input id="yMax" type="number" min="0" placeholder="max">
+    </div>
+    <button onclick="applyRange()">↻ Refresh</button>
+    <button class="plain" onclick="resetFilters()">Reset</button>
+    <span class="updated" id="updated"></span>
+</div>
+
+<div class="content">
+    <div class="summary" id="summary"><span class="loading">Loading...</span></div>
+
+    <h2>Sectors</h2>
+    <div class="cards" id="sectors"></div>
+
+    <h2>Tunnels</h2>
+    <div class="cards" id="tunnels"></div>
+
+    <h2>Targets</h2>
+    <div class="chips" id="chips"></div>
+    <div class="table-wrap"><table>
+        <thead><tr id="thead"></tr></thead>
+        <tbody id="targets"></tbody>
+    </table></div>
+    <div class="note">
+        Open = scanned by a LayoutScanner in the last 7 days and not attacked in this period.
+        A target destroyed outside the tracker (other alliance, a member without Shockr) stays open until its scan is 7 days old.
+        Click a row for the attacks on it.
+    </div>
+</div>
+
+<script src="static/session.js"></script>
+<script>
+const API = '.';
+const REFRESH_MS = 60000;
+const PREFS_KEY = 'st-war-prefs';
+const PERIODS = ['today', '3', '7', '14', '30'];
+const STATUS_LABEL = { destroyed: 'Destroyed', attacked: 'Attacked', open: 'Open' };
+const COLUMNS = [
+    ['target', 'Target'], ['coords', 'Coords'], ['sector', 'Sector'], ['status', 'Status'],
+    ['attackers', 'Attacked by'], ['last', 'When'], ['attacks', 'Attacks', 'num'],
+    ['tib', 'Tib', 'num'], ['crystal', 'Crystal', 'num'], ['credits', 'Credits', 'num'], ['cp', 'CP', 'num'],
+];
+
+const prefs = readPrefs();     // {world, period, sector, player, type, xMin, xMax, yMin, yMax}
+const view = { status: '', tunnel: '', sort: 'last', desc: true };   // client-side, not saved
+const expanded = new Set();    // target keys with their attack rows shown
+let data = null;
+let lastStatus = null;
+
+async function load() {
+    const params = new URLSearchParams();
+    if (prefs.world) params.set('worldId', prefs.world);
+    if (prefs.period === 'today') {
+        const midnight = new Date();
+        midnight.setHours(0, 0, 0, 0);
+        params.set('since', String(midnight.getTime()));
+    } else {
+        params.set('days', prefs.period);
+    }
+    for (const k of ['sector', 'player', 'type', 'xMin', 'xMax', 'yMin', 'yMax']) {
+        if (prefs[k] !== '' && prefs[k] != null) params.set(k, prefs[k]);
+    }
+    try {
+        const resp = await fetch(`${API}/api/attacks/summary?${params}`, { cache: 'no-store' });
+        if (resp.status === 403) { location.reload(); return; }   // access withdrawn: the page answers with the notice
+        if (!resp.ok) throw new Error(`${resp.status} ${resp.statusText}`);
+        data = await resp.json();
+        showStatus(`Updated ${new Date().toLocaleTimeString()} · refresh every ${REFRESH_MS / 1000} s`, false);
+    } catch (e) {
+        showStatus(`Refresh failed: ${e.message}`, true);
+        if (!data) document.getElementById('summary').textContent = `Error: ${e.message}`;
+        return;
+    }
+    render();
+}
+
+function showStatus(text, error) {
+    lastStatus = { text, error };
+    const el = document.getElementById('updated');
+    el.classList.toggle('error', error);
+    el.textContent = text;
+}
+
+function render() {
+    if (!data) return;
+    renderPickers();
+    document.getElementById('worldTitle').textContent = data.worldId ? `· World ${data.worldId}` : '';
+    if (view.tunnel && !data.tunnels.some(t => t.key === view.tunnel)) view.tunnel = '';
+    renderSummary();
+    renderSectors();
+    renderTunnels();
+    renderTargets();
+}
+
+function renderSummary() {
+    const s = data.summary;
+    const period = document.querySelector(`#periodSelect option[value="${prefs.period}"]`).textContent;
+    const top = s.topPlayers.length
+        ? s.topPlayers.map(p => `<div>${esc(p.playerName)} <span class="n">${p.attacks} att · ${p.destroyed} destroyed · ${fmt(p.lootTib + p.lootCrystal)} loot</span></div>`).join('')
+        : '<div class="n">—</div>';
+    document.getElementById('summary').innerHTML = `
+        <div class="stat"><div class="big">${s.targets}</div><div class="lbl">targets (${esc(period)})</div>
+            <div class="sub">${s.open} open · ${s.attacked} attacked · ${s.destroyed} destroyed</div></div>
+        <div class="stat" style="min-width:140px"><div class="big">${s.pctDestroyed}%</div><div class="lbl">destroyed</div>
+            ${barHtml(s.destroyed, s.attacked, s.targets)}</div>
+        <div class="stat"><div class="big">${s.attacks}</div><div class="lbl">attacks</div>
+            <div class="sub">${s.won} won · <span class="${s.lost ? 'lost' : ''}">${s.lost} lost</span> · ${fmt(s.cpCost)} CP</div></div>
+        <div class="stat"><div class="big">${fmt(s.lootTib + s.lootCrystal + s.lootCredits)}</div><div class="lbl">total loot</div>
+            <div class="sub">${fmt(s.lootTib)} tib · ${fmt(s.lootCrystal)} crystal · ${fmt(s.lootCredits)} credits</div></div>
+        <div class="stat top-players"><div class="lbl">Most active</div>${top}</div>`;
+}
+
+function renderSectors() {
+    const box = document.getElementById('sectors');
+    if (!data.sectors.length) { box.innerHTML = '<div class="loading">No targets</div>'; return; }
+    box.innerHTML = data.sectors.map(s => `
+        <div class="card${prefs.sector !== '' && String(s.sector) === String(prefs.sector) ? ' active' : ''}" data-sector="${s.sector ?? ''}"
+             title="${s.sector == null ? 'World size not known yet - comes with the first attack report' : 'Click to filter on this sector'}">
+            <div class="title">${esc(s.name)} <span class="lvl">${s.progress}%</span></div>
+            <div class="counts">${s.targets} targets · ${s.open} open · ${s.attacked} att · ${s.destroyed} destr</div>
+            ${barHtml(s.destroyed, s.attacked, s.targets)}
+        </div>`).join('');
+    box.querySelectorAll('.card').forEach(el => el.addEventListener('click', () => {
+        const v = el.dataset.sector;
+        if (v === '') return;
+        onFilter('sector', String(prefs.sector) === v ? '' : v);
+    }));
+}
+
+function renderTunnels() {
+    const box = document.getElementById('tunnels');
+    if (!data.tunnels.length) { box.innerHTML = '<div class="loading">No attacks in this period</div>'; return; }
+    box.innerHTML = data.tunnels.map(tn => {
+        const lvl = Math.floor(tn.minLevel) === Math.floor(tn.maxLevel)
+            ? `lvl ${Math.floor(tn.minLevel)}` : `lvl ${Math.floor(tn.minLevel)}-${Math.floor(tn.maxLevel)}`;
+        const who = tn.contributors.slice(0, 3).map(p => `${p.playerName} (${p.attacks})`).join(', ');
+        return `<div class="card${view.tunnel === tn.key ? ' active' : ''}" data-key="${tn.key}" title="Click to show only this tunnel's targets">
+            <div class="title">${tn.x}:${tn.y} <span class="lvl">${esc(lvl)} · ${tn.progress}%</span></div>
+            <div class="counts">${tn.targets} targets · ${tn.open} open · ${tn.attacked} att · ${tn.destroyed} destr</div>
+            <div class="counts">${tn.attacks} attacks · ${fmt(tn.lootTib + tn.lootCrystal)} loot</div>
+            <div class="who">${esc(who)}</div>
+            ${barHtml(tn.destroyed, tn.attacked, tn.targets)}
+        </div>`;
+    }).join('');
+    box.querySelectorAll('.card').forEach(el => el.addEventListener('click', () => {
+        view.tunnel = view.tunnel === el.dataset.key ? '' : el.dataset.key;
+        render();
+    }));
+}
+
+function renderTargets() {
+    const counts = { '': data.targets.length, open: 0, attacked: 0, destroyed: 0 };
+    for (const t of data.targets) counts[t.status]++;
+    const chips = [['', 'All'], ['open', 'Open'], ['attacked', 'Attacked'], ['destroyed', 'Destroyed']];
+    document.getElementById('chips').innerHTML = chips.map(([v, l]) =>
+        `<span class="chip${view.status === v ? ' active' : ''}" data-status="${v}">${l} (${counts[v]})</span>`).join('') +
+        (view.tunnel ? `<span class="chips clear">Tunnel ${esc(view.tunnel)} · <a href="#" id="clearTunnel">show all</a></span>` : '');
+    document.querySelectorAll('.chip').forEach(el => el.addEventListener('click', () => { view.status = el.dataset.status; renderTargets(); }));
+    const clear = document.getElementById('clearTunnel');
+    if (clear) clear.addEventListener('click', e => { e.preventDefault(); view.tunnel = ''; render(); });
+
+    document.getElementById('thead').innerHTML = COLUMNS.map(([k, l, cls]) =>
+        `<th class="${cls || ''}" data-sort="${k}">${l}${view.sort === k ? (view.desc ? ' ▾' : ' ▴') : ''}</th>`).join('');
+    document.querySelectorAll('#thead th').forEach(th => th.addEventListener('click', () => {
+        const k = th.dataset.sort;
+        view.desc = view.sort === k ? !view.desc : true;
+        view.sort = k;
+        renderTargets();
+    }));
+
+    const rows = data.targets
+        .filter(t => (!view.status || t.status === view.status) && (!view.tunnel || t.tunnel === view.tunnel))
+        .sort(compare);
+    const body = document.getElementById('targets');
+    if (!rows.length) {
+        body.innerHTML = `<tr><td colspan="${COLUMNS.length}" class="loading">No targets</td></tr>`;
+        return;
+    }
+    body.innerHTML = rows.map(targetHtml).join('');
+    body.querySelectorAll('tr.target').forEach(tr => tr.addEventListener('click', () => {
+        const k = tr.dataset.key;
+        if (expanded.has(k)) expanded.delete(k); else expanded.add(k);
+        renderTargets();
+    }));
+}
+
+const SORT_VALUE = {
+    target: t => `${t.targetType}${String(Math.floor(t.targetLevel)).padStart(3, '0')}`,
+    coords: t => t.x * 10000 + t.y,
+    sector: t => t.sector ?? 99,
+    status: t => ['open', 'attacked', 'destroyed'].indexOf(t.status),
+    attackers: t => (t.attackers[0] || {}).playerName || '',
+    last: t => t.lastAttack || 0,
+    attacks: t => t.attacks,
+    tib: t => t.lootTib,
+    crystal: t => t.lootCrystal,
+    credits: t => t.lootCredits,
+    cp: t => t.cpCost,
+};
+
+function compare(a, b) {
+    const f = SORT_VALUE[view.sort];
+    const va = f(a), vb = f(b);
+    const r = typeof va === 'string' ? va.localeCompare(vb) : va - vb;
+    return (view.desc ? -r : r) || (a.x - b.x) || (a.y - b.y);
+}
+
+function targetHtml(t) {
+    const open = expanded.has(t.key);
+    const who = t.attackers.map(p => p.attacks > 1 ? `${p.playerName} ×${p.attacks}` : p.playerName).join(', ');
+    let html = `<tr class="target s-${t.status}" data-key="${esc(t.key)}">
+        <td>${t.attacks ? (open ? '▾ ' : '▸ ') : ''}${esc(cap(t.targetType))} L${Math.floor(t.targetLevel)}</td>
+        <td>${t.x}:${t.y}</td>
+        <td>${esc(t.sectorName)}</td>
+        <td class="status">${STATUS_LABEL[t.status]}</td>
+        <td>${esc(who) || '—'}</td>
+        <td>${t.lastAttack ? esc(timeLabel(t.lastAttack)) : '—'}</td>
+        <td class="num">${t.attacks || ''}</td>
+        <td class="num">${t.attacks ? fmt(t.lootTib) : ''}</td>
+        <td class="num">${t.attacks ? fmt(t.lootCrystal) : ''}</td>
+        <td class="num">${t.attacks ? fmt(t.lootCredits) : ''}</td>
+        <td class="num">${t.cpCost || ''}</td>
+    </tr>`;
+    if (open) {
+        html += t.attackList.map(a => `<tr class="detail"><td colspan="${COLUMNS.length}">
+            ${esc(timeLabel(a.timestamp))} · ${esc(a.playerName)} ·
+            ${a.destroyed ? 'destroyed' : (a.won ? 'won, still standing' : '<span class="lost">lost</span>')}
+            ${a.defenderHpEnd != null ? ` · defence left ${Math.round(a.defenderHpEnd)}%` : ''}
+            ${a.cyPct != null ? ` · CY ${Math.round(a.cyPct)}%` : ''}${a.dfPct != null ? ` · DF ${Math.round(a.dfPct)}%` : ''}
+            · ${fmt(a.lootTib)} tib · ${fmt(a.lootCrystal)} crystal · ${fmt(a.lootCredits)} credits
+            ${a.cpCost != null ? ` · ${a.cpCost} CP` : ''}
+        </td></tr>`).join('');
+    }
+    return html;
+}
+
+function barHtml(destroyed, attacked, total) {
+    if (!total) return '<div class="bar"></div>';
+    return `<div class="bar"><div class="d" style="width:${100 * destroyed / total}%"></div><div class="a" style="width:${100 * attacked / total}%"></div></div>`;
+}
+
+function renderPickers() {
+    const worlds = data.worlds || [];
+    document.getElementById('worldPicker').style.display = worlds.length > 1 ? '' : 'none';
+    const ws = document.getElementById('worldSelect');
+    ws.innerHTML = worlds.map(w => `<option value="${w}">World ${w}</option>`).join('');
+    if (data.worldId) ws.value = String(data.worldId);
+
+    const ss = document.getElementById('sectorSelect');
+    const geo = data.geometry;
+    const names = geo && geo.count === 8 ? ['S', 'SW', 'W', 'NW', 'N', 'NE', 'E', 'SE'] : null;
+    const count = geo ? geo.count : 0;
+    ss.innerHTML = '<option value="">All</option>' +
+        Array.from({ length: count }, (_, i) => `<option value="${i}">${names ? names[i] : i}</option>`).join('');
+    ss.value = String(prefs.sector ?? '');
+    ss.disabled = !count;
+
+    const ps = document.getElementById('playerSelect');
+    const players = [...(data.playerNames || [])];
+    if (prefs.player && !players.includes(prefs.player)) players.push(prefs.player);
+    ps.innerHTML = '<option value="">All</option>' + players.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
+    ps.value = prefs.player || '';
+    document.getElementById('periodSelect').value = prefs.period;
+    document.getElementById('typeSelect').value = prefs.type || '';
+    for (const k of ['xMin', 'xMax', 'yMin', 'yMax']) document.getElementById(k).value = prefs[k] ?? '';
+}
+
+function cap(s) { return s ? s[0].toUpperCase() + s.slice(1) : s; }
+
+/** "08:43" today, otherwise "Mon 28.10 08:43" (browser locale). */
+function timeLabel(ms) {
+    const d = new Date(ms);
+    const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return d.toDateString() === new Date().toDateString()
+        ? time
+        : `${d.toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'numeric' })} ${time}`;
+}
+
+/** 2.1M / 890k / 950 */
+function fmt(n) {
+    n = Number(n) || 0;
+    if (n >= 1e9) return (n / 1e9).toFixed(1).replace(/\.0$/, '') + 'G';
+    if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (n >= 1e3) return Math.round(n / 1e3) + 'k';
+    return String(Math.round(n));
+}
+
+function esc(s) {
+    return String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
+}
+
+function readPrefs() {
+    const def = { world: null, period: 'today', sector: '', player: '', type: '', xMin: '', xMax: '', yMin: '', yMax: '' };
+    try {
+        const v = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
+        return { ...def, ...v, period: PERIODS.includes(String(v.period)) ? String(v.period) : def.period };
+    } catch { return def; }
+}
+
+function savePrefs() {
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch { /* private mode */ }
+}
+
+function onFilter(field, value) {
+    prefs[field] = value;
+    if (field === 'world') { prefs.player = ''; prefs.sector = ''; }
+    savePrefs();
+    load();
+}
+
+function applyRange() {
+    for (const k of ['xMin', 'xMax', 'yMin', 'yMax']) {
+        const v = document.getElementById(k).value.trim();
+        prefs[k] = /^\d+$/.test(v) ? v : '';
+    }
+    savePrefs();
+    load();
+}
+
+function resetFilters() {
+    Object.assign(prefs, { sector: '', player: '', type: '', xMin: '', xMax: '', yMin: '', yMax: '' });
+    view.status = '';
+    view.tunnel = '';
+    savePrefs();
+    load();
+}
+
+document.getElementById('worldSelect').addEventListener('change', e => onFilter('world', parseInt(e.target.value, 10) || null));
+document.getElementById('periodSelect').addEventListener('change', e => onFilter('period', e.target.value));
+document.getElementById('sectorSelect').addEventListener('change', e => onFilter('sector', e.target.value));
+document.getElementById('playerSelect').addEventListener('change', e => onFilter('player', e.target.value));
+document.getElementById('typeSelect').addEventListener('change', e => onFilter('type', e.target.value));
+for (const k of ['xMin', 'xMax', 'yMin', 'yMax']) {
+    document.getElementById(k).addEventListener('keydown', e => { if (e.key === 'Enter') applyRange(); });
+}
+
+document.addEventListener('shockr-lang', () => {
+    if (lastStatus) showStatus(lastStatus.text, lastStatus.error);
+});
+
+load();
+setInterval(load, REFRESH_MS);
+</script>
+</body>
+</html>

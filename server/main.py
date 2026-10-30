@@ -24,7 +24,7 @@ from fastapi import FastAPI, Request, Response, Header, HTTPException, Depends
 from fastapi.exceptions import RequestValidationError
 from fastapi.exception_handlers import request_validation_exception_handler
 from fastapi.responses import JSONResponse
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 
 from server.models import ScanPayload, ScanResponse
 from server.storage import ScanStorage
@@ -43,6 +43,7 @@ from server.player_keys import (
 )
 from server.web_auth import LoginPayload, SessionStore, SESSION_COOKIE, LOGIN_FAILED
 from server.siteinfo import SiteInfo
+from server.war import WarAccess, SCAN_MAX_AGE_HOURS as WAR_SCAN_MAX_AGE_HOURS, overview as war_overview, sector_of
 
 # ─── Config ──────────────────────────────────────────────────────────
 
@@ -115,6 +116,7 @@ get_limiter = RateLimiter(max_requests=30, window_seconds=1)
 login_limiter = RateLimiter(max_requests=10, window_seconds=60)
 sessions = SessionStore(player_keys)
 site_info = SiteInfo(CONFIG_DIR)
+war_access = WarAccess(DATA_DIR / "alliance" / "war-whitelist.json")
 
 
 @asynccontextmanager
@@ -307,6 +309,13 @@ async def require_session(request: Request) -> dict:
     return session
 
 
+async def require_war_access(session: dict = Depends(require_session)) -> dict:
+    """War API: a session of a player with a leadership role or on the whitelist (server/war.py), else 403."""
+    if not war_access.allowed(session["playerId"], player_keys):
+        raise HTTPException(status_code=403, detail="No access to the War page")
+    return session
+
+
 def cookie_path(request: Request) -> str:
     """The proxy prefix (X-Forwarded-Prefix, e.g. /shockr) so the cookie is not
     sent to the rest of the domain; '/' when served without a prefix."""
@@ -351,7 +360,8 @@ async def post_logout(request: Request):
 
 @app.get("/api/me")
 async def get_me(session: dict = Depends(require_session)):
-    return {"playerName": session["playerName"], "playerId": session["playerId"]}
+    return {"playerName": session["playerName"], "playerId": session["playerId"],
+            "warAccess": war_access.allowed(session["playerId"], player_keys)}
 
 # ─── Enrollment (per-player keys) ────────────────────────────────────
 
@@ -374,7 +384,8 @@ async def post_enroll(payload: EnrollPayload, request: Request):
     scope = enrollment.scope
     if not scope:
         scope = next(iter(key_store.keys)) if len(key_store.keys) == 1 else str(payload.allianceId)
-    player_key = player_keys.enroll(payload.playerId, payload.playerName.strip()[:50], payload.allianceId, scope)
+    player_key = player_keys.enroll(payload.playerId, payload.playerName.strip()[:50], payload.allianceId, scope,
+                                    role=payload.role)
     return {"status": "ok", "playerKey": player_key}
 
 
@@ -531,12 +542,18 @@ async def post_attack(
     player_name = unquote(x_player_name).strip()[:50] or str(player_id)
     counts = {"ok": 0, "duplicate": 0, "stale": 0}
     unclaimed = []
+    # 5.33.0: the attacker's current alliance role (War page access) - the newest attack's
+    role = next((i.playerRole for i in sorted(items, key=lambda i: i.timestamp, reverse=True) if i.playerRole), None)
+    if role:
+        player_keys.set_role(player_id, role)
     for item in items:
         result = attack_store.add(item, player_id, player_name, alliance_id)
         counts[result] += 1
         if result == "ok":
-            log.info("Attack stored: %s world=%d %s L%g @ %d:%d", player_name, item.worldId,
-                     item.targetType, item.targetLevel, item.targetX, item.targetY)
+            log.info("Attack stored: %s world=%d %s L%g @ %d:%d%s", player_name, item.worldId,
+                     item.targetType, item.targetLevel, item.targetX, item.targetY, "" if item.won else " (lost)")
+            if not item.won:
+                continue
             # WatchList hook: a won attack ends the player's own claim on that target
             removed = watchlist.on_attack(item.worldId, player_id, item.targetX, item.targetY, item.timestamp)
             for claim in removed:
@@ -555,20 +572,79 @@ async def get_attacks(
     since: int | None = None,
     player: str | None = None,
     type: str | None = None,
+    result: str = "won",
+    sector: int | None = None,
+    xMin: int | None = None,
+    xMax: int | None = None,
+    yMin: int | None = None,
+    yMax: int | None = None,
 ):
     """
     Dashboard data (website session). Period: `since` (ms epoch, e.g. local
     midnight for "today") or else the last `days` days, never more than the
     retention. No worldId: the world with the most recent attack.
+    5.33.0: result won (default, the Attacks page) / lost / all, and an area
+    filter: compass sector (server/war.py) and/or coordinate range.
     """
+    if result not in ("won", "lost", "all"):
+        raise HTTPException(status_code=400, detail="result must be won, lost or all")
     worlds, world_id, now_ms, since_ms = _attack_period(worldId, days, since)
     target_type = (type or "").strip().lower() or None
     if world_id is None:
         return {"worldId": None, "worlds": [], "since": since_ms, "serverTime": now_ms,
                 "summary": {"attacks": 0, "players": 0, "lootTib": 0, "lootCrystal": 0, "lootCredits": 0},
                 "tunnels": [], "attacks": [], "players": []}
-    data = attack_store.query(world_id, since_ms, player=(player or "").strip() or None, target_type=target_type)
+    in_area = _area_filter(xMin, xMax, yMin, yMax)
+    area = None
+    if sector is not None or in_area is not None:
+        geometry = attack_store.geometry(world_id)
+        area = lambda r: ((sector is None or sector_of(r["targetX"], r["targetY"], geometry) == sector)
+                          and (in_area is None or in_area(r["targetX"], r["targetY"])))
+    data = attack_store.query(world_id, since_ms, player=(player or "").strip() or None, target_type=target_type,
+                              result=result, area=area)
     return {**data, "worlds": worlds, "serverTime": now_ms}
+
+
+@app.get("/api/attacks/summary", dependencies=[Depends(rate_limit_get)])
+async def get_attack_summary(
+    worldId: int | None = None,
+    days: int = 7,
+    since: int | None = None,
+    player: str | None = None,
+    type: str | None = None,
+    sector: int | None = None,
+    xMin: int | None = None,
+    xMax: int | None = None,
+    yMin: int | None = None,
+    yMax: int | None = None,
+    session: dict = Depends(require_war_access),
+):
+    """
+    War page (leadership role or whitelist): the scope's Forgotten targets
+    with status open / attacked / destroyed, totals per player, per sector
+    and per tunnel (server/war.py). Same period/world rules as GET /api/attacks.
+    """
+    worlds, world_id, now_ms, since_ms = _attack_period(worldId, days, since)
+    base = {"worlds": worlds, "worldId": world_id, "since": since_ms, "serverTime": now_ms}
+    if world_id is None:
+        return {**base, **war_overview([], since_ms, [], None)}
+    entry = player_keys.players.get(session["playerId"]) or {}
+    scope = entry.get("scope")
+    rows = attack_store.rows(world_id, scope=scope)
+    scans = storage.fg_targets(scope, world_id, WAR_SCAN_MAX_AGE_HOURS) if scope else []
+    data = war_overview(rows, since_ms, scans, attack_store.geometry(world_id),
+                        sector=sector, player=(player or "").strip() or None,
+                        target_type=(type or "").strip().lower() or None,
+                        area=_area_filter(xMin, xMax, yMin, yMax))
+    return {**base, **data}
+
+
+def _area_filter(x_min: int | None, x_max: int | None, y_min: int | None, y_max: int | None):
+    """(x, y) -> inside the coordinate range, or None when no bound is given."""
+    if x_min is None and x_max is None and y_min is None and y_max is None:
+        return None
+    return lambda x, y: ((x_min is None or x >= x_min) and (x_max is None or x <= x_max)
+                         and (y_min is None or y >= y_min) and (y_max is None or y <= y_max))
 
 
 @app.get("/api/attacks/targets", dependencies=[Depends(rate_limit_get), Depends(require_session)])
@@ -767,6 +843,24 @@ async def loot_page(request: Request):
 @app.get("/watchlist")
 async def watchlist_page(request: Request):
     return page(request, "watchlist.html", "login")
+
+WAR_DENIED_HTML = """<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Shockr War</title>
+<style>body{background:#1a1a1a;color:#ccc;font-family:'Segoe UI',Tahoma,sans-serif;font-size:14px;padding:40px 20px}
+h1{font-size:18px;color:#e0e0e0;margin-bottom:10px}a{color:#4fc3f7}</style></head><body>
+<h1>War Tracker</h1><p>This page is for the alliance leadership (Commander-in-Chief, Second Commander,
+Officer). Ask your CIC if you need access.</p><p><a href="./">Back to the dashboard</a></p></body></html>"""
+
+
+@app.get("/war")
+async def war_page(request: Request):
+    """Checked on every load: role or whitelist may have changed since login."""
+    session = current_session(request)
+    if session is None:
+        return RedirectResponse("login", status_code=303)
+    if not war_access.allowed(session["playerId"], player_keys):
+        return HTMLResponse(WAR_DENIED_HTML, status_code=403)
+    return FileResponse(STATIC_DIR / "war.html")
 
 @app.get("/info")
 async def info_page(request: Request):

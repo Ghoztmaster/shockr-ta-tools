@@ -1,14 +1,23 @@
 """
-Alliance Attack Tracker — won attacks on Forgotten targets, per player and per tunnel.
+Alliance Attack Tracker — attacks on Forgotten targets, per player and per tunnel.
 
 The userscript (plugins/attack-tracker.js) reads the player's own combat
-reports and POSTs every WON attack on a Forgotten camp/outpost/base to
-POST /api/attack. Lost attacks and PvP are filtered out in the userscript;
-the server only accepts the three FG target types.
+reports and POSTs every attack on a Forgotten camp/outpost/base to
+POST /api/attack. PvP is filtered out in the userscript; the server only
+accepts the three FG target types.
 
-Storage: data/attacks/{worldId}.jsonl, one line per attack = the POST data +
-playerId, playerName, scope (storage scope of the key, like scans) and
-receivedAt. Records older than RETENTION_DAYS are removed at startup (prune()),
+Won and lost (5.33.0, War Tracker): `won` (report h.s) and `destroyed`
+(ad.cr = 1, the target is gone) come with each attack, plus the target's
+city id, CP cost, defender health, the world geometry (for the sector) and
+the attacker's alliance role. Records from before 5.33.0 hold only won
+attacks and none of these fields: a missing `won` reads as True and a
+missing `destroyed` as "won = destroyed" (is_destroyed). The Attacks/Loot
+pages and Map Labels keep showing won attacks only; the War page
+(server/war.py) uses all of them.
+
+Storage: data/attacks/{worldId}.jsonl, one line per attack = the POST data
+(optional fields only when sent) + playerId, playerName, scope (storage
+scope of the key, like scans) and receivedAt. Records older than RETENTION_DAYS are removed at startup (prune()),
 and a POST older than that is not stored at all.
 
 Deduplication: same playerId + targetX + targetY with timestamps at most
@@ -42,10 +51,12 @@ from typing import Callable
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from server.player_keys import PLAYER_ROLES
+
 log = logging.getLogger("shockr-alliance")
 
 TARGET_TYPES = ("camp", "outpost", "base")
-RETENTION_DAYS = 7
+RETENTION_DAYS = 30
 DEDUP_WINDOW_MS = 60 * 1000
 TUNNEL_RADIUS = 10
 MAX_FUTURE_MS = 3600 * 1000
@@ -70,6 +81,20 @@ class AttackPayload(BaseModel):
     worldId: int = Field(ge=1, le=999)
     timestamp: int = Field(gt=0)               # ms epoch, time of the attack
     reportId: int | None = Field(default=None, gt=0)   # optional: game report id, sharper dedup
+    # 5.33.0 (War Tracker), all optional: older userscripts send none of them
+    won: bool = True                                    # report h.s (older userscripts sent won attacks only)
+    outcome: int | None = Field(default=None, ge=0, le=20)       # report ad.cr
+    destroyed: bool | None = None                       # ad.cr = 1: the target is gone
+    targetId: int | None = Field(default=None, gt=0)    # report obi = the target's city id (as in the scans)
+    cpCost: int | None = Field(default=None, ge=0, le=1000)
+    defenderHpStart: float | None = Field(default=None, ge=0, le=100)
+    defenderHpEnd: float | None = Field(default=None, ge=0, le=100)
+    cyPct: float | None = Field(default=None, ge=0, le=100)      # % of the CY destroyed - once the report getter is verified
+    dfPct: float | None = Field(default=None, ge=0, le=100)      # % of the DF destroyed - idem
+    worldWidth: int | None = Field(default=None, gt=0, le=10000)
+    worldHeight: int | None = Field(default=None, gt=0, le=10000)
+    sectorCount: int | None = Field(default=None, gt=0, le=64)
+    playerRole: str | None = Field(default=None, max_length=20)  # attacker's alliance role: refreshes the key's role, not stored here
 
     @field_validator("lootTib", "lootCrystal", "lootCredits")
     @classmethod
@@ -82,6 +107,16 @@ class AttackPayload(BaseModel):
         v = v.strip().lower()
         if v not in TARGET_TYPES:
             raise ValueError("targetType must be camp, outpost or base")
+        return v
+
+    @field_validator("playerRole")
+    @classmethod
+    def validate_role(cls, v: str | None) -> str | None:
+        if v is None:
+            return None
+        v = v.strip().lower()
+        if v not in PLAYER_ROLES:
+            raise ValueError("playerRole must be cic, second, officer or member")
         return v
 
 
@@ -102,9 +137,7 @@ class AttackStore:
         records = self._load(payload.worldId)
         if any(_same_attack(r, payload, player_id) for r in records):
             return "duplicate"
-        record = payload.model_dump()
-        if record.get("reportId") is None:
-            record.pop("reportId", None)
+        record = {k: v for k, v in payload.model_dump().items() if v is not None and k != "playerRole"}
         record.update({
             "playerId": player_id,
             "playerName": player_name,
@@ -152,13 +185,14 @@ class AttackStore:
         return sorted((w for w in ids if latest[w]), key=lambda w: latest[w], reverse=True)
 
     def query(self, world_id: int, since_ms: int, player: str | None = None,
-              target_type: str | None = None, tunnels: list[dict] | None = None) -> dict:
+              target_type: str | None = None, tunnels: list[dict] | None = None,
+              result: str = "won", area: Callable[[dict], bool] | None = None) -> dict:
         """
         Dashboard data for one world from since_ms on: the attack list (newest
         first), totals, the tunnel clusters and the players seen in the period
         (the player dropdown — unaffected by the player/type filter).
         """
-        players, rows = self._filtered(world_id, since_ms, player, target_type)
+        players, rows = self._filtered(world_id, since_ms, player, target_type, result, area)
         attacks = [_public(r) for r in rows]
         return {
             "worldId": world_id,
@@ -189,21 +223,40 @@ class AttackStore:
         one storage scope (= alliance) from since_ms on, newest first. Only
         player name, target and time - the loot stays behind the website login.
         """
-        rows = [r for r in self._load(world_id) if r.get("scope") == scope and r.get("timestamp", 0) >= since_ms]
+        rows = [r for r in self._load(world_id)
+                if r.get("scope") == scope and r.get("timestamp", 0) >= since_ms and r.get("won", True)]
         rows.sort(key=lambda r: r["timestamp"], reverse=True)
         return [{k: r[k] for k in ALLIANCE_FIELDS} for r in rows]
 
     # ─── Internals ───────────────────────────────────────────────────
 
-    def _filtered(self, world_id: int, since_ms: int, player: str | None,
-                  target_type: str | None) -> tuple[list[str], list[dict]]:
-        """(players seen in the period, the period's rows after the player/type filter, newest first)."""
-        in_period = [r for r in self._load(world_id) if r.get("timestamp", 0) >= since_ms]
+    def rows(self, world_id: int, since_ms: int = 0, scope: str | None = None) -> list[dict]:
+        """Raw records of one world from since_ms on (won and lost), optionally of one scope only."""
+        return [r for r in self._load(world_id)
+                if r.get("timestamp", 0) >= since_ms and (scope is None or r.get("scope") == scope)]
+
+    def geometry(self, world_id: int) -> dict | None:
+        """{width, height, count} of the world from the newest attack that carried it, else None."""
+        for r in reversed(self._load(world_id)):
+            if r.get("worldWidth") and r.get("worldHeight") and r.get("sectorCount"):
+                return {"width": r["worldWidth"], "height": r["worldHeight"], "count": r["sectorCount"]}
+        return None
+
+    def _filtered(self, world_id: int, since_ms: int, player: str | None, target_type: str | None,
+                  result: str = "won", area: Callable[[dict], bool] | None = None) -> tuple[list[str], list[dict]]:
+        """
+        (players seen in the period, the period's rows after the player/type/
+        result/area filter, newest first). result: "won" (Attacks/Loot pages),
+        "lost" or "all"; area: optional row predicate (sector, coordinate range).
+        """
+        in_period = [r for r in self._load(world_id) if r.get("timestamp", 0) >= since_ms
+                     and (result == "all" or r.get("won", True) == (result == "won"))]
         players = sorted({r["playerName"] for r in in_period}, key=str.lower)
         rows = [
             r for r in in_period
             if (not player or r["playerName"].lower() == player.lower())
             and (not target_type or r["targetType"] == target_type)
+            and (area is None or area(r))
         ]
         rows.sort(key=lambda r: r["timestamp"], reverse=True)
         return players, rows
@@ -343,6 +396,12 @@ def _same_attack(record: dict, payload: AttackPayload, player_id: int) -> bool:
             and abs(record.get("timestamp", 0) - payload.timestamp) <= DEDUP_WINDOW_MS)
 
 
+def is_destroyed(r: dict) -> bool:
+    """The attack destroyed the target. Records without `destroyed` (before 5.33.0) were won-only: won = destroyed."""
+    d = r.get("destroyed")
+    return bool(r.get("won", True)) if d is None else bool(d)
+
+
 def _public(r: dict) -> dict:
     """What the dashboard gets per attack (no scope / receivedAt / reportId)."""
     return {
@@ -356,6 +415,13 @@ def _public(r: dict) -> dict:
         "lootTib": r.get("lootTib", 0),
         "lootCrystal": r.get("lootCrystal", 0),
         "lootCredits": r.get("lootCredits", 0),
+        "won": r.get("won", True),
+        "destroyed": is_destroyed(r),
+        "targetId": r.get("targetId"),
+        "cpCost": r.get("cpCost"),
+        "defenderHpEnd": r.get("defenderHpEnd"),
+        "cyPct": r.get("cyPct"),
+        "dfPct": r.get("dfPct"),
     }
 
 

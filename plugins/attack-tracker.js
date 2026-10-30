@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Free software under the GNU General Public License v3 or later; see LICENSE. No warranty.
 /**
- * attack-tracker.js — log your own WON attacks on Forgotten targets to the alliance server.
+ * attack-tracker.js — log your own attacks on Forgotten targets to the alliance server.
  *
  * On by default; needs api.url + `/st register` (same config as the scanner).
  * Off: `/st plugin disable attack-tracker`.
@@ -11,14 +11,22 @@
  * MehrStrom ReportLogger; GAME_CLIENT_API §12, verified live 2026-09-10):
  *   GetReportHeaderAll {type: 1}            — own attacks (EPlayerReportType.CombatOffense), newest first
  *     h.i report id · h.t time (ms) · h.tp EReportType (2 = NPCRaid = Forgotten, 1 = PvP)
- *     h.s won · h.ad.dbl target level · h.ad.dbn ENPCCampType as text · h.ad.dbx/dby target coords
+ *     h.s won · h.ad.cr outcome (1 = target destroyed) · h.obi target city id · h.bi own base id
+ *     h.ad.dbl target level · h.ad.dbn ENPCCampType as text · h.ad.dbx/dby target coords
  *   reports.RequestReportData(id) + ReportDelivered event
  *     rep.GetAttackerTotalResourceReceived(EResourceType.Tiberium/Crystal/Gold) — loot
+ *     rep.get_DefenderStart/EndHealthPercent() — defender health (§13, verified on defence reports)
  * Never MarkReportsAsRead / DeleteReports / set_IsRead: the inbox is not touched.
  *
- * Logged only when tp = NPCRaid (no PvP) AND h.s = won, and the target is a
- * camp / outpost / base (dbn 1-2 camp, 3 outpost, 4 base; fortress/event are
- * skipped). Lost attacks never leave the browser.
+ * Logged when tp = NPCRaid (no PvP) and the target is a camp / outpost / base
+ * (dbn 1-2 camp, 3 outpost, 4 base; fortress/event are skipped) - won AND,
+ * since 5.33.0 (War Tracker), lost. Per attack also: destroyed (cr = 1), the
+ * target's city id (matches the LayoutScanner scans: "open" targets on the
+ * War page), the CP cost (own base's CalculateAttackCommandPointCostToCoord,
+ * computed when logged), the world size (sector) and the own alliance role
+ * (War page access). CY/DF % destroyed: no verified report getter yet
+ * (docs/probes/war-tracker-probe.js); the server accepts cyPct/dfPct.
+ * Chat after each POST: one line per attack, or a count for a backlog.
  *
  * Flow: a poll every POLL_INTERVAL_MS → new won FG reports are fetched one at
  * a time (REQUEST_SPACING_MS apart, ANSWER_TIMEOUT_MS each, MAX_ATTEMPTS, then
@@ -33,6 +41,9 @@
  * (playerId + target + ±60 s, and the report id), so a re-send is harmless.
  */
 import { t } from '../lib/i18n.js';
+import { chatMessage } from '../lib/main.js';
+import { readOwnRole } from '../lib/api-client.js';
+import { worldGeometry } from '../lib/poi-util.js';
 
 const POLL_INTERVAL_MS = 2 * 60 * 1000;
 const FIRST_POLL_DELAY_MS = 15 * 1000;
@@ -46,12 +57,16 @@ const MAX_POST_FAILURES = 5;
 const OUTBOX_MAX = 200;
 const DONE_MAX = 100;
 const BACKFILL_DAYS = 7;
+/** More attacks in one POST than this → one "N attacks logged" chat line instead of one per attack. */
+const CHAT_MAX_LINES = 3;
 
 const OUTBOX_KEY = 'st-attacks-outbox';
 const DONE_KEY_PREFIX = 'st-attacks-done-';     // + worldId → {cutoff, done: [[id, t], ...]}
 
 /** EReportType.NPCRaid — attack on a Forgotten target (1 = Combat = PvP). */
 const REPORT_TYPE_NPC_RAID = 2;
+/** Report header ad.cr: 1 = the target was destroyed (4/5 = won, target still standing). */
+const REPORT_OUTCOME_DESTROYED = 1;
 /** ENPCCampType (h.ad.dbn, as text) → target type; anything else is not logged. */
 const CAMP_TYPES = { 1: 'camp', 2: 'camp', 3: 'outpost', 4: 'base' };
 
@@ -192,7 +207,7 @@ export class AttackTracker {
         if (!item || item.header.i !== id) return;
         clearTimeout(item.timer);
         this._inFlight = null;
-        this._commit(item, readLoot(rep));
+        this._commit(item, { ...readLoot(rep), ...readDefenderHealth(rep) });
         this._processNext();
     }
 
@@ -210,8 +225,13 @@ export class AttackTracker {
     }
 
     /** Outbox first, then the done list: a crash in between can only re-send (server dedups), never lose. */
-    _commit(item, loot) {
-        const attack = buildAttack(item.header, item.worldId, loot);
+    _commit(item, report) {
+        const attack = buildAttack(item.header, item.worldId, {
+            ...report,
+            cpCost: cpCostOf(item.header),
+            world: worldGeometry(),
+            role: readOwnRole(),
+        });
         if (!attack) return;
         const outbox = loadOutbox();
         outbox.push({ attack, failures: 0 });
@@ -252,8 +272,9 @@ export class AttackTracker {
         if (result) {
             outbox = outbox.filter(e => !sent.has(attackKey(e.attack)));
             for (const { attack: a } of batch) {
-                console.log(`[ST] Attack logged: ${a.targetType} lvl ${a.targetLevel} @ ${a.targetX}:${a.targetY}`);
+                console.log(`[ST] Attack logged: ${a.targetType} lvl ${a.targetLevel} @ ${a.targetX}:${a.targetY}${a.won ? '' : ' (lost)'}`);
             }
+            for (const line of chatLines(batch.map(e => e.attack))) chatMessage(`[ST] ${line}`);
             this._logged += batch.length;
             if (this.onUnclaimed && Array.isArray(result.unclaimed)) {
                 for (const claim of result.unclaimed) this.onUnclaimed(claim);
@@ -275,31 +296,87 @@ export class AttackTracker {
 
 // ─── Pure helpers (exported for the tests) ───────────────────────────
 
-/** Won attack (h.s) on a Forgotten camp/outpost/base (tp NPCRaid) with coordinates. */
+/** Attack (won or lost) on a Forgotten camp/outpost/base (tp NPCRaid) with coordinates. */
 export function isLoggable(h) {
-    if (!h || h.i === undefined || h.tp !== REPORT_TYPE_NPC_RAID || h.s !== true) return false;
+    if (!h || h.i === undefined || h.tp !== REPORT_TYPE_NPC_RAID) return false;
     const ad = h.ad || {};
     return !!CAMP_TYPES[parseInt(ad.dbn, 10)] && Number.isFinite(Number(ad.dbx)) && Number.isFinite(Number(ad.dby))
         && typeof h.t === 'number';
 }
 
-/** POST body for one attack (AttackPayload in server/attacks.py), or null when the header is not loggable. */
-export function buildAttack(h, worldId, loot) {
+/**
+ * POST body for one attack (AttackPayload in server/attacks.py), or null when
+ * the header is not loggable. `d`: {tib, cry, credits} loot, optional
+ * defenderHpStart/End, cpCost, world {width, height, count}, role - a
+ * missing one is left out of the body.
+ */
+export function buildAttack(h, worldId, d) {
     if (!isLoggable(h)) return null;
     const ad = h.ad;
     const level = Number(ad.dbl);
-    return {
+    const cr = parseInt(ad.cr, 10);
+    const attack = {
         targetType: CAMP_TYPES[parseInt(ad.dbn, 10)],
         targetLevel: Number.isFinite(level) && level >= 0 ? level : 0,
         targetX: Math.round(Number(ad.dbx)),
         targetY: Math.round(Number(ad.dby)),
-        lootTib: nonNeg(loot.tib),
-        lootCrystal: nonNeg(loot.cry),
-        lootCredits: nonNeg(loot.credits),
+        lootTib: nonNeg(d.tib),
+        lootCrystal: nonNeg(d.cry),
+        lootCredits: nonNeg(d.credits),
         worldId: Number(worldId),
         timestamp: h.t,
         reportId: h.i,
+        won: h.s === true,
     };
+    if (Number.isInteger(cr) && cr >= 0) {
+        attack.outcome = cr;
+        attack.destroyed = cr === REPORT_OUTCOME_DESTROYED;
+    }
+    if (Number.isInteger(h.obi) && h.obi > 0) attack.targetId = h.obi;
+    if (Number.isFinite(d.cpCost) && d.cpCost >= 0) attack.cpCost = Math.round(d.cpCost);
+    for (const k of ['defenderHpStart', 'defenderHpEnd']) {
+        if (Number.isFinite(d[k])) attack[k] = Math.min(100, Math.max(0, Math.round(d[k] * 10) / 10));
+    }
+    if (d.world) {
+        attack.worldWidth = d.world.width;
+        attack.worldHeight = d.world.height;
+        attack.sectorCount = d.world.count;
+    }
+    if (d.role) attack.playerRole = d.role;
+    return attack;
+}
+
+/** Chat lines after a successful POST: one per attack, or one count line for a backlog. */
+export function chatLines(attacks) {
+    if (attacks.length > CHAT_MAX_LINES) return [t('attackLoggedMany', { n: attacks.length })];
+    return attacks.map(a => t(a.won ? 'attackLogged' : 'attackLoggedLost', {
+        type: a.targetType.charAt(0).toUpperCase() + a.targetType.slice(1),
+        level: Math.floor(a.targetLevel),
+        x: a.targetX,
+        y: a.targetY,
+    }));
+}
+
+/** CP cost from the attacking base (h.bi) to the target, as the game computes it now; null when unknown. */
+function cpCostOf(h) {
+    try {
+        const own = ClientLib.Data.MainData.GetInstance().get_Cities().get_AllCities().d[h.bi];
+        if (!own) return null;
+        const cost = own.CalculateAttackCommandPointCostToCoord(Number(h.ad.dbx), Number(h.ad.dby));
+        return Number.isFinite(cost) ? cost : null;
+    } catch {
+        return null;
+    }
+}
+
+function readDefenderHealth(rep) {
+    const get = (name) => {
+        try {
+            const v = typeof rep[name] === 'function' ? Number(rep[name]()) : NaN;
+            return Number.isFinite(v) ? v : undefined;
+        } catch { return undefined; }
+    };
+    return { defenderHpStart: get('get_DefenderStartHealthPercent'), defenderHpEnd: get('get_DefenderEndHealthPercent') };
 }
 
 function readLoot(rep) {

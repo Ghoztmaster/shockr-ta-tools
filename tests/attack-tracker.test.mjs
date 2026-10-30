@@ -17,7 +17,7 @@ async function load() {
         plugins: [{
             name: 'stub-main',
             setup(b) {
-                b.onResolve({ filter: /lib\/main\.js$/ }, () => ({ path: 'main', namespace: 'stub' }));
+                b.onResolve({ filter: /(^|\/)main\.js$/ }, () => ({ path: 'main', namespace: 'stub' }));
                 b.onLoad({ filter: /.*/, namespace: 'stub' }, () => ({ contents: 'export function chatMessage() {}' }));
             },
         }],
@@ -96,9 +96,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // ─── Pure filter / payload ───────────────────────────────────────────
 
-test('only won attacks on FG camp/outpost/base are loggable', () => {
+test('won and lost attacks on FG camp/outpost/base are loggable', () => {
     assert.equal(mod.isLoggable(header()), true);
-    assert.equal(mod.isLoggable(header({ s: false })), false, 'lost');
+    assert.equal(mod.isLoggable(header({ s: false })), true, 'lost (5.33.0)');
     assert.equal(mod.isLoggable(header({ tp: 1 })), false, 'PvP (EReportType.Combat)');
     assert.equal(mod.isLoggable(header({ ad: { dbl: 18, dbn: '6', dbx: 1, dby: 1 } })), false, 'fortress');
     assert.equal(mod.isLoggable(header({ ad: { dbl: 18, dbn: '1', dbx: 1, dby: 1 } })), true, 'camp');
@@ -110,8 +110,33 @@ test('payload matches the server schema', () => {
     assert.deepEqual(a, {
         targetType: 'outpost', targetLevel: 18, targetX: 84, targetY: 293,
         lootTib: 120000, lootCrystal: 85000, lootCredits: 0,
-        worldId: 477, timestamp: NOW - 60_000, reportId: 1,
+        worldId: 477, timestamp: NOW - 60_000, reportId: 1, won: true, outcome: 4, destroyed: false,
     });
+});
+
+test('War Tracker fields: destroyed, target id, CP, health, world, role', () => {
+    const a = mod.buildAttack(header({ s: false, obi: 7209394, ad: { cr: 3, dbl: 27, dbn: '1', dbx: 102, dby: 296 } }), 477, {
+        tib: 0, cry: 0, credits: 0, cpCost: 13.6, defenderHpStart: 100, defenderHpEnd: 41.27,
+        world: { width: 1000, height: 1000, count: 8 }, role: 'officer',
+    });
+    assert.equal(a.won, false);
+    assert.equal(a.destroyed, false);
+    assert.equal(a.outcome, 3);
+    assert.equal(a.targetId, 7209394);
+    assert.equal(a.cpCost, 14);
+    assert.equal(a.defenderHpEnd, 41.3);
+    assert.deepEqual([a.worldWidth, a.worldHeight, a.sectorCount], [1000, 1000, 8]);
+    assert.equal(a.playerRole, 'officer');
+    assert.equal(mod.buildAttack(header({ ad: { cr: 1, dbl: 27, dbn: '1', dbx: 1, dby: 1 } }), 477, {}).destroyed, true);
+    const bare = mod.buildAttack(header({ ad: { dbl: 27, dbn: '1', dbx: 1, dby: 1 } }), 477, {});
+    assert.ok(!('destroyed' in bare) && !('cpCost' in bare) && !('playerRole' in bare), 'unknown fields are left out');
+});
+
+test('chat lines: one per attack, a count for a backlog', () => {
+    const a = (won) => ({ targetType: 'camp', targetLevel: 27.4, targetX: 102, targetY: 296, won });
+    assert.deepEqual(mod.chatLines([a(true), a(false)]),
+        ['Attack logged: Camp L27 @ 102:296', 'Attack logged: Camp L27 @ 102:296 (lost)']);
+    assert.deepEqual(mod.chatLines([a(true), a(true), a(true), a(true)]), ['4 attacks logged']);
 });
 
 test('done list keeps 100 ids and moves the cutoff', () => {
@@ -124,7 +149,7 @@ test('done list keeps 100 ids and moves the cutoff', () => {
 
 // ─── End to end with stubs ───────────────────────────────────────────
 
-test('poll → report → one batched POST; lost/PvP never sent; nothing marked read', async () => {
+test('poll → report → one batched POST; lost sent, PvP never; nothing marked read', async () => {
     const headers = [
         header({ i: 4, t: NOW - 10_000 }),
         header({ i: 3, t: NOW - 20_000, s: false }),         // lost
@@ -140,7 +165,7 @@ test('poll → report → one batched POST; lost/PvP never sent; nothing marked 
     tracker.running = true;
     try {
         tracker.poll();
-        await sleep(1500);                    // two reports, 1 s apart
+        await sleep(2500);                    // three reports, 1 s apart
         assert.equal(api.posts.length, 1, 'second report waits for the 5 s POST slot');
         tracker._lastPostAt -= 5000;
         await tracker.flush();
@@ -148,10 +173,11 @@ test('poll → report → one batched POST; lost/PvP never sent; nothing marked 
         console.log = origLog;
         tracker.stop();
     }
-    assert.deepEqual(game.requested, [1, 4], 'only the won FG reports, oldest first');
+    assert.deepEqual(game.requested, [1, 3, 4], 'the FG reports, oldest first');
     assert.deepEqual(game.forbidden, []);
     const sent = api.posts.flatMap(p => p.body);
-    assert.deepEqual(sent.map(a => a.reportId).sort(), [1, 4]);
+    assert.deepEqual(sent.map(a => a.reportId).sort(), [1, 3, 4]);
+    assert.equal(sent.find(a => a.reportId === 3).won, false);
     assert.equal(sent.find(a => a.reportId === 1).targetType, 'camp');
     assert.ok(logs.includes('[ST] Attack logged: outpost lvl 18 @ 84:293'), logs.join('\n'));
 

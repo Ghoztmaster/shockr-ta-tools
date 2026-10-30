@@ -45,9 +45,12 @@ from pathlib import Path
 from typing import Callable
 
 import bcrypt
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 log = logging.getLogger("shockr-alliance")
+
+# Alliance roles the userscript reads (lib/api-client.js readOwnRole)
+PLAYER_ROLES = ("cic", "second", "officer", "member")
 
 INVALID_CODE = "Invalid enrollment code"
 ALLIANCE_NOT_AUTHORIZED = "Alliance not authorized"
@@ -67,6 +70,19 @@ class EnrollPayload(BaseModel):
     # userscript can warn that a new key invalidates the old one; true = the
     # player confirmed. Absent (older userscripts) = replace, as before.
     replace: bool | None = None
+    # 5.33.0: own alliance role (cic / second / officer / member) - grants the
+    # War page (server/war.py). Absent (older userscripts) = not stored.
+    role: str | None = Field(default=None, max_length=20)
+
+    @field_validator("role")
+    @classmethod
+    def validate_role(cls, v: str | None) -> str | None:
+        if v is None:
+            return None
+        v = v.strip().lower()
+        if v not in PLAYER_ROLES:
+            raise ValueError("role must be cic, second, officer or member")
+        return v
 
 
 class RestorePayload(BaseModel):
@@ -177,7 +193,8 @@ class PlayerKeyStore:
         log.info("Loaded %d player key(s)%s", len(self.players),
                  f" (file had {lines} line(s), rewritten)" if lines != len(self.players) else "")
 
-    def enroll(self, player_id: int, player_name: str, alliance_id: int, scope: str) -> str:
+    def enroll(self, player_id: int, player_name: str, alliance_id: int, scope: str,
+               role: str | None = None) -> str:
         """Issue a new key for the player (replacing any previous one). @returns the plaintext key"""
         raw_key = secrets.token_hex(16)
         entry = {
@@ -188,6 +205,8 @@ class PlayerKeyStore:
             "playerKey": bcrypt.hashpw(raw_key.encode(), bcrypt.gensalt()).decode(),
             "createdAt": int(self.clock()),
         }
+        if role:
+            entry.update({"role": role, "roleAt": int(self.clock())})
         replaced = player_id in self.players
         self.players[player_id] = entry
         self._verified.pop(player_id, None)
@@ -212,6 +231,18 @@ class PlayerKeyStore:
             return None
         self._verified[player_id] = fp
         return entry
+
+    def set_role(self, player_id: int, role: str) -> bool:
+        """Store a newer alliance role (5.33.0: sent with each attack). Writes only on a change. @returns changed"""
+        entry = self.players.get(player_id)
+        if entry is None or entry.get("role") == role:
+            return False
+        old = entry.get("role")
+        entry["role"] = role
+        entry["roleAt"] = int(self.clock())
+        self._save()
+        log.info("Alliance role of %s (%d): %s -> %s", entry.get("playerName") or "?", player_id, old or "-", role)
+        return True
 
     def revoke(self, player_id: int) -> bool:
         if self.players.pop(player_id, None) is None:

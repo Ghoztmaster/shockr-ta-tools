@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.32.0
+// @version         5.33.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -102,7 +102,7 @@ var ShockrTools = (() => {
   });
 
   // <define:__ST_PLUGIN_SHORT__>
-  var define_ST_PLUGIN_SHORT_default = { CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, AttackTracker: { en: "Logs your won attacks on Forgotten targets", de: "Meldet deine gewonnenen Angriffe auf Forgotten-Ziele", nl: "Meldt je gewonnen aanvallen op Forgotten-targets" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" } };
+  var define_ST_PLUGIN_SHORT_default = { CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" } };
 
   // lib/game-ready.js
   async function waitForGame({ maxAttempts = 200, intervalMs = 100 } = {}) {
@@ -571,7 +571,7 @@ var ShockrTools = (() => {
       descAutoRepair: "Repair damaged units right after every attack; buildings too with autorepair.buildings",
       descUpgradeCalc: "Building upgrade cost & time panel",
       descTargetWatcher: "Report viewed targets to alliance server",
-      descAttackTracker: "Log your won attacks on Forgotten targets to the alliance server",
+      descAttackTracker: "Log your attacks on Forgotten targets (won and lost) to the alliance server",
       descTargetBoard: "In-game overview of alliance targets \u2014 who is watching and who is attacking",
       descMarkerNav: "Marker Navigator: list of your map markers, click to jump",
       descTunnelPoi: "Tunnel & POI Analyzer: who activates each tunnel exit, low bases that are a spawn risk, which POI bases can move",
@@ -694,6 +694,9 @@ var ShockrTools = (() => {
       // ── AttackTracker ──
       attackTrackerStatus: "{count} attack(s) logged this session, {queued} waiting to be sent",
       attackTrackerStatusNoServer: "no server configured (api.url / /st register)",
+      attackLogged: "Attack logged: {type} L{level} @ {x}:{y}",
+      attackLoggedLost: "Attack logged: {type} L{level} @ {x}:{y} (lost)",
+      attackLoggedMany: "{n} attacks logged",
       descWatchList: "Claim Forgotten targets you intend to attack (/st watch) \u2014 visible to the alliance",
       descBaseInfo: "Offense/defense level + number (#1, #2\u2026) at player bases on the world map",
       descAttackRange: "Attack range circle around your own bases on the world map",
@@ -1056,7 +1059,7 @@ var ShockrTools = (() => {
       descAutoRepair: "Besch\xE4digte Einheiten direkt nach jedem Angriff reparieren; mit autorepair.buildings auch Geb\xE4ude",
       descUpgradeCalc: "Panel mit Upgrade-Kosten & -Dauer der Geb\xE4ude",
       descTargetWatcher: "Angesehene Ziele an den Allianz-Server melden",
-      descAttackTracker: "Gewonnene Angriffe auf Forgotten-Ziele an den Allianz-Server melden",
+      descAttackTracker: "Angriffe auf Forgotten-Ziele (gewonnen und verloren) an den Allianz-Server melden",
       descTargetBoard: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an",
       descMarkerNav: "Marker-Navigator: Liste deiner Kartenmarkierungen, Klick springt hin",
       descTunnelPoi: "Tunnel- & POI-Analyse: wer welchen Tunnelausgang aktiviert, niedrige Basen mit Spawn-Risiko, welche POI-Basen umziehen k\xF6nnen",
@@ -1168,6 +1171,9 @@ var ShockrTools = (() => {
       targetWatcherStatusIdle: "kein Ziel im Blick, {count} Meldung(en) gesendet",
       attackTrackerStatus: "{count} Angriff(e) in dieser Sitzung gemeldet, {queued} warten auf Versand",
       attackTrackerStatusNoServer: "kein Server eingerichtet (api.url / /st register)",
+      attackLogged: "Angriff gemeldet: {type} L{level} @ {x}:{y}",
+      attackLoggedLost: "Angriff gemeldet: {type} L{level} @ {x}:{y} (verloren)",
+      attackLoggedMany: "{n} Angriffe gemeldet",
       descWatchList: "Forgotten-Ziele reservieren, die du angreifen willst (/st watch) \u2014 f\xFCr die Allianz sichtbar",
       descBaseInfo: "Offensiv-/Defensivlevel + Nummer (#1, #2\u2026) an Spielerbasen auf der Weltkarte",
       descAttackRange: "Angriffsreichweite als Kreis um deine eigenen Basen auf der Weltkarte",
@@ -1530,7 +1536,7 @@ var ShockrTools = (() => {
       descAutoRepair: "Beschadigde units direct na elke aanval repareren; met autorepair.buildings ook gebouwen",
       descUpgradeCalc: "Paneel met upgrade-kosten & -tijd van gebouwen",
       descTargetWatcher: "Bekeken targets melden aan de alliance-server",
-      descAttackTracker: "Gewonnen aanvallen op Forgotten-targets melden aan de alliance-server",
+      descAttackTracker: "Aanvallen op Forgotten-targets (gewonnen en verloren) melden aan de alliance-server",
       descTargetBoard: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan",
       descMarkerNav: "Marker-navigator: lijst van je kaartmarkers, klik om erheen te springen",
       descTunnelPoi: "Tunnel & POI Analyzer: wie elke tunnel exit activeert, lage bases met spawn-risico, welke POI-bases kunnen verhuizen",
@@ -1642,6 +1648,9 @@ var ShockrTools = (() => {
       targetWatcherStatusIdle: "geen target in beeld, {count} melding(en) verstuurd",
       attackTrackerStatus: "{count} aanval(len) gemeld deze sessie, {queued} wachten op verzenden",
       attackTrackerStatusNoServer: "geen server ingesteld (api.url / /st register)",
+      attackLogged: "Aanval gemeld: {type} L{level} @ {x}:{y}",
+      attackLoggedLost: "Aanval gemeld: {type} L{level} @ {x}:{y} (verloren)",
+      attackLoggedMany: "{n} aanvallen gemeld",
       descWatchList: "Forgotten-targets claimen die je wilt aanvallen (/st watch) \u2014 zichtbaar voor de alliance",
       descBaseInfo: "Offense-/defense-level + nummer (#1, #2\u2026) bij speler-bases op de wereldkaart",
       descAttackRange: "Aanvalsbereik als cirkel rond je eigen bases op de wereldkaart",
@@ -2895,7 +2904,8 @@ var ShockrTools = (() => {
             allianceId: player.allianceId,
             worldId: player.worldId,
             enrollmentCode: code,
-            replace
+            replace,
+            role: readOwnRole() || void 0
           })
         });
         let data = {};
@@ -3173,6 +3183,18 @@ var ShockrTools = (() => {
         worldId3 = m ? Number(m[1]) : 0;
       }
       return { id: id || 0, name: name || "", allianceId: allianceId || 0, worldId: worldId3 };
+    } catch {
+      return null;
+    }
+  }
+  function readOwnRole() {
+    try {
+      const alliance = ClientLib.Data.MainData.GetInstance().get_Alliance();
+      if (!alliance || !alliance.get_Id()) return null;
+      if (alliance.get_IsFirstLeader()) return "cic";
+      if (alliance.get_IsAdmin()) return "second";
+      if (alliance.get_IsOfficer()) return "officer";
+      return "member";
     } catch {
       return null;
     }
@@ -6298,6 +6320,323 @@ var ShockrTools = (() => {
     return String(s).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
   }
 
+  // lib/poi-util.js
+  var POI_KEYS = {
+    TiberiumBonus: "tib",
+    CrystalBonus: "cry",
+    PowerBonus: "pow",
+    InfanteryBonus: "inf",
+    VehicleBonus: "veh",
+    AirBonus: "air",
+    DefenseBonus: "def"
+  };
+  var KEY_ORDER = ["tib", "cry", "pow", "inf", "veh", "air", "def"];
+  var RESOURCE_KEYS = /* @__PURE__ */ new Set(["tib", "cry", "pow"]);
+  var BONUS_GETTERS = {
+    tib: "get_POITiberiumBonus",
+    cry: "get_POICrystalBonus",
+    pow: "get_POIPowerBonus",
+    inf: "get_POIInfantryBonus",
+    veh: "get_POIVehicleBonus",
+    air: "get_POIAirBonus",
+    def: "get_POIDefenseBonus"
+  };
+  var SECTOR_FALLBACK = ["S", "SW", "W", "NW", "N", "NE", "E", "SE"];
+  var SECTOR_TR = ["south", "southwest", "west", "northwest", "north", "northeast", "east", "southeast"];
+  function fmtNumber(n) {
+    n = Number(n) || 0;
+    const a = Math.abs(n);
+    if (a >= 1e9) return (n / 1e9).toFixed(1).replace(/\.0$/, "") + "G";
+    if (a >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, "") + "M";
+    if (a >= 1e3) return (n / 1e3).toFixed(1).replace(/\.0$/, "") + "k";
+    return String(Math.round(n * 10) / 10);
+  }
+  function fmtBonus(key, value, sign = false) {
+    const s = sign && value > 0 ? "+" : "";
+    return RESOURCE_KEYS.has(key) ? `${s}${fmtNumber(value)}/h` : `${s}${fmtNumber(value)}%`;
+  }
+  function poiKey(poiType) {
+    try {
+      const e = ClientLib.Base.EPOIType;
+      for (const name of Object.keys(POI_KEYS)) if (e[name] === poiType) return POI_KEYS[name];
+    } catch {
+    }
+    return null;
+  }
+  function sectorNo(x, y, worldWidth, worldHeight, count) {
+    const dx = x - Math.floor(worldWidth / 2);
+    const dy = y - Math.floor(worldHeight / 2);
+    const turn = Math.atan2(-dx, dy) / (2 * Math.PI);
+    const slice = Math.round(turn * count);
+    return (slice % count + count) % count;
+  }
+  function worldGeometry() {
+    try {
+      const s = ClientLib.Data.MainData.GetInstance().get_Server();
+      const g = { width: s.get_WorldWidth(), height: s.get_WorldHeight(), count: s.get_SectorCount() };
+      return g.width > 0 && g.height > 0 && g.count > 0 ? g : null;
+    } catch {
+      return null;
+    }
+  }
+  function sectorAbbr(i) {
+    try {
+      const name = SECTOR_TR[i];
+      const text = name ? String(qx.core.Init.getApplication().tr(`tnf:${name} abbr`)) : "";
+      if (text && !text.startsWith("tnf:")) return text;
+    } catch {
+    }
+    return SECTOR_FALLBACK[i] || String(i);
+  }
+  function ownAlliance() {
+    try {
+      const a = ClientLib.Data.MainData.GetInstance().get_Alliance();
+      if (!a || typeof a.get_Exists === "function" && !a.get_Exists()) return null;
+      const id = Number(a.get_Id());
+      return id > 0 ? { id, name: String(a.get_Name() || "") } : null;
+    } catch {
+      return null;
+    }
+  }
+  function allianceBonuses() {
+    try {
+      const a = ClientLib.Data.MainData.GetInstance().get_Alliance();
+      if (!ownAlliance()) return null;
+      let ranks = [];
+      try {
+        ranks = a.get_POIRankScore() || [];
+      } catch {
+      }
+      let begin = 0;
+      try {
+        begin = ClientLib.Base.EPOIType.RankedTypeBegin;
+      } catch {
+      }
+      const out = [];
+      for (const [name, key] of Object.entries(POI_KEYS)) {
+        let value = 0;
+        try {
+          value = Number(a[BONUS_GETTERS[key]]()) || 0;
+        } catch {
+        }
+        let rs = null;
+        try {
+          rs = ranks[ClientLib.Base.EPOIType[name] - begin] || null;
+        } catch {
+        }
+        out.push({ key, value, rank: rs ? rs.r : null, score: rs ? rs.s : null });
+      }
+      return out;
+    } catch {
+      return null;
+    }
+  }
+  function ownedPois() {
+    try {
+      const a = ClientLib.Data.MainData.GetInstance().get_Alliance();
+      if (!ownAlliance()) return [];
+      return (a.get_OwnedPOIs() || []).map((p) => ({ x: Number(p.x), y: Number(p.y), level: Number(p.l), worldType: p.t }));
+    } catch {
+      return [];
+    }
+  }
+  function poiObjectType() {
+    try {
+      const v = ClientLib.Data.WorldSector.ObjectType.PointOfInterest;
+      if (typeof v === "number") return v;
+    } catch {
+    }
+    return 4;
+  }
+  function poiFromVisObject(obj) {
+    try {
+      if (!obj) return null;
+      const visType = ClientLib.Vis.VisObject.EObjectType.RegionPointOfInterest;
+      if (typeof obj.get_VisObjectType === "function" && obj.get_VisObjectType() !== visType) return null;
+      const worldType = obj.get_Type();
+      let tunnel;
+      try {
+        tunnel = ClientLib.Data.WorldSector.WorldObjectPointOfInterest.EPOIType.TunnelExit;
+      } catch {
+        tunnel = void 0;
+      }
+      if (tunnel !== void 0 && worldType === tunnel) return null;
+      const poiType = ClientLib.Base.PointOfInterestTypes.GetPOITypeFromWorldPOIType(worldType);
+      const key = poiKey(poiType);
+      if (!key) return null;
+      return {
+        key,
+        poiType,
+        level: Number(obj.get_Level()),
+        ownerId: Number(obj.get_OwnerAllianceId()) || 0,
+        ownerName: String(typeof obj.get_OwnerAllianceName === "function" && obj.get_OwnerAllianceName() || "")
+      };
+    } catch {
+      return null;
+    }
+  }
+  function visiblePois() {
+    const md = ClientLib.Data.MainData.GetInstance();
+    const world = md.get_World();
+    const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
+    const gw = region.get_GridWidth();
+    const gh = region.get_GridHeight();
+    const type = poiObjectType();
+    const range = visibleCellRange();
+    const out = [];
+    for (let y = range.minY; y <= range.maxY; y++) {
+      for (let x = range.minX; x <= range.maxX; x++) {
+        try {
+          const w = world.GetObjectFromPosition(x, y);
+          if (!w || w.Type !== type) continue;
+          const poi = poiFromVisObject(region.GetObjectFromPosition(x * gw, y * gh));
+          if (poi) out.push({ x, y, ...poi });
+        } catch {
+        }
+      }
+    }
+    return out;
+  }
+  function poiScore(level) {
+    try {
+      return Number(ClientLib.Base.PointOfInterestTypes.GetScoreByLevel(level)) || 0;
+    } catch {
+      return 0;
+    }
+  }
+  function realPoiDelta(ctx, total) {
+    const { own, ownerIsAlliance, poiScore: ps, rank, score, nextScore, prevScore } = ctx;
+    const current = total(rank, score);
+    if (own) {
+      if (prevScore <= 0 || score - ps >= prevScore) return { kind: "loss", value: current - total(rank, score - ps) };
+      return { kind: "loss", value: null };
+    }
+    if (!score) return { kind: "gain", value: null };
+    if (nextScore <= 0 || rank <= 1) return { kind: "gain", value: total(rank, score + ps) - current };
+    if (ownerIsAlliance) return { kind: "gain", value: null };
+    if (score + ps > nextScore) return { kind: "gain", value: null };
+    if (score + ps < nextScore) return { kind: "gain", value: total(rank, score + ps) - current };
+    return { kind: "gain", value: total(rank - 1, score + ps) - current };
+  }
+  function rankedPoiDelta(ctx, rows, total) {
+    let others = rows.map((r) => ({ a: r.a, pois: Number(r.pois) || 0 }));
+    const isGain = !ctx.own;
+    if (isGain && ctx.poiOwnerId) {
+      const owner = others.find((r) => r.a === ctx.poiOwnerId);
+      if (owner) {
+        owner.pois -= ctx.poiScore;
+        others.sort((a, b) => b.pois - a.pois);
+      }
+    }
+    const newScore = ctx.score + (isGain ? ctx.poiScore : -ctx.poiScore);
+    let i = 0;
+    while (i < others.length && others[i].pois > newScore) i++;
+    const current = total(ctx.rank, ctx.score);
+    const next = total(i + 1, newScore);
+    return { kind: isGain ? "gain" : "loss", value: isGain ? next - current : current - next };
+  }
+  function poiDeltaContext(poiType, poiOwnerId, ownId, poiScoreValue) {
+    try {
+      const md = ClientLib.Data.MainData.GetInstance();
+      const rs = md.get_Alliance().get_POIRankScore()[poiType - ClientLib.Base.EPOIType.RankedTypeBegin];
+      if (!rs) return null;
+      const factor = md.get_Server().get_POIGlobalBonusFactor();
+      const util = ClientLib.Base.PointOfInterestTypes;
+      let noAlliance = 0;
+      try {
+        noAlliance = webfrontend.gui.widgets.AllianceLabel.ESpecialNoAllianceName;
+      } catch {
+      }
+      return {
+        own: poiOwnerId === ownId,
+        ownerIsAlliance: !!poiOwnerId && poiOwnerId !== noAlliance,
+        poiScore: poiScoreValue,
+        rank: rs.r,
+        score: rs.s,
+        nextScore: rs.ns,
+        prevScore: rs.ps,
+        total: (rank, s) => util.GetTotalBonusByType(poiType, rank, s, factor)
+      };
+    } catch {
+      return null;
+    }
+  }
+  var RANKING_CACHE_MS = 10 * 60 * 1e3;
+  var RANKING_RETRY_MS = 30 * 1e3;
+  var rankingCache = {};
+  var rankingInflight = {};
+  function fetchPoiRanking(poiType, ownId, done) {
+    const hit = rankingCache[poiType];
+    if (hit && hit.expire >= Date.now()) {
+      done(hit.rows);
+      return true;
+    }
+    const busy = rankingInflight[poiType];
+    if (busy && Date.now() - busy.since < RANKING_RETRY_MS) {
+      busy.waiting.push(done);
+      return true;
+    }
+    rankingInflight[poiType] = { since: Date.now(), waiting: [done] };
+    try {
+      const R = ClientLib.Data.Ranking;
+      const E = ClientLib.Base.EPOIType;
+      const rankingType = {
+        [E.TiberiumBonus]: R.ERankingType.BonusTiberium,
+        [E.CrystalBonus]: R.ERankingType.BonusCrystal,
+        [E.PowerBonus]: R.ERankingType.BonusPower,
+        [E.InfanteryBonus]: R.ERankingType.BonusInfantry,
+        [E.VehicleBonus]: R.ERankingType.BonusVehicles,
+        [E.AirBonus]: R.ERankingType.BonusAircraft,
+        [E.DefenseBonus]: R.ERankingType.BonusDefense
+      }[poiType];
+      const sortColumn = {
+        [R.ERankingType.BonusTiberium]: R.ESortColumn.TiberiumScore,
+        [R.ERankingType.BonusCrystal]: R.ESortColumn.CrystalScore,
+        [R.ERankingType.BonusPower]: R.ESortColumn.PowerScore,
+        [R.ERankingType.BonusInfantry]: R.ESortColumn.InfantryScore,
+        [R.ERankingType.BonusVehicles]: R.ESortColumn.VehicleScore,
+        [R.ERankingType.BonusAircraft]: R.ESortColumn.AircraftScore,
+        [R.ERankingType.BonusDefense]: R.ESortColumn.DefenseScore
+      }[rankingType];
+      const lastIndex = Object.keys(ClientLib.Res.ResMain.GetInstance().GetGamedata().poibmbr).length;
+      ClientLib.Net.CommunicationManager.GetInstance().SendSimpleCommand("RankingGetData", {
+        firstIndex: 0,
+        lastIndex,
+        view: R.EViewType.Alliance,
+        rankingType,
+        sortColumn,
+        ascending: true
+      }, webfrontend.phe.cnc.Util.createEventDelegate(ClientLib.Net.CommandResult, null, (ctx, data) => {
+        const waiting = rankingInflight[poiType] ? rankingInflight[poiType].waiting : [];
+        delete rankingInflight[poiType];
+        if (!data || !Array.isArray(data.a)) return;
+        const rows = data.a.filter((r) => r.a !== ownId).map((r) => ({ a: r.a, pois: r.pois || 0 }));
+        rankingCache[poiType] = { expire: Date.now() + RANKING_CACHE_MS, rows };
+        for (const fn of waiting) fn(rows);
+      }), null);
+      return true;
+    } catch {
+      delete rankingInflight[poiType];
+      return false;
+    }
+  }
+  function sectorSummary(pois, ownId, geo) {
+    const out = [];
+    for (let i = 0; i < geo.count; i++) out.push({ sector: i, own: 0, enemy: 0, free: 0, status: "none" });
+    for (const p of pois) {
+      const s = out[sectorNo(p.x, p.y, geo.width, geo.height, geo.count)];
+      if (!s) continue;
+      if (!p.ownerId) s.free++;
+      else if (ownId && p.ownerId === ownId) s.own++;
+      else s.enemy++;
+    }
+    for (const s of out) {
+      if (s.own > 0 && s.own >= s.enemy) s.status = "own";
+      else if (s.enemy > 0) s.status = "enemy";
+    }
+    return out;
+  }
+
   // plugins/attack-tracker.js
   var POLL_INTERVAL_MS2 = 2 * 60 * 1e3;
   var FIRST_POLL_DELAY_MS = 15 * 1e3;
@@ -6311,9 +6650,11 @@ var ShockrTools = (() => {
   var OUTBOX_MAX = 200;
   var DONE_MAX = 100;
   var BACKFILL_DAYS = 7;
+  var CHAT_MAX_LINES = 3;
   var OUTBOX_KEY = "st-attacks-outbox";
   var DONE_KEY_PREFIX = "st-attacks-done-";
   var REPORT_TYPE_NPC_RAID = 2;
+  var REPORT_OUTCOME_DESTROYED = 1;
   var CAMP_TYPES = { 1: "camp", 2: "camp", 3: "outpost", 4: "base" };
   var AttackTracker = class {
     /** Short description for `/st help`. */
@@ -6451,7 +6792,7 @@ var ShockrTools = (() => {
       if (!item || item.header.i !== id) return;
       clearTimeout(item.timer);
       this._inFlight = null;
-      this._commit(item, readLoot(rep));
+      this._commit(item, { ...readLoot(rep), ...readDefenderHealth(rep) });
       this._processNext();
     }
     _onTimeout() {
@@ -6467,8 +6808,13 @@ var ShockrTools = (() => {
       this._processNext();
     }
     /** Outbox first, then the done list: a crash in between can only re-send (server dedups), never lose. */
-    _commit(item, loot) {
-      const attack = buildAttack(item.header, item.worldId, loot);
+    _commit(item, report) {
+      const attack = buildAttack(item.header, item.worldId, {
+        ...report,
+        cpCost: cpCostOf(item.header),
+        world: worldGeometry(),
+        role: readOwnRole()
+      });
       if (!attack) return;
       const outbox = loadOutbox();
       outbox.push({ attack, failures: 0 });
@@ -6507,8 +6853,9 @@ var ShockrTools = (() => {
       if (result) {
         outbox = outbox.filter((e) => !sent.has(attackKey(e.attack)));
         for (const { attack: a } of batch) {
-          console.log(`[ST] Attack logged: ${a.targetType} lvl ${a.targetLevel} @ ${a.targetX}:${a.targetY}`);
+          console.log(`[ST] Attack logged: ${a.targetType} lvl ${a.targetLevel} @ ${a.targetX}:${a.targetY}${a.won ? "" : " (lost)"}`);
         }
+        for (const line of chatLines(batch.map((e) => e.attack))) chatMessage(`[ST] ${line}`);
         this._logged += batch.length;
         if (this.onUnclaimed && Array.isArray(result.unclaimed)) {
           for (const claim of result.unclaimed) this.onUnclaimed(claim);
@@ -6525,26 +6872,74 @@ var ShockrTools = (() => {
     }
   };
   function isLoggable(h) {
-    if (!h || h.i === void 0 || h.tp !== REPORT_TYPE_NPC_RAID || h.s !== true) return false;
+    if (!h || h.i === void 0 || h.tp !== REPORT_TYPE_NPC_RAID) return false;
     const ad = h.ad || {};
     return !!CAMP_TYPES[parseInt(ad.dbn, 10)] && Number.isFinite(Number(ad.dbx)) && Number.isFinite(Number(ad.dby)) && typeof h.t === "number";
   }
-  function buildAttack(h, worldId3, loot) {
+  function buildAttack(h, worldId3, d) {
     if (!isLoggable(h)) return null;
     const ad = h.ad;
     const level = Number(ad.dbl);
-    return {
+    const cr = parseInt(ad.cr, 10);
+    const attack = {
       targetType: CAMP_TYPES[parseInt(ad.dbn, 10)],
       targetLevel: Number.isFinite(level) && level >= 0 ? level : 0,
       targetX: Math.round(Number(ad.dbx)),
       targetY: Math.round(Number(ad.dby)),
-      lootTib: nonNeg(loot.tib),
-      lootCrystal: nonNeg(loot.cry),
-      lootCredits: nonNeg(loot.credits),
+      lootTib: nonNeg(d.tib),
+      lootCrystal: nonNeg(d.cry),
+      lootCredits: nonNeg(d.credits),
       worldId: Number(worldId3),
       timestamp: h.t,
-      reportId: h.i
+      reportId: h.i,
+      won: h.s === true
     };
+    if (Number.isInteger(cr) && cr >= 0) {
+      attack.outcome = cr;
+      attack.destroyed = cr === REPORT_OUTCOME_DESTROYED;
+    }
+    if (Number.isInteger(h.obi) && h.obi > 0) attack.targetId = h.obi;
+    if (Number.isFinite(d.cpCost) && d.cpCost >= 0) attack.cpCost = Math.round(d.cpCost);
+    for (const k of ["defenderHpStart", "defenderHpEnd"]) {
+      if (Number.isFinite(d[k])) attack[k] = Math.min(100, Math.max(0, Math.round(d[k] * 10) / 10));
+    }
+    if (d.world) {
+      attack.worldWidth = d.world.width;
+      attack.worldHeight = d.world.height;
+      attack.sectorCount = d.world.count;
+    }
+    if (d.role) attack.playerRole = d.role;
+    return attack;
+  }
+  function chatLines(attacks) {
+    if (attacks.length > CHAT_MAX_LINES) return [t("attackLoggedMany", { n: attacks.length })];
+    return attacks.map((a) => t(a.won ? "attackLogged" : "attackLoggedLost", {
+      type: a.targetType.charAt(0).toUpperCase() + a.targetType.slice(1),
+      level: Math.floor(a.targetLevel),
+      x: a.targetX,
+      y: a.targetY
+    }));
+  }
+  function cpCostOf(h) {
+    try {
+      const own = ClientLib.Data.MainData.GetInstance().get_Cities().get_AllCities().d[h.bi];
+      if (!own) return null;
+      const cost = own.CalculateAttackCommandPointCostToCoord(Number(h.ad.dbx), Number(h.ad.dby));
+      return Number.isFinite(cost) ? cost : null;
+    } catch {
+      return null;
+    }
+  }
+  function readDefenderHealth(rep) {
+    const get = (name) => {
+      try {
+        const v = typeof rep[name] === "function" ? Number(rep[name]()) : NaN;
+        return Number.isFinite(v) ? v : void 0;
+      } catch {
+        return void 0;
+      }
+    };
+    return { defenderHpStart: get("get_DefenderStartHealthPercent"), defenderHpEnd: get("get_DefenderEndHealthPercent") };
   }
   function readLoot(rep) {
     const E = ClientLib.Base.EResourceType;
@@ -8480,323 +8875,6 @@ var ShockrTools = (() => {
       }
     }
   };
-
-  // lib/poi-util.js
-  var POI_KEYS = {
-    TiberiumBonus: "tib",
-    CrystalBonus: "cry",
-    PowerBonus: "pow",
-    InfanteryBonus: "inf",
-    VehicleBonus: "veh",
-    AirBonus: "air",
-    DefenseBonus: "def"
-  };
-  var KEY_ORDER = ["tib", "cry", "pow", "inf", "veh", "air", "def"];
-  var RESOURCE_KEYS = /* @__PURE__ */ new Set(["tib", "cry", "pow"]);
-  var BONUS_GETTERS = {
-    tib: "get_POITiberiumBonus",
-    cry: "get_POICrystalBonus",
-    pow: "get_POIPowerBonus",
-    inf: "get_POIInfantryBonus",
-    veh: "get_POIVehicleBonus",
-    air: "get_POIAirBonus",
-    def: "get_POIDefenseBonus"
-  };
-  var SECTOR_FALLBACK = ["S", "SW", "W", "NW", "N", "NE", "E", "SE"];
-  var SECTOR_TR = ["south", "southwest", "west", "northwest", "north", "northeast", "east", "southeast"];
-  function fmtNumber(n) {
-    n = Number(n) || 0;
-    const a = Math.abs(n);
-    if (a >= 1e9) return (n / 1e9).toFixed(1).replace(/\.0$/, "") + "G";
-    if (a >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, "") + "M";
-    if (a >= 1e3) return (n / 1e3).toFixed(1).replace(/\.0$/, "") + "k";
-    return String(Math.round(n * 10) / 10);
-  }
-  function fmtBonus(key, value, sign = false) {
-    const s = sign && value > 0 ? "+" : "";
-    return RESOURCE_KEYS.has(key) ? `${s}${fmtNumber(value)}/h` : `${s}${fmtNumber(value)}%`;
-  }
-  function poiKey(poiType) {
-    try {
-      const e = ClientLib.Base.EPOIType;
-      for (const name of Object.keys(POI_KEYS)) if (e[name] === poiType) return POI_KEYS[name];
-    } catch {
-    }
-    return null;
-  }
-  function sectorNo(x, y, worldWidth, worldHeight, count) {
-    const dx = x - Math.floor(worldWidth / 2);
-    const dy = y - Math.floor(worldHeight / 2);
-    const turn = Math.atan2(-dx, dy) / (2 * Math.PI);
-    const slice = Math.round(turn * count);
-    return (slice % count + count) % count;
-  }
-  function worldGeometry() {
-    try {
-      const s = ClientLib.Data.MainData.GetInstance().get_Server();
-      const g = { width: s.get_WorldWidth(), height: s.get_WorldHeight(), count: s.get_SectorCount() };
-      return g.width > 0 && g.height > 0 && g.count > 0 ? g : null;
-    } catch {
-      return null;
-    }
-  }
-  function sectorAbbr(i) {
-    try {
-      const name = SECTOR_TR[i];
-      const text = name ? String(qx.core.Init.getApplication().tr(`tnf:${name} abbr`)) : "";
-      if (text && !text.startsWith("tnf:")) return text;
-    } catch {
-    }
-    return SECTOR_FALLBACK[i] || String(i);
-  }
-  function ownAlliance() {
-    try {
-      const a = ClientLib.Data.MainData.GetInstance().get_Alliance();
-      if (!a || typeof a.get_Exists === "function" && !a.get_Exists()) return null;
-      const id = Number(a.get_Id());
-      return id > 0 ? { id, name: String(a.get_Name() || "") } : null;
-    } catch {
-      return null;
-    }
-  }
-  function allianceBonuses() {
-    try {
-      const a = ClientLib.Data.MainData.GetInstance().get_Alliance();
-      if (!ownAlliance()) return null;
-      let ranks = [];
-      try {
-        ranks = a.get_POIRankScore() || [];
-      } catch {
-      }
-      let begin = 0;
-      try {
-        begin = ClientLib.Base.EPOIType.RankedTypeBegin;
-      } catch {
-      }
-      const out = [];
-      for (const [name, key] of Object.entries(POI_KEYS)) {
-        let value = 0;
-        try {
-          value = Number(a[BONUS_GETTERS[key]]()) || 0;
-        } catch {
-        }
-        let rs = null;
-        try {
-          rs = ranks[ClientLib.Base.EPOIType[name] - begin] || null;
-        } catch {
-        }
-        out.push({ key, value, rank: rs ? rs.r : null, score: rs ? rs.s : null });
-      }
-      return out;
-    } catch {
-      return null;
-    }
-  }
-  function ownedPois() {
-    try {
-      const a = ClientLib.Data.MainData.GetInstance().get_Alliance();
-      if (!ownAlliance()) return [];
-      return (a.get_OwnedPOIs() || []).map((p) => ({ x: Number(p.x), y: Number(p.y), level: Number(p.l), worldType: p.t }));
-    } catch {
-      return [];
-    }
-  }
-  function poiObjectType() {
-    try {
-      const v = ClientLib.Data.WorldSector.ObjectType.PointOfInterest;
-      if (typeof v === "number") return v;
-    } catch {
-    }
-    return 4;
-  }
-  function poiFromVisObject(obj) {
-    try {
-      if (!obj) return null;
-      const visType = ClientLib.Vis.VisObject.EObjectType.RegionPointOfInterest;
-      if (typeof obj.get_VisObjectType === "function" && obj.get_VisObjectType() !== visType) return null;
-      const worldType = obj.get_Type();
-      let tunnel;
-      try {
-        tunnel = ClientLib.Data.WorldSector.WorldObjectPointOfInterest.EPOIType.TunnelExit;
-      } catch {
-        tunnel = void 0;
-      }
-      if (tunnel !== void 0 && worldType === tunnel) return null;
-      const poiType = ClientLib.Base.PointOfInterestTypes.GetPOITypeFromWorldPOIType(worldType);
-      const key = poiKey(poiType);
-      if (!key) return null;
-      return {
-        key,
-        poiType,
-        level: Number(obj.get_Level()),
-        ownerId: Number(obj.get_OwnerAllianceId()) || 0,
-        ownerName: String(typeof obj.get_OwnerAllianceName === "function" && obj.get_OwnerAllianceName() || "")
-      };
-    } catch {
-      return null;
-    }
-  }
-  function visiblePois() {
-    const md = ClientLib.Data.MainData.GetInstance();
-    const world = md.get_World();
-    const region = ClientLib.Vis.VisMain.GetInstance().get_Region();
-    const gw = region.get_GridWidth();
-    const gh = region.get_GridHeight();
-    const type = poiObjectType();
-    const range = visibleCellRange();
-    const out = [];
-    for (let y = range.minY; y <= range.maxY; y++) {
-      for (let x = range.minX; x <= range.maxX; x++) {
-        try {
-          const w = world.GetObjectFromPosition(x, y);
-          if (!w || w.Type !== type) continue;
-          const poi = poiFromVisObject(region.GetObjectFromPosition(x * gw, y * gh));
-          if (poi) out.push({ x, y, ...poi });
-        } catch {
-        }
-      }
-    }
-    return out;
-  }
-  function poiScore(level) {
-    try {
-      return Number(ClientLib.Base.PointOfInterestTypes.GetScoreByLevel(level)) || 0;
-    } catch {
-      return 0;
-    }
-  }
-  function realPoiDelta(ctx, total) {
-    const { own, ownerIsAlliance, poiScore: ps, rank, score, nextScore, prevScore } = ctx;
-    const current = total(rank, score);
-    if (own) {
-      if (prevScore <= 0 || score - ps >= prevScore) return { kind: "loss", value: current - total(rank, score - ps) };
-      return { kind: "loss", value: null };
-    }
-    if (!score) return { kind: "gain", value: null };
-    if (nextScore <= 0 || rank <= 1) return { kind: "gain", value: total(rank, score + ps) - current };
-    if (ownerIsAlliance) return { kind: "gain", value: null };
-    if (score + ps > nextScore) return { kind: "gain", value: null };
-    if (score + ps < nextScore) return { kind: "gain", value: total(rank, score + ps) - current };
-    return { kind: "gain", value: total(rank - 1, score + ps) - current };
-  }
-  function rankedPoiDelta(ctx, rows, total) {
-    let others = rows.map((r) => ({ a: r.a, pois: Number(r.pois) || 0 }));
-    const isGain = !ctx.own;
-    if (isGain && ctx.poiOwnerId) {
-      const owner = others.find((r) => r.a === ctx.poiOwnerId);
-      if (owner) {
-        owner.pois -= ctx.poiScore;
-        others.sort((a, b) => b.pois - a.pois);
-      }
-    }
-    const newScore = ctx.score + (isGain ? ctx.poiScore : -ctx.poiScore);
-    let i = 0;
-    while (i < others.length && others[i].pois > newScore) i++;
-    const current = total(ctx.rank, ctx.score);
-    const next = total(i + 1, newScore);
-    return { kind: isGain ? "gain" : "loss", value: isGain ? next - current : current - next };
-  }
-  function poiDeltaContext(poiType, poiOwnerId, ownId, poiScoreValue) {
-    try {
-      const md = ClientLib.Data.MainData.GetInstance();
-      const rs = md.get_Alliance().get_POIRankScore()[poiType - ClientLib.Base.EPOIType.RankedTypeBegin];
-      if (!rs) return null;
-      const factor = md.get_Server().get_POIGlobalBonusFactor();
-      const util = ClientLib.Base.PointOfInterestTypes;
-      let noAlliance = 0;
-      try {
-        noAlliance = webfrontend.gui.widgets.AllianceLabel.ESpecialNoAllianceName;
-      } catch {
-      }
-      return {
-        own: poiOwnerId === ownId,
-        ownerIsAlliance: !!poiOwnerId && poiOwnerId !== noAlliance,
-        poiScore: poiScoreValue,
-        rank: rs.r,
-        score: rs.s,
-        nextScore: rs.ns,
-        prevScore: rs.ps,
-        total: (rank, s) => util.GetTotalBonusByType(poiType, rank, s, factor)
-      };
-    } catch {
-      return null;
-    }
-  }
-  var RANKING_CACHE_MS = 10 * 60 * 1e3;
-  var RANKING_RETRY_MS = 30 * 1e3;
-  var rankingCache = {};
-  var rankingInflight = {};
-  function fetchPoiRanking(poiType, ownId, done) {
-    const hit = rankingCache[poiType];
-    if (hit && hit.expire >= Date.now()) {
-      done(hit.rows);
-      return true;
-    }
-    const busy = rankingInflight[poiType];
-    if (busy && Date.now() - busy.since < RANKING_RETRY_MS) {
-      busy.waiting.push(done);
-      return true;
-    }
-    rankingInflight[poiType] = { since: Date.now(), waiting: [done] };
-    try {
-      const R = ClientLib.Data.Ranking;
-      const E = ClientLib.Base.EPOIType;
-      const rankingType = {
-        [E.TiberiumBonus]: R.ERankingType.BonusTiberium,
-        [E.CrystalBonus]: R.ERankingType.BonusCrystal,
-        [E.PowerBonus]: R.ERankingType.BonusPower,
-        [E.InfanteryBonus]: R.ERankingType.BonusInfantry,
-        [E.VehicleBonus]: R.ERankingType.BonusVehicles,
-        [E.AirBonus]: R.ERankingType.BonusAircraft,
-        [E.DefenseBonus]: R.ERankingType.BonusDefense
-      }[poiType];
-      const sortColumn = {
-        [R.ERankingType.BonusTiberium]: R.ESortColumn.TiberiumScore,
-        [R.ERankingType.BonusCrystal]: R.ESortColumn.CrystalScore,
-        [R.ERankingType.BonusPower]: R.ESortColumn.PowerScore,
-        [R.ERankingType.BonusInfantry]: R.ESortColumn.InfantryScore,
-        [R.ERankingType.BonusVehicles]: R.ESortColumn.VehicleScore,
-        [R.ERankingType.BonusAircraft]: R.ESortColumn.AircraftScore,
-        [R.ERankingType.BonusDefense]: R.ESortColumn.DefenseScore
-      }[rankingType];
-      const lastIndex = Object.keys(ClientLib.Res.ResMain.GetInstance().GetGamedata().poibmbr).length;
-      ClientLib.Net.CommunicationManager.GetInstance().SendSimpleCommand("RankingGetData", {
-        firstIndex: 0,
-        lastIndex,
-        view: R.EViewType.Alliance,
-        rankingType,
-        sortColumn,
-        ascending: true
-      }, webfrontend.phe.cnc.Util.createEventDelegate(ClientLib.Net.CommandResult, null, (ctx, data) => {
-        const waiting = rankingInflight[poiType] ? rankingInflight[poiType].waiting : [];
-        delete rankingInflight[poiType];
-        if (!data || !Array.isArray(data.a)) return;
-        const rows = data.a.filter((r) => r.a !== ownId).map((r) => ({ a: r.a, pois: r.pois || 0 }));
-        rankingCache[poiType] = { expire: Date.now() + RANKING_CACHE_MS, rows };
-        for (const fn of waiting) fn(rows);
-      }), null);
-      return true;
-    } catch {
-      delete rankingInflight[poiType];
-      return false;
-    }
-  }
-  function sectorSummary(pois, ownId, geo) {
-    const out = [];
-    for (let i = 0; i < geo.count; i++) out.push({ sector: i, own: 0, enemy: 0, free: 0, status: "none" });
-    for (const p of pois) {
-      const s = out[sectorNo(p.x, p.y, geo.width, geo.height, geo.count)];
-      if (!s) continue;
-      if (!p.ownerId) s.free++;
-      else if (ownId && p.ownerId === ownId) s.own++;
-      else s.enemy++;
-    }
-    for (const s of out) {
-      if (s.own > 0 && s.own >= s.enemy) s.status = "own";
-      else if (s.enemy > 0) s.status = "enemy";
-    }
-    return out;
-  }
 
   // plugins/poi-analyser.js
   var REFRESH_MS4 = 3e3;
@@ -13784,7 +13862,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.32.0";
+  var ST_VERSION = "5.33.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });

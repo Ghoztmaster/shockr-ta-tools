@@ -1,6 +1,7 @@
 // Website session (shared by index.html and targets.html; needs i18n.js first):
 // - "Logged in as: <name> [Log out]" in the element with id="userBox", in the
 //   chosen language (re-rendered on a language switch)
+// - the hidden "War" nav link (data-war-link) shown when /api/me says warAccess
 // - any API answer 401 (session expired/revoked while the page is open) -> login page
 (function () {
     const realFetch = window.fetch.bind(window);
@@ -34,6 +35,8 @@
             if (!resp.ok) return;
             me = await resp.json();
             renderUser();
+            // War page link (5.33.0): only for a leadership role / the whitelist
+            if (me.warAccess) document.querySelectorAll('[data-war-link]').forEach(a => { a.hidden = false; });
         } catch (e) { /* header stays empty; the page itself still works */ }
     }
 
