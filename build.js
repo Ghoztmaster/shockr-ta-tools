@@ -12,7 +12,7 @@ const esbuild = require('esbuild');
 const fs = require('fs');
 const path = require('path');
 
-const VERSION = '5.31.2';
+const VERSION = '5.32.0';
 /**
  * 5.25.0: where Tampermonkey checks for updates (daily by default) and fetches
  * the new version from. An update through this URL keeps the script id and its
@@ -25,7 +25,7 @@ const USERSCRIPT_HEADER = `// ==UserScript==
 // @name            Shockr - Tiberium Alliances Tools
 // @author          Ghozt [SoO] (original: Shockr, fixed by NetquiK [SoO])
 // @license         GPL-3.0-or-later
-// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver, wavy, loot summary, chat helper & PvP alert for C&C Tiberium Alliances
+// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver, wavy, loot summary, chat helper, spam blocker & PvP alert for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue

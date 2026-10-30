@@ -430,5 +430,21 @@
       "de": "Das Tunnel-Symbol im Shockr-Knopf (oder /st tunnels) öffnet ein Panel mit jedem Tunnelausgang und Allianz-POI, den du auf der Weltkarte gesehen hast. Tunnel: aktiv, sobald 5 verschiedene Allianzspieler je eine Basis innerhalb von 5 Feldern haben; zeigt wer, wie viele noch fehlen und die niedrigen Basen in der Zone mit Spawn-Risiko (Basislevel mehr als 5 unter dem nötigen Tunnellevel: niedrige Camps spawnen in der Zone). POI: sein realer Verlust für die Allianz; 0/h = wertlos, die Basen daneben können umziehen (markiert, wenn sie auch ein Spawn-Risiko an einem Tunnel sind). Klick auf eine Zeile zentriert die Karte. Einstellungen: /st config set tpa.players | tpa.range | tpa.guardrange | tpa.spawnmargin.",
       "nl": "Het tunnel-icoon in de Shockr-knop (of /st tunnels) opent een paneel met elke tunnel exit en alliance-POI die je op de wereldkaart hebt gezien. Tunnel: actief zodra 5 verschillende alliance-spelers elk een base binnen 5 velden hebben; toont wie, hoeveel er nog missen en de lage bases in de zone met spawn-risico (base level meer dan 5 onder het vereiste tunnellevel: er spawnen lage camps in de zone). POI: de real loss voor de alliance; 0/h = waardeloos, de bases ernaast kunnen verhuizen (gemarkeerd als ze ook een spawn-risico bij een tunnel zijn). Klik op een rij om de kaart te centreren. Instellingen: /st config set tpa.players | tpa.range | tpa.guardrange | tpa.spawnmargin."
     }
+  },
+  {
+    "name": "SpamBlock",
+    "slug": "spam-block",
+    "defaultEnabled": true,
+    "replaces": null,
+    "short": {
+      "en": "Hide in-game mail from players you block",
+      "de": "Ingame-Mails blockierter Spieler ausblenden",
+      "nl": "In-game mail van geblokkeerde spelers verbergen"
+    },
+    "long": {
+      "en": "Open a mail and click \"Block sender\": every mail from that player disappears from your inbox, and a player whose mails are all blocked drops out of the list. The block-list icon in the Shockr button (or /st blocklist) opens a panel with every blocked player and an Unblock button; type a name at the top to block a player before they write. Purely client-side: nothing is sent, deleted or marked read, and the blocked player notices nothing. The unread counter still counts blocked mail.",
+      "de": "Öffne eine Mail und klicke „Absender blockieren“: alle Mails dieses Spielers verschwinden aus deinem Posteingang, und ein Spieler, dessen Mails alle blockiert sind, fällt aus der Liste. Das Blocklisten-Symbol im Shockr-Knopf (oder /st blocklist) öffnet ein Panel mit allen blockierten Spielern und einem Entsperren-Knopf; oben einen Namen eingeben blockiert einen Spieler, bevor er schreibt. Rein clientseitig: nichts wird gesendet, gelöscht oder als gelesen markiert, und der blockierte Spieler merkt nichts. Der Zähler ungelesener Mails zählt blockierte Mails weiterhin mit.",
+      "nl": "Open een mail en klik \"Afzender blokkeren\": alle mail van die speler verdwijnt uit je inbox, en een speler van wie alle mail geblokkeerd is valt uit de lijst. Het blokkeerlijst-icoon in de Shockr-knop (of /st blocklist) opent een paneel met alle geblokkeerde spelers en een Deblokkeren-knop; typ bovenaan een naam om een speler te blokkeren voordat die schrijft. Puur client-side: er wordt niets verstuurd, verwijderd of als gelezen gemarkeerd, en de geblokkeerde speler merkt niets. De teller van ongelezen mail telt geblokkeerde mail nog mee."
+    }
   }
 ]

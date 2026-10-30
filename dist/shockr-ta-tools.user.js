@@ -2,11 +2,11 @@
 // @name            Shockr - Tiberium Alliances Tools
 // @author          Ghozt [SoO] (original: Shockr, fixed by NetquiK [SoO])
 // @license         GPL-3.0-or-later
-// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver, wavy, loot summary, chat helper & PvP alert for C&C Tiberium Alliances
+// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver, wavy, loot summary, chat helper, spam blocker & PvP alert for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.31.2
+// @version         5.32.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -102,7 +102,7 @@ var ShockrTools = (() => {
   });
 
   // <define:__ST_PLUGIN_SHORT__>
-  var define_ST_PLUGIN_SHORT_default = { CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, AttackTracker: { en: "Logs your won attacks on Forgotten targets", de: "Meldet deine gewonnenen Angriffe auf Forgotten-Ziele", nl: "Meldt je gewonnen aanvallen op Forgotten-targets" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" } };
+  var define_ST_PLUGIN_SHORT_default = { CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, AttackTracker: { en: "Logs your won attacks on Forgotten targets", de: "Meldet deine gewonnenen Angriffe auf Forgotten-Ziele", nl: "Meldt je gewonnen aanvallen op Forgotten-targets" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" } };
 
   // lib/game-ready.js
   async function waitForGame({ maxAttempts = 200, intervalMs = 100 } = {}) {
@@ -725,6 +725,8 @@ var ShockrTools = (() => {
       helpCmdTunnels: "Open/close the Tunnel & POI Analyzer",
       helpCmdMarkers: "Open/close the Marker Navigator (your map markers)",
       helpCmdMenu: "Show/hide a plugin in the Plugins menu",
+      helpCmdBlocklist: "Open/close the block list (Spam Blocker): block by name, unblock",
+      helpCmdBlocklistRemove: "Unblock a player: their mail shows again",
       descWavy: "Forgotten attack waves per base: Forgotten bases in range, level distribution, waves + distance lines on the world map",
       descPoiAnalyser: "Alliance POI bonuses: POI labels on the world map (gold = yours), the active bonuses in the base info panel and the real gain/loss of a selected POI",
       descSectorHud: "Sector HUD on the world map: view coordinates + sector, and per sector the POIs held (own green, enemy red, free grey)",
@@ -753,6 +755,22 @@ var ShockrTools = (() => {
       chatHelperDeletedAll: "All contacts deleted",
       chatHelperEmptyPrompt: "Your contacts list is empty.\n\nType a name here to add a contact:",
       chatHelperListHeader: "{n} contact(s):",
+      descSpamBlock: 'Spam Blocker: a "Block sender" button in an opened mail hides all mail from that player \u2014 only for you, nothing is sent or deleted; /st blocklist shows the list',
+      spamBlockButton: "Block sender",
+      spamBlockTooltip: "Hide all mail from {name} (only for you: they notice nothing, nothing is deleted)",
+      spamBlockNoSender: "System mail or unknown sender: cannot be blocked",
+      spamBlockBlocked: "Blocked: {name}",
+      spamBlockAlready: "{name} is already blocked",
+      spamBlockUnblocked: "Unblocked: {name} \u2014 their mail shows again",
+      spamBlockNotFound: '"{name}" is not on your block list (see /st blocklist)',
+      spamBlockUsage: "Usage: /st blocklist | /st blocklist remove <name>",
+      spamBlockStatus: "{n} blocked player(s)",
+      spamBlockTitle: "Blocked players",
+      spamBlockPlaceholder: "Player name",
+      spamBlockAdd: "Block",
+      spamBlockUnblock: "Unblock",
+      spamBlockByName: "by name",
+      spamBlockPanelEmpty: 'Nobody blocked \u2014 type a name above, or open a mail and click "Block sender"',
       chatHelperHelp1: "Chat Helper \u2014 space in the chat tags coordinates (123:456) and urls before sending; Enter does it in mail/forum.",
       chatHelperHelp2: "Alt+1: tag coordinates/urls in a message or forum post \xB7 Alt+2: insert a url \xB7 Alt+0: remove all tags",
       chatHelperHelp3: "Alt+p or Alt+3: [player] \xB7 Alt+a or Alt+4: [alliance] \xB7 Alt+b bold \xB7 Alt+i italic \xB7 Alt+u underline \xB7 Alt+s strikethrough",
@@ -849,6 +867,7 @@ var ShockrTools = (() => {
       toolbarTargetBoard: "Target Watch",
       toolbarMarkerNav: "Markers",
       toolbarTunnelPoi: "Tunnels & POIs",
+      toolbarSpamBlock: "Block list",
       toolbarStabs: "Battle Simulator",
       configMenuTitle: "Shockr config",
       configMenuIntro: "Export: take all settings incl. your key to another world or browser. Import: paste an export.",
@@ -1180,6 +1199,8 @@ var ShockrTools = (() => {
       helpCmdTunnels: "Tunnel- & POI-Analyse \xF6ffnen/schlie\xDFen",
       helpCmdMarkers: "Marker-Navigator \xF6ffnen/schlie\xDFen (deine Kartenmarkierungen)",
       helpCmdMenu: "Plugin im Plugins-Men\xFC anzeigen/ausblenden",
+      helpCmdBlocklist: "Blockliste \xF6ffnen/schlie\xDFen (Spam Blocker): nach Name blockieren, entsperren",
+      helpCmdBlocklistRemove: "Spieler entsperren: die Mails werden wieder angezeigt",
       descWavy: "Forgotten-Angriffswellen pro Basis: Forgotten-Basen in Reichweite, Level-Verteilung, Wellen + Entfernungslinien auf der Weltkarte",
       descPoiAnalyser: "Allianz-POI-Boni: POI-Labels auf der Weltkarte (gold = eure), aktive Boni im Basis-Infofenster und der echte Gewinn/Verlust eines gew\xE4hlten POI",
       descSectorHud: "Sektor-HUD auf der Weltkarte: Ansichtskoordinaten + Sektor, und pro Sektor die gehaltenen POIs (eigene gr\xFCn, feindliche rot, freie grau)",
@@ -1208,6 +1229,22 @@ var ShockrTools = (() => {
       chatHelperDeletedAll: "Alle Kontakte gel\xF6scht",
       chatHelperEmptyPrompt: "Deine Kontaktliste ist leer.\n\nGib hier einen Namen ein, um einen Kontakt hinzuzuf\xFCgen:",
       chatHelperListHeader: "{n} Kontakt(e):",
+      descSpamBlock: "Spam Blocker: ein Knopf \u201EAbsender blockieren\u201C in einer ge\xF6ffneten Mail blendet alle Mails dieses Spielers aus \u2014 nur f\xFCr dich, nichts wird gesendet oder gel\xF6scht; /st blocklist zeigt die Liste",
+      spamBlockButton: "Absender blockieren",
+      spamBlockTooltip: "Alle Mails von {name} ausblenden (nur f\xFCr dich: {name} merkt nichts, nichts wird gel\xF6scht)",
+      spamBlockNoSender: "Systemmail oder unbekannter Absender: kann nicht blockiert werden",
+      spamBlockBlocked: "Blockiert: {name}",
+      spamBlockAlready: "{name} ist bereits blockiert",
+      spamBlockUnblocked: "Entsperrt: {name} \u2014 die Mails werden wieder angezeigt",
+      spamBlockNotFound: "\u201E{name}\u201C steht nicht auf deiner Blockliste (siehe /st blocklist)",
+      spamBlockUsage: "Verwendung: /st blocklist | /st blocklist remove <Name>",
+      spamBlockStatus: "{n} blockierte(r) Spieler",
+      spamBlockTitle: "Blockierte Spieler",
+      spamBlockPlaceholder: "Spielername",
+      spamBlockAdd: "Blockieren",
+      spamBlockUnblock: "Entsperren",
+      spamBlockByName: "nach Name",
+      spamBlockPanelEmpty: "Niemand blockiert \u2014 oben einen Namen eingeben oder eine Mail \xF6ffnen und \u201EAbsender blockieren\u201C klicken",
       chatHelperHelp1: "Chat Helper \u2014 Leertaste im Chat taggt Koordinaten (123:456) und URLs vor dem Senden; Enter tut das in Post/Forum.",
       chatHelperHelp2: "Alt+1: Koordinaten/URLs in Nachricht oder Forumsbeitrag taggen \xB7 Alt+2: URL einf\xFCgen \xB7 Alt+0: alle Tags entfernen",
       chatHelperHelp3: "Alt+p oder Alt+3: [player] \xB7 Alt+a oder Alt+4: [alliance] \xB7 Alt+b fett \xB7 Alt+i kursiv \xB7 Alt+u unterstrichen \xB7 Alt+s durchgestrichen",
@@ -1304,6 +1341,7 @@ var ShockrTools = (() => {
       toolbarTargetBoard: "Target Watch",
       toolbarMarkerNav: "Markierungen",
       toolbarTunnelPoi: "Tunnel & POIs",
+      toolbarSpamBlock: "Blockliste",
       toolbarStabs: "Kampfsimulator",
       configMenuTitle: "Shockr-Einstellungen",
       configMenuIntro: "Exportieren: alle Einstellungen inkl. Key in eine andere Welt oder einen anderen Browser mitnehmen. Importieren: einen Export einf\xFCgen.",
@@ -1635,6 +1673,8 @@ var ShockrTools = (() => {
       helpCmdTunnels: "Tunnel & POI Analyzer openen/sluiten",
       helpCmdMarkers: "Marker-navigator openen/sluiten (je kaartmarkers)",
       helpCmdMenu: "Plugin tonen/verbergen in het Plugins-menu",
+      helpCmdBlocklist: "Blokkeerlijst openen/sluiten (Spam Blocker): blokkeren op naam, deblokkeren",
+      helpCmdBlocklistRemove: "Speler deblokkeren: de mail is weer zichtbaar",
       descWavy: "Forgotten-aanvalsgolven per base: Forgotten-bases in bereik, level-verdeling, waves + afstandslijnen op de wereldkaart",
       descPoiAnalyser: "Alliance-POI-bonussen: POI-labels op de wereldkaart (goud = van jullie), de actieve bonussen in het base-infopaneel en de echte winst/verlies van een geselecteerde POI",
       descSectorHud: "Sector-HUD op de wereldkaart: kijkco\xF6rdinaten + sector, en per sector de bezette POIs (eigen groen, vijandelijk rood, vrij grijs)",
@@ -1663,6 +1703,22 @@ var ShockrTools = (() => {
       chatHelperDeletedAll: "Alle contacten verwijderd",
       chatHelperEmptyPrompt: "Je contactlijst is leeg.\n\nTyp hier een naam om een contact toe te voegen:",
       chatHelperListHeader: "{n} contact(en):",
+      descSpamBlock: 'Spam Blocker: een knop "Afzender blokkeren" in een geopende mail verbergt alle mail van die speler \u2014 alleen voor jou, er wordt niets verstuurd of verwijderd; /st blocklist toont de lijst',
+      spamBlockButton: "Afzender blokkeren",
+      spamBlockTooltip: "Verberg alle mail van {name} (alleen voor jou: {name} merkt niets, er wordt niets verwijderd)",
+      spamBlockNoSender: "Systeemmail of onbekende afzender: kan niet geblokkeerd worden",
+      spamBlockBlocked: "Geblokkeerd: {name}",
+      spamBlockAlready: "{name} is al geblokkeerd",
+      spamBlockUnblocked: "Gedeblokkeerd: {name} \u2014 de mail is weer zichtbaar",
+      spamBlockNotFound: '"{name}" staat niet op je blokkeerlijst (zie /st blocklist)',
+      spamBlockUsage: "Gebruik: /st blocklist | /st blocklist remove <naam>",
+      spamBlockStatus: "{n} geblokkeerde speler(s)",
+      spamBlockTitle: "Geblokkeerde spelers",
+      spamBlockPlaceholder: "Spelernaam",
+      spamBlockAdd: "Blokkeren",
+      spamBlockUnblock: "Deblokkeren",
+      spamBlockByName: "op naam",
+      spamBlockPanelEmpty: 'Niemand geblokkeerd \u2014 typ hierboven een naam, of open een mail en klik "Afzender blokkeren"',
       chatHelperHelp1: "Chat Helper \u2014 spatie in de chat tagt co\xF6rdinaten (123:456) en urls v\xF3\xF3r het versturen; Enter doet dat in mail/forum.",
       chatHelperHelp2: "Alt+1: co\xF6rdinaten/urls taggen in een bericht of forumpost \xB7 Alt+2: url invoegen \xB7 Alt+0: alle tags weghalen",
       chatHelperHelp3: "Alt+p of Alt+3: [player] \xB7 Alt+a of Alt+4: [alliance] \xB7 Alt+b vet \xB7 Alt+i cursief \xB7 Alt+u onderstreept \xB7 Alt+s doorgehaald",
@@ -1759,6 +1815,7 @@ var ShockrTools = (() => {
       toolbarTargetBoard: "Target Watch",
       toolbarMarkerNav: "Markers",
       toolbarTunnelPoi: "Tunnels & POIs",
+      toolbarSpamBlock: "Blokkeerlijst",
       toolbarStabs: "Gevechtssimulator",
       configMenuTitle: "Shockr-config",
       configMenuIntro: "Exporteren: neem alle instellingen incl. je key mee naar een andere wereld of browser. Importeren: plak een export.",
@@ -3185,6 +3242,8 @@ var ShockrTools = (() => {
     { cmd: "targets", usage: "/st targets", key: "helpCmdTargets" },
     { cmd: "markers", usage: "/st markers", key: "helpCmdMarkers" },
     { cmd: "tunnels", usage: "/st tunnels", key: "helpCmdTunnels" },
+    { cmd: "blocklist", usage: "/st blocklist", key: "helpCmdBlocklist" },
+    { cmd: "blocklist", usage: "/st blocklist remove <name>", key: "helpCmdBlocklistRemove" },
     { cmd: "menu", usage: "/st menu add|remove <plugin>", key: "helpCmdMenu" }
   ];
   var USEFUL_SETTINGS = [
@@ -3510,6 +3569,7 @@ var ShockrTools = (() => {
     sim: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3.5l9.5 9.5M3.5 3.5h3l9 9M20 3.5L10.5 13M20.5 3.5h-3l-9 9"/><path d="M6.5 15.5l2 2M15.5 15.5l-2 2M4.5 19.5l3-3M19.5 19.5l-3-3"/></svg>',
     radar: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="5"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/></svg>',
     pin: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 22s-7-7.2-7-12.5a7 7 0 0 1 14 0C19 14.8 12 22 12 22z"/><circle cx="12" cy="9.5" r="2.6" fill="currentColor" stroke="none"/></svg>',
+    block: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M5.3 5.3l13.4 13.4"/></svg>',
     tunnel: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2.5 21.5v-9a9.5 9.5 0 0 1 19 0v9z"/><path d="M7 21.5v-8a5 5 0 0 1 10 0v8"/><path d="M12 17.5v4" stroke-linecap="round"/></svg>'
   };
   var Toolbar = class {
@@ -11725,6 +11785,580 @@ var ShockrTools = (() => {
     }
   };
 
+  // plugins/spam-block.js
+  var STORE_KEY2 = "SpamBlock.blocked";
+  var HEADER_CMD = "IGMGetMsgHeader";
+  var OPEN_CMD = "IGMGetMsg";
+  var VIEW_CLASS = "webfrontend.gui.mail.MailMessageDisplay";
+  var ANCHOR_OBJID = "btndelete";
+  var BACK_OBJID = "btnback";
+  var BUTTON_OBJID = "stblocksender";
+  var SCAN_MS3 = 1e3;
+  var MAX_DEPTH = 40;
+  var HEADER_DEPTH = 2;
+  var LOOK_PROPS = [
+    "Width",
+    "Height",
+    "MinWidth",
+    "MinHeight",
+    "MaxWidth",
+    "MaxHeight",
+    "PaddingTop",
+    "PaddingRight",
+    "PaddingBottom",
+    "PaddingLeft",
+    "Font",
+    "TextColor",
+    "AllowGrowX",
+    "AllowGrowY",
+    "AllowShrinkX",
+    "AllowShrinkY",
+    "Center",
+    "Gap"
+  ];
+  var PANEL_ID10 = "st-spamblock-panel";
+  var TOOLBAR_ID5 = "spamblock";
+  var PANEL_WIDTH5 = 300;
+  var DEFAULT_POSITION5 = { x: 150, y: 110 };
+  var BTN = "padding:3px 10px;border-radius:3px;cursor:pointer;font-size:12px;color:#fff;";
+  var BTN_PRIMARY2 = BTN + "background:#2a5a8a;border:1px solid #3a7ab8;";
+  var BTN_GREY2 = BTN + "background:#444;border:1px solid #666;";
+  var FIELD2 = "flex:1;min-width:0;box-sizing:border-box;padding:4px 6px;background:#111;color:#eee;border:1px solid #555;border-radius:3px;font-size:12px;";
+  function isHeaderList(x) {
+    return Array.isArray(x) && x.length > 0 && x.every((h) => h && typeof h === "object" && "i" in h && "fi" in h);
+  }
+  function filterHeaders(headers, blockedIds, blockedNames = /* @__PURE__ */ new Set()) {
+    if (!blockedIds.size && !blockedNames.size) return headers;
+    return headers.filter((h) => !blockedIds.has(Number(h.fi)) && !blockedNames.has(String(h.f || "").toLowerCase()));
+  }
+  function normalizeList(v) {
+    if (!Array.isArray(v)) return [];
+    return v.filter((e) => e && typeof e === "object").map((e) => ({
+      id: e.id !== null && e.id !== void 0 && e.id !== "" && Number.isFinite(Number(e.id)) ? Number(e.id) : null,
+      name: String(e.name || "").trim()
+    })).filter((e) => e.id !== null || e.name);
+  }
+  function findEntry(list, query) {
+    const q = String(query || "").trim().toLowerCase();
+    if (!q) return null;
+    return list.find((e) => String(e.name).toLowerCase() === q || e.id !== null && String(e.id) === q) || null;
+  }
+  var PLAYER_MAIL = 0;
+  function isBlockable(header, ownId) {
+    if (!header || header.type !== void 0 && header.type !== PLAYER_MAIL) return false;
+    const id = Number(header.fi);
+    return Number.isFinite(id) && id > 0 && id !== ownId;
+  }
+  function isMailData(v) {
+    return !!v && typeof v === "object" && "FromId" in v && "From" in v;
+  }
+  function findHeaderIn(obj, depth = HEADER_DEPTH, seen = /* @__PURE__ */ new Set()) {
+    if (!obj || typeof obj !== "object" || seen.has(obj)) return null;
+    seen.add(obj);
+    let keys = [];
+    try {
+      keys = Object.keys(obj);
+    } catch {
+      return null;
+    }
+    for (const k of keys) {
+      let v;
+      try {
+        v = obj[k];
+      } catch {
+        continue;
+      }
+      if (isMailData(v)) {
+        const type = v.Type === void 0 || v.Type === null ? void 0 : Number(v.Type);
+        return { i: Number(v.Id), fi: Number(v.FromId), f: String(v.From || ""), type };
+      }
+    }
+    if (depth <= 0) return null;
+    for (const k of keys) {
+      let v;
+      try {
+        v = obj[k];
+      } catch {
+        continue;
+      }
+      if (!v || typeof v !== "object" || v.classname || v.nodeType) continue;
+      const h = findHeaderIn(v, depth - 1, seen);
+      if (h) return h;
+    }
+    return null;
+  }
+  function wrapDelegate(delegate, { map, after } = {}) {
+    if (typeof delegate !== "function") return delegate;
+    const wrapped = function(...args) {
+      const out = map ? args.map((a) => isHeaderList(a) ? map(a) : a) : args;
+      const result = delegate.apply(this, out);
+      if (after) after();
+      return result;
+    };
+    return Object.assign(wrapped, delegate);
+  }
+  function copyLook(from, to) {
+    try {
+      to.setAppearance(from.getAppearance());
+    } catch {
+    }
+    for (const p of LOOK_PROPS) {
+      try {
+        if (typeof from[`get${p}`] !== "function" || typeof to[`set${p}`] !== "function") continue;
+        const v = from[`get${p}`]();
+        if (v !== null && v !== void 0) to[`set${p}`](v);
+      } catch {
+      }
+    }
+    try {
+      const lp = from.getLayoutProperties();
+      if (lp && Object.keys(lp).length) to.setLayoutProperties({ ...lp });
+    } catch {
+    }
+  }
+  function renderBlockList(list) {
+    if (!list.length) {
+      return `<div style="color:#999;padding:12px 0;text-align:center;">${escapeHtml(t("spamBlockPanelEmpty"))}</div>`;
+    }
+    const td = "padding:4px;vertical-align:middle;";
+    let html = '<table style="width:100%;border-collapse:collapse;">';
+    list.forEach((e, i) => {
+      const id = e.id !== null ? String(e.id) : t("spamBlockByName");
+      html += `<tr style="border-bottom:1px solid #2a2a2a;"><td style="${td}color:#e0e0e0;">${escapeHtml(e.name || "?")}</td><td style="${td}color:#888;white-space:nowrap;">${escapeHtml(id)}</td><td style="${td}text-align:right;"><button data-unblock="${i}" style="${BTN_GREY2}">${escapeHtml(t("spamBlockUnblock"))}</button></td></tr>`;
+    });
+    return html + "</table>";
+  }
+  function childrenOf(w) {
+    try {
+      return (typeof w._getChildren === "function" ? w._getChildren() : typeof w.getChildren === "function" ? w.getChildren() : []) || [];
+    } catch {
+      return [];
+    }
+  }
+  function isShown(w) {
+    try {
+      return typeof w.isSeeable === "function" ? w.isSeeable() : w.isVisible();
+    } catch {
+      return false;
+    }
+  }
+  function findShown(root, test, out = [], depth = 0) {
+    if (!root || depth > MAX_DEPTH || !isShown(root)) return out;
+    if (test(root)) out.push(root);
+    for (const k of childrenOf(root)) findShown(k, test, out, depth + 1);
+    return out;
+  }
+  function buttonIn(view, objid) {
+    const found = [];
+    const walk = (w, d) => {
+      if (!w || d > MAX_DEPTH || found.length) return;
+      if (w.objid === objid) found.push(w);
+      for (const k of childrenOf(w)) walk(k, d + 1);
+    };
+    walk(view, 0);
+    return found[0] || null;
+  }
+  function buttonClass() {
+    try {
+      return qx.ui.form.Button;
+    } catch {
+      return null;
+    }
+  }
+  var SpamBlock = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descSpamBlock");
+    }
+    constructor(config, toolbar, cli) {
+      this.name = "SpamBlock";
+      this.defaultEnabled = true;
+      this.config = config;
+      this.toolbar = toolbar;
+      this.cli = cli;
+      this.running = false;
+      this._patches = [];
+      this._send = null;
+      this._headers = /* @__PURE__ */ new Map();
+      this._openId = null;
+      this._lastList = null;
+      this._buttons = /* @__PURE__ */ new Map();
+      this._timer = null;
+      this._warned = false;
+      this._panel = null;
+      this._title = null;
+      this._input = null;
+      this._list = null;
+      this._onKeyDown = (e) => {
+        if (e.key === "Escape") this.close();
+      };
+    }
+    async start() {
+      this.running = true;
+      this._patchSend();
+      if (this.cli) this.cli.register("blocklist", (args) => this.command(args || []));
+      if (this.toolbar) {
+        this.toolbar.register({
+          id: TOOLBAR_ID5,
+          icon: ICONS.block,
+          label: () => t("toolbarSpamBlock"),
+          onClick: () => this.toggle()
+        });
+      }
+      this._timer = setInterval(() => this.scan(), SCAN_MS3);
+      this.scan();
+      console.log(`[ST] SpamBlock: started (${this.blocked().length} blocked, send patched: ${this._patches.length})`);
+    }
+    stop() {
+      this.running = false;
+      if (this._timer) clearInterval(this._timer);
+      this._timer = null;
+      for (const btn of this._buttons.keys()) {
+        try {
+          btn.destroy();
+        } catch {
+        }
+      }
+      this._buttons.clear();
+      for (const p of this._patches) p.proto[p.key] = p.original;
+      this._patches = [];
+      if (this.cli) this.cli.unregister("blocklist");
+      if (this.toolbar) this.toolbar.unregister(TOOLBAR_ID5);
+      this.close();
+      if (this._panel) this._panel.remove();
+      this._panel = null;
+      this._refreshList();
+      this._send = null;
+      console.log("[ST] SpamBlock: stopped");
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      return t("spamBlockStatus", { n: this.blocked().length });
+    }
+    // ─── Block list ──────────────────────────────────────────────────
+    blocked() {
+      return normalizeList(this.config.get(STORE_KEY2, []));
+    }
+    blockedIds() {
+      return new Set(this.running ? this.blocked().filter((e) => e.id !== null).map((e) => e.id) : []);
+    }
+    blockedNames() {
+      return new Set(this.running ? this.blocked().map((e) => e.name.toLowerCase()).filter(Boolean) : []);
+    }
+    /**
+     * Add a sender; id null = by name only (the panel field, not checked against the game).
+     * An entry already there by name gets the id when it is now known.
+     * @returns {boolean} newly blocked
+     */
+    block(id, name) {
+      const pid = id === null || id === void 0 ? null : Number(id);
+      const label = String(name || "").trim();
+      if (pid === null && !label) return false;
+      const list = this.blocked();
+      const same2 = list.find((e) => pid !== null && e.id === pid || label && e.name.toLowerCase() === label.toLowerCase());
+      if (same2) {
+        if (same2.id === null && pid !== null) {
+          same2.id = pid;
+          this.config.set(STORE_KEY2, list);
+          this.renderPanel();
+        }
+        chatMessage(`[ST] ${t("spamBlockAlready", { name: escapeHtml(label || same2.name) })}`);
+        return false;
+      }
+      list.push({ id: pid, name: label });
+      this.config.set(STORE_KEY2, list);
+      chatMessage(`[ST] ${t("spamBlockBlocked", { name: escapeHtml(label || String(pid)) })}`);
+      this._refreshList();
+      this.renderPanel();
+      return true;
+    }
+    /** Remove by name or id; @returns {boolean} found */
+    unblock(query) {
+      const entry = findEntry(this.blocked(), query);
+      if (!entry) {
+        chatMessage(`[ST] ${t("spamBlockNotFound", { name: escapeHtml(query) })}`);
+        return false;
+      }
+      this._removeEntry(entry);
+      return true;
+    }
+    /** Remove one stored entry, confirm, redraw the mail list and the panel. */
+    _removeEntry(entry) {
+      this.config.set(STORE_KEY2, this.blocked().filter((e) => !(e.id === entry.id && e.name === entry.name)));
+      chatMessage(`[ST] ${t("spamBlockUnblocked", { name: escapeHtml(entry.name || String(entry.id)) })}`);
+      this._refreshList();
+      this.renderPanel();
+    }
+    /** /st blocklist (panel) | /st blocklist remove <name> */
+    command(args) {
+      const [action, ...rest] = args;
+      if (!action) {
+        this.toggle();
+        return;
+      }
+      if (action.toLowerCase() === "remove" && rest.length) {
+        this.unblock(rest.join(" "));
+        return;
+      }
+      chatMessage(`[ST] ${escapeHtml(t("spamBlockUsage"))}`);
+    }
+    // ─── Server traffic ──────────────────────────────────────────────
+    /** Wrap SendSimpleCommand and every prototype key pointing at the same function. */
+    _patchSend() {
+      let proto;
+      try {
+        proto = ClientLib.Net.CommunicationManager.prototype;
+      } catch {
+        return;
+      }
+      const original = proto && proto.SendSimpleCommand;
+      if (typeof original !== "function") return;
+      this._send = original;
+      const plugin = this;
+      const wrapper = function(name, params, delegate, ...rest) {
+        return original.call(this, name, params, plugin._onSend(this, name, params, delegate, rest), ...rest);
+      };
+      for (const key of Object.getOwnPropertyNames(proto)) {
+        const d = Object.getOwnPropertyDescriptor(proto, key);
+        if (!d || d.value !== original) continue;
+        this._patches.push({ proto, key, original });
+        proto[key] = wrapper;
+      }
+    }
+    /** The delegate the game's command goes out with (wrapped for the mail commands). */
+    _onSend(self, name, params, delegate, rest) {
+      if (name === HEADER_CMD) {
+        const wrapped = wrapDelegate(delegate, { map: (headers) => this._receiveHeaders(headers) });
+        this._lastList = { self, args: [name, params, wrapped, ...rest] };
+        return wrapped;
+      }
+      if (name === OPEN_CMD && params && params.mailId !== void 0) {
+        this._openId = Number(params.mailId);
+        return wrapDelegate(delegate, { after: () => setTimeout(() => this.scan(), 0) });
+      }
+      return delegate;
+    }
+    /** Remember every sender (fallback for the button), fill in ids of name entries, hand the game the unblocked ones. */
+    _receiveHeaders(headers) {
+      for (const h of headers) this._headers.set(Number(h.i), { i: Number(h.i), fi: Number(h.fi), f: String(h.f || "") });
+      if (this.running) this._learnIds(headers);
+      return filterHeaders(headers, this.blockedIds(), this.blockedNames());
+    }
+    /** A name-only entry takes the player id of the first mail from that name. */
+    _learnIds(headers) {
+      const list = this.blocked();
+      let changed = false;
+      for (const e of list) {
+        if (e.id !== null) continue;
+        const h = headers.find((x) => String(x.f || "").toLowerCase() === e.name.toLowerCase() && Number(x.fi) > 0);
+        if (!h) continue;
+        e.id = Number(h.fi);
+        changed = true;
+      }
+      if (!changed) return;
+      this.config.set(STORE_KEY2, list);
+      this.renderPanel();
+    }
+    /** Ask the server for the same header page again; the game redraws its list. */
+    _refreshList() {
+      const last = this._lastList;
+      if (!last || !this._send) return;
+      try {
+        this._send.apply(last.self, last.args);
+      } catch (err) {
+        console.warn("[ST] SpamBlock: list refresh failed", err);
+      }
+    }
+    // ─── Message view ────────────────────────────────────────────────
+    /** Find visible message views; add or update their "Block sender" button. */
+    scan() {
+      if (!this.running) return;
+      try {
+        for (const view of this._messageViews()) this._injectButton(view);
+      } catch (e) {
+        if (!this._warned) {
+          this._warned = true;
+          console.warn("[ST] SpamBlock: scan failed", e && e.message);
+        }
+      }
+    }
+    /** Visible MailMessageDisplay widgets under the root and desktop children (hidden overlays not entered). */
+    _messageViews() {
+      let app;
+      try {
+        app = qx.core.Init.getApplication();
+      } catch {
+        return [];
+      }
+      const views = [];
+      for (const getter of ["getRoot", "getDesktop"]) {
+        let parent = null;
+        try {
+          parent = typeof app[getter] === "function" ? app[getter]() : null;
+        } catch {
+        }
+        for (const c of parent ? childrenOf(parent) : []) {
+          for (const v of findShown(c, (w) => w.classname === VIEW_CLASS)) if (!views.includes(v)) views.push(v);
+        }
+      }
+      return views;
+    }
+    /** Sender of the mail the view shows: its own mail data, else the last IGMGetMsg. */
+    senderOf(view) {
+      return findHeaderIn(view) || this._headers.get(this._openId) || null;
+    }
+    _injectButton(view) {
+      const Button = buttonClass();
+      let btn = buttonIn(view, BUTTON_OBJID);
+      if (!btn) {
+        const anchor = buttonIn(view, ANCHOR_OBJID);
+        const parent = anchor && anchor.getLayoutParent();
+        if (!Button || !parent) return;
+        btn = new Button(t("spamBlockButton"));
+        btn.objid = BUTTON_OBJID;
+        copyLook(anchor, btn);
+        btn.addListener("execute", () => this._onBlockClick(view));
+        if (typeof parent.addAfter === "function") parent.addAfter(btn, anchor);
+        else parent.add(btn);
+        this._buttons.set(btn, view);
+      }
+      const header = this.senderOf(view);
+      const ok = isBlockable(header, this._ownId());
+      btn.setEnabled(ok);
+      btn.setToolTipText(ok ? t("spamBlockTooltip", { name: header.f }) : t("spamBlockNoSender"));
+    }
+    /** Sender read now (the view may show another mail than at the last scan). */
+    _onBlockClick(view) {
+      const h = this.senderOf(view);
+      if (!isBlockable(h, this._ownId())) {
+        chatMessage(`[ST] ${t("spamBlockNoSender")}`);
+        return;
+      }
+      if (!this.block(h.fi, h.f)) return;
+      const back = buttonIn(view, BACK_OBJID);
+      try {
+        if (back && isShown(back)) back.execute();
+      } catch {
+      }
+    }
+    // ─── Panel ───────────────────────────────────────────────────────
+    isOpen() {
+      return !!this._panel && this._panel.style.display !== "none";
+    }
+    toggle() {
+      if (this.isOpen()) this.close();
+      else this.open();
+    }
+    open() {
+      this._ensurePanel();
+      this._panel.style.display = "block";
+      document.addEventListener("keydown", this._onKeyDown);
+      this.renderPanel();
+    }
+    close() {
+      if (!this._panel) return;
+      document.removeEventListener("keydown", this._onKeyDown);
+      this._panel.style.display = "none";
+    }
+    /** Redraw the list (open panel only); called after every change. */
+    renderPanel() {
+      if (!this.isOpen()) return;
+      const list = this.blocked();
+      this._title.innerHTML = `<b style="color:#fff;">${escapeHtml(t("spamBlockTitle"))}</b> <span style="color:#aaa;">(${list.length})</span>`;
+      this._list.innerHTML = renderBlockList(list);
+      this._list.querySelectorAll("button[data-unblock]").forEach((b) => {
+        b.addEventListener("click", () => {
+          const entry = list[Number(b.dataset.unblock)];
+          if (entry) this._removeEntry(entry);
+        });
+      });
+    }
+    /** The panel field: block by name as typed. */
+    blockTyped() {
+      const name = this._input ? this._input.value.trim() : "";
+      if (!name) return;
+      this.block(null, name);
+      this._input.value = "";
+      this.renderPanel();
+    }
+    _ensurePanel() {
+      if (this._panel && document.body.contains(this._panel)) return;
+      const pos = clampPosition(
+        loadPosition(this.config, "SpamBlock", DEFAULT_POSITION5),
+        { w: PANEL_WIDTH5, h: 40 },
+        { w: window.innerWidth, h: window.innerHeight }
+      );
+      const panel = document.createElement("div");
+      panel.id = PANEL_ID10;
+      panel.style.cssText = `
+            display: none;
+            position: fixed;
+            left: ${pos.x}px;
+            top: ${pos.y}px;
+            z-index: 10000;
+            width: ${PANEL_WIDTH5}px;
+            max-width: calc(100vw - 16px);
+            box-sizing: border-box;
+            background: rgba(20, 20, 20, 0.92);
+            color: #ddd;
+            border: 1px solid #444;
+            border-radius: 4px;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 12px;
+            pointer-events: auto;
+        `;
+      for (const type of ["keydown", "keyup", "keypress"]) panel.addEventListener(type, (e) => e.stopPropagation());
+      const header = document.createElement("div");
+      header.style.cssText = "display:flex;align-items:baseline;gap:8px;padding:8px 10px 6px;cursor:move;user-select:none;border-bottom:1px solid #333;";
+      const title = document.createElement("div");
+      title.style.cssText = "flex:1;min-width:0;";
+      const close = document.createElement("div");
+      close.textContent = "\u2715";
+      close.title = t("close");
+      close.style.cssText = "cursor:pointer;color:#999;font-size:14px;line-height:1;";
+      close.addEventListener("mousedown", (e) => e.stopPropagation());
+      close.addEventListener("click", () => this.close());
+      close.addEventListener("mouseenter", () => {
+        close.style.color = "#fff";
+      });
+      close.addEventListener("mouseleave", () => {
+        close.style.color = "#999";
+      });
+      header.append(title, close);
+      const form = document.createElement("div");
+      form.style.cssText = "display:flex;gap:6px;padding:8px 10px 4px;";
+      const input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = t("spamBlockPlaceholder");
+      input.style.cssText = FIELD2;
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") this.blockTyped();
+        else if (e.key === "Escape") this.close();
+      });
+      const add2 = document.createElement("button");
+      add2.textContent = t("spamBlockAdd");
+      add2.style.cssText = BTN_PRIMARY2;
+      add2.addEventListener("click", () => this.blockTyped());
+      form.append(input, add2);
+      const list = document.createElement("div");
+      list.style.cssText = "max-height:50vh;overflow-y:auto;padding:4px 10px 8px;";
+      panel.append(header, form, list);
+      document.body.appendChild(panel);
+      makeDraggable(panel, header, { config: this.config, prefix: "SpamBlock" });
+      this._panel = panel;
+      this._title = title;
+      this._input = input;
+      this._list = list;
+    }
+    _ownId() {
+      try {
+        return ClientLib.Data.MainData.GetInstance().get_Player().get_Id();
+      } catch {
+        return null;
+      }
+    }
+  };
+
   // plugins/stabs-stats.js
   var RES = { TIB: 1, CRY: 2, CREDITS: 3, RP: 6, RC_BASE: 7, RC_AIR: 8, RC_INF: 9, RC_VEH: 10 };
   var RES_KEYS = Object.values(RES);
@@ -12417,7 +13051,7 @@ var ShockrTools = (() => {
   }
 
   // plugins/stabs.js
-  var TOOLBAR_ID5 = "stabs";
+  var TOOLBAR_ID6 = "stabs";
   var SIM_LOCK_MS = 3e3;
   var TICK_MS2 = 300;
   var KEY_NUM0 = 96;
@@ -12659,7 +13293,7 @@ var ShockrTools = (() => {
       }
       if (!this.parked) {
         this.toolbar.register({
-          id: TOOLBAR_ID5,
+          id: TOOLBAR_ID6,
           icon: ICONS.sim,
           label: () => t("toolbarStabs"),
           onClick: () => this.togglePanel()
@@ -12711,7 +13345,7 @@ var ShockrTools = (() => {
       this._lock = false;
       this._request = false;
       document.removeEventListener("keydown", this._onKeyDown);
-      this.toolbar.unregister(TOOLBAR_ID5);
+      this.toolbar.unregister(TOOLBAR_ID6);
       if (this._button) {
         try {
           const parent = this._button.getLayoutParent();
@@ -13150,7 +13784,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.31.2";
+  var ST_VERSION = "5.32.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -13211,6 +13845,7 @@ var ShockrTools = (() => {
       new TargetBoard(config, api, toolbar, cli),
       new MarkerNav(config, toolbar, cli),
       new TunnelPoiAnalyzer(config, toolbar, cli),
+      new SpamBlock(config, toolbar, cli),
       new Stabs(config, toolbar)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });

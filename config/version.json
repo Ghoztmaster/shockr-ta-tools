@@ -1,7 +1,25 @@
 {
-  "version": "5.31.2",
-  "date": "2026-10-29",
+  "version": "5.32.0",
+  "date": "2026-10-30",
   "changelog": [
+    {
+      "version": "5.32.0",
+      "date": "2026-10-30",
+      "changes": {
+        "en": [
+          "New plugin Spam Blocker: \"Block sender\" in an opened mail hides all mail from that player, only for you (nothing is sent or deleted, the player notices nothing)",
+          "Block list panel (block icon in the Shockr button, or /st blocklist): every blocked player with an Unblock button, and a name field to block a player by name"
+        ],
+        "de": [
+          "Neues Plugin Spam Blocker: „Absender blockieren“ in einer geöffneten Mail blendet alle Mails dieses Spielers aus, nur für dich (nichts wird gesendet oder gelöscht, der Spieler merkt nichts)",
+          "Blocklisten-Panel (Block-Symbol im Shockr-Knopf oder /st blocklist): alle blockierten Spieler mit Entsperren-Knopf, und ein Namensfeld, um einen Spieler nach Name zu blockieren"
+        ],
+        "nl": [
+          "Nieuwe plugin Spam Blocker: \"Afzender blokkeren\" in een geopende mail verbergt alle mail van die speler, alleen voor jou (er wordt niets verstuurd of verwijderd, de speler merkt niets)",
+          "Blokkeerlijst-paneel (blokkeer-icoon in de Shockr-knop, of /st blocklist): alle geblokkeerde spelers met een Deblokkeren-knop, en een naamveld om een speler op naam te blokkeren"
+        ]
+      }
+    },
     {
       "version": "5.31.2",
       "date": "2026-10-29",
@@ -77,27 +95,6 @@
           "Scanners scannen op de wereldkaart 100 ms per base (2 s in andere views, geen flikkering)",
           "AutoRepair kan na een aanval op je base ook gebouwen repareren (standaard uit: /st config set autorepair.buildings true)",
           "Tunnel Info: de rode cirkel is dekkend en 3 px breed; kleur en breedte instelbaar (tunnel.color, tunnel.width)"
-        ]
-      }
-    },
-    {
-      "version": "5.29.0",
-      "date": "2026-10-23",
-      "changes": {
-        "en": [
-          "New plugin AutoRepair (off by default): repairs the units of the attacking base right after every own attack, as soon as the base is unlocked; a check every few minutes as a safety net (/st config set autorepair.interval <min>, default 5). Never while the attack screen is open",
-          "AutoRepair and RepairGuard exclude each other: turning one on turns the other off (both on at startup → RepairGuard wins)",
-          "Fix RepairGuard: also blocks Repair All via the city repair data (the route repair scripts use), not only via the buttons"
-        ],
-        "de": [
-          "Neues Plugin AutoRepair (standardmäßig aus): repariert die Einheiten der angreifenden Basis direkt nach jedem eigenen Angriff, sobald die Basis nicht mehr gesperrt ist; eine Prüfung alle paar Minuten als Sicherheitsnetz (/st config set autorepair.interval <Min.>, Standard 5). Nie bei offenem Angriffsbildschirm",
-          "AutoRepair und RepairGuard schließen sich gegenseitig aus: einschalten des einen schaltet das andere aus (beide beim Start an → RepairGuard gewinnt)",
-          "Fix RepairGuard: blockiert Repair All jetzt auch über die Reparaturdaten der Basis (der Weg von Reparatur-Skripten), nicht nur über die Buttons"
-        ],
-        "nl": [
-          "Nieuwe plugin AutoRepair (standaard uit): repareert de units van de aanvallende base direct na elke eigen aanval, zodra de base niet meer op slot staat; een check elke paar minuten als vangnet (/st config set autorepair.interval <min>, standaard 5). Nooit als het aanvalsscherm open staat",
-          "AutoRepair en RepairGuard sluiten elkaar uit: de een aanzetten zet de ander uit (allebei aan bij het opstarten → RepairGuard wint)",
-          "Fix RepairGuard: blokkeert Repair All nu ook via de reparatiedata van de base (de route van reparatiescripts), niet alleen via de knoppen"
         ]
       }
     }

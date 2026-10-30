@@ -1,5 +1,22 @@
 # Changelog
 
+## [5.32.0] — 2026-10-30
+
+Userscript + `config/plugins.json`, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Nieuwe plugin: Spam Blocker
+- `plugins/spam-block.js`, standaard aan. In een geopende mail staat een knop "Block sender" / "Absender blockieren" / "Afzender blokkeren" achter de knoppen van de game zelf (zelfde appearance als de knop waar hij achter staat). Klik: `[ST] Blocked: <naam>` in de chat, de lijst wordt direct opnieuw getekend zonder die afzender en het open bericht verdwijnt
+- Puur client-side: `ClientLib.Net.CommunicationManager.SendSimpleCommand` (plus obfuscated aliassen, op referentie) wordt gewrapt; het antwoord op `IGMGetMsgHeader` gaat zonder de geblokte afzenders (`fi`) naar de delegate van de game. Er wordt niets verstuurd, verwijderd of als gelezen gemarkeerd; het enige extra request is een herhaling van de laatste `IGMGetMsgHeader` (een read) om de lijst te verversen
+- Berichtvenster = `webfrontend.gui.mail.MailMessageDisplay` (probe 2026-10-30): de knop komt via `addAfter` direct na `btndelete` in de Composite met de actieknoppen (`btnback`, `btndelete`, `btnreport`, `btnforward`, `btnreplyall`, `btnreply`, `btn_close`). Gecachete mail stuurt geen `IGMGetMsg`, dus een scan van 1 s over de zichtbare root/desktop-children vindt het venster (verborgen overlays worden niet doorzocht); `IGMGetMsg` triggert alleen een directe scan
+- Afzender wordt bij de klik gelezen uit de maildata op het venster (probe: obfuscated veld `__dS` met `Id`, `Type`, `Subject`, `From`, `To`, `Date`, `Read`, `FromId`, `ToIds`, …). Gezocht op vorm (object met `FromId` en `From`), niet op veldnaam: die verandert per build. Anders de header van de laatste `IGMGetMsg`. Alleen `Type` 0 (spelermail) is blokkeerbaar; systeemmail en eigen mail: knop uitgeschakeld. Na blokkeren drukt de plugin de `btnback` van de game zelf in
+- Blocklist in config `SpamBlock.blocked` (`[{ id, name }]`, localStorage + GM-mirror)
+- Blocklist-paneel (stijl Marker Nav, versleepbaar): toolbar-icoon "Block list" of `/st blocklist`. Per speler naam, id (of "op naam") en een Unblock-knop; de lijst ververst direct na elke wijziging, ook na blokkeren vanuit een mail
+- Blokkeren op naam: invoerveld + Block (of Enter) bovenaan het paneel. Niet gecontroleerd tegen de game: opgeslagen als `{ id: null, name }` en gefilterd op afzendernaam (hoofdletterongevoelig); de eerste mail van die naam vult het id in
+- `/st blocklist remove <naam>` deblokkeert vanuit de chat (naam of id, hoofdletterongevoelig); beide commando's in `/st help`
+- De knop neemt naast de appearance ook breedte/hoogte, padding, font en layout-properties van `btndelete` over (alleen de appearance maakte hem groter dan de rest van de rij)
+- Bekende beperkingen: de ongelezen-teller van de game telt geblokte mail mee; een inbox-pagina toont minder rijen als er geblokte mail op stond
+- Tests: `tests/spam-block.test.mjs`
+
 ## [5.31.2] — 2026-10-29
 
 Userscript + `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
