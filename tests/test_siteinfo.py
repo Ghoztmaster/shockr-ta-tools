@@ -187,11 +187,11 @@ class TestRoutes:
 class TestPages:
     @pytest.mark.parametrize("name", ["index.html", "targets.html", "attacks.html", "loot.html", "login.html", "info.html"])
     def test_every_page_loads_the_footer(self, name):
-        assert '<script src="static/footer.js"></script>' in (STATIC / name).read_text(encoding="utf-8")
+        assert re.search(r'<script src="static/footer\.js(\?v=\w+)?"></script>', (STATIC / name).read_text(encoding="utf-8"))
 
     @pytest.mark.parametrize("name", ["index.html", "targets.html", "attacks.html", "loot.html"])
     def test_banner_on_data_pages(self, name):
-        assert '<script src="static/announcements.js"></script>' in (STATIC / name).read_text(encoding="utf-8")
+        assert re.search(r'<script src="static/announcements\.js(\?v=\w+)?"></script>', (STATIC / name).read_text(encoding="utf-8"))
 
     @pytest.mark.parametrize("name", ["index.html", "targets.html", "attacks.html", "loot.html"])
     def test_nav_links_to_info(self, name):

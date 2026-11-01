@@ -835,15 +835,21 @@ async def get_info():
 
 # ─── Pages (website session; no session -> login) ──────────────────
 
+# Pages and their scripts change together on every release. Without an explicit
+# Cache-Control the browser caches FileResponses heuristically (from
+# Last-Modified) and kept a pre-5.34 i18n.js under the new layouts.html - every
+# ly* key rendered raw. no-cache = always revalidate (cheap 304 via ETag).
+NO_CACHE = {"Cache-Control": "no-cache"}
+
 def page(request: Request, name: str, login_url: str):
     if current_session(request) is None:
         return RedirectResponse(login_url, status_code=303)
-    return FileResponse(STATIC_DIR / name)
+    return FileResponse(STATIC_DIR / name, headers=NO_CACHE)
 
 
 @app.get("/login")
 async def login_page():
-    return FileResponse(STATIC_DIR / "login.html")
+    return FileResponse(STATIC_DIR / "login.html", headers=NO_CACHE)
 
 # Public page scripts (no data in them; the login page needs i18n.js before a session exists)
 PUBLIC_SCRIPTS = {"session.js", "i18n.js", "footer.js", "announcements.js"}
@@ -853,7 +859,7 @@ PUBLIC_SCRIPTS = {"session.js", "i18n.js", "footer.js", "announcements.js"}
 async def static_script(name: str):
     if name not in PUBLIC_SCRIPTS:
         raise HTTPException(status_code=404, detail="Not found")
-    return FileResponse(STATIC_DIR / name, media_type="text/javascript")
+    return FileResponse(STATIC_DIR / name, media_type="text/javascript", headers=NO_CACHE)
 
 @app.get("/")
 async def index(request: Request):
@@ -891,7 +897,7 @@ async def war_page(request: Request):
         return RedirectResponse("login", status_code=303)
     if not war_access.allowed(session["playerId"], player_keys):
         return HTMLResponse(WAR_DENIED_HTML, status_code=403)
-    return FileResponse(STATIC_DIR / "war.html")
+    return FileResponse(STATIC_DIR / "war.html", headers=NO_CACHE)
 
 @app.get("/layouts")
 async def layouts_page(request: Request):

@@ -60,6 +60,27 @@ def test_login_page_and_scripts_are_public(env):
         assert c.get(f"/static/{name}").status_code == 404, name
 
 
+def test_pages_and_scripts_are_not_cached_heuristically(env):
+    """Without Cache-Control a browser kept a pre-5.34 i18n.js under the new
+    layouts.html (raw ly* keys). Pages and scripts must always revalidate."""
+    c = env["client"]
+    for name in ("i18n.js", "session.js", "footer.js", "announcements.js"):
+        r = c.get(f"/static/{name}?v=2")
+        assert r.status_code == 200 and r.headers["cache-control"] == "no-cache", name
+    assert c.get("/login").headers["cache-control"] == "no-cache"
+    login(c, "GhoztMasters", env["key"])
+    for path in ("/", "/targets", "/attacks", "/layouts", "/info"):
+        r = c.get(path, follow_redirects=False)
+        assert r.status_code == 200 and r.headers["cache-control"] == "no-cache", path
+
+
+def test_pages_load_scripts_with_cache_bust():
+    from pathlib import Path
+    for page in Path(main.STATIC_DIR).glob("*.html"):
+        text = page.read_text(encoding="utf-8")
+        assert 'src="static/i18n.js?v=' in text, page.name
+
+
 def test_i18n_has_every_key_in_all_languages():
     """Every T()/data-i18n key used by the pages exists in en, de and nl."""
     import re
@@ -72,9 +93,9 @@ def test_i18n_has_every_key_in_all_languages():
         tables[lang] = set(re.findall(r"^\s+(\w+):", block, re.M))
     assert tables["en"] == tables["de"] == tables["nl"]
     used = set()
-    for page in ("login.html", "index.html", "targets.html", "session.js"):
-        text = (static / page).read_text(encoding="utf-8")
-        used |= set(re.findall(r"\bT\('(\w+)'", text))
+    for path in sorted(static.glob("*.html")) + [static / "session.js"]:
+        text = path.read_text(encoding="utf-8")
+        used |= set(re.findall(r"\bT\('(\w+)'\s*[,)]", text))  # not T('prefix' + i ...)
         used |= set(re.findall(r'data-i18n(?:-placeholder|-title|-doctitle)?="(\w+)"', text))
         used |= set(re.findall(r"label: '(\w+)'", text))
     assert used - tables["en"] == set()

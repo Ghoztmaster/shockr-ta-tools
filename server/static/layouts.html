@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shockr Layouts</title>
-<script src="static/i18n.js"></script>
-<script src="static/footer.js"></script>
-<script src="static/announcements.js"></script>
+<script src="static/i18n.js?v=2"></script>
+<script src="static/footer.js?v=2"></script>
+<script src="static/announcements.js?v=2"></script>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -31,6 +31,26 @@
     }
     .header h1 { font-size: 18px; color: #e0e0e0; }
     .nav { font-size: 13px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+
+    /* Resource tabs (same row-of-buttons as the MehrStrom /layouts Tib / Crystal / Attack tabs) */
+    .tabs {
+        background: #222;
+        padding: 8px 20px 0;
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .tabs .tabs-label { color: #999; font-size: 12px; margin-right: 6px; }
+    .tabs button {
+        background: #444; color: #ccc; border: none;
+        padding: 5px 14px; cursor: pointer; font-size: 13px;
+    }
+    .tabs button:hover { background: #555; }
+    .tabs button.active { background: #ff9800; color: #111; }
+    /* Column of the active tab */
+    th.hl { color: #ffb74d; background: #33291a; }
+    td.hl { background: rgba(255, 152, 0, 0.07); }
 
     /* Filters */
     .filters {
@@ -141,7 +161,7 @@
     .card svg { display: block; width: 100%; height: auto; }
 
     @media (max-width: 640px) {
-        .header, .filters, .content { padding-left: 12px; padding-right: 12px; }
+        .header, .tabs, .filters, .content { padding-left: 12px; padding-right: 12px; }
         .filters .updated { margin-left: 0; width: 100%; }
         .table-wrap, .layout-wrap { max-height: none; }
     }
@@ -172,6 +192,15 @@
         <span class="user" id="userBox"></span>
         <span class="lang-switch" id="langSwitch"></span>
     </div>
+</div>
+
+<div class="tabs" id="tabs">
+    <span class="tabs-label" data-i18n="lyTabsLabel">Sort by:</span>
+    <button type="button" data-tab="tib" data-i18n="lyTabTib" data-i18n-title="lyTipTabTib">Tiberium</button>
+    <button type="button" data-tab="cry" data-i18n="lyTabCry" data-i18n-title="lyTipTabCry">Crystal</button>
+    <button type="button" data-tab="mix" data-i18n="lyTabMix" data-i18n-title="lyTipTabMix">Mixed</button>
+    <button type="button" data-tab="power" data-i18n="lyTabPower" data-i18n-title="lyTipTabPower">Power</button>
+    <button type="button" data-tab="attack" data-i18n="lyTabAttack" data-i18n-title="lyTipTabAttack">Attack</button>
 </div>
 
 <div class="filters">
@@ -238,10 +267,14 @@
     </div>
 </div>
 
-<script src="static/session.js"></script>
+<script src="static/session.js?v=2"></script>
 <script>
 const RULE_OUT_KEY = 'shockr_layouts_ruleout';
 const VIEW_KEY = 'shockr_layouts_view';
+const TAB_KEY = 'shockr_layouts_tab';
+// Per tab: the column it sorts on (descending) and highlights. The data has no
+// production per hour, so the BaseScanner metrics stand in for it.
+const TABS = { tib: 'tibSpots', cry: 'crySpots', mix: 'mixSpots', power: 'power8', attack: 'freeBlock' };
 const TYPE_LABEL = { camp: 'Camp', outpost: 'Outpost', base: 'Base', player: null };
 // Tile colours: 0 empty, 1 crystal, 2 tiberium, anything else (woods, scrub, oil, swamp) an obstacle
 const TILE_FILL = { 0: '#2b2b2b', 1: '#1e4f9c', 2: '#2e7d32' };
@@ -250,7 +283,9 @@ const OBSTACLE_FILL = '#6b6b6b';
 const CNCOPT_TERRAIN = { 0: '.', 1: 'c', 2: 't', 4: 'j', 5: 'h', 6: 'l', 7: 'k' };
 
 let data = null;
-let sortKey = 'level';
+let tab = 'tib';
+try { const t = localStorage.getItem(TAB_KEY); if (TABS[t]) tab = t; } catch (e) { /* default tab */ }
+let sortKey = TABS[tab];
 let sortDir = -1;
 let view = 'table';
 const selected = new Set();
@@ -301,6 +336,36 @@ function centre() {
 }
 
 function attackMode() { return document.getElementById('attackCheck').checked; }
+function attackTab() { return tab === 'attack'; }
+
+// Largest empty rectangle in the base (rows 1-7, row 0 excluded; only empty
+// fields count, buildings are not in the layout) - the MehrStrom attack_space
+// rule. At least FREE_MIN_W wide and FREE_MIN_H high, else null. Rank: most
+// cells, then wider, then lowest, then leftmost.
+const FREE_MIN_W = 4, FREE_MIN_H = 3;
+function freeBlock(b) {
+    if (b._freeBlock !== undefined) return b._freeBlock;
+    const rows = [];
+    for (let y = 1; y < 8; y++) rows.push([...(b.layout[y] || '')].slice(0, 9).map(v => v === '0'));
+    let best = null;
+    for (let y0 = 0; y0 < rows.length; y0++) {
+        for (let x0 = 0; x0 < 9; x0++) {
+            let maxW = 9 - x0;   // shrinks as rows below are added
+            for (let y1 = y0; y1 < rows.length && maxW > 0; y1++) {
+                let w = 0;
+                while (w < maxW && rows[y1][x0 + w]) w++;
+                maxW = w;
+                const h = y1 - y0 + 1;
+                if (maxW < FREE_MIN_W || h < FREE_MIN_H) continue;
+                const c = { w: maxW, h, cells: maxW * h, y: y0, x: x0 };
+                if (!best || c.cells > best.cells || (c.cells === best.cells && (c.w > best.w ||
+                    (c.w === best.w && (c.y > best.y || (c.y === best.y && c.x < best.x)))))) best = c;
+            }
+        }
+    }
+    b._freeBlock = best;
+    return best;
+}
 
 function filtered() {
     if (!data) return [];
@@ -329,7 +394,7 @@ const spots = arr => arr.join(' | ');
 const spotsSort = arr => arr.reduce((v, n) => v * 100 + n, 0);   // 7 first, then 6, ...
 
 const COLUMNS = [
-    { key: 'ruleOut', label: 'lyColRuleOut', tip: 'lyTipRuleOut', sort: b => ruledOut.has(b.cityId) ? 1 : 0,
+    { key: 'ruleOut', label: 'lyColRuleOut', tip: 'lyTipRuleOut', when: attackTab, sort: b => ruledOut.has(b.cityId) ? 1 : 0,
       cell: b => `<input type="checkbox" data-ruleout="${b.cityId}"${ruledOut.has(b.cityId) ? ' checked' : ''}>` },
     { key: 'thumb', label: null, cls: 'thumb', cell: b => thumbSvg(b, 4, false) },
     { key: 'city', label: 'lyColCity', cls: 'city', sort: b => typeLabel(b) + ' ' + b.name,
@@ -339,13 +404,16 @@ const COLUMNS = [
     { key: 'dist', label: 'lyColDist', tip: 'lyTipDist', num: true, when: () => centre() !== null, sort: b => b.dist,
       cell: b => b.dist === null ? '—' : b.dist.toFixed(1) },
     { key: 'level', label: 'lyColLevel', num: true, sort: b => b.level, cell: b => b.level.toFixed(1) },
-    { key: 'lootTib', label: 'lyColTib', num: true, sort: b => b.lootTib, cell: b => lootCell(b, b.lootTib) },
-    { key: 'lootCrystal', label: 'lyColCry', num: true, sort: b => b.lootCrystal, cell: b => lootCell(b, b.lootCrystal) },
-    { key: 'lootCredits', label: 'lyColDollar', num: true, sort: b => b.lootCredits, cell: b => lootCell(b, b.lootCredits) },
+    { key: 'freeBlock', label: 'lyColFreeBlock', tip: 'lyTipFreeBlock', num: true, when: attackTab,
+      sort: b => { const f = freeBlock(b); return f ? f.cells * 10 + f.w : null; },
+      cell: b => { const f = freeBlock(b); return f ? `${f.w}×${f.h}` : `<span class="muted" title="${esc(T('lyFreeBlockNone'))}">—</span>`; } },
+    { key: 'lootTib', label: 'lyColTib', num: true, when: attackTab, sort: b => b.lootTib, cell: b => lootCell(b, b.lootTib) },
+    { key: 'lootCrystal', label: 'lyColCry', num: true, when: attackTab, sort: b => b.lootCrystal, cell: b => lootCell(b, b.lootCrystal) },
+    { key: 'lootCredits', label: 'lyColDollar', num: true, when: attackTab, sort: b => b.lootCredits, cell: b => lootCell(b, b.lootCredits) },
     { key: 'cp', label: 'lyColCp', num: true, sort: b => b.cp,
       cell: b => b.cp === null ? `<span class="muted" title="${esc(T('lyTipCpUnknown'))}">—</span>` : `<span title="${esc(T('lyTipCp'))}">${b.cp}</span>` },
     { key: 'growth', label: 'lyColGrowth', tip: 'lyTipGrowth', num: true, sort: b => b.growth, cell: b => b.growth.toFixed(1) },
-    { key: 'sum', label: 'lyColSum', num: true, sort: b => b.lootTib === null ? null : b.lootTib + b.lootCrystal,
+    { key: 'sum', label: 'lyColSum', num: true, when: attackTab, sort: b => b.lootTib === null ? null : b.lootTib + b.lootCrystal,
       cell: b => lootCell(b, b.lootTib === null ? null : b.lootTib + b.lootCrystal) },
     { key: 'cyRow', label: 'lyColCy', tip: 'lyTipCy', num: true, sort: b => b.cyRow, cell: b => b.cyRow ?? '—' },
     { key: 'dfRow', label: 'lyColDf', tip: 'lyTipDf', num: true, sort: b => b.dfRow, cell: b => b.dfRow ?? '—' },
@@ -451,6 +519,7 @@ function render() {
     document.getElementById('layoutView').hidden = view !== 'layouts';
     document.getElementById('tableBtn').classList.toggle('active', view === 'table');
     document.getElementById('layoutsBtn').classList.toggle('active', view === 'layouts');
+    document.querySelectorAll('#tabs button[data-tab]').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
     if (view === 'table') renderTable(rows);
     else renderLayouts(rows);
 }
@@ -458,7 +527,7 @@ function render() {
 function renderTable(rows) {
     const cols = COLUMNS.filter(c => !c.when || c.when());
     document.getElementById('thead').innerHTML = '<tr>' + cols.map(c =>
-        `<th class="${c.num ? 'num' : ''}${c.key === sortKey ? ' sorted' : ''}" data-sort="${c.sort ? c.key : ''}"` +
+        `<th class="${c.num ? 'num' : ''}${c.key === sortKey ? ' sorted' : ''}${c.key === TABS[tab] ? ' hl' : ''}" data-sort="${c.sort ? c.key : ''}"` +
         `${c.tip ? ` title="${esc(T(c.tip))}"` : ''}>${c.label ? esc(T(c.label)) : ''}` +
         `${c.key === sortKey ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';
     const tbody = document.getElementById('tbody');
@@ -470,7 +539,7 @@ function renderTable(rows) {
     tbody.innerHTML = rows.map(b => {
         const cls = [selected.has(b.cityId) ? 'selected' : '', ruledOut.has(b.cityId) ? 'ruled-out' : ''].join(' ');
         return `<tr class="${cls}" data-city="${b.cityId}" title="${esc(T('lyScannedBy', { name: b.scannedBy, ago: timeAgo(b.scannedAt) }))}">` +
-            cols.map(c => `<td class="${c.num ? 'num ' : ''}${c.cls || ''}">${c.cell(b)}</td>`).join('') + '</tr>';
+            cols.map(c => `<td class="${c.num ? 'num ' : ''}${c.cls || ''}${c.key === TABS[tab] ? ' hl' : ''}">${c.cell(b)}</td>`).join('') + '</tr>';
     }).join('');
 }
 
@@ -579,6 +648,18 @@ document.getElementById('thead').addEventListener('click', ev => {
     if (sortKey === th.dataset.sort) sortDir *= -1;
     else { sortKey = th.dataset.sort; sortDir = ['city', 'location', 'dist', 'cp'].includes(sortKey) ? 1 : -1; }
     render();
+});
+
+function setTab(t) {
+    tab = t;
+    sortKey = TABS[t];
+    sortDir = -1;
+    try { localStorage.setItem(TAB_KEY, t); } catch (e) { /* not remembered */ }
+    render();
+}
+document.getElementById('tabs').addEventListener('click', ev => {
+    const btn = ev.target.closest('button[data-tab]');
+    if (btn && TABS[btn.dataset.tab]) setTab(btn.dataset.tab);
 });
 
 function setView(v) {
