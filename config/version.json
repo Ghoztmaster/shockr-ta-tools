@@ -1,7 +1,34 @@
 {
-  "version": "5.33.0",
-  "date": "2026-10-30",
+  "version": "5.34.0",
+  "date": "2026-11-01",
   "changelog": [
+    {
+      "version": "5.34.0",
+      "date": "2026-11-01",
+      "changes": {
+        "en": [
+          "New Layouts page (🧩 Layouts in the menu): every base your alliance scanned with the LayoutScanner, with CP, Growth, CY/DF row, Power8 and the 7|6|5|4|3 Tib/Cry/Mix fields; all columns sortable",
+          "Filters: distance from your base or a location, CP limit, min level, Player/Base/Outpost/Camp and scan age; \"Get Layouts\" shows all layouts as tiles, Attack adds loot and attack status",
+          "Click a coordinate to copy it for the game chat; Rule OUT hides bases you have checked; Optimizer opens the layout in CnCOpt",
+          "Map Labels: the player name labels under camps and outposts now sit below the game's own label (\"Camp Lvl 25\") instead of on top of it, scaling with the zoom",
+          "New setting maplabels.offset: label height in cells from the top of the cell (e.g. 1.5); auto is the default"
+        ],
+        "de": [
+          "Neue Layouts-Seite (🧩 Layouts im Menü): jede von deiner Allianz mit dem LayoutScanner gescannte Basis, mit CP, Wachstum, CY/DF-Reihe, Power8 und den 7|6|5|4|3 Tib/Kri/Mix-Feldern; alle Spalten sortierbar",
+          "Filter: Entfernung zu deiner Basis oder einer Position, CP-Limit, Min.-Level, Spieler/Base/Outpost/Camp und Scan-Alter; „Layouts zeigen“ zeigt alle Layouts als Kacheln, Angriff ergänzt Beute und Angriffsstatus",
+          "Klick auf eine Koordinate kopiert sie für den Spiel-Chat; Rule OUT blendet geprüfte Basen aus; Optimizer öffnet das Layout in CnCOpt",
+          "Map Labels: die Spielernamen-Labels unter Camps und Außenposten stehen jetzt unter dem Spiel-Label („Camp Lvl 25“) statt darauf und skalieren mit dem Zoom",
+          "Neue Einstellung maplabels.offset: Label-Höhe in Feldern ab Feldoberkante (z. B. 1.5); Standard ist auto"
+        ],
+        "nl": [
+          "Nieuwe Layouts-pagina (🧩 Layouts in het menu): elke base die je alliance met de LayoutScanner scande, met CP, Groei, CY/DF-rij, Power8 en de 7|6|5|4|3 Tib/Cry/Mix-velden; alle kolommen sorteerbaar",
+          "Filters: afstand tot je base of een locatie, CP-limiet, min. level, Speler/Base/Outpost/Camp en scan-leeftijd; \"Layouts tonen\" toont alle layouts als tegels, Aanval voegt buit en aanvalsstatus toe",
+          "Klik op een coördinaat om hem te kopiëren voor de game-chat; Rule OUT verbergt bases die je hebt bekeken; Optimizer opent de layout in CnCOpt",
+          "Map Labels: de spelernaam-labels onder camps en outposts staan nu onder het game-label (\"Camp Lvl 25\") in plaats van erop, en schalen mee met de zoom",
+          "Nieuwe instelling maplabels.offset: labelhoogte in velden vanaf de bovenkant van het veld (bijv. 1.5); standaard auto"
+        ]
+      }
+    },
     {
       "version": "5.33.0",
       "date": "2026-10-30",
@@ -68,27 +95,6 @@
         ],
         "nl": [
           "Tunnel & POI Analyzer: lage bases in een tunnel-zone heten nu \"spawn-risico\" (daardoor spawnen er lage camps); de instelling heet nu tpa.spawnmargin (standaard 5)"
-        ]
-      }
-    },
-    {
-      "version": "5.31.0",
-      "date": "2026-10-29",
-      "changes": {
-        "en": [
-          "New plugin Tunnel & POI Analyzer: the tunnel icon in the Shockr button (or /st tunnels) shows per tunnel exit who activates it (5 players within 5 fields), how many are missing and which low bases are a spawn risk",
-          "Same panel: alliance POIs with their real loss; 0/h = worthless, the bases next to it can move (flagged when they are also a tunnel spawn risk). Click a row to centre the map",
-          "Fix Base Info: the base numbers per player no longer mix up the bases of different players"
-        ],
-        "de": [
-          "Neues Plugin Tunnel- & POI-Analyse: das Tunnel-Symbol im Shockr-Knopf (oder /st tunnels) zeigt pro Tunnelausgang, wer ihn aktiviert (5 Spieler innerhalb von 5 Feldern), wie viele fehlen und welche niedrigen Basen ein Spawn-Risiko sind",
-          "Im selben Panel: Allianz-POIs mit ihrem realen Verlust; 0/h = wertlos, die Basen daneben können umziehen (markiert, wenn sie auch ein Spawn-Risiko an einem Tunnel sind). Klick auf eine Zeile zentriert die Karte",
-          "Fix Base Info: die Basisnummern pro Spieler mischen nicht mehr die Basen verschiedener Spieler"
-        ],
-        "nl": [
-          "Nieuwe plugin Tunnel & POI Analyzer: het tunnel-icoon in de Shockr-knop (of /st tunnels) toont per tunnel exit wie hem activeert (5 spelers binnen 5 velden), hoeveel er nog missen en welke lage bases een spawn-risico zijn",
-          "In hetzelfde paneel: alliance-POI's met hun real loss; 0/h = waardeloos, de bases ernaast kunnen verhuizen (gemarkeerd als ze ook een spawn-risico bij een tunnel zijn). Klik op een rij om de kaart te centreren",
-          "Fix Base Info: de basenummers per speler halen de bases van verschillende spelers niet meer door elkaar"
         ]
       }
     }

@@ -44,6 +44,7 @@ from server.player_keys import (
 from server.web_auth import LoginPayload, SessionStore, SESSION_COOKIE, LOGIN_FAILED
 from server.siteinfo import SiteInfo
 from server.war import WarAccess, SCAN_MAX_AGE_HOURS as WAR_SCAN_MAX_AGE_HOURS, overview as war_overview, sector_of
+from server.layouts import build_layouts
 
 # ─── Config ──────────────────────────────────────────────────────────
 
@@ -485,6 +486,36 @@ async def get_base(city_id: int, world_id: int | None = None):
         raise HTTPException(status_code=404, detail="Base not found")
     return detail
 
+# ─── GET: base layouts (/layouts) ───────────────────────────────────
+
+LAYOUTS_MAX_AGE_HOURS = 168
+
+
+@app.get("/api/layouts", dependencies=[Depends(rate_limit_get)])
+async def get_layouts(worldId: int | None = None, maxAgeHours: int = LAYOUTS_MAX_AGE_HOURS,
+                      session: dict = Depends(require_session)):
+    """
+    Layouts page (website session): the scans of the player's own storage
+    scope in one world (no worldId: the highest world id with scans) with
+    layout metrics, loot, CP and attack status (server/layouts.py), plus the
+    player's own scanned bases for the base dropdown.
+    """
+    entry = player_keys.players.get(session["playerId"]) or {}
+    scope = entry.get("scope")
+    worlds = storage.scope_worlds(scope) if scope else []
+    world_id = worldId if worldId is not None else (worlds[-1] if worlds else None)
+    now_ms = int(time.time() * 1000)
+    if world_id is None:
+        return {"worlds": worlds, "worldId": None, "serverTime": now_ms, "ownBases": [], "bases": []}
+    max_age = max(1, min(maxAgeHours, LAYOUTS_MAX_AGE_HOURS))
+    records = storage.latest_scans(scope, world_id, max_age)
+    own = [{"cityId": r["city_id"], "name": r.get("name", ""), "x": r["x"], "y": r["y"], "faction": r.get("faction")}
+           for r in records if r.get("owner_id") == session["playerId"] and r.get("faction") in (1, 2)]
+    bases = build_layouts(records, attack_store.rows(world_id, scope=scope),
+                          watchlist.active(world_id, scope=scope), session["playerId"])
+    return {"worlds": worlds, "worldId": world_id, "serverTime": now_ms,
+            "ownBases": sorted(own, key=lambda b: b["name"].lower()), "bases": bases}
+
 # ─── Target Watch (in-memory, 10 min TTL) ───────────────────────────
 
 @app.post("/api/target-watch")
@@ -861,6 +892,10 @@ async def war_page(request: Request):
     if not war_access.allowed(session["playerId"], player_keys):
         return HTMLResponse(WAR_DENIED_HTML, status_code=403)
     return FileResponse(STATIC_DIR / "war.html")
+
+@app.get("/layouts")
+async def layouts_page(request: Request):
+    return page(request, "layouts.html", "login")
 
 @app.get("/info")
 async def info_page(request: Request):

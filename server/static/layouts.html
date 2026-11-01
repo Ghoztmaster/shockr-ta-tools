@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en" data-i18n-doctitle="lyPageTitle">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shockr Layouts</title>
+<script src="static/i18n.js"></script>
+<script src="static/footer.js"></script>
+<script src="static/announcements.js"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        background: #1a1a1a;
+        color: #ccc;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        font-size: 14px;
+    }
+    a { color: #4fc3f7; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Header */
+    .header {
+        background: #252525;
+        border-bottom: 1px solid #333;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .header h1 { font-size: 18px; color: #e0e0e0; }
+    .nav { font-size: 13px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+
+    /* Filters */
+    .filters {
+        background: #222;
+        padding: 10px 20px;
+        border-bottom: 1px solid #333;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .filters label { color: #999; font-size: 12px; margin-right: 4px; }
+    .filters .check { color: #ccc; font-size: 13px; margin-right: 8px; white-space: nowrap; cursor: pointer; }
+    .filters .check input { vertical-align: middle; margin-right: 3px; }
+    .filters select, .filters input[type=number], .filters input[type=text] {
+        background: #333;
+        color: #ccc;
+        border: 1px solid #444;
+        padding: 4px 8px;
+        font-size: 13px;
+    }
+    .filters input[type=number] { width: 62px; }
+    .filters input[type=text] { width: 80px; }
+    .filters button {
+        background: #66bb6a;
+        color: #111;
+        border: none;
+        padding: 5px 14px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+    .filters button:hover { background: #81c784; }
+    .filters button.plain { background: #444; color: #ccc; }
+    .filters button.plain:hover { background: #555; }
+    .filters button.active { background: #ff9800; color: #111; }
+    .filters .updated { color: #777; font-size: 12px; margin-left: auto; }
+    .filters .updated.error { color: #e57373; }
+
+    .content { padding: 12px 20px; }
+    .note { color: #777; font-size: 12px; margin: 0 0 8px; }
+    .loading { text-align: center; padding: 40px; color: #666; }
+
+    /* Table */
+    .table-wrap { overflow: auto; max-height: calc(100vh - 210px); border: 1px solid #2a2a2a; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+        background: #2a2a2a;
+        color: #aaa;
+        text-align: left;
+        padding: 6px 8px;
+        border-bottom: 1px solid #444;
+        white-space: nowrap;
+        cursor: pointer;
+        user-select: none;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+    th:hover { color: #fff; }
+    th.sorted { color: #e0e0e0; }
+    th.num, td.num { text-align: right; }
+    td { padding: 4px 8px; border-bottom: 1px solid #2a2a2a; white-space: nowrap; }
+    tbody tr { cursor: pointer; }
+    tbody tr:hover td { background: #252525; }
+    tr.selected td { background: #2d2418; }
+    tr.selected td:first-child { box-shadow: inset 3px 0 0 #ff9800; }
+    tr.ruled-out td { color: #666; }
+    tr.ruled-out td.city { text-decoration: line-through; }
+    td.thumb { padding: 2px 6px; line-height: 0; }
+    .est { color: #888; }
+    .muted { color: #555; }
+    .type-camp { color: #aed581; }
+    .type-outpost { color: #4fc3f7; }
+    .type-base { color: #ffb74d; }
+    .type-player { color: #ce93d8; }
+
+    /* Click-to-copy coordinates */
+    .coords { color: #4fc3f7; cursor: copy; border-bottom: 1px dotted #4fc3f7; }
+    .copied-tip {
+        position: fixed; z-index: 50; pointer-events: none;
+        background: #66bb6a; color: #111; font-size: 12px; padding: 2px 8px; border-radius: 3px;
+        transform: translate(-50%, -130%);
+    }
+
+    /* Attack status */
+    .status { font-size: 12px; padding: 1px 6px; border-radius: 2px; }
+    .st-free { background: #1b3a1d; color: #81c784; }
+    .st-claimed { background: #3a3415; color: #ffd54f; }
+    .st-attacked { background: #3d2a12; color: #ffb74d; }
+    .st-destroyed { background: #2a2a2a; color: #777; }
+    .opt { font-size: 12px; margin-left: 6px; }
+
+    /* Layout overview */
+    .layout-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+    .layout-wrap { overflow: auto; max-height: calc(100vh - 210px); }
+    .card {
+        background: #212121;
+        border: 2px solid #333;
+        padding: 6px;
+        cursor: pointer;
+        user-select: none;
+    }
+    .card:hover { border-color: #555; }
+    .card.selected { border-color: #ff9800; }
+    .card.ruled-out { opacity: 0.45; }
+    .card .title { font-size: 12px; color: #e0e0e0; display: flex; justify-content: space-between; gap: 4px; margin-bottom: 4px; }
+    .card .meta { font-size: 11px; color: #888; margin-top: 4px; display: flex; justify-content: space-between; gap: 4px; flex-wrap: wrap; }
+    .card svg { display: block; width: 100%; height: auto; }
+
+    @media (max-width: 640px) {
+        .header, .filters, .content { padding-left: 12px; padding-right: 12px; }
+        .filters .updated { margin-left: 0; width: 100%; }
+        .table-wrap, .layout-wrap { max-height: none; }
+    }
+    /* Website session (session.js) */
+    .user { font-size: 12px; color: #888; display: flex; align-items: center; gap: 6px; }
+    .user strong { color: #e0e0e0; font-weight: normal; }
+    .user form { display: inline; }
+    .user button {
+        background: #444; color: #ccc; border: none; border-radius: 3px;
+        padding: 3px 8px; font-size: 12px; cursor: pointer;
+    }
+    .user button:hover { background: #666; }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1 data-i18n="lyTitle">🧩 Base Layouts</h1>
+    <div class="nav">
+        <a href="./" data-i18n="navBases">⚔ Bases</a>
+        <a href="targets" data-i18n="navTargetWatch">🎯 Target Watch</a>
+        <a href="attacks" data-i18n="navAttacks">🗡 Attacks</a>
+        <a href="loot" data-i18n="navLoot">💰 Loot</a>
+        <a href="layouts" data-i18n="navLayouts">🧩 Layouts</a>
+        <a href="watchlist" data-i18n="navWatchList">📌 WatchList</a>
+        <a href="war" data-war-link hidden>🛡 War</a>
+        <a href="info" data-i18n="navInfo">ℹ Info</a>
+        <span class="user" id="userBox"></span>
+        <span class="lang-switch" id="langSwitch"></span>
+    </div>
+</div>
+
+<div class="filters">
+    <div id="worldPicker" style="display:none">
+        <label for="worldSelect" data-i18n="world">World:</label>
+        <select id="worldSelect"></select>
+    </div>
+    <div>
+        <label for="baseSelect" data-i18n="lyBase">Base:</label>
+        <select id="baseSelect"></select>
+    </div>
+    <div>
+        <label for="locInput" data-i18n="lyLocation">Location:</label>
+        <input type="text" id="locInput" placeholder="x:y">
+    </div>
+    <div>
+        <label for="rangeInput" data-i18n="lyRange">Range:</label>
+        <input type="number" id="rangeInput" min="1" max="200" value="10">
+    </div>
+    <div>
+        <label for="cpInput" data-i18n="lyCpLimit">CP limit:</label>
+        <input type="number" id="cpInput" min="1" max="1000" placeholder="any" data-i18n-placeholder="filterAny">
+    </div>
+    <div>
+        <label for="levelInput" data-i18n="lyMinLevel">Min level:</label>
+        <input type="number" id="levelInput" min="1" max="100" placeholder="any" data-i18n-placeholder="filterAny">
+    </div>
+    <div>
+        <label data-i18n="lyTypes">Type:</label>
+        <label class="check"><input type="checkbox" data-type="player"><span data-i18n="lyTypePlayer">Player</span></label>
+        <label class="check"><input type="checkbox" data-type="base" checked><span data-i18n="lyTypeBases">Bases</span></label>
+        <label class="check"><input type="checkbox" data-type="outpost" checked>Outpost</label>
+        <label class="check"><input type="checkbox" data-type="camp" checked>Camp</label>
+    </div>
+    <div>
+        <label class="check"><input type="checkbox" id="attackCheck"><span data-i18n="lyAttack">Attack</span></label>
+    </div>
+    <div>
+        <label for="ageSelect" data-i18n="filterAge">Age:</label>
+        <select id="ageSelect">
+            <option value="1" data-i18n="age1h">&lt; 1 hour</option>
+            <option value="6" data-i18n="age6h">&lt; 6 hours</option>
+            <option value="24" data-i18n="age24h">&lt; 24 hours</option>
+            <option value="168" selected data-i18n="age7d">&lt; 7 days</option>
+        </select>
+    </div>
+    <button id="scanBtn" data-i18n="lyScan">↻ Scan</button>
+    <button id="tableBtn" class="plain active" data-i18n="lyTable">☰ Table</button>
+    <button id="layoutsBtn" class="plain" data-i18n="lyGetLayouts">▦ Get Layouts</button>
+    <span class="updated" id="updated"></span>
+</div>
+
+<div class="content">
+    <p class="note" id="countNote"></p>
+    <div id="tableView" class="table-wrap">
+        <table>
+            <thead id="thead"></thead>
+            <tbody id="tbody"><tr><td class="loading" data-i18n="loading">Loading...</td></tr></tbody>
+        </table>
+    </div>
+    <div id="layoutView" class="layout-wrap" hidden>
+        <p class="note" data-i18n="lyLegend"></p>
+        <div class="layout-grid" id="layoutGrid"></div>
+    </div>
+</div>
+
+<script src="static/session.js"></script>
+<script>
+const RULE_OUT_KEY = 'shockr_layouts_ruleout';
+const VIEW_KEY = 'shockr_layouts_view';
+const TYPE_LABEL = { camp: 'Camp', outpost: 'Outpost', base: 'Base', player: null };
+// Tile colours: 0 empty, 1 crystal, 2 tiberium, anything else (woods, scrub, oil, swamp) an obstacle
+const TILE_FILL = { 0: '#2b2b2b', 1: '#1e4f9c', 2: '#2e7d32' };
+const OBSTACLE_FILL = '#6b6b6b';
+// CnCOpt terrain letters per resource type (rows 0-15); buildings/units are not in this link
+const CNCOPT_TERRAIN = { 0: '.', 1: 'c', 2: 't', 4: 'j', 5: 'h', 6: 'l', 7: 'k' };
+
+let data = null;
+let sortKey = 'level';
+let sortDir = -1;
+let view = 'table';
+const selected = new Set();
+let ruledOut = new Set();
+
+try { ruledOut = new Set(JSON.parse(localStorage.getItem(RULE_OUT_KEY) || '[]')); } catch (e) { /* none remembered */ }
+try { if (localStorage.getItem(VIEW_KEY) === 'layouts') view = 'layouts'; } catch (e) { /* default view */ }
+
+function saveRuledOut() {
+    try { localStorage.setItem(RULE_OUT_KEY, JSON.stringify([...ruledOut])); } catch (e) { /* not remembered */ }
+}
+
+function esc(s) {
+    const d = document.createElement('div');
+    d.textContent = s === undefined || s === null ? '' : String(s);
+    return d.innerHTML.replace(/"/g, '&quot;');
+}
+
+function timeAgo(ms) {
+    if (!ms) return '—';
+    const mins = Math.floor((Date.now() - ms) / 60000);
+    if (mins < 1) return T('justNow');
+    if (mins < 60) return T('minutesAgo', { n: mins });
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return T('hoursAgo', { n: hrs });
+    return T('daysAgo', { n: Math.floor(hrs / 24) });
+}
+
+function fmtNum(n) {
+    if (n === null || n === undefined) return '—';
+    if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+    if (n >= 1e3) return Math.round(n / 1e3) + 'k';
+    return String(n);
+}
+
+function typeLabel(b) {
+    return TYPE_LABEL[b.type] || T('lyTypePlayer');
+}
+
+// ─── Filters ────────────────────────────────────────────────
+
+function centre() {
+    const m = document.getElementById('locInput').value.match(/(\d+)\s*[:,; ]\s*(\d+)/);
+    if (m) return { x: +m[1], y: +m[2] };
+    const id = +document.getElementById('baseSelect').value;
+    const own = id && data ? data.ownBases.find(b => b.cityId === id) : null;
+    return own ? { x: own.x, y: own.y } : null;
+}
+
+function attackMode() { return document.getElementById('attackCheck').checked; }
+
+function filtered() {
+    if (!data) return [];
+    const types = new Set([...document.querySelectorAll('input[data-type]')].filter(c => c.checked).map(c => c.dataset.type));
+    const minLevel = parseFloat(document.getElementById('levelInput').value);
+    const cpLimit = parseFloat(document.getElementById('cpInput').value);
+    const range = parseFloat(document.getElementById('rangeInput').value) || 10;
+    const c = centre();
+    const out = [];
+    for (const b of data.bases) {
+        b.dist = c ? Math.hypot(b.x - c.x, b.y - c.y) : null;
+        if (!types.has(b.type)) continue;
+        if (!isNaN(minLevel) && b.level < minLevel) continue;
+        if (!isNaN(cpLimit) && b.cp !== null && b.cp > cpLimit) continue;
+        if (c && b.dist > range) continue;
+        if (attackMode() && b.status === 'destroyed') continue;
+        out.push(b);
+    }
+    return out;
+}
+
+// ─── Columns ────────────────────────────────────────────────
+// sort: value used for sorting (null last); cell: inner HTML; when: column shown only if true
+
+const spots = arr => arr.join(' | ');
+const spotsSort = arr => arr.reduce((v, n) => v * 100 + n, 0);   // 7 first, then 6, ...
+
+const COLUMNS = [
+    { key: 'ruleOut', label: 'lyColRuleOut', tip: 'lyTipRuleOut', sort: b => ruledOut.has(b.cityId) ? 1 : 0,
+      cell: b => `<input type="checkbox" data-ruleout="${b.cityId}"${ruledOut.has(b.cityId) ? ' checked' : ''}>` },
+    { key: 'thumb', label: null, cls: 'thumb', cell: b => thumbSvg(b, 4, false) },
+    { key: 'city', label: 'lyColCity', cls: 'city', sort: b => typeLabel(b) + ' ' + b.name,
+      cell: b => `<span class="type-${b.type}" title="${esc(b.name + (b.type === 'player' ? ' — ' + b.owner : ''))}">${esc(b.type === 'player' ? b.name : typeLabel(b))}</span>` },
+    { key: 'location', label: 'lyColLocation', sort: b => b.x * 10000 + b.y,
+      cell: b => `<span class="coords" data-x="${b.x}" data-y="${b.y}" title="${esc(T('lyTipCopy'))}">${b.x}:${b.y}</span>` },
+    { key: 'dist', label: 'lyColDist', tip: 'lyTipDist', num: true, when: () => centre() !== null, sort: b => b.dist,
+      cell: b => b.dist === null ? '—' : b.dist.toFixed(1) },
+    { key: 'level', label: 'lyColLevel', num: true, sort: b => b.level, cell: b => b.level.toFixed(1) },
+    { key: 'lootTib', label: 'lyColTib', num: true, sort: b => b.lootTib, cell: b => lootCell(b, b.lootTib) },
+    { key: 'lootCrystal', label: 'lyColCry', num: true, sort: b => b.lootCrystal, cell: b => lootCell(b, b.lootCrystal) },
+    { key: 'lootCredits', label: 'lyColDollar', num: true, sort: b => b.lootCredits, cell: b => lootCell(b, b.lootCredits) },
+    { key: 'cp', label: 'lyColCp', num: true, sort: b => b.cp,
+      cell: b => b.cp === null ? `<span class="muted" title="${esc(T('lyTipCpUnknown'))}">—</span>` : `<span title="${esc(T('lyTipCp'))}">${b.cp}</span>` },
+    { key: 'growth', label: 'lyColGrowth', tip: 'lyTipGrowth', num: true, sort: b => b.growth, cell: b => b.growth.toFixed(1) },
+    { key: 'sum', label: 'lyColSum', num: true, sort: b => b.lootTib === null ? null : b.lootTib + b.lootCrystal,
+      cell: b => lootCell(b, b.lootTib === null ? null : b.lootTib + b.lootCrystal) },
+    { key: 'cyRow', label: 'lyColCy', tip: 'lyTipCy', num: true, sort: b => b.cyRow, cell: b => b.cyRow ?? '—' },
+    { key: 'dfRow', label: 'lyColDf', tip: 'lyTipDf', num: true, sort: b => b.dfRow, cell: b => b.dfRow ?? '—' },
+    { key: 'power8', label: 'lyColPower8', tip: 'lyTipPower8', num: true, sort: b => b.power8, cell: b => b.power8 },
+    { key: 'tibSpots', label: 'lyColTibSpots', tip: 'lyTipTibSpots', sort: b => spotsSort(b.tibSpots), cell: b => spots(b.tibSpots) },
+    { key: 'crySpots', label: 'lyColCrySpots', tip: 'lyTipCrySpots', sort: b => spotsSort(b.crySpots), cell: b => spots(b.crySpots) },
+    { key: 'mixSpots', label: 'lyColMixSpots', tip: 'lyTipMixSpots', sort: b => spotsSort(b.mixSpots), cell: b => spots(b.mixSpots) },
+    { key: 'found', label: 'lyColFound', tip: 'lyTipFound', cell: () => '<span class="muted">—</span>' },
+    { key: 'attack', label: 'lyColAttack', when: attackMode, sort: b => ['free', 'attacked', 'claimed', 'destroyed'].indexOf(b.status),
+      cell: attackCell },
+];
+
+function lootCell(b, v) {
+    if (v === null) return `<span class="muted" title="${esc(T('lyTipLootNone'))}">—</span>`;
+    const tip = b.lootEstimated
+        ? T('lyTipLootEst', { type: typeLabel(b), level: Math.round(b.level) }) : T('lyTipLootReal');
+    return `<span class="${b.lootEstimated ? 'est' : ''}" title="${esc(tip + ' — ' + v.toLocaleString())}">${b.lootEstimated ? '~' : ''}${fmtNum(v)}</span>`;
+}
+
+function attackCell(b) {
+    let text;
+    if (b.status === 'claimed') text = T('lyStatusClaimed', { names: b.claimedBy.join(', ') });
+    else if (b.status === 'attacked') text = T('lyStatusAttacked', { name: b.lastAttack.playerName || '?', ago: timeAgo(b.lastAttack.timestamp) });
+    else text = T(b.status === 'destroyed' ? 'lyStatusDestroyed' : 'lyStatusFree');
+    return `<span class="status st-${b.status}">${esc(text)}</span>` +
+        `<a class="opt" href="${esc(cncoptUrl(b))}" target="_blank" rel="noopener" title="${esc(T('lyTipOptimizer'))}">${esc(T('lyOptimizer'))} ↗</a>`;
+}
+
+// CnCOpt link with the layout's terrain (20 rows x 9: base, defense, 4 empty offense rows).
+// Attacker faction = the selected own base, else the first one, else GDI.
+function cncoptUrl(b) {
+    const faction = f => f === 1 ? 'G' : f === 2 ? 'N' : 'F';
+    const id = +document.getElementById('baseSelect').value;
+    const own = data.ownBases.find(o => o.cityId === id) || data.ownBases[0];
+    const attacker = b.type === 'player' ? faction(b.faction) : (own ? faction(own.faction) : 'G');
+    let map = '';
+    for (let y = 0; y < 20; y++) {
+        const row = b.layout[y] || '000000000';
+        for (const v of row) map += y < 16 ? (CNCOPT_TERRAIN[v] ?? '.') : '.';
+    }
+    return `https://cncopt.com/?map=3|${faction(b.faction)}|${attacker}|${encodeURIComponent(b.name)}|${map}`;
+}
+
+// ─── Thumbnail (SVG): base area 9x8, ▲ under the CY column ──
+
+function thumbSvg(b, cell, withMarker) {
+    const w = 9 * cell;
+    const h = 8 * cell;
+    const extra = withMarker ? cell : 0;
+    let s = `<svg viewBox="0 0 ${w} ${h + extra}" width="${w}" height="${h + extra}" xmlns="http://www.w3.org/2000/svg">`;
+    s += `<rect width="${w}" height="${h}" fill="${TILE_FILL[0]}"/>`;
+    for (let y = 0; y < 8; y++) {
+        const row = b.layout[y];
+        for (let x = 0; x < 9; x++) {
+            const v = +row[x];
+            if (v === 0) continue;
+            const fill = TILE_FILL[v] || OBSTACLE_FILL;
+            if (withMarker && (v === 1 || v === 2)) {
+                // resource icon: crystal diamond, tiberium hexagon-ish blob
+                const cx = x * cell + cell / 2, cy = y * cell + cell / 2, r = cell * 0.38;
+                s += `<rect x="${x * cell}" y="${y * cell}" width="${cell}" height="${cell}" fill="${fill}" opacity="0.45"/>`;
+                s += v === 1
+                    ? `<path d="M${cx} ${cy - r}L${cx + r * 0.75} ${cy}L${cx} ${cy + r}L${cx - r * 0.75} ${cy}Z" fill="#64b5f6"/>`
+                    : `<circle cx="${cx}" cy="${cy}" r="${r * 0.8}" fill="#66bb6a"/>`;
+            } else {
+                s += `<rect x="${x * cell}" y="${y * cell}" width="${cell}" height="${cell}" fill="${fill}"/>`;
+            }
+        }
+    }
+    if (withMarker) {
+        // grid lines
+        for (let i = 1; i < 9; i++) s += `<line x1="${i * cell}" y1="0" x2="${i * cell}" y2="${h}" stroke="#1a1a1a" stroke-width="0.5"/>`;
+        for (let i = 1; i < 8; i++) s += `<line x1="0" y1="${i * cell}" x2="${w}" y2="${i * cell}" stroke="#1a1a1a" stroke-width="0.5"/>`;
+        if (b.cyCol !== null) {
+            const cx = b.cyCol * cell + cell / 2;
+            s += `<path d="M${cx} ${h + 1}L${cx + cell * 0.4} ${h + extra - 1}L${cx - cell * 0.4} ${h + extra - 1}Z" fill="#ff9800"><title>CY</title></path>`;
+        }
+    } else if (b.cyCol !== null) {
+        const cx = b.cyCol * cell + cell / 2;
+        s += `<path d="M${cx} ${h - cell}L${cx + cell / 2} ${h}L${cx - cell / 2} ${h}Z" fill="#ff9800"/>`;
+    }
+    return s + '</svg>';
+}
+
+// ─── Render ─────────────────────────────────────────────────
+
+function sortRows(rows) {
+    const col = COLUMNS.find(c => c.key === sortKey && c.sort);
+    if (!col) return rows;
+    return [...rows].sort((a, b) => {
+        const av = col.sort(a), bv = col.sort(b);
+        if (av === null || av === undefined) return (bv === null || bv === undefined) ? 0 : 1;
+        if (bv === null || bv === undefined) return -1;
+        return typeof av === 'string' ? sortDir * av.localeCompare(bv) : sortDir * (av - bv);
+    });
+}
+
+function render() {
+    const rows = sortRows(filtered());
+    const total = data ? data.bases.length : 0;
+    document.getElementById('countNote').textContent = data ? T('lyCount', { n: rows.length, total }) : '';
+    document.getElementById('tableView').hidden = view !== 'table';
+    document.getElementById('layoutView').hidden = view !== 'layouts';
+    document.getElementById('tableBtn').classList.toggle('active', view === 'table');
+    document.getElementById('layoutsBtn').classList.toggle('active', view === 'layouts');
+    if (view === 'table') renderTable(rows);
+    else renderLayouts(rows);
+}
+
+function renderTable(rows) {
+    const cols = COLUMNS.filter(c => !c.when || c.when());
+    document.getElementById('thead').innerHTML = '<tr>' + cols.map(c =>
+        `<th class="${c.num ? 'num' : ''}${c.key === sortKey ? ' sorted' : ''}" data-sort="${c.sort ? c.key : ''}"` +
+        `${c.tip ? ` title="${esc(T(c.tip))}"` : ''}>${c.label ? esc(T(c.label)) : ''}` +
+        `${c.key === sortKey ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';
+    const tbody = document.getElementById('tbody');
+    if (!data) return;
+    if (rows.length === 0) {
+        tbody.innerHTML = `<tr><td class="loading" colspan="${cols.length}">${esc(T(data.bases.length ? 'lyNoBases' : 'lyNoData'))}</td></tr>`;
+        return;
+    }
+    tbody.innerHTML = rows.map(b => {
+        const cls = [selected.has(b.cityId) ? 'selected' : '', ruledOut.has(b.cityId) ? 'ruled-out' : ''].join(' ');
+        return `<tr class="${cls}" data-city="${b.cityId}" title="${esc(T('lyScannedBy', { name: b.scannedBy, ago: timeAgo(b.scannedAt) }))}">` +
+            cols.map(c => `<td class="${c.num ? 'num ' : ''}${c.cls || ''}">${c.cell(b)}</td>`).join('') + '</tr>';
+    }).join('');
+}
+
+function renderLayouts(rows) {
+    const grid = document.getElementById('layoutGrid');
+    if (!data) return;
+    if (rows.length === 0) {
+        grid.innerHTML = `<p class="loading">${esc(T(data.bases.length ? 'lyNoBases' : 'lyNoData'))}</p>`;
+        return;
+    }
+    grid.innerHTML = rows.map(b => {
+        const cls = ['card', selected.has(b.cityId) ? 'selected' : '', ruledOut.has(b.cityId) ? 'ruled-out' : ''].join(' ');
+        return `<div class="${cls}" data-city="${b.cityId}">` +
+            `<div class="title"><span class="type-${b.type}" title="${esc(b.name)}">${esc(typeLabel(b))} ${b.level.toFixed(1)}</span>` +
+            `<span class="coords" data-x="${b.x}" data-y="${b.y}" title="${esc(T('lyTipCopy'))}">${b.x}:${b.y}</span></div>` +
+            thumbSvg(b, 14, true) +
+            `<div class="meta"><span title="${esc(T('lyTipPower8'))}">P8 ${b.power8}</span>` +
+            `<span title="${esc(T('lyTipCy'))}">CY ${b.cyRow ?? '—'}</span>` +
+            `<span title="${esc(T('lyTipDf'))}">DF ${b.dfRow ?? '—'}</span>` +
+            `<span title="${esc(T('lyTipGrowth'))}">G ${b.growth.toFixed(1)}</span></div>` +
+            (attackMode() ? `<div class="meta">${attackCell(b)}</div>` : '') +
+            '</div>';
+    }).join('');
+}
+
+// ─── Data ───────────────────────────────────────────────────
+
+async function load() {
+    const updated = document.getElementById('updated');
+    const world = document.getElementById('worldSelect').value;
+    const params = new URLSearchParams({ maxAgeHours: document.getElementById('ageSelect').value });
+    if (world) params.set('worldId', world);
+    try {
+        const resp = await fetch('api/layouts?' + params, { cache: 'no-store' });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        data = await resp.json();
+        updated.classList.remove('error');
+        updated.textContent = T('lyUpdated', { time: new Date().toLocaleTimeString() });
+        fillPickers();
+        render();
+    } catch (e) {
+        updated.classList.add('error');
+        updated.textContent = T('error', { msg: e.message });
+    }
+}
+
+function fillPickers() {
+    const ws = document.getElementById('worldSelect');
+    ws.innerHTML = data.worlds.map(w => `<option value="${w}"${w === data.worldId ? ' selected' : ''}>${w}</option>`).join('');
+    document.getElementById('worldPicker').style.display = data.worlds.length > 1 ? '' : 'none';
+    const bs = document.getElementById('baseSelect');
+    const current = bs.value;
+    bs.innerHTML = `<option value="">${esc(T('lyBaseNone'))}</option>` + data.ownBases.map(b =>
+        `<option value="${b.cityId}"${String(b.cityId) === current ? ' selected' : ''}>${esc(b.name)} (${b.x}:${b.y})</option>`).join('');
+}
+
+// ─── Copy coordinates ([coords]x:y[/coords] = clickable in the game chat) ─
+
+async function copyCoords(el, ev) {
+    const text = `[coords]${el.dataset.x}:${el.dataset.y}[/coords]`;
+    try {
+        await navigator.clipboard.writeText(text);
+    } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (e2) { /* nothing more to try */ }
+        ta.remove();
+    }
+    const tip = document.createElement('div');
+    tip.className = 'copied-tip';
+    tip.textContent = T('lyCopied');
+    tip.style.left = ev.clientX + 'px';
+    tip.style.top = ev.clientY + 'px';
+    document.body.appendChild(tip);
+    setTimeout(() => tip.remove(), 1200);
+}
+
+// ─── Events ─────────────────────────────────────────────────
+
+function onItemClick(ev) {
+    const coords = ev.target.closest('.coords');
+    if (coords) { copyCoords(coords, ev); return; }
+    if (ev.target.closest('a')) return;
+    const box = ev.target.closest('input[data-ruleout]');
+    if (box) {
+        const id = +box.dataset.ruleout;
+        if (box.checked) ruledOut.add(id); else ruledOut.delete(id);
+        saveRuledOut();
+        render();
+        return;
+    }
+    const item = ev.target.closest('[data-city]');
+    if (!item) return;
+    const id = +item.dataset.city;
+    if (selected.has(id)) selected.delete(id); else selected.add(id);
+    render();
+}
+
+document.getElementById('tbody').addEventListener('click', onItemClick);
+document.getElementById('layoutGrid').addEventListener('click', onItemClick);
+document.getElementById('thead').addEventListener('click', ev => {
+    const th = ev.target.closest('th[data-sort]');
+    if (!th || !th.dataset.sort) return;
+    if (sortKey === th.dataset.sort) sortDir *= -1;
+    else { sortKey = th.dataset.sort; sortDir = ['city', 'location', 'dist', 'cp'].includes(sortKey) ? 1 : -1; }
+    render();
+});
+
+function setView(v) {
+    view = v;
+    try { localStorage.setItem(VIEW_KEY, v); } catch (e) { /* not remembered */ }
+    render();
+}
+document.getElementById('tableBtn').addEventListener('click', () => setView('table'));
+document.getElementById('layoutsBtn').addEventListener('click', () => setView('layouts'));
+document.getElementById('scanBtn').addEventListener('click', load);
+document.getElementById('worldSelect').addEventListener('change', load);
+document.getElementById('ageSelect').addEventListener('change', load);
+for (const id of ['baseSelect', 'attackCheck']) document.getElementById(id).addEventListener('change', render);
+for (const id of ['locInput', 'rangeInput', 'cpInput', 'levelInput']) document.getElementById(id).addEventListener('input', render);
+document.querySelectorAll('input[data-type]').forEach(c => c.addEventListener('change', render));
+document.addEventListener('shockr-lang', () => { if (data) fillPickers(); render(); });
+
+render();
+load();
+</script>
+</body>
+</html>

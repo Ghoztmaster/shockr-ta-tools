@@ -165,7 +165,7 @@ test('render: labels on FG targets, none on player bases; target disappears → 
     const el = parent.children[0];
     assert.equal(el.textContent, '📌 GhoztMast…');
     assert.equal(el.style.left, '25px');
-    assert.equal(el.style.top, '29.5px');
+    assert.equal(el.style.top, '32.5px');   // cell 2 * 10 px + 1.25 cell heights
     assert.match(el.title, /GhoztMasters/);
 
     state.objects['2:2'].$CampType = 0;   // defeated

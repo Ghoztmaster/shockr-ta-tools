@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.33.0
+// @version         5.34.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -7642,6 +7642,7 @@ var ShockrTools = (() => {
   var RENDER_MS = 2e3;
   var ATTACK_MAX_AGE_MS = 7 * 24 * 3600 * 1e3;
   var NAME_MAX = 10;
+  var LABEL_TOP = 1.25;
   var CAMP_TYPES3 = { 1: "camp", 2: "camp", 3: "outpost", 4: "base" };
   var STATUS = {
     attacked: { rank: 3, icon: "\u2694", color: "#f44336" },
@@ -7972,7 +7973,8 @@ var ShockrTools = (() => {
       }
     }
     _place(label) {
-      const { left, top } = cellToScreen(label.x, label.y, 0.5, 0.95);
+      const offset = this.config ? this.config.get("maplabels.offset", "auto") : "auto";
+      const { left, top } = cellToScreen(label.x, label.y, 0.5, typeof offset === "number" ? offset : LABEL_TOP);
       const view = viewSize();
       if (top < 0 || left < 0 || top > view.height || left > view.width) {
         if (label.el.parentElement) label.el.remove();
@@ -13862,7 +13864,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.33.0";
+  var ST_VERSION = "5.34.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });

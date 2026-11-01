@@ -45,8 +45,12 @@
  * Polling and rendering only while the world map is shown. Label font: the
  * CampTracker font, at 0.6 × its fontsize (min 11 px) — CampTracker's size is
  * meant for the one-glyph "#n" marker; full size would make names unreadably
- * wide. Placed centred just below the target cell, so it never overlaps the
- * CampTracker marker (top-left of the cell).
+ * wide. Placed centred below the target cell, under the game's own label
+ * ("Camp Lvl 25", drawn on the canvas at the bottom of the cell), so it
+ * overlaps neither that label nor the CampTracker marker (top-left of the cell).
+ * The distance is in cell heights, so it scales with the zoom;
+ * `/st config set maplabels.offset <n>` moves the label top to n cell heights
+ * from the cell top (0.95 = the pre-5.34 spot), `auto` = LABEL_TOP.
  */
 import { t } from '../lib/i18n.js';
 import {
@@ -62,6 +66,8 @@ const ALLIANCE_ATTACK_POLL_MS = 60 * 1000;
 const RENDER_MS = 2000;
 const ATTACK_MAX_AGE_MS = 7 * 24 * 3600 * 1000;
 const NAME_MAX = 10;
+/** Label top in cell heights from the cell top: under the game's own label. */
+const LABEL_TOP = 1.25;
 /** ENPCCampType (report h.ad.dbn / world object $CampType) → target type, as AttackTracker. */
 const CAMP_TYPES = { 1: 'camp', 2: 'camp', 3: 'outpost', 4: 'base' };
 
@@ -432,7 +438,8 @@ export class MapLabels {
     }
 
     _place(label) {
-        const { left, top } = cellToScreen(label.x, label.y, 0.5, 0.95);
+        const offset = this.config ? this.config.get('maplabels.offset', 'auto') : 'auto';
+        const { left, top } = cellToScreen(label.x, label.y, 0.5, typeof offset === 'number' ? offset : LABEL_TOP);
         const view = viewSize();
         if (top < 0 || left < 0 || top > view.height || left > view.width) {
             if (label.el.parentElement) label.el.remove();

@@ -43,6 +43,8 @@ class ScanStorage:
         self.archive_dir.mkdir(parents=True, exist_ok=True)
         # fg_targets(): file -> ((mtime_ns, size), parsed targets)
         self._fg_cache: dict[Path, tuple[tuple[int, int], list[dict]]] = {}
+        # latest_scans(): file -> ((mtime_ns, size), newest record per city)
+        self._latest_cache: dict[Path, tuple[tuple[int, int], list[dict]]] = {}
 
     def _path(self, alliance_id: str, world_id: int) -> Path:
         safe_id = "".join(c for c in alliance_id if c.isalnum() or c in "-_")
@@ -246,6 +248,48 @@ class ScanStorage:
             self._fg_cache[path] = cached
         cutoff_ms = int((time.time() - max_age_hours * 3600) * 1000)
         return [t for t in cached[1] if t["scannedAt"] >= cutoff_ms]
+
+    def scope_worlds(self, alliance_id: str) -> list[int]:
+        """World ids with scans in one storage scope, ascending."""
+        folder = self._path(alliance_id, 0).parent
+        if not folder.is_dir():
+            return []
+        return sorted(int(p.stem) for p in folder.glob("*.jsonl") if p.stem.isdigit())
+
+    def latest_scans(self, alliance_id: str, world_id: int, max_age_hours: int = 168) -> list[dict]:
+        """
+        Layouts page: the newest full scan record per city of one storage scope
+        + world from the last max_age_hours. Parsed lines are cached per file
+        (mtime + size), like fg_targets().
+        """
+        path = self._path(alliance_id, world_id)
+        try:
+            st = path.stat()
+        except OSError:
+            return []
+        stamp = (st.st_mtime_ns, st.st_size)
+        cached = self._latest_cache.get(path)
+        if cached is None or cached[0] != stamp:
+            latest: dict[int, dict] = {}
+            try:
+                with open(path) as f:
+                    for line in f:
+                        try:
+                            r = json.loads(line)
+                        except json.JSONDecodeError:
+                            continue
+                        if not isinstance(r.get("city_id"), int):
+                            continue
+                        old = latest.get(r["city_id"])
+                        if old is None or r.get("timestamp", 0) >= old.get("timestamp", 0):
+                            latest[r["city_id"]] = r
+            except OSError as e:
+                log.warning("Error reading %s: %s", path, e)
+                return []
+            cached = (stamp, list(latest.values()))
+            self._latest_cache[path] = cached
+        cutoff_ms = int((time.time() - max_age_hours * 3600) * 1000)
+        return [r for r in cached[1] if r.get("timestamp", 0) >= cutoff_ms]
 
     def archive_old(self, max_age_days: int = 7):
         cutoff_ms = int((time.time() - max_age_days * 86400) * 1000)
