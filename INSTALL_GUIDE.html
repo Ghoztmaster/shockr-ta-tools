@@ -481,9 +481,12 @@ h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25r
       <p>Het script kan automatisch vijandelijke bases scannen en delen op een gedeelde website. Zo kan iedereen in de alliance base-layouts bekijken zonder zelf naar elke base te vliegen.</p>
       <p>Dit werkt alleen als je alliance-leider je de <strong>server-URL</strong> en een <strong>enrollment-code</strong> heeft gegeven.</p>
       <p>Plak in de <strong>game-chat</strong> één commando, met de enrollment-code achter <code>?code=</code>:</p>
-      <code class="cmd">/st config set api.url https://jullie-server-url?code=JOUW-CODE</code>
+      <code class="cmd">/st config set api.url https://packetlab.nl/shockr?code=JOUW_CODE</code>
       <p>Het script slaat de server-URL op (zonder de code) en registreert je meteen. In de chat zie je <code>[ST] Bezig met registreren...</code> en daarna <code>[ST] ✅ Succesvol geregistreerd</code>. Daarna werken WatchList, attacks en de scanner direct.</p>
-      <p>Liever los? <code>/st config set api.url https://jullie-server-url</code> zonder code, en daarna <code>/st register</code>: er opent een popup waarin je de code invult.</p>
+      <p>Al geregistreerd? Dan wordt de code overgeslagen.</p>
+      <p><strong>Alternatief (twee stappen):</strong> eerst de server-URL zonder code, daarna registreren. Er opent een popup waarin je de code invult.</p>
+      <code class="cmd">/st config set api.url https://packetlab.nl/shockr</code>
+      <code class="cmd">/st register</code>
       <div class="callout callout-info">
         <span class="callout-icon">🔌</span>
         <div><strong>Plugins aan/uit zetten:</strong> klik op het schildje (🛡️⚡) linksboven → je ziet knoppen voor elke plugin. Of typ <code>/st status</code> in de game-chat om te zien wat er aan staat.</div>
@@ -495,9 +498,12 @@ h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25r
       <p>Das Script kann automatisch feindliche Basen scannen und auf einer gemeinsamen Website teilen. So kann jeder in der Allianz Base-Layouts ansehen, ohne selbst zu jeder Base fliegen zu müssen.</p>
       <p>Das funktioniert nur, wenn dein Allianzleiter dir die <strong>Server-URL</strong> und einen <strong>Enrollment-Code</strong> gegeben hat.</p>
       <p>Füge im <strong>Spiel-Chat</strong> einen Befehl ein, mit dem Enrollment-Code hinter <code>?code=</code>:</p>
-      <code class="cmd">/st config set api.url https://eure-server-url?code=DEIN-CODE</code>
+      <code class="cmd">/st config set api.url https://packetlab.nl/shockr?code=DEIN_CODE</code>
       <p>Das Script speichert die Server-URL (ohne den Code) und registriert dich sofort. Im Chat siehst du <code>[ST] Registriere...</code> und danach <code>[ST] ✅ Erfolgreich registriert</code>. Danach funktionieren WatchList, Angriffe und der Scanner direkt.</p>
-      <p>Lieber getrennt? <code>/st config set api.url https://eure-server-url</code> ohne Code, danach <code>/st register</code>: es öffnet sich ein Popup, in das du den Code eingibst.</p>
+      <p>Schon registriert? Dann wird der Code übersprungen.</p>
+      <p><strong>Alternative (zwei Schritte):</strong> zuerst die Server-URL ohne Code, danach registrieren. Es öffnet sich ein Popup, in das du den Code eingibst.</p>
+      <code class="cmd">/st config set api.url https://packetlab.nl/shockr</code>
+      <code class="cmd">/st register</code>
       <div class="callout callout-info">
         <span class="callout-icon">🔌</span>
         <div><strong>Plugins ein-/ausschalten:</strong> klicke auf das Schildsymbol (🛡️⚡) oben links → du siehst Buttons für jedes Plugin. Oder tippe <code>/st status</code> im Spiel-Chat um zu sehen was aktiv ist.</div>
@@ -509,9 +515,12 @@ h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25r
       <p>The script can automatically scan enemy bases and share them on a shared website. This way everyone in the alliance can view base layouts without having to fly to each base themselves.</p>
       <p>This only works if your alliance leader has given you the <strong>server URL</strong> and an <strong>enrollment code</strong>.</p>
       <p>Paste one command in the <strong>game chat</strong>, with the enrollment code after <code>?code=</code>:</p>
-      <code class="cmd">/st config set api.url https://your-server-url?code=YOUR-CODE</code>
+      <code class="cmd">/st config set api.url https://packetlab.nl/shockr?code=YOUR_CODE</code>
       <p>The script stores the server URL (without the code) and registers you right away. The chat shows <code>[ST] Registering...</code> and then <code>[ST] ✅ Registered successfully</code>. WatchList, attacks and the scanner work straight after.</p>
-      <p>Prefer two steps? <code>/st config set api.url https://your-server-url</code> without a code, then <code>/st register</code>: a popup opens where you enter the code.</p>
+      <p>Already registered? Then the code is skipped.</p>
+      <p><strong>Alternative (two steps):</strong> first the server URL without a code, then register. A popup opens where you enter the code.</p>
+      <code class="cmd">/st config set api.url https://packetlab.nl/shockr</code>
+      <code class="cmd">/st register</code>
       <div class="callout callout-info">
         <span class="callout-icon">🔌</span>
         <div><strong>Toggle plugins on/off:</strong> click the shield icon (🛡️⚡) in the top-left → you'll see buttons for each plugin. Or type <code>/st status</code> in the game chat to see what's active.</div>
@@ -519,14 +528,39 @@ h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25r
     </div>
   </div>
 
-  <!-- ==================== WHAT'S NEW (5.30.0 - 5.32.0) ==================== -->
+  <!-- ==================== WHAT'S NEW (5.30.0 - 5.36.0) ==================== -->
   <div class="section">
-    <div class="section-label"><span class="num">6</span> Nieuw · Neu · New</div>
+    <div class="section-label"><span class="num">6</span> Nieuw / What’s new / Was ist neu</div>
 
     <!-- NL -->
     <div data-lang="nl">
-      <h2>Nieuw in v5.30 – v5.32</h2>
+      <h2>Nieuw</h2>
       <p>Tampermonkey werkt het script zelf bij. Werk nooit bij via <em>Importeren</em>.</p>
+      <h3>v5.36.0 <span class="version-tag">— 02-11-2026</span></h3>
+      <ul class="features">
+        <li><strong>Auto-enrollment</strong>: registreren in één commando. Zet de enrollment-code achter <code>?code=</code> in de server-URL: het script slaat de URL op en registreert je meteen (zie stap 5).</li>
+        <li>De code wordt niet opgeslagen. In de chat zie je <em>Bezig met registreren...</em>, <em>Succesvol geregistreerd</em> of <em>Registratie mislukt</em> met de reden.</li>
+        <li>Al geregistreerd: de code wordt overgeslagen. Zonder <code>?code=</code> verandert er niets; <code>/st register</code> blijft werken.</li>
+      </ul>
+      <code class="cmd">/st config set api.url https://packetlab.nl/shockr?code=JOUW_CODE</code>
+      <h3>v5.35.0 <span class="version-tag">— 02-11-2026</span></h3>
+      <ul class="features">
+        <li><strong>Base Layouts-pagina</strong> (nieuw, 🧩 Layouts in het menu van de website): elke base die je alliance met de LayoutScanner scande, met CP, Groei, CY/DF-rij, Power8 en de 7|6|5|4|3 Tib/Cry/Mix-velden. Alle kolommen zijn sorteerbaar.</li>
+        <li><strong>Resource-tabs</strong> Tiberium / Crystal / Gemengd / Power / Aanval sorteren de lijst op die grondstof; Aanval toont ook Rule OUT en de buit.</li>
+        <li>Filters op afstand tot je base of een locatie, CP-limiet, min. level, Speler/Base/Outpost/Camp en scan-leeftijd. <em>Layouts tonen</em> toont alle layouts als tegels. Klik op een coördinaat om hem te kopiëren voor de game-chat; <em>Optimizer</em> opent de layout in CnCOpt.</li>
+        <li><strong>Fix</strong>: na een update toont de website geen ruwe tekstsleutels meer (de browser hield een oud taalbestand vast).</li>
+      </ul>
+      <h3>v5.34.0 <span class="version-tag">— 31-10-2026</span></h3>
+      <ul class="features">
+        <li><strong>Map Labels</strong>: de spelernaam-labels onder camps en outposts staan nu onder het game-label (&quot;Camp Lvl 25&quot;) in plaats van erop, en schalen mee met de zoom.</li>
+      </ul>
+      <code class="cmd">/st config set maplabels.offset 1.5</code>
+      <h3>v5.33.0 <span class="version-tag">— 30-10-2026</span></h3>
+      <ul class="features">
+        <li><strong>War Dashboard</strong> (nieuw, 🛡 War op de website, alleen voor CIC, Second Commander en Officer): elk Forgotten-target per sector en tunnel als open, aangevallen of vernietigd, wie wanneer aanviel, de buit en de meest actieve spelers.</li>
+        <li><strong>Attack Tracker</strong> meldt nu ook <em>verloren</em> aanvallen, plus vernietigd ja/nee, CP-kosten en de gezondheid van de verdediger, en bevestigt elke gemelde aanval in de chat.</li>
+        <li>Aanvallen blijven 30 dagen op de server (was 7).</li>
+      </ul>
       <h3>v5.32.0 <span class="version-tag">— 30-10-2026</span></h3>
       <ul class="features">
         <li><strong>Spam Blocker</strong> (nieuw): open een mail en klik <em>Afzender blokkeren</em>. Alle mail van die speler verdwijnt uit je inbox; is alle mail van een speler geblokkeerd, dan valt die uit de lijst. Alleen voor jou: er wordt niets verstuurd of verwijderd en de speler merkt niets. Het blokkeer-icoon in de Shockr-knop (of <code>/st blocklist</code>) toont de lijst met een <em>Deblokkeren</em>-knop per speler, en een veld om op naam te blokkeren.</li>
@@ -559,8 +593,33 @@ h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25r
     </div>
     <!-- DE -->
     <div data-lang="de">
-      <h2>Neu in v5.30 – v5.32</h2>
+      <h2>Was ist neu</h2>
       <p>Tampermonkey aktualisiert das Script selbst. Nie über <em>Importieren</em> aktualisieren.</p>
+      <h3>v5.36.0 <span class="version-tag">— 02.11.2026</span></h3>
+      <ul class="features">
+        <li><strong>Auto-Enrollment</strong>: registrieren mit einem Befehl. Setze den Enrollment-Code hinter <code>?code=</code> in die Server-URL: das Script speichert die URL und registriert dich sofort (siehe Schritt 5).</li>
+        <li>Der Code wird nicht gespeichert. Im Chat siehst du <em>Registriere...</em>, <em>Erfolgreich registriert</em> oder <em>Registrierung fehlgeschlagen</em> mit dem Grund.</li>
+        <li>Bereits registriert: der Code wird übersprungen. Ohne <code>?code=</code> ändert sich nichts; <code>/st register</code> funktioniert weiter.</li>
+      </ul>
+      <code class="cmd">/st config set api.url https://packetlab.nl/shockr?code=DEIN_CODE</code>
+      <h3>v5.35.0 <span class="version-tag">— 02.11.2026</span></h3>
+      <ul class="features">
+        <li><strong>Base-Layouts-Seite</strong> (neu, 🧩 Layouts im Menü der Website): jede von deiner Allianz mit dem LayoutScanner gescannte Basis, mit CP, Wachstum, CY/DF-Reihe, Power8 und den 7|6|5|4|3 Tib/Kri/Mix-Feldern. Alle Spalten sind sortierbar.</li>
+        <li><strong>Rohstoff-Tabs</strong> Tiberium / Kristall / Gemischt / Strom / Angriff sortieren die Liste nach diesem Rohstoff; Angriff zeigt zusätzlich Rule OUT und die Beute.</li>
+        <li>Filter nach Entfernung zu deiner Basis oder einer Position, CP-Limit, Min.-Level, Spieler/Base/Outpost/Camp und Scan-Alter. <em>Layouts zeigen</em> zeigt alle Layouts als Kacheln. Klick auf eine Koordinate kopiert sie für den Spiel-Chat; <em>Optimizer</em> öffnet das Layout in CnCOpt.</li>
+        <li><strong>Fix</strong>: nach einem Update zeigt die Website keine rohen Textschlüssel mehr (der Browser behielt eine alte Sprachdatei).</li>
+      </ul>
+      <h3>v5.34.0 <span class="version-tag">— 31.10.2026</span></h3>
+      <ul class="features">
+        <li><strong>Map Labels</strong>: die Spielernamen-Labels unter Camps und Außenposten stehen jetzt unter dem Spiel-Label („Camp Lvl 25“) statt darauf und skalieren mit dem Zoom.</li>
+      </ul>
+      <code class="cmd">/st config set maplabels.offset 1.5</code>
+      <h3>v5.33.0 <span class="version-tag">— 30.10.2026</span></h3>
+      <ul class="features">
+        <li><strong>War-Dashboard</strong> (neu, 🛡 War auf der Website, nur für CIC, Second Commander und Officer): jedes Forgotten-Ziel pro Sektor und Tunnel als offen, angegriffen oder zerstört, wer wann angegriffen hat, die Beute und die aktivsten Spieler.</li>
+        <li><strong>Attack Tracker</strong> meldet jetzt auch <em>verlorene</em> Angriffe, dazu zerstört ja/nein, CP-Kosten und die Verteidiger-Gesundheit, und bestätigt jeden gemeldeten Angriff im Chat.</li>
+        <li>Angriffe bleiben 30 Tage auf dem Server (bisher 7).</li>
+      </ul>
       <h3>v5.32.0 <span class="version-tag">— 30.10.2026</span></h3>
       <ul class="features">
         <li><strong>Spam Blocker</strong> (neu): öffne eine Mail und klicke <em>Absender blockieren</em>. Alle Mails dieses Spielers verschwinden aus deinem Posteingang; sind alle Mails eines Spielers blockiert, verschwindet der Spieler aus der Liste. Nur für dich: nichts wird gesendet oder gelöscht, und der Spieler merkt nichts. Das Block-Symbol im Shockr-Knopf (oder <code>/st blocklist</code>) zeigt die Liste mit einem <em>Entsperren</em>-Knopf pro Spieler und ein Feld, um nach Name zu blockieren.</li>
@@ -593,8 +652,33 @@ h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25r
     </div>
     <!-- EN -->
     <div data-lang="en">
-      <h2>New in v5.30 – v5.32</h2>
+      <h2>What’s new</h2>
       <p>Tampermonkey updates the script by itself. Never update via <em>Import</em>.</p>
+      <h3>v5.36.0 <span class="version-tag">— 2026-11-02</span></h3>
+      <ul class="features">
+        <li><strong>Auto-enrollment</strong>: register in one command. Put the enrollment code after <code>?code=</code> in the server URL: the script stores the URL and registers you right away (see step 5).</li>
+        <li>The code is not stored. The chat shows <em>Registering...</em>, <em>Registered successfully</em> or <em>Registration failed</em> with the reason.</li>
+        <li>Already registered: the code is skipped. Without <code>?code=</code> nothing changes; <code>/st register</code> still works.</li>
+      </ul>
+      <code class="cmd">/st config set api.url https://packetlab.nl/shockr?code=YOUR_CODE</code>
+      <h3>v5.35.0 <span class="version-tag">— 2026-11-02</span></h3>
+      <ul class="features">
+        <li><strong>Base Layouts page</strong> (new, 🧩 Layouts in the website menu): every base your alliance scanned with the LayoutScanner, with CP, Growth, CY/DF row, Power8 and the 7|6|5|4|3 Tib/Cry/Mix fields. All columns are sortable.</li>
+        <li><strong>Resource tabs</strong> Tiberium / Crystal / Mixed / Power / Attack sort the list on that resource; Attack also shows Rule OUT and the loot.</li>
+        <li>Filters on distance from your base or a location, CP limit, min level, Player/Base/Outpost/Camp and scan age. <em>Get Layouts</em> shows all layouts as tiles. Click a coordinate to copy it for the game chat; <em>Optimizer</em> opens the layout in CnCOpt.</li>
+        <li><strong>Fix</strong>: after an update the website no longer shows raw text keys (the browser kept an old language file).</li>
+      </ul>
+      <h3>v5.34.0 <span class="version-tag">— 2026-10-31</span></h3>
+      <ul class="features">
+        <li><strong>Map Labels</strong>: the player name labels under camps and outposts now sit below the game's own label (&quot;Camp Lvl 25&quot;) instead of on top of it, scaling with the zoom.</li>
+      </ul>
+      <code class="cmd">/st config set maplabels.offset 1.5</code>
+      <h3>v5.33.0 <span class="version-tag">— 2026-10-30</span></h3>
+      <ul class="features">
+        <li><strong>War Dashboard</strong> (new, 🛡 War on the website, only for CIC, Second Commander and Officer): every Forgotten target per sector and tunnel as open, attacked or destroyed, who attacked and when, the loot, and the most active players.</li>
+        <li><strong>Attack Tracker</strong> now also logs <em>lost</em> attacks, plus destroyed yes/no, CP cost and the defender's health, and confirms each logged attack in chat.</li>
+        <li>Attacks are kept 30 days on the server (was 7).</li>
+      </ul>
       <h3>v5.32.0 <span class="version-tag">— 2026-10-30</span></h3>
       <ul class="features">
         <li><strong>Spam Blocker</strong> (new): open a mail and click <em>Block sender</em>. Every mail from that player disappears from your inbox; a player whose mails are all blocked drops out of the list. Only for you: nothing is sent or deleted, and the player notices nothing. The block icon in the Shockr button (or <code>/st blocklist</code>) shows the list with an <em>Unblock</em> button per player, and a field to block by name.</li>
