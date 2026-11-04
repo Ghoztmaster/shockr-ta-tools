@@ -1,5 +1,35 @@
 # Changelog
 
+## [5.35.0] — 2026-11-02
+
+Server (website) + userscript-versie, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Nieuwe pagina: Base Layouts (`/layouts`)
+- Achter de enrollment-login (website-sessie); 🧩 Layouts in het menu van alle pagina's. Mix van Leo's BaseScanner (web) en BaseScanner AIO, als eigen implementatie
+- `GET /api/layouts` (`server/layouts.py`): per stad de nieuwste LayoutScanner-scan van de eigen storage-scope (laatste 7 dagen, `ScanStorage.latest_scans`, cache per bestand op mtime + grootte) met layout-metrics, buit, CP en aanvalsstatus. Niets nieuws van de userscript nodig
+- Layout: 16 rijen × 9 uit de scan-`tiles` (base62, 3 bits per veld; rij 0-7 base, 8-15 defense). Spots `7|6|5|4|3` Tib/Cry/Mix = lege base-velden met N tiberium- / crystal- / gemengde buren (8-buurt; 8 telt als 7). Power8 = lege velden met 8 lege buren, centra die elkaar niet raken. CY/DF = rij van onderen uit de gebouwen in de scan (mdb-ids GDI/NOD/Forgotten)
+- Growth = eigen layout-score (per leeg veld tib-buren² + crystal-buren², / 10), **niet** de AIO-groeisimulatie
+- Buit = gemiddelde van de gewonnen alliance-aanvallen op dat target (city id, anders coördinaat); zonder: schatting uit hetzelfde type + level in die wereld (gemarkeerd). CP = kosten van de eigen nieuwste aanval op het target (`cpCost` sinds 5.33.0), anders onbekend
+- Aanvalsstatus: vernietigd / geclaimd (WatchList) / aangevallen na de scan / vrij
+- Resource-tabs Tiberium / Crystal / Mixed / Power / Attack: sorteren op die resource en markeren de kolom; Attack sorteert op het grootste vrije blok en toont Rule OUT en buit
+- Filters: eigen base of locatie + bereik (afstandskolom), CP-limiet, min. level, Player/Base/Outpost/Camp, scan-leeftijd. Alle kolommen sorteerbaar. "Get Layouts" = tegeloverzicht van alle gefilterde bases
+- Klik op coördinaat = `[coords]` naar het klembord; Rule OUT (alleen in deze browser); Optimizer opent de layout in CnCOpt (alleen terrein)
+- Drie talen (`ly*`-sleutels in `server/static/i18n.js`)
+
+### Fix: oude i18n.js uit de browsercache
+- Pagina's en scripts gingen zonder `Cache-Control` de deur uit; de browser cachete heuristisch (Last-Modified) en hield een pre-5.34 `i18n.js` onder de nieuwe `layouts.html` - elke `ly*`-sleutel verscheen ruw
+- Alle pagina's en `static/*.js` nu met `Cache-Control: no-cache` (altijd revalideren, goedkope 304 via ETag) en de scripts met `?v=2` in de pagina's
+- Tests: `tests/test_layouts.py`, `tests/test_web_auth.py` (cache-headers, cache-bust, alle gebruikte T()-sleutels bestaan), `tests/test_siteinfo.py`
+
+## [5.34.0] — 2026-10-31
+
+Userscript + `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Map Labels: spelernamen onder het game-label
+- De spelernaam-labels onder camps en outposts stonden op het game-label ("Camp Lvl 25", onderaan de cel op het canvas getekend). Ze staan nu daaronder: top op `LABEL_TOP` = 1,25 celhoogte vanaf de bovenkant van de cel (was 0,95). In celhoogtes, dus het schaalt mee met de zoom
+- Nieuwe instelling `/st config set maplabels.offset <n>` (celhoogtes vanaf de bovenkant van de cel, bijv. 1.5; 0.95 = de oude plek); standaard `auto`
+- Test: `tests/map-labels.test.mjs`
+
 ## [5.33.0] — 2026-10-30
 
 Userscript + server + `config/plugins.json`, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`. Geen nginx-wijziging (zie `docs/DEPLOY.md`, War Tracker).

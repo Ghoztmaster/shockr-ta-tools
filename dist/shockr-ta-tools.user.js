@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.34.0
+// @version         5.36.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -546,7 +546,7 @@ var ShockrTools = (() => {
       helpUsefulSettings: "Useful settings:",
       helpSetLanguage: "en / de / nl (default: en)",
       helpSetColors: "shockr / maelstrom (default: shockr)",
-      helpSetApiUrl: "Server URL for scanners/watcher (default https://packetlab.nl/shockr)",
+      helpSetApiUrl: "Server URL for scanners/watcher (default https://packetlab.nl/shockr); add ?code=<enrollment code> to register in the same step",
       helpSetApiKey: "Shared alliance key (transition \u2014 use /st register)",
       helpSetPvpSound: "PvP Alert siren on/off (default: true)",
       helpSetTpaSpawnMargin: "Spawn risk = base level more than this below the tunnel level (default 5)",
@@ -597,6 +597,9 @@ var ShockrTools = (() => {
       copied: "\u2705 Copied",
       copyFailed: "Copy failed \u2014 select the key and press Ctrl+C",
       registerSuccessChat: "\u2705 Registered successfully",
+      registerAutoAlready: "Already registered \u2014 the enrollment code was not used",
+      registerAutoElsewhere: "Already registered in another browser \u2014 type /st register to restore or replace your key",
+      registerAutoKeyHint: "Your personal key (website login): /st config get api.playerkey \u2014 backup: /st config export",
       registerInvalidCode: "\u274C Invalid enrollment code",
       registerNotAuthorized: "\u274C Alliance not authorized",
       registerRateLimited: "\u274C Too many attempts \u2014 try again in an hour",
@@ -1035,7 +1038,7 @@ var ShockrTools = (() => {
       helpUsefulSettings: "N\xFCtzliche Einstellungen:",
       helpSetLanguage: "en / de / nl (Standard: en)",
       helpSetColors: "shockr / maelstrom (Standard: shockr)",
-      helpSetApiUrl: "Server-URL f\xFCr Scanner/Watcher (Standard https://packetlab.nl/shockr)",
+      helpSetApiUrl: "Server-URL f\xFCr Scanner/Watcher (Standard https://packetlab.nl/shockr); mit ?code=<Registrierungscode> registrierst du dich im selben Schritt",
       helpSetApiKey: "Gemeinsamer Allianz-Key (\xDCbergang \u2014 nutze /st register)",
       helpSetPvpSound: "PvP-Alarm-Sirene an/aus (Standard: true)",
       helpSetTpaSpawnMargin: "Spawn-Risiko = Basislevel mehr als dies unter dem Tunnellevel (Standard 5)",
@@ -1083,6 +1086,9 @@ var ShockrTools = (() => {
       copied: "\u2705 Kopiert",
       copyFailed: "Kopieren fehlgeschlagen \u2014 markiere den Key und dr\xFCcke Strg+C",
       registerSuccessChat: "\u2705 Erfolgreich registriert",
+      registerAutoAlready: "Bereits registriert \u2014 der Registrierungscode wurde nicht verwendet",
+      registerAutoElsewhere: "Bereits in einem anderen Browser registriert \u2014 tippe /st register, um deinen Key wiederherzustellen oder zu ersetzen",
+      registerAutoKeyHint: "Dein pers\xF6nlicher Key (Website-Login): /st config get api.playerkey \u2014 Sicherung: /st config export",
       registerInvalidCode: "\u274C Ung\xFCltiger Registrierungscode",
       registerNotAuthorized: "\u274C Allianz nicht berechtigt",
       registerRateLimited: "\u274C Zu viele Versuche \u2014 versuche es in einer Stunde erneut",
@@ -1512,7 +1518,7 @@ var ShockrTools = (() => {
       helpUsefulSettings: "Handige instellingen:",
       helpSetLanguage: "en / de / nl (standaard: en)",
       helpSetColors: "shockr / maelstrom (standaard: shockr)",
-      helpSetApiUrl: "Server-URL voor scanners/watcher (standaard https://packetlab.nl/shockr)",
+      helpSetApiUrl: "Server-URL voor scanners/watcher (standaard https://packetlab.nl/shockr); met ?code=<enrollment-code> registreer je in dezelfde stap",
       helpSetApiKey: "Gedeelde alliance-key (overgang \u2014 gebruik /st register)",
       helpSetPvpSound: "PvP Alert-sirene aan/uit (standaard: true)",
       helpSetTpaSpawnMargin: "Spawn-risico = base level meer dan dit onder het tunnellevel (standaard 5)",
@@ -1560,6 +1566,9 @@ var ShockrTools = (() => {
       copied: "\u2705 Gekopieerd",
       copyFailed: "Kopi\xEBren mislukt \u2014 selecteer de key en druk Ctrl+C",
       registerSuccessChat: "\u2705 Succesvol geregistreerd",
+      registerAutoAlready: "Al geregistreerd \u2014 de enrollment-code is niet gebruikt",
+      registerAutoElsewhere: "Al geregistreerd in een andere browser \u2014 typ /st register om je key terug te zetten of te vervangen",
+      registerAutoKeyHint: "Je persoonlijke key (website-login): /st config get api.playerkey \u2014 back-up: /st config export",
       registerInvalidCode: "\u274C Ongeldige enrollment-code",
       registerNotAuthorized: "\u274C Alliance niet geautoriseerd",
       registerRateLimited: "\u274C Te veel pogingen \u2014 probeer het over een uur opnieuw",
@@ -3457,6 +3466,44 @@ var ShockrTools = (() => {
       return panel;
     }
   };
+
+  // lib/auto-enroll.js
+  function splitEnrollCode(value) {
+    if (typeof value !== "string") return { url: value, code: "" };
+    let parsed;
+    try {
+      parsed = new URL(value);
+    } catch {
+      return { url: value, code: "" };
+    }
+    const code = (parsed.searchParams.get("code") || "").trim();
+    if (!code) return { url: value, code: "" };
+    parsed.searchParams.delete("code");
+    return { url: parsed.toString(), code };
+  }
+  async function setApiUrl(config, api, value, say3) {
+    const { url, code } = splitEnrollCode(value);
+    config.set("api.url", url);
+    say3(`[ST] api.url = ${escapeHtml(JSON.stringify(url))}`);
+    if (!code) return;
+    if (api.registration === "player") {
+      say3(`[ST] ${escapeHtml(t("registerAutoAlready"))}`);
+      return;
+    }
+    say3(`[ST] ${escapeHtml(t("registerBusy"))}`);
+    const result = await api.enroll(code);
+    if (result.ok) {
+      say3(`[ST] ${escapeHtml(t("registerSuccessChat"))}`);
+      say3(`[ST] ${escapeHtml(t("registerAutoKeyHint"))}`);
+    } else if (result.confirm) {
+      say3(`[ST] ${escapeHtml(t("registerAutoElsewhere"))}`);
+    } else if (result.message === "registerFailed") {
+      say3(`[ST] ${escapeHtml(t("registerFailed", result.vars))}`);
+    } else {
+      const reason = t(result.message, result.vars).replace(/^❌\s*/, "");
+      say3(`[ST] ${escapeHtml(t("registerFailed", { error: reason }))}`);
+    }
+  }
 
   // lib/update-check.js
   var VERSION_PATH = "/api/version";
@@ -10313,7 +10360,7 @@ var ShockrTools = (() => {
   var DIAG_AFTER = 5;
   var TAGGED_BLOCK = /\[(coords|url|player|alliance)\][\s\S]*?\[\/\1\]/gi;
   var SHORTHAND = /\[(p|a)\]([^[\]]+?)\[\/\1\]/gi;
-  var URL = /https?:\/\/[^\s[\]]+/gi;
+  var URL2 = /https?:\/\/[^\s[\]]+/gi;
   var COORDS = /(^|[^\d])(\d{3,4})[:.](\d{3,4})([:.]\w+)?(?!\d)/g;
   var NO_COORDS_LINE = /^(http:\/\/cnc-map|\[url\])/i;
   var CLEARABLE = /* @__PURE__ */ new Set(["coords", "url", "player", "alliance", "b", "i", "u", "s"]);
@@ -10333,7 +10380,7 @@ var ShockrTools = (() => {
       const tag = kind.toLowerCase() === "p" ? "player" : "alliance";
       return `[${tag}]${name}[/${tag}]`;
     }));
-    s = outsideTags(s, (part) => part.replace(URL, (url) => `[url]${url}[/url]`));
+    s = outsideTags(s, (part) => part.replace(URL2, (url) => `[url]${url}[/url]`));
     if (!keepCoords) {
       s = outsideTags(s, (part) => part.replace(COORDS, (m, before, x, y, extra) => `${before}[coords]${x}:${y}${extra ? ":" + extra.slice(1) : ""}[/coords]`));
     }
@@ -13864,7 +13911,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.34.0";
+  var ST_VERSION = "5.36.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -14000,6 +14047,9 @@ var ShockrTools = (() => {
       getExport: () => exportConfig(config.data)
     });
     cli.register("register", () => registerPanel.open());
+    cli.onConfigSet("api.url", (value) => {
+      setApiUrl(config, api, value, chatMessage);
+    });
     cli.register("version", () => {
       chatMessage(`[ST] ${t("versionLine", { version: ST_VERSION })}`);
     });

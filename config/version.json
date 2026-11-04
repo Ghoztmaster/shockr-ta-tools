@@ -1,29 +1,68 @@
 {
-  "version": "5.34.0",
-  "date": "2026-11-01",
+  "version": "5.36.0",
+  "date": "2026-11-02",
   "changelog": [
     {
-      "version": "5.34.0",
-      "date": "2026-11-01",
+      "version": "5.36.0",
+      "date": "2026-11-02",
+      "changes": {
+        "en": [
+          "Register in one command: /st config set api.url https://packetlab.nl/shockr?code=<enrollment code> stores the server URL and registers you right away",
+          "The code is not stored; feedback in the chat (Registering... / Registered successfully / Registration failed: reason)",
+          "Already registered: the code is skipped. Without ?code= nothing changes (/st register still works)"
+        ],
+        "de": [
+          "Registrieren mit einem Befehl: /st config set api.url https://packetlab.nl/shockr?code=<Registrierungscode> speichert die Server-URL und registriert dich sofort",
+          "Der Code wird nicht gespeichert; Rückmeldung im Chat (Registriere... / Erfolgreich registriert / Registrierung fehlgeschlagen: Grund)",
+          "Bereits registriert: der Code wird übersprungen. Ohne ?code= ändert sich nichts (/st register funktioniert weiter)"
+        ],
+        "nl": [
+          "Registreren in één commando: /st config set api.url https://packetlab.nl/shockr?code=<enrollment-code> slaat de server-URL op en registreert je meteen",
+          "De code wordt niet opgeslagen; terugmelding in de chat (Bezig met registreren... / Succesvol geregistreerd / Registratie mislukt: reden)",
+          "Al geregistreerd: de code wordt overgeslagen. Zonder ?code= verandert er niets (/st register blijft werken)"
+        ]
+      }
+    },
+    {
+      "version": "5.35.0",
+      "date": "2026-11-02",
       "changes": {
         "en": [
           "New Layouts page (🧩 Layouts in the menu): every base your alliance scanned with the LayoutScanner, with CP, Growth, CY/DF row, Power8 and the 7|6|5|4|3 Tib/Cry/Mix fields; all columns sortable",
-          "Filters: distance from your base or a location, CP limit, min level, Player/Base/Outpost/Camp and scan age; \"Get Layouts\" shows all layouts as tiles, Attack adds loot and attack status",
+          "Resource tabs Tiberium / Crystal / Mixed / Power / Attack sort the list on that resource; Attack also shows Rule OUT and the loot",
+          "Filters: distance from your base or a location, CP limit, min level, Player/Base/Outpost/Camp and scan age; \"Get Layouts\" shows all layouts as tiles",
           "Click a coordinate to copy it for the game chat; Rule OUT hides bases you have checked; Optimizer opens the layout in CnCOpt",
+          "Fix: after an update the website no longer shows raw text keys (the browser kept an old language file)"
+        ],
+        "de": [
+          "Neue Layouts-Seite (🧩 Layouts im Menü): jede von deiner Allianz mit dem LayoutScanner gescannte Basis, mit CP, Wachstum, CY/DF-Reihe, Power8 und den 7|6|5|4|3 Tib/Kri/Mix-Feldern; alle Spalten sortierbar",
+          "Rohstoff-Tabs Tiberium / Kristall / Gemischt / Strom / Angriff sortieren die Liste nach diesem Rohstoff; Angriff zeigt zusätzlich Rule OUT und die Beute",
+          "Filter: Entfernung zu deiner Basis oder einer Position, CP-Limit, Min.-Level, Spieler/Base/Outpost/Camp und Scan-Alter; „Layouts zeigen“ zeigt alle Layouts als Kacheln",
+          "Klick auf eine Koordinate kopiert sie für den Spiel-Chat; Rule OUT blendet geprüfte Basen aus; Optimizer öffnet das Layout in CnCOpt",
+          "Fix: nach einem Update zeigt die Website keine rohen Textschlüssel mehr (der Browser behielt eine alte Sprachdatei)"
+        ],
+        "nl": [
+          "Nieuwe Layouts-pagina (🧩 Layouts in het menu): elke base die je alliance met de LayoutScanner scande, met CP, Groei, CY/DF-rij, Power8 en de 7|6|5|4|3 Tib/Cry/Mix-velden; alle kolommen sorteerbaar",
+          "Resource-tabs Tiberium / Crystal / Gemengd / Power / Aanval sorteren de lijst op die grondstof; Aanval toont ook Rule OUT en de buit",
+          "Filters: afstand tot je base of een locatie, CP-limiet, min. level, Speler/Base/Outpost/Camp en scan-leeftijd; \"Layouts tonen\" toont alle layouts als tegels",
+          "Klik op een coördinaat om hem te kopiëren voor de game-chat; Rule OUT verbergt bases die je hebt bekeken; Optimizer opent de layout in CnCOpt",
+          "Fix: na een update toont de website geen ruwe tekstsleutels meer (de browser hield een oud taalbestand vast)"
+        ]
+      }
+    },
+    {
+      "version": "5.34.0",
+      "date": "2026-10-31",
+      "changes": {
+        "en": [
           "Map Labels: the player name labels under camps and outposts now sit below the game's own label (\"Camp Lvl 25\") instead of on top of it, scaling with the zoom",
           "New setting maplabels.offset: label height in cells from the top of the cell (e.g. 1.5); auto is the default"
         ],
         "de": [
-          "Neue Layouts-Seite (🧩 Layouts im Menü): jede von deiner Allianz mit dem LayoutScanner gescannte Basis, mit CP, Wachstum, CY/DF-Reihe, Power8 und den 7|6|5|4|3 Tib/Kri/Mix-Feldern; alle Spalten sortierbar",
-          "Filter: Entfernung zu deiner Basis oder einer Position, CP-Limit, Min.-Level, Spieler/Base/Outpost/Camp und Scan-Alter; „Layouts zeigen“ zeigt alle Layouts als Kacheln, Angriff ergänzt Beute und Angriffsstatus",
-          "Klick auf eine Koordinate kopiert sie für den Spiel-Chat; Rule OUT blendet geprüfte Basen aus; Optimizer öffnet das Layout in CnCOpt",
           "Map Labels: die Spielernamen-Labels unter Camps und Außenposten stehen jetzt unter dem Spiel-Label („Camp Lvl 25“) statt darauf und skalieren mit dem Zoom",
           "Neue Einstellung maplabels.offset: Label-Höhe in Feldern ab Feldoberkante (z. B. 1.5); Standard ist auto"
         ],
         "nl": [
-          "Nieuwe Layouts-pagina (🧩 Layouts in het menu): elke base die je alliance met de LayoutScanner scande, met CP, Groei, CY/DF-rij, Power8 en de 7|6|5|4|3 Tib/Cry/Mix-velden; alle kolommen sorteerbaar",
-          "Filters: afstand tot je base of een locatie, CP-limiet, min. level, Speler/Base/Outpost/Camp en scan-leeftijd; \"Layouts tonen\" toont alle layouts als tegels, Aanval voegt buit en aanvalsstatus toe",
-          "Klik op een coördinaat om hem te kopiëren voor de game-chat; Rule OUT verbergt bases die je hebt bekeken; Optimizer opent de layout in CnCOpt",
           "Map Labels: de spelernaam-labels onder camps en outposts staan nu onder het game-label (\"Camp Lvl 25\") in plaats van erop, en schalen mee met de zoom",
           "Nieuwe instelling maplabels.offset: labelhoogte in velden vanaf de bovenkant van het veld (bijv. 1.5); standaard auto"
         ]
@@ -65,36 +104,6 @@
         "nl": [
           "Nieuwe plugin Spam Blocker: \"Afzender blokkeren\" in een geopende mail verbergt alle mail van die speler, alleen voor jou (er wordt niets verstuurd of verwijderd, de speler merkt niets)",
           "Blokkeerlijst-paneel (blokkeer-icoon in de Shockr-knop, of /st blocklist): alle geblokkeerde spelers met een Deblokkeren-knop, en een naamveld om een speler op naam te blokkeren"
-        ]
-      }
-    },
-    {
-      "version": "5.31.2",
-      "date": "2026-10-29",
-      "changes": {
-        "en": [
-          "Worthless POIs without nearby alliance bases are now hidden from the tunnel panel."
-        ],
-        "de": [
-          "Wertlose POIs ohne Allianzbasen in der Nähe werden im Tunnel-Panel jetzt ausgeblendet."
-        ],
-        "nl": [
-          "Waardeloze POI's zonder alliance-bases in de buurt worden nu verborgen in het tunnelpaneel."
-        ]
-      }
-    },
-    {
-      "version": "5.31.1",
-      "date": "2026-10-29",
-      "changes": {
-        "en": [
-          "Tunnel & POI Analyzer: low bases in a tunnel zone are now called \"spawn risk\" (they make low camps spawn there); the setting is now tpa.spawnmargin (default 5)"
-        ],
-        "de": [
-          "Tunnel- & POI-Analyse: niedrige Basen in einer Tunnelzone heißen jetzt „Spawn-Risiko“ (durch sie spawnen dort niedrige Camps); die Einstellung heißt jetzt tpa.spawnmargin (Standard 5)"
-        ],
-        "nl": [
-          "Tunnel & POI Analyzer: lage bases in een tunnel-zone heten nu \"spawn-risico\" (daardoor spawnen er lage camps); de instelling heet nu tpa.spawnmargin (standaard 5)"
         ]
       }
     }

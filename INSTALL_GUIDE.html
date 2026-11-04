@@ -480,11 +480,10 @@ h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25r
       <h2>Alliance-scanner instellen (optioneel)</h2>
       <p>Het script kan automatisch vijandelijke bases scannen en delen op een gedeelde website. Zo kan iedereen in de alliance base-layouts bekijken zonder zelf naar elke base te vliegen.</p>
       <p>Dit werkt alleen als je alliance-leider je de <strong>server-URL</strong> en een <strong>enrollment-code</strong> heeft gegeven.</p>
-      <p>Typ in de <strong>game-chat</strong>:</p>
-      <code class="cmd">/st config set api.url https://jullie-server-url</code>
-      <p>Registreer je daarna:</p>
-      <code class="cmd">/st register</code>
-      <p>Er opent een klein popup-venster in het spel. Vul daar de enrollment-code in die je van je alliance hebt gekregen.</p>
+      <p>Plak in de <strong>game-chat</strong> één commando, met de enrollment-code achter <code>?code=</code>:</p>
+      <code class="cmd">/st config set api.url https://jullie-server-url?code=JOUW-CODE</code>
+      <p>Het script slaat de server-URL op (zonder de code) en registreert je meteen. In de chat zie je <code>[ST] Bezig met registreren...</code> en daarna <code>[ST] ✅ Succesvol geregistreerd</code>. Daarna werken WatchList, attacks en de scanner direct.</p>
+      <p>Liever los? <code>/st config set api.url https://jullie-server-url</code> zonder code, en daarna <code>/st register</code>: er opent een popup waarin je de code invult.</p>
       <div class="callout callout-info">
         <span class="callout-icon">🔌</span>
         <div><strong>Plugins aan/uit zetten:</strong> klik op het schildje (🛡️⚡) linksboven → je ziet knoppen voor elke plugin. Of typ <code>/st status</code> in de game-chat om te zien wat er aan staat.</div>
@@ -495,11 +494,10 @@ h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25r
       <h2>Allianz-Scanner einrichten (optional)</h2>
       <p>Das Script kann automatisch feindliche Basen scannen und auf einer gemeinsamen Website teilen. So kann jeder in der Allianz Base-Layouts ansehen, ohne selbst zu jeder Base fliegen zu müssen.</p>
       <p>Das funktioniert nur, wenn dein Allianzleiter dir die <strong>Server-URL</strong> und einen <strong>Enrollment-Code</strong> gegeben hat.</p>
-      <p>Tippe im <strong>Spiel-Chat</strong>:</p>
-      <code class="cmd">/st config set api.url https://eure-server-url</code>
-      <p>Dann registriere dich:</p>
-      <code class="cmd">/st register</code>
-      <p>Es öffnet sich ein kleines Popup-Fenster im Spiel. Gib dort den Enrollment-Code ein, den du von deiner Allianz bekommen hast.</p>
+      <p>Füge im <strong>Spiel-Chat</strong> einen Befehl ein, mit dem Enrollment-Code hinter <code>?code=</code>:</p>
+      <code class="cmd">/st config set api.url https://eure-server-url?code=DEIN-CODE</code>
+      <p>Das Script speichert die Server-URL (ohne den Code) und registriert dich sofort. Im Chat siehst du <code>[ST] Registriere...</code> und danach <code>[ST] ✅ Erfolgreich registriert</code>. Danach funktionieren WatchList, Angriffe und der Scanner direkt.</p>
+      <p>Lieber getrennt? <code>/st config set api.url https://eure-server-url</code> ohne Code, danach <code>/st register</code>: es öffnet sich ein Popup, in das du den Code eingibst.</p>
       <div class="callout callout-info">
         <span class="callout-icon">🔌</span>
         <div><strong>Plugins ein-/ausschalten:</strong> klicke auf das Schildsymbol (🛡️⚡) oben links → du siehst Buttons für jedes Plugin. Oder tippe <code>/st status</code> im Spiel-Chat um zu sehen was aktiv ist.</div>
@@ -510,11 +508,10 @@ h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25r
       <h2>Set up the alliance scanner (optional)</h2>
       <p>The script can automatically scan enemy bases and share them on a shared website. This way everyone in the alliance can view base layouts without having to fly to each base themselves.</p>
       <p>This only works if your alliance leader has given you the <strong>server URL</strong> and an <strong>enrollment code</strong>.</p>
-      <p>Type in the <strong>game chat</strong>:</p>
-      <code class="cmd">/st config set api.url https://your-server-url</code>
-      <p>Then register:</p>
-      <code class="cmd">/st register</code>
-      <p>A small popup window opens inside the game. Enter the enrollment code you received from your alliance.</p>
+      <p>Paste one command in the <strong>game chat</strong>, with the enrollment code after <code>?code=</code>:</p>
+      <code class="cmd">/st config set api.url https://your-server-url?code=YOUR-CODE</code>
+      <p>The script stores the server URL (without the code) and registers you right away. The chat shows <code>[ST] Registering...</code> and then <code>[ST] ✅ Registered successfully</code>. WatchList, attacks and the scanner work straight after.</p>
+      <p>Prefer two steps? <code>/st config set api.url https://your-server-url</code> without a code, then <code>/st register</code>: a popup opens where you enter the code.</p>
       <div class="callout callout-info">
         <span class="callout-icon">🔌</span>
         <div><strong>Toggle plugins on/off:</strong> click the shield icon (🛡️⚡) in the top-left → you'll see buttons for each plugin. Or type <code>/st status</code> in the game chat to see what's active.</div>
