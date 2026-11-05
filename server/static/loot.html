@@ -200,11 +200,11 @@ const COLUMNS = [
     { key: 'crystal', label: () => 'Crystal', value: t => t.totalCrystal, num: true },
     { key: 'credits', label: () => 'Credits', value: t => t.totalCredits, num: true },
     { key: 'rp', label: () => 'RP', value: t => known(t.totalRp), num: true },
-    { key: 'total', label: () => T('lootColTotal'), tip: () => T('lootTotalTip'), value: t => t.totalAll, num: true },
     { key: 'rt', label: () => 'RT', tip: () => T('lootRtTip'), value: t => known(t.totalRepairSeconds), num: true },
+    { key: 'total', label: () => T('lootColTotal'), tip: () => T('lootTotalTip'), value: t => t.totalAll, num: true },
+    { key: 'avg', label: () => T('lootColAvg'), value: t => t.avgTotal, num: true },
     { key: 'perCp', label: () => T('lootColPerCp'), tip: () => T('lootPerCpTip'), value: t => known(t.perCp), num: true },
     { key: 'perRt', label: () => T('lootColPerRt'), tip: () => T('lootPerRtTip'), value: t => known(t.perRt), num: true },
-    { key: 'avg', label: () => T('lootColAvg'), value: t => t.avgTotal, num: true },
     { key: 'last', label: () => T('lootColLast'), value: t => t.lastAttackMs, num: true },
 ];
 
@@ -325,11 +325,11 @@ function targetHtml(t) {
         <td class="num">${fmt(t.totalCrystal)}</td>
         <td class="num">${fmt(t.totalCredits)}</td>
         <td class="num">${t.totalRp == null ? '—' : fmt(t.totalRp)}</td>
-        <td class="num">${fmt(t.totalAll)}</td>
         <td class="num">${fmtRt(t.totalRepairSeconds)}</td>
+        <td class="num">${fmt(t.totalAll)}</td>
+        <td class="num avg" title="${esc(avgTip)}">${fmt(t.avgTotal)}</td>
         <td class="num" title="${t.totalCp == null ? '' : esc(T('lootCpSpentTip', { cp: t.totalCp }))}">${fmtRate(t.perCp)}</td>
         <td class="num">${fmtRate(t.perRt)}</td>
-        <td class="num avg" title="${esc(avgTip)}">${fmt(t.avgTotal)}</td>
         <td class="num" title="${esc(new Date(t.lastAttackMs).toLocaleString())}">${esc(ago(t.lastAttackMs))}</td>
     </tr>`;
     if (!expanded) return row;
