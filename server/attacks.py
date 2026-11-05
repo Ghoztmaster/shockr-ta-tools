@@ -62,6 +62,7 @@ TUNNEL_RADIUS = 10
 MAX_FUTURE_MS = 3600 * 1000
 MAX_BATCH = 50
 LOOT_MAX = 1e12
+REPAIR_MAX_S = 7 * 86400
 ALLIANCE_WINDOW_MS = 24 * 3600 * 1000
 # The only fields GET /api/attacks/alliance hands out (no loot, no ids)
 ALLIANCE_FIELDS = ("playerName", "targetType", "targetLevel", "targetX", "targetY", "timestamp")
@@ -95,11 +96,19 @@ class AttackPayload(BaseModel):
     worldHeight: int | None = Field(default=None, gt=0, le=10000)
     sectorCount: int | None = Field(default=None, gt=0, le=64)
     playerRole: str | None = Field(default=None, max_length=20)  # attacker's alliance role: refreshes the key's role, not stored here
+    # 5.37.0 (Loot efficiency), optional: report GetAttackerMaxRepairTime() / GetAttackerTotalResourceReceived(ResearchPoints)
+    repairSeconds: int | None = Field(default=None, ge=0, le=REPAIR_MAX_S)
+    rpGained: float | None = Field(default=None, ge=0, le=LOOT_MAX)
 
     @field_validator("lootTib", "lootCrystal", "lootCredits")
     @classmethod
     def whole_numbers(cls, v: float) -> int:
         return int(round(v))
+
+    @field_validator("rpGained")
+    @classmethod
+    def whole_rp(cls, v: float | None) -> int | None:
+        return None if v is None else int(round(v))
 
     @field_validator("targetType")
     @classmethod
@@ -343,8 +352,15 @@ def per_target(attacks: list[dict]) -> list[dict]:
     level come from the most recent attack on it (a camp can respawn as
     something else on the same spot); players = unique names, most attacks
     first. Averages are rounded per attack; avgTotal = tib + crystal + credits
-    per attack. `attackList` (newest first) feeds the page's detail rows.
+    per attack. avgTotal = (tib + crystal + credits + RP) / attacks (5.37.0: with
+    RP, consistent with totalAll). `attackList` (newest first) feeds the page's detail rows.
     Order: highest avgTotal first (most lucrative on top).
+
+    Efficiency (5.37.0): totalRp / totalRepairSeconds / totalCp are None when
+    no attack on the target carried the field (records before 5.37.0 have no
+    RP/RT, before 5.33.0 no CP). totalAll = tib + crystal + credits + RP.
+    perCp / perRt divide the total of only the attacks that carry CP / RT by
+    their CP sum / RT sum in hours, so old attacks without the field do not skew them.
     """
     by_pos: dict[tuple[int, int], list[dict]] = {}
     for a in attacks:
@@ -361,6 +377,9 @@ def per_target(attacks: list[dict]) -> list[dict]:
         cry = sum(a["lootCrystal"] for a in rows)
         cred = sum(a["lootCredits"] for a in rows)
         last = rows[0]
+        rp = _sum_known(rows, "rpGained")
+        rt = _sum_known(rows, "repairSeconds")
+        cp = _sum_known(rows, "cpCost")
         result.append({
             "x": x,
             "y": y,
@@ -374,13 +393,36 @@ def per_target(attacks: list[dict]) -> list[dict]:
             "avgTib": round(tib / n),
             "avgCrystal": round(cry / n),
             "avgCredits": round(cred / n),
-            "avgTotal": round((tib + cry + cred) / n),
+            "avgRp": round((rp or 0) / n),
+            "avgTotal": round((tib + cry + cred + (rp or 0)) / n),
+            "totalRp": rp,
+            "totalRepairSeconds": rt,
+            "totalCp": cp,
+            "totalAll": tib + cry + cred + (rp or 0),
+            "perCp": _yield_per(rows, "cpCost"),
+            "perRt": _yield_per(rows, "repairSeconds", per=3600),
             "lastAttack": _iso(last["timestamp"]),
             "lastAttackMs": last["timestamp"],
             "attackList": rows,
         })
     result.sort(key=lambda t: (-t["avgTotal"], -t["attackCount"], t["x"], t["y"]))
     return result
+
+
+def _sum_known(rows: list[dict], key: str) -> int | None:
+    """Sum of `key` over the rows that carry it; None when none does."""
+    vals = [a[key] for a in rows if a.get(key) is not None]
+    return sum(vals) if vals else None
+
+
+def _yield_per(rows: list[dict], key: str, per: int = 1) -> float | None:
+    """(tib + crystal + credits + RP) per `per` units of `key` (per CP; per 3600 RT seconds = per hour), over the rows that carry it; None if no such row or the sum is 0."""
+    known = [a for a in rows if a.get(key) is not None]
+    spent = sum(a[key] for a in known)
+    if not spent:
+        return None
+    got = sum(a["lootTib"] + a["lootCrystal"] + a["lootCredits"] + (a.get("rpGained") or 0) for a in known)
+    return round(got / (spent / per), 2)
 
 
 def _iso(ms: int) -> str:
@@ -419,6 +461,8 @@ def _public(r: dict) -> dict:
         "destroyed": is_destroyed(r),
         "targetId": r.get("targetId"),
         "cpCost": r.get("cpCost"),
+        "repairSeconds": r.get("repairSeconds"),
+        "rpGained": r.get("rpGained"),
         "defenderHpEnd": r.get("defenderHpEnd"),
         "cyPct": r.get("cyPct"),
         "dfPct": r.get("dfPct"),

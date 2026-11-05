@@ -1,5 +1,24 @@
 # Changelog
 
+## [5.37.0] — 2026-11-05
+
+Userscript + server (website), `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Attack Tracker: repair time en RP per aanval
+- `repairSeconds` uit `rep.GetAttackerMaxRepairTime()` en `rpGained` uit `rep.GetAttackerTotalResourceReceived(EResourceType.ResearchPoints)` (beide live geverifieerd, GAME_CLIENT_API §12)
+- Bewust uit het rapport en niet uit de huidige RT van de base (AutoRepair-route): de tracker pakt rapporten ook uren/dagen later op (backfill), dan hoort de RT van nu niet bij die aanval
+- Getter ontbreekt of rapport kwam niet binnen (timeout): het veld blijft weg uit de POST
+
+### Server
+- `AttackPayload`: optioneel `repairSeconds` (0 - 7 dagen) en `rpGained`; oude records zonder deze velden blijven werken
+- `GET /api/attacks/targets` per target: `totalRp`, `totalRepairSeconds`, `totalCp` (null als geen enkele aanval het veld heeft), `totalAll` (tib + crystal + credits + RP), `perCp`, `perRt`. Opbrengst/CP en /RT rekenen alleen met de aanvallen die CP resp. RT hebben, zodat oude aanvallen het getal niet scheeftrekken. Per aanval in `attackList` ook `repairSeconds` en `rpGained`
+
+### Loot-pagina
+- Nieuwe kolommen RP, Totaal, RT ("45m" / "2u 05m"), Opbrengst/CP en Opbrengst/RT (per uur RT), alle sorteerbaar; onbekend = "—" en onderaan bij sorteren
+- Gem/aanval telt RP nu mee: (tib + crystal + credits + RP) / aanvallen, consistent met Totaal
+- Samenvatting met RP en totale RT; detailregels per aanval met RP, RT en CP
+- Drie talen
+
 ## [5.35.0] — 2026-11-02
 
 Server (website) + userscript-versie, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

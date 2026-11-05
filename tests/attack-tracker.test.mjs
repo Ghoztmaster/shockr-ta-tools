@@ -132,6 +132,17 @@ test('War Tracker fields: destroyed, target id, CP, health, world, role', () => 
     assert.ok(!('destroyed' in bare) && !('cpCost' in bare) && !('playerRole' in bare), 'unknown fields are left out');
 });
 
+test('RP and repair time: sent when read, left out when unknown', () => {
+    const a = mod.buildAttack(header(), 477, { tib: 0, cry: 0, credits: 0, rp: 8614.4, repairSeconds: 6803.2 });
+    assert.equal(a.rpGained, 8614);
+    assert.equal(a.repairSeconds, 6803);
+    const z = mod.buildAttack(header(), 477, { tib: 0, cry: 0, credits: 0, rp: 0, repairSeconds: 0 });
+    assert.equal(z.rpGained, 0);
+    assert.equal(z.repairSeconds, 0);
+    const none = mod.buildAttack(header(), 477, { tib: 0, cry: 0, credits: 0, rp: undefined, repairSeconds: NaN });
+    assert.ok(!('rpGained' in none) && !('repairSeconds' in none));
+});
+
 test('chat lines: one per attack, a count for a backlog', () => {
     const a = (won) => ({ targetType: 'camp', targetLevel: 27.4, targetX: 102, targetY: 296, won });
     assert.deepEqual(mod.chatLines([a(true), a(false)]),

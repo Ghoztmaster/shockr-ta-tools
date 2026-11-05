@@ -16,6 +16,10 @@
  *   reports.RequestReportData(id) + ReportDelivered event
  *     rep.GetAttackerTotalResourceReceived(EResourceType.Tiberium/Crystal/Gold) — loot
  *     rep.get_DefenderStart/EndHealthPercent() — defender health (§13, verified on defence reports)
+ *     rep.GetAttackerTotalResourceReceived(EResourceType.ResearchPoints) — RP gained (§12, verified)
+ *     rep.GetAttackerMaxRepairTime() — repair time the attack cost, seconds (§12, verified)
+ *       Read from the report, not from the base's current repair time: reports are also
+ *       picked up hours/days later (backfill), when the base's RT says nothing about this attack.
  * Never MarkReportsAsRead / DeleteReports / set_IsRead: the inbox is not touched.
  *
  * Logged when tp = NPCRaid (no PvP) and the target is a camp / outpost / base
@@ -207,7 +211,7 @@ export class AttackTracker {
         if (!item || item.header.i !== id) return;
         clearTimeout(item.timer);
         this._inFlight = null;
-        this._commit(item, { ...readLoot(rep), ...readDefenderHealth(rep) });
+        this._commit(item, { ...readLoot(rep), ...readDefenderHealth(rep), repairSeconds: readRepairSeconds(rep) });
         this._processNext();
     }
 
@@ -307,8 +311,8 @@ export function isLoggable(h) {
 /**
  * POST body for one attack (AttackPayload in server/attacks.py), or null when
  * the header is not loggable. `d`: {tib, cry, credits} loot, optional
- * defenderHpStart/End, cpCost, world {width, height, count}, role - a
- * missing one is left out of the body.
+ * defenderHpStart/End, cpCost, rp, repairSeconds, world {width, height, count},
+ * role - a missing one is left out of the body.
  */
 export function buildAttack(h, worldId, d) {
     if (!isLoggable(h)) return null;
@@ -334,6 +338,8 @@ export function buildAttack(h, worldId, d) {
     }
     if (Number.isInteger(h.obi) && h.obi > 0) attack.targetId = h.obi;
     if (Number.isFinite(d.cpCost) && d.cpCost >= 0) attack.cpCost = Math.round(d.cpCost);
+    if (Number.isFinite(d.rp) && d.rp >= 0) attack.rpGained = Math.round(d.rp);
+    if (Number.isFinite(d.repairSeconds) && d.repairSeconds >= 0) attack.repairSeconds = Math.round(d.repairSeconds);
     for (const k of ['defenderHpStart', 'defenderHpEnd']) {
         if (Number.isFinite(d[k])) attack[k] = Math.min(100, Math.max(0, Math.round(d[k] * 10) / 10));
     }
@@ -379,12 +385,25 @@ function readDefenderHealth(rep) {
     return { defenderHpStart: get('get_DefenderStartHealthPercent'), defenderHpEnd: get('get_DefenderEndHealthPercent') };
 }
 
+/** Loot per resource; RP is undefined (left out of the POST) when the enum key or getter is missing. */
 function readLoot(rep) {
     const E = ClientLib.Base.EResourceType;
-    const get = (name) => {
-        try { return E[name] === undefined ? 0 : rep.GetAttackerTotalResourceReceived(E[name]); } catch { return 0; }
+    const get = (name, fallback) => {
+        try {
+            if (E[name] === undefined) return fallback;
+            const v = Number(rep.GetAttackerTotalResourceReceived(E[name]));
+            return Number.isFinite(v) ? v : fallback;
+        } catch { return fallback; }
     };
-    return { tib: get('Tiberium'), cry: get('Crystal'), credits: get('Gold') };
+    return { tib: get('Tiberium', 0), cry: get('Crystal', 0), credits: get('Gold', 0), rp: get('ResearchPoints', undefined) };
+}
+
+/** Repair time this attack cost (seconds), or undefined when the getter is missing. */
+function readRepairSeconds(rep) {
+    try {
+        const v = typeof rep.GetAttackerMaxRepairTime === 'function' ? Number(rep.GetAttackerMaxRepairTime()) : NaN;
+        return Number.isFinite(v) ? v : undefined;
+    } catch { return undefined; }
 }
 
 function nonNeg(v) {

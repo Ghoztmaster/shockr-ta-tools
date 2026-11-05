@@ -1,7 +1,28 @@
 {
-  "version": "5.36.0",
-  "date": "2026-11-02",
+  "version": "5.37.0",
+  "date": "2026-11-05",
   "changelog": [
+    {
+      "version": "5.37.0",
+      "date": "2026-11-05",
+      "changes": {
+        "en": [
+          "Attack Tracker now also sends the repair time (RT) and research points (RP) of each attack, read from the combat report",
+          "Loot page: new columns RP, Total (tib + crystal + credits + RP), RT, Yield/CP and Yield/RT; the summary shows RP and total RT; Avg/attack now includes RP",
+          "Attacks from before 5.37.0 have no RP/RT and show —"
+        ],
+        "de": [
+          "Attack Tracker sendet jetzt auch die Reparaturzeit (RT) und Forschungspunkte (FP) jedes Angriffs, aus dem Kampfbericht gelesen",
+          "Beute-Seite: neue Spalten FP, Gesamt (Tib + Kristall + Credits + FP), RT, Ertrag/KP und Ertrag/RT; die Zusammenfassung zeigt FP und die gesamte RT; Ø/Angriff enthält jetzt FP",
+          "Angriffe vor 5.37.0 haben keine FP/RT und zeigen —"
+        ],
+        "nl": [
+          "Attack Tracker stuurt nu ook de repair time (RT) en research points (RP) van elke aanval mee, gelezen uit het gevechtsrapport",
+          "Loot-pagina: nieuwe kolommen RP, Totaal (tib + crystal + credits + RP), RT, Opbrengst/CP en Opbrengst/RT; de samenvatting toont RP en totale RT; Gem/aanval telt nu RP mee",
+          "Aanvallen van voor 5.37.0 hebben geen RP/RT en tonen —"
+        ]
+      }
+    },
     {
       "version": "5.36.0",
       "date": "2026-11-02",
@@ -86,24 +107,6 @@
           "Nieuwe War-pagina op de website voor de alliance-leiding (CIC, Second Commander, Officer): elk Forgotten-target per sector en tunnel als open, aangevallen of vernietigd, wie wanneer aanviel, de buit en de meest actieve spelers",
           "Attack Tracker meldt nu ook verloren aanvallen, plus vernietigd ja/nee, CP-kosten en de gezondheid van de verdediger, en bevestigt elke gemelde aanval in de chat",
           "Aanvallen blijven 30 dagen op de server (was 7)"
-        ]
-      }
-    },
-    {
-      "version": "5.32.0",
-      "date": "2026-10-30",
-      "changes": {
-        "en": [
-          "New plugin Spam Blocker: \"Block sender\" in an opened mail hides all mail from that player, only for you (nothing is sent or deleted, the player notices nothing)",
-          "Block list panel (block icon in the Shockr button, or /st blocklist): every blocked player with an Unblock button, and a name field to block a player by name"
-        ],
-        "de": [
-          "Neues Plugin Spam Blocker: „Absender blockieren“ in einer geöffneten Mail blendet alle Mails dieses Spielers aus, nur für dich (nichts wird gesendet oder gelöscht, der Spieler merkt nichts)",
-          "Blocklisten-Panel (Block-Symbol im Shockr-Knopf oder /st blocklist): alle blockierten Spieler mit Entsperren-Knopf, und ein Namensfeld, um einen Spieler nach Name zu blockieren"
-        ],
-        "nl": [
-          "Nieuwe plugin Spam Blocker: \"Afzender blokkeren\" in een geopende mail verbergt alle mail van die speler, alleen voor jou (er wordt niets verstuurd of verwijderd, de speler merkt niets)",
-          "Blokkeerlijst-paneel (blokkeer-icoon in de Shockr-knop, of /st blocklist): alle geblokkeerde spelers met een Deblokkeren-knop, en een naamveld om een speler op naam te blokkeren"
         ]
       }
     }

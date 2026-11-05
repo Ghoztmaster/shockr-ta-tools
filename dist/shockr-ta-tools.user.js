@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.36.0
+// @version         5.37.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -6839,7 +6839,7 @@ var ShockrTools = (() => {
       if (!item || item.header.i !== id) return;
       clearTimeout(item.timer);
       this._inFlight = null;
-      this._commit(item, { ...readLoot(rep), ...readDefenderHealth(rep) });
+      this._commit(item, { ...readLoot(rep), ...readDefenderHealth(rep), repairSeconds: readRepairSeconds(rep) });
       this._processNext();
     }
     _onTimeout() {
@@ -6947,6 +6947,8 @@ var ShockrTools = (() => {
     }
     if (Number.isInteger(h.obi) && h.obi > 0) attack.targetId = h.obi;
     if (Number.isFinite(d.cpCost) && d.cpCost >= 0) attack.cpCost = Math.round(d.cpCost);
+    if (Number.isFinite(d.rp) && d.rp >= 0) attack.rpGained = Math.round(d.rp);
+    if (Number.isFinite(d.repairSeconds) && d.repairSeconds >= 0) attack.repairSeconds = Math.round(d.repairSeconds);
     for (const k of ["defenderHpStart", "defenderHpEnd"]) {
       if (Number.isFinite(d[k])) attack[k] = Math.min(100, Math.max(0, Math.round(d[k] * 10) / 10));
     }
@@ -6990,14 +6992,24 @@ var ShockrTools = (() => {
   }
   function readLoot(rep) {
     const E = ClientLib.Base.EResourceType;
-    const get = (name) => {
+    const get = (name, fallback) => {
       try {
-        return E[name] === void 0 ? 0 : rep.GetAttackerTotalResourceReceived(E[name]);
+        if (E[name] === void 0) return fallback;
+        const v = Number(rep.GetAttackerTotalResourceReceived(E[name]));
+        return Number.isFinite(v) ? v : fallback;
       } catch {
-        return 0;
+        return fallback;
       }
     };
-    return { tib: get("Tiberium"), cry: get("Crystal"), credits: get("Gold") };
+    return { tib: get("Tiberium", 0), cry: get("Crystal", 0), credits: get("Gold", 0), rp: get("ResearchPoints", void 0) };
+  }
+  function readRepairSeconds(rep) {
+    try {
+      const v = typeof rep.GetAttackerMaxRepairTime === "function" ? Number(rep.GetAttackerMaxRepairTime()) : NaN;
+      return Number.isFinite(v) ? v : void 0;
+    } catch {
+      return void 0;
+    }
   }
   function nonNeg(v) {
     const n = Number(v);
@@ -13911,7 +13923,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.36.0";
+  var ST_VERSION = "5.37.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });

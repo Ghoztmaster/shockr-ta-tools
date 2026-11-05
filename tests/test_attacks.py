@@ -235,6 +235,34 @@ def test_per_target_groups_on_coordinate():
     assert [a["playerName"] for a in outpost["attackList"]] == ["delta3dany", "GhoztMasters"]
 
 
+def test_per_target_efficiency_rp_rt_cp():
+    s = store_with()
+    # Old record (before 5.37.0): no RP / RT, no CP
+    s.add(AttackPayload(**attack(timestamp=NOW_MS - 3_600_000)), 164, "GhoztMasters", "SoO")
+    s.add(AttackPayload(**attack(lootTib=100000, lootCrystal=50000, lootCredits=50000, rpGained=8614.4,
+                                 repairSeconds=4000, cpCost=10)), 200, "delta3dany", "SoO")
+    s.add(AttackPayload(**attack(targetX=90, targetY=310)), 164, "GhoztMasters", "SoO")
+    data = s.targets(477, 0)
+    new = next(t for t in data["targets"] if t["x"] == 84)
+    old = next(t for t in data["targets"] if t["x"] == 90)
+    assert new["totalRp"] == 8614 and new["totalRepairSeconds"] == 4000 and new["totalCp"] == 10
+    assert new["totalAll"] == 120000 + 85000 + 42000 + 100000 + 50000 + 50000 + 8614
+    # Only the attack that carries CP / RT counts: (200k + 8614) / 10 CP and / (4000 s / 3600) = per hour RT
+    assert new["perCp"] == 20861.4
+    assert new["perRt"] == round(208614 / (4000 / 3600), 2)
+    # Avg/attack includes RP, consistent with totalAll
+    assert new["avgTotal"] == round(new["totalAll"] / 2) and new["avgRp"] == 4307
+    assert new["attackList"][0]["rpGained"] == 8614 and new["attackList"][1]["repairSeconds"] is None
+    assert (old["totalRp"], old["totalRepairSeconds"], old["totalCp"], old["perCp"], old["perRt"]) == (None,) * 5
+    assert old["totalAll"] == 247000
+
+
+def test_payload_rejects_bad_rp_rt():
+    for bad in ({"repairSeconds": -1}, {"repairSeconds": 8 * 86400}, {"rpGained": -5}):
+        with pytest.raises(ValueError):
+            AttackPayload(**attack(**bad))
+
+
 def test_get_targets_endpoint(env):
     c = env["client"]
     assert c.get("/api/attacks/targets").status_code == 401
