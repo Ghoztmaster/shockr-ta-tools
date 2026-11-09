@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.44.0] — 2026-11-09
+
+Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+Ronde 7 van 7 (laatste): MaelstromTools-functies als Shockr-plugins.
+
+### Nieuwe plugin: MissionHider (`plugins/mission-hider.js`, standaard uit)
+- Verbergt de mission tracker: `app.getMissionsBar()` (oudere clients: `getMissionTracker()`) op `excluded`, daarna `triggerDesktopResize()`; de balken eronder schuiven omhoog
+- Toont de game hem opnieuw, dan verbergt een `changeVisibility`-listener hem weer
+- `/st plugin disable mission-hider`: `show()` + `triggerDesktopResize()`, de tracker staat er weer
+- Live geverifieerd (2026-11-09): `webfrontend.gui.missions.MissionsBar` in `LeftBarsGroup`; exclude/show werken zoals verwacht
+
 ## [5.43.0] — 2026-11-09
 
 Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

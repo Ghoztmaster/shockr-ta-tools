@@ -256,6 +256,22 @@
     }
   },
   {
+    "name": "MissionHider",
+    "slug": "mission-hider",
+    "defaultEnabled": false,
+    "replaces": null,
+    "short": {
+      "en": "Hide the mission tracker on the left",
+      "de": "Das Missionsfenster links ausblenden",
+      "nl": "De mission tracker links verbergen"
+    },
+    "long": {
+      "en": "Hides the mission tracker (the missions bar on the left of the screen); the bars below it move up. Off by default: /st plugin enable mission-hider hides it, /st plugin disable mission-hider shows it again.",
+      "de": "Blendet das Missionsfenster (die Missionsleiste links am Bildschirm) aus; die Leisten darunter rücken nach oben. Standardmäßig aus: /st plugin enable mission-hider blendet es aus, /st plugin disable mission-hider zeigt es wieder.",
+      "nl": "Verbergt de mission tracker (de missiebalk links op het scherm); de balken eronder schuiven omhoog. Standaard uit: /st plugin enable mission-hider verbergt hem, /st plugin disable mission-hider toont hem weer."
+    }
+  },
+  {
     "name": "MovableMenu",
     "slug": "movable-menu",
     "defaultEnabled": true,

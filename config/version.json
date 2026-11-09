@@ -1,7 +1,22 @@
 {
-  "version": "5.43.0",
+  "version": "5.44.0",
   "date": "2026-11-09",
   "changelog": [
+    {
+      "version": "5.44.0",
+      "date": "2026-11-09",
+      "changes": {
+        "en": [
+          "New plugin MissionHider (off by default): hides the mission tracker on the left; /st plugin enable mission-hider"
+        ],
+        "de": [
+          "Neues Plugin MissionHider (standardmäßig aus): blendet das Missionsfenster links aus; /st plugin enable mission-hider"
+        ],
+        "nl": [
+          "Nieuwe plugin MissionHider (standaard uit): verbergt de mission tracker links; /st plugin enable mission-hider"
+        ]
+      }
+    },
     {
       "version": "5.43.0",
       "date": "2026-11-09",
@@ -71,27 +86,6 @@
         "nl": [
           "Nieuwe plugin ResourceOverview: opslag per base voor Tiberium, Crystal en Power — voorraad, max, vulling % en wanneer hij vol is — silo-icoon in de Shockr-knop of /st resources",
           "Rood = vol, geel = boven 75 %; de totaalrij toont het totaalpercentage"
-        ]
-      }
-    },
-    {
-      "version": "5.39.0",
-      "date": "2026-11-09",
-      "changes": {
-        "en": [
-          "New plugin ProductionOverview: production per base per hour (continuous, bonus, POI, total) for Tiberium, Crystal, Power and Credits, with a total row — factory icon in the Shockr button or /st production",
-          "Click a base name in the overview to open that base",
-          "The plugin list (Plugins panel, /st plugin list, /st help, info page) is now alphabetical"
-        ],
-        "de": [
-          "Neues Plugin ProductionOverview: Produktion pro Basis pro Stunde (kontinuierlich, Bonus, POI, gesamt) für Tiberium, Kristall, Strom und Credits, mit Summenzeile — Fabrik-Symbol im Shockr-Knopf oder /st production",
-          "Klick auf einen Basisnamen in der Übersicht öffnet diese Basis",
-          "Die Plugin-Liste (Plugins-Panel, /st plugin list, /st help, Info-Seite) ist jetzt alphabetisch"
-        ],
-        "nl": [
-          "Nieuwe plugin ProductionOverview: productie per base per uur (continu, bonus, POI, totaal) voor Tiberium, Crystal, Power en Credits, met totaalrij — fabriek-icoon in de Shockr-knop of /st production",
-          "Klik op een basenaam in het overzicht om die base te openen",
-          "De plugin-lijst (Plugins-paneel, /st plugin list, /st help, info-pagina) staat nu op alfabet"
         ]
       }
     }
