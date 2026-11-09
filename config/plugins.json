@@ -16,6 +16,22 @@
     }
   },
   {
+    "name": "ArmyOverview",
+    "slug": "army-overview",
+    "defaultEnabled": true,
+    "replaces": null,
+    "short": {
+      "en": "Base, defense, army and repair charges of every base in one panel",
+      "de": "Basis, Verteidigung, Armee und Reparaturladungen jeder Basis in einem Panel",
+      "nl": "Base, defense, leger en repair charges van elke base in één paneel"
+    },
+    "long": {
+      "en": "The tank icon in the Shockr button (or /st army) opens the overview known from MaelstromTools. Top: every own base with Base, Defense and Army level, buildings or units (current / max) and health. Below: repair charges for every base with an army — repair time for infantry, vehicles and aircraft (the longest highlighted), the charges, attacks (current / max; * = the army still needs a repair), and how long until the next attack and until max+1 attacks. Click a base name to open that base, or its offense view from the repair section.",
+      "de": "Das Panzer-Symbol im Shockr-Knopf (oder /st army) öffnet die aus MaelstromTools bekannte Übersicht. Oben: jede eigene Basis mit Basis-, Verteidigungs- und Armee-Level, Gebäuden bzw. Einheiten (aktuell / max) und Zustand. Darunter: Reparaturladungen für jede Basis mit Armee — Reparaturzeit für Infanterie, Fahrzeuge und Flugzeuge (die längste hervorgehoben), die Ladungen, Angriffe (aktuell / max; * = die Armee muss noch repariert werden) und wie lange es bis zum nächsten Angriff und bis Max+1 Angriffe dauert. Klick auf einen Basisnamen öffnet die Basis, im Reparaturteil ihre Offensiv-Ansicht.",
+      "nl": "Het tank-icoon in de Shockr-knop (of /st army) opent het overzicht dat je kent uit MaelstromTools. Bovenaan: elke eigen base met Base-, Defense- en Army-level, gebouwen of units (huidig / max) en health. Daaronder: repair charges voor elke base met een leger — repair time voor infantry, vehicles en aircraft (de langste gemarkeerd), de charges, aanvallen (huidig / max; * = het leger moet nog gerepareerd worden), en hoe lang het duurt tot de volgende aanval en tot max+1 aanvallen. Klik op een basenaam om de base te openen, of in de repair-sectie de offense-weergave."
+    }
+  },
+  {
     "name": "AttackRange",
     "slug": "attack-range",
     "defaultEnabled": true,

@@ -1,5 +1,21 @@
 # Changelog
 
+## [5.41.0] — 2026-11-09
+
+Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+Ronde 4 van 7: MaelstromTools-functies als Shockr-plugins.
+
+### Nieuwe plugin: ArmyOverview (`plugins/army-overview.js`, standaard aan)
+- Toolbar-icoon (tank) of `/st army`: het Overview-venster van MaelstromTools (RepairTime-class, dezelfde getters en regels, eigen implementatie), in twee secties
+- Overzicht, elke eigen base: Base (level, buildings `GetBuildingSlotCount` / `GetBuildingSlotLimit`, health `GetBuildingsConditionInPercent`), Defense (level, `get_TotalDefenseHeadCount` / `get_UnitLimitDefense`, `GetDefenseConditionInPercent`), Army (level, `get_TotalOffenseHeadCount` / `get_UnitLimitOffense`, `GetOffenseConditionInPercent`). Levels op 2 decimalen naar beneden; kleuren als MaelstromTools (vrije slots, health < 25 % rood, < 100 % geel); Defense/Army leeg bij unit limit 0. Klik: base-weergave
+- Repair charges, alleen bases met een leger: repair time Inf/Veh/Air (`GetRepairTimeFromEUnitGroup(..., false)`, langste geel), Charges = `GetResourceCount(RepairChargeInf)` als tijdspan, Attacks huidig / max = `ceil(charges / langste RT)` (één minder + `*` als de offense-health onder 100 % is) / `ceil(GetResourceMaxStorage(RepairChargeInf) / langste RT)`
+- Next at = wachttijd tot er één aanval bij komt (`RT × ceil(charges / RT) − charges`, geel als dat boven de max opslag uitkomt); Max+1 at = wachttijd tot `RT × max` (het niveau voor max+1 aanvallen). MaelstromTools toont daar het charge-niveau; hier de resterende tijd
+- Alle tijden (repair time, charges, Next at, Max+1 at) via de game-formatter `ClientLib.Vis.VisMain.FormatTimespan`, zoals MaelstromTools: boven 24 uur `d:hh:mm:ss` (bijv. `4:12:11:42`); zonder die formatter een eigen fallback in hetzelfde formaat
+- Klik in de repair-sectie: offense-weergave via `openVisModeInMainWindow(PlayerAreaViewMode.pavmPlayerOffense, id, false)`, fallback de base-weergave
+- `lib/overview-panel.js`: `renderTable` krijgt een optionele `view` (data-view), zodat `onRowClick` per sectie een ander klik-doel kan kiezen
+- NIET LIVE GEVERIFIEERD: de getters uit MaelstromTools 0.1.5.5 op de huidige client
+
 ## [5.40.0] — 2026-11-09
 
 Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

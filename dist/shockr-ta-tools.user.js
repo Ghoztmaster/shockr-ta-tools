@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.40.0
+// @version         5.41.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -102,7 +102,7 @@ var ShockrTools = (() => {
   });
 
   // <define:__ST_PLUGIN_SHORT__>
-  var define_ST_PLUGIN_SHORT_default = { AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, AutoCollect: { en: "Collects the resource packages of all your bases automatically", de: "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein", nl: "Verzamelt de resource-pakketten van al je bases automatisch" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, ProductionOverview: { en: "Production per base per hour in one panel", de: "Produktion pro Basis pro Stunde in einem Panel", nl: "Productie per base per uur in \xE9\xE9n paneel" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, ResourceOverview: { en: "Storage per base: how full, and when it is full", de: "Lager pro Basis: wie voll, und wann es voll ist", nl: "Opslag per base: hoe vol, en wanneer hij vol is" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" } };
+  var define_ST_PLUGIN_SHORT_default = { AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, ArmyOverview: { en: "Base, defense, army and repair charges of every base in one panel", de: "Basis, Verteidigung, Armee und Reparaturladungen jeder Basis in einem Panel", nl: "Base, defense, leger en repair charges van elke base in \xE9\xE9n paneel" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, AutoCollect: { en: "Collects the resource packages of all your bases automatically", de: "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein", nl: "Verzamelt de resource-pakketten van al je bases automatisch" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, ProductionOverview: { en: "Production per base per hour in one panel", de: "Produktion pro Basis pro Stunde in einem Panel", nl: "Productie per base per uur in \xE9\xE9n paneel" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, ResourceOverview: { en: "Storage per base: how full, and when it is full", de: "Lager pro Basis: wie voll, und wann es voll ist", nl: "Opslag per base: hoe vol, en wanneer hij vol is" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" } };
 
   // lib/game-ready.js
   async function waitForGame({ maxAttempts = 200, intervalMs = 100 } = {}) {
@@ -610,6 +610,30 @@ var ShockrTools = (() => {
       resFull: "full",
       resStatusOpen: "panel open",
       resStatusClosed: "panel closed (/st resources)",
+      // ArmyOverview (5.41.0)
+      descArmyOverview: "Base, defense and army per base (level, buildings/units, health) plus repair charges: repair time per unit type, charges, attacks, next at, max+1 at",
+      helpCmdArmy: "Open/close the army overview",
+      toolbarArmy: "Army",
+      armyTitle: "Overview",
+      armyGroupBase: "Base",
+      armyGroupDefense: "Defense",
+      armyGroupArmy: "Army",
+      armyColLevel: "Level",
+      armyColBuildings: "Buildings",
+      armyColUnits: "Units",
+      armyColHealth: "Health",
+      armyRepairTitle: "Repair charges",
+      armyColInf: "Infantry",
+      armyColVeh: "Vehicle",
+      armyColAir: "Aircraft",
+      armyColCharges: "Charges",
+      armyColAttacks: "Attacks",
+      armyColNextAt: "Next at",
+      armyColMaxAt: "Max+1 at",
+      armyNoArmies: "No base with an army",
+      armyJumpHintOffense: "Click to open the offense view of this base",
+      armyStatusOpen: "panel open",
+      armyStatusClosed: "panel closed (/st army)",
       apiKeyRejected: "\u26A0 API key rejected \u2014 check /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: not recognized \u2014 scan a base first to register.",
       scansFailed: "\u26A0 {count} scan(s) failed to send",
@@ -1137,6 +1161,30 @@ var ShockrTools = (() => {
       resFull: "voll",
       resStatusOpen: "Panel offen",
       resStatusClosed: "Panel zu (/st resources)",
+      // ArmyOverview (5.41.0)
+      descArmyOverview: "Basis, Verteidigung und Armee pro Basis (Level, Geb\xE4ude/Einheiten, Zustand) plus Reparaturladungen: Reparaturzeit pro Einheitentyp, Ladungen, Angriffe, n\xE4chster um, Max+1 um",
+      helpCmdArmy: "Armee-\xDCbersicht \xF6ffnen/schlie\xDFen",
+      toolbarArmy: "Armee",
+      armyTitle: "\xDCbersicht",
+      armyGroupBase: "Basis",
+      armyGroupDefense: "Verteidigung",
+      armyGroupArmy: "Armee",
+      armyColLevel: "Level",
+      armyColBuildings: "Geb\xE4ude",
+      armyColUnits: "Einheiten",
+      armyColHealth: "Zustand",
+      armyRepairTitle: "Reparaturladungen",
+      armyColInf: "Infanterie",
+      armyColVeh: "Fahrzeuge",
+      armyColAir: "Flugzeuge",
+      armyColCharges: "Ladungen",
+      armyColAttacks: "Angriffe",
+      armyColNextAt: "N\xE4chster in",
+      armyColMaxAt: "Max+1 in",
+      armyNoArmies: "Keine Basis mit Armee",
+      armyJumpHintOffense: "Klicken, um die Offensiv-Ansicht dieser Basis zu \xF6ffnen",
+      armyStatusOpen: "Panel offen",
+      armyStatusClosed: "Panel zu (/st army)",
       apiKeyRejected: "\u26A0 API-Key abgelehnt \u2014 pr\xFCfe /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: nicht erkannt \u2014 scanne zuerst eine Basis, um dich zu registrieren.",
       scansFailed: "\u26A0 {count} Scan(s) konnten nicht gesendet werden",
@@ -1654,6 +1702,30 @@ var ShockrTools = (() => {
       resFull: "vol",
       resStatusOpen: "paneel open",
       resStatusClosed: "paneel dicht (/st resources)",
+      // ArmyOverview (5.41.0)
+      descArmyOverview: "Base, defense en leger per base (level, gebouwen/units, health) plus repair charges: repair time per unit-type, charges, aanvallen, volgende over, max+1 over",
+      helpCmdArmy: "Leger-overzicht openen/sluiten",
+      toolbarArmy: "Leger",
+      armyTitle: "Overzicht",
+      armyGroupBase: "Base",
+      armyGroupDefense: "Defense",
+      armyGroupArmy: "Army",
+      armyColLevel: "Level",
+      armyColBuildings: "Gebouwen",
+      armyColUnits: "Units",
+      armyColHealth: "Health",
+      armyRepairTitle: "Repair charges",
+      armyColInf: "Infantry",
+      armyColVeh: "Vehicle",
+      armyColAir: "Aircraft",
+      armyColCharges: "Charges",
+      armyColAttacks: "Aanvallen",
+      armyColNextAt: "Volgende over",
+      armyColMaxAt: "Max+1 over",
+      armyNoArmies: "Geen base met een leger",
+      armyJumpHintOffense: "Klik om de offense-weergave van deze base te openen",
+      armyStatusOpen: "paneel open",
+      armyStatusClosed: "paneel dicht (/st army)",
       apiKeyRejected: "\u26A0 API-key geweigerd \u2014 controleer /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: niet herkend \u2014 scan eerst een base om je te registreren.",
       scansFailed: "\u26A0 {count} scan(s) konden niet verstuurd worden",
@@ -2727,8 +2799,8 @@ var ShockrTools = (() => {
     _parseValue(str) {
       if (str === "true") return true;
       if (str === "false") return false;
-      const num3 = parseFloat(str);
-      if (!isNaN(num3) && String(num3) === str) return num3;
+      const num4 = parseFloat(str);
+      if (!isNaN(num4) && String(num4) === str) return num4;
       return str;
     }
   };
@@ -3385,6 +3457,7 @@ var ShockrTools = (() => {
     { cmd: "markers", usage: "/st markers", key: "helpCmdMarkers" },
     { cmd: "production", usage: "/st production", key: "helpCmdProduction" },
     { cmd: "resources", usage: "/st resources", key: "helpCmdResources" },
+    { cmd: "army", usage: "/st army", key: "helpCmdArmy" },
     { cmd: "tunnels", usage: "/st tunnels", key: "helpCmdTunnels" },
     { cmd: "blocklist", usage: "/st blocklist", key: "helpCmdBlocklist" },
     { cmd: "blocklist", usage: "/st blocklist remove <name>", key: "helpCmdBlocklistRemove" },
@@ -3755,6 +3828,7 @@ var ShockrTools = (() => {
     block: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M5.3 5.3l13.4 13.4"/></svg>',
     factory: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2.5 21.5v-11l5 3v-3l5 3v-3l5 3V3.5h4v18z"/><path d="M6 17.5h2M11 17.5h2M16 17.5h2" stroke-linecap="round"/></svg>',
     silo: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 21.5V8a7 4 0 0 1 14 0v13.5z"/><path d="M5 12.5h14M5 17h14"/><path d="M3 21.5h18" stroke-linecap="round"/></svg>',
+    tank: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><rect x="2.5" y="14" width="19" height="6" rx="3"/><path d="M6 14v-3.5h10V14"/><path d="M16 11.5h6"/><circle cx="7" cy="17" r="0.8" fill="currentColor"/><circle cx="12" cy="17" r="0.8" fill="currentColor"/><circle cx="17" cy="17" r="0.8" fill="currentColor"/></svg>',
     tunnel: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2.5 21.5v-9a9.5 9.5 0 0 1 19 0v9z"/><path d="M7 21.5v-8a5 5 0 0 1 10 0v8"/><path d="M12 17.5v4" stroke-linecap="round"/></svg>'
   };
   var Toolbar = class {
@@ -4629,15 +4703,15 @@ var ShockrTools = (() => {
       return panel;
     }
   };
-  function getPlunder(unitId2, level, forgotten = true) {
-    const cacheKey = `${unitId2}:${level}:${forgotten ? 1 : 0}`;
+  function getPlunder(unitId2, level2, forgotten = true) {
+    const cacheKey = `${unitId2}:${level2}:${forgotten ? 1 : 0}`;
     if (plunderCache.has(cacheKey)) return plunderCache.get(cacheKey);
     let result = null;
     const gd = typeof GAMEDATA !== "undefined" && GAMEDATA.units && GAMEDATA.units[unitId2];
     if (gd && gd.r) {
       const keys = Object.keys(gd.r).filter((k) => gd.r[k] != null).map(Number).sort((a, b) => a - b);
       if (keys.length) {
-        const eligible = keys.filter((k) => k <= level);
+        const eligible = keys.filter((k) => k <= level2);
         const useLvl = eligible.length ? eligible[eligible.length - 1] : keys[keys.length - 1];
         const entry = gd.r[useLvl];
         const costs = forgotten ? entry.rer || entry.rr : entry.rr || entry.rer;
@@ -4683,14 +4757,14 @@ var ShockrTools = (() => {
     let totalTib = 0, totalCry = 0;
     for (const unit of units) {
       const id = unit.get_MdbUnitId();
-      const level = unit.get_CurrentLevel();
-      const plunder = getPlunder(id, level, forgotten);
+      const level2 = unit.get_CurrentLevel();
+      const plunder = getPlunder(id, level2, forgotten);
       if (!plunder) continue;
-      const key = `${id}:${level}`;
+      const key = `${id}:${level2}`;
       let row = rows.get(key);
       if (!row) {
         const gd = GAMEDATA.units[id];
-        row = { name: gd ? gd.dn : `Unit ${id}`, level, count: 0, tib: 0, cry: 0 };
+        row = { name: gd ? gd.dn : `Unit ${id}`, level: level2, count: 0, tib: 0, cry: 0 };
         rows.set(key, row);
       }
       row.count++;
@@ -4701,14 +4775,14 @@ var ShockrTools = (() => {
     }
     const sorted = [...rows.values()].sort((a, b) => b.tib + b.cry - (a.tib + a.cry));
     const td = "padding:1px 4px;";
-    const num3 = td + "text-align:right;";
+    const num4 = td + "text-align:right;";
     let html = `<div style="font-weight:bold;margin-bottom:6px;color:#fff;">\u2694 ${t("plunderTitle")} \u2014 ${escapeHtml2(city.get_Name())}</div>`;
     html += '<table style="width:100%;border-collapse:collapse;">';
-    html += `<tr style="color:#999;"><th style="${td}text-align:left;">${t("plunderUnit")}</th><th style="${num3}">${t("plunderLevel")}</th><th style="${num3}">#</th><th style="${num3}color:#8bc34a;">${t("plunderTib")}</th><th style="${num3}color:#42a5f5;">${t("plunderCrystal")}</th></tr>`;
+    html += `<tr style="color:#999;"><th style="${td}text-align:left;">${t("plunderUnit")}</th><th style="${num4}">${t("plunderLevel")}</th><th style="${num4}">#</th><th style="${num4}color:#8bc34a;">${t("plunderTib")}</th><th style="${num4}color:#42a5f5;">${t("plunderCrystal")}</th></tr>`;
     for (const r of sorted) {
-      html += `<tr><td style="${td}">${escapeHtml2(r.name)}</td><td style="${num3}">${r.level}</td><td style="${num3}">${r.count}</td><td style="${num3}">${fmt(r.tib)}</td><td style="${num3}">${fmt(r.cry)}</td></tr>`;
+      html += `<tr><td style="${td}">${escapeHtml2(r.name)}</td><td style="${num4}">${r.level}</td><td style="${num4}">${r.count}</td><td style="${num4}">${fmt(r.tib)}</td><td style="${num4}">${fmt(r.cry)}</td></tr>`;
     }
-    html += `<tr style="border-top:1px solid #555;font-weight:bold;"><td style="${td}" colspan="3">${t("plunderTotal")}</td><td style="${num3}color:#8bc34a;">${fmt(totalTib)}</td><td style="${num3}color:#42a5f5;">${fmt(totalCry)}</td></tr>`;
+    html += `<tr style="border-top:1px solid #555;font-weight:bold;"><td style="${td}" colspan="3">${t("plunderTotal")}</td><td style="${num4}color:#8bc34a;">${fmt(totalTib)}</td><td style="${num4}color:#42a5f5;">${fmt(totalCry)}</td></tr>`;
     html += "</table>";
     return html;
   }
@@ -4924,10 +4998,10 @@ var ShockrTools = (() => {
     DECODE_TABLE[BASE62_CHARS.charCodeAt(i)] = i;
   }
   var Base62 = {
-    encode(num3, padLength = 0) {
-      if (num3 === 0 && padLength <= 1) return BASE62_CHARS[0];
+    encode(num4, padLength = 0) {
+      if (num4 === 0 && padLength <= 1) return BASE62_CHARS[0];
       const output = [];
-      let current = num3;
+      let current = num4;
       while (current > 0) {
         output.push(BASE62_CHARS[current % BASE]);
         current = Math.floor(current / BASE);
@@ -5231,9 +5305,9 @@ var ShockrTools = (() => {
       for (const mod of modules) {
         const unitMod = getUnitModule(mod);
         if (!unitMod) continue;
-        const { id, level } = unitMod;
-        if (!upgrades[id] || upgrades[id] < level) {
-          upgrades[id] = level;
+        const { id, level: level2 } = unitMod;
+        if (!upgrades[id] || upgrades[id] < level2) {
+          upgrades[id] = level2;
         }
       }
       return upgrades;
@@ -6298,8 +6372,8 @@ var ShockrTools = (() => {
     for (const { name, buildings } of getBuildingsByType(city)) {
       buildings.forEach((b, i) => {
         if (b.HasReachedMaxLevel()) return;
-        const level = b.get_CurrentLevel();
-        const cost = getUpgradeCost(b, level + 1);
+        const level2 = b.get_CurrentLevel();
+        const cost = getUpgradeCost(b, level2 + 1);
         if (!cost) return;
         const hours = Math.max(
           hoursNeeded(cost.tib, stock.tib, rate.tib),
@@ -6307,7 +6381,7 @@ var ShockrTools = (() => {
         );
         rows.push({
           name: buildings.length > 1 ? `${name} ${i + 1}` : name,
-          level,
+          level: level2,
           tib: cost.tib,
           power: cost.power,
           hours
@@ -6343,10 +6417,10 @@ var ShockrTools = (() => {
     }
     return groups;
   }
-  function getUpgradeCost(building, level) {
+  function getUpgradeCost(building, level2) {
     const tgd = building.get_TechGameData_Obj();
     if (!tgd) return null;
-    const reqs = ClientLib.Base.Util.GetTechLevelResourceRequirements_Obj(level, tgd);
+    const reqs = ClientLib.Base.Util.GetTechLevelResourceRequirements_Obj(level2, tgd);
     if (!reqs || !reqs.length) return null;
     let tib = 0, power = 0;
     for (const r of reqs) {
@@ -6380,7 +6454,7 @@ var ShockrTools = (() => {
   }
   function renderPanel2(city, { rows, stock, rate }) {
     const td = "padding:1px 4px;";
-    const num3 = td + "text-align:right;white-space:nowrap;";
+    const num4 = td + "text-align:right;white-space:nowrap;";
     const tibColor = "color:#8bc34a;";
     const powColor = "color:#ffca28;";
     const perHour = t("upgradeCalcPerHour");
@@ -6390,10 +6464,10 @@ var ShockrTools = (() => {
       return html + `<div style="color:#999;">${t("upgradeCalcAllMax")}</div>`;
     }
     html += '<table style="width:100%;border-collapse:collapse;">';
-    html += `<tr style="color:#999;"><th style="${td}text-align:left;">${t("upgradeCalcBuilding")}</th><th style="${num3}">${t("upgradeCalcLevel")}</th><th style="${num3}${tibColor}">${t("upgradeCalcTib")}</th><th style="${num3}${powColor}">${t("upgradeCalcPower")}</th><th style="${num3}">${t("upgradeCalcTime")}</th></tr>`;
+    html += `<tr style="color:#999;"><th style="${td}text-align:left;">${t("upgradeCalcBuilding")}</th><th style="${num4}">${t("upgradeCalcLevel")}</th><th style="${num4}${tibColor}">${t("upgradeCalcTib")}</th><th style="${num4}${powColor}">${t("upgradeCalcPower")}</th><th style="${num4}">${t("upgradeCalcTime")}</th></tr>`;
     for (const r of rows) {
       const ready = r.hours === 0;
-      html += `<tr><td style="${td}">${escapeHtml3(r.name)}</td><td style="${num3}">${r.level}\u2192${r.level + 1}</td><td style="${num3}">${fmt2(r.tib)}</td><td style="${num3}">${fmt2(r.power)}</td><td style="${num3}${ready ? "color:#8bc34a;font-weight:bold;" : ""}">${fmtHours(r.hours)}</td></tr>`;
+      html += `<tr><td style="${td}">${escapeHtml3(r.name)}</td><td style="${num4}">${r.level}\u2192${r.level + 1}</td><td style="${num4}">${fmt2(r.tib)}</td><td style="${num4}">${fmt2(r.power)}</td><td style="${num4}${ready ? "color:#8bc34a;font-weight:bold;" : ""}">${fmtHours(r.hours)}</td></tr>`;
     }
     html += "</table>";
     return html;
@@ -6412,11 +6486,11 @@ var ShockrTools = (() => {
   }
 
   // plugins/target-watcher.js
-  function roundLevel(level) {
-    return Math.round(Number(level) * 10) / 10;
+  function roundLevel(level2) {
+    return Math.round(Number(level2) * 10) / 10;
   }
-  function formatLevel(level) {
-    const l = roundLevel(level);
+  function formatLevel(level2) {
+    const l = roundLevel(level2);
     if (!Number.isFinite(l)) return "0";
     return Number.isInteger(l) ? String(l) : l.toFixed(1);
   }
@@ -6528,17 +6602,17 @@ var ShockrTools = (() => {
       }
       const x = city.get_PosX();
       const y = city.get_PosY();
-      const level = roundLevel(city.get_LvlBase());
+      const level2 = roundLevel(city.get_LvlBase());
       const type = getTargetType(x, y, faction);
       const label = { camp: "Camp", outpost: "Outpost", base: "FG Base", player: "Base" }[type];
       return {
         playerId,
         playerName: clip(playerName),
         targetId: Number(city.get_Id()),
-        targetName: clip(city.get_Name() || `${label} L${formatLevel(level)}`),
+        targetName: clip(city.get_Name() || `${label} L${formatLevel(level2)}`),
         targetX: Math.round(Number(x)),
         targetY: Math.round(Number(y)),
-        targetLevel: Number.isFinite(level) ? level : 0,
+        targetLevel: Number.isFinite(level2) ? level2 : 0,
         targetType: type,
         worldId: Number(md.get_Server().get_WorldId()),
         timestamp: Math.floor(Date.now() / 1e3)
@@ -6752,9 +6826,9 @@ var ShockrTools = (() => {
     }
     return out;
   }
-  function poiScore(level) {
+  function poiScore(level2) {
     try {
-      return Number(ClientLib.Base.PointOfInterestTypes.GetScoreByLevel(level)) || 0;
+      return Number(ClientLib.Base.PointOfInterestTypes.GetScoreByLevel(level2)) || 0;
     } catch {
       return 0;
     }
@@ -7134,11 +7208,11 @@ var ShockrTools = (() => {
   function buildAttack(h, worldId3, d) {
     if (!isLoggable(h)) return null;
     const ad = h.ad;
-    const level = Number(ad.dbl);
+    const level2 = Number(ad.dbl);
     const cr = parseInt(ad.cr, 10);
     const attack = {
       targetType: CAMP_TYPES[parseInt(ad.dbn, 10)],
-      targetLevel: Number.isFinite(level) && level >= 0 ? level : 0,
+      targetLevel: Number.isFinite(level2) && level2 >= 0 ? level2 : 0,
       targetX: Math.round(Number(ad.dbx)),
       targetY: Math.round(Number(ad.dby)),
       lootTib: nonNeg(d.tib),
@@ -7497,22 +7571,22 @@ var ShockrTools = (() => {
       if (!(x >= 0 && y >= 0)) return null;
       const obj = md.get_World().GetObjectFromPosition(x, y);
       let targetType = null;
-      let level = null;
+      let level2 = null;
       if (obj && obj.Type === 3) {
         targetType = CAMP_TYPES2[obj.$CampType] || null;
-        level = obj.$Level;
+        level2 = obj.$Level;
       } else if (obj && obj.Type === 2) {
         targetType = "base";
-        level = obj.$Level;
+        level2 = obj.$Level;
       } else if (inBaseView) {
         targetType = "base";
       }
       if (!targetType) return null;
-      if (level === null || level === void 0 || !Number.isFinite(Number(level))) level = cityLevel;
-      level = Number(level);
+      if (level2 === null || level2 === void 0 || !Number.isFinite(Number(level2))) level2 = cityLevel;
+      level2 = Number(level2);
       return {
         targetType,
-        targetLevel: Number.isFinite(level) && level >= 0 ? Math.min(level, 100) : 0,
+        targetLevel: Number.isFinite(level2) && level2 >= 0 ? Math.min(level2, 100) : 0,
         targetX: Math.round(Number(x)),
         targetY: Math.round(Number(y)),
         worldId: Number(md.get_Server().get_WorldId())
@@ -7957,8 +8031,8 @@ var ShockrTools = (() => {
       if (obj.Type === 2) type = "base";
       else if (obj.Type === 3 && obj.$CampType !== 0) type = CAMP_TYPES3[obj.$CampType] || null;
       else return null;
-      const level = typeof obj.$Level === "number" && Number.isFinite(obj.$Level) ? obj.$Level : null;
-      return { type, level };
+      const level2 = typeof obj.$Level === "number" && Number.isFinite(obj.$Level) ? obj.$Level : null;
+      return { type, level: level2 };
     } catch {
       return null;
     }
@@ -8294,11 +8368,11 @@ var ShockrTools = (() => {
     const n = m ? parseInt(m[1], 10) : NaN;
     return n > 0 ? n : DEFAULT_INFLUENCE_RANGE;
   }
-  function requiredOffense(level, activationDiff) {
-    return level - (Number(activationDiff) || 0);
+  function requiredOffense(level2, activationDiff) {
+    return level2 - (Number(activationDiff) || 0);
   }
-  function labelText2(level, required) {
-    return `T${fmt3(level)} \xB7 \u2265${fmt3(required)}`;
+  function labelText2(level2, required) {
+    return `T${fmt3(level2)} \xB7 \u2265${fmt3(required)}`;
   }
   function tunnelColor(offense, required, blocked = COLOR_BLOCKED) {
     return offense >= required ? COLOR_ACTIVE : blocked;
@@ -8898,8 +8972,8 @@ var ShockrTools = (() => {
         if (!obj || obj.Type !== type) continue;
         count++;
         if (dist <= floored) countW++;
-        const level = baseLevel(obj);
-        if (level !== null && Number.isFinite(level)) levels[level] = (levels[level] || 0) + 1;
+        const level2 = baseLevel(obj);
+        if (level2 !== null && Number.isFinite(level2)) levels[level2] = (levels[level2] || 0) + 1;
       }
     }
     return { count, countW, waves: wavesFor(countW), levels };
@@ -11980,9 +12054,9 @@ var ShockrTools = (() => {
       if (!vis || vis.get_VisObjectType() !== visTypes.RegionCityType) return null;
       if (Number(vis.get_AllianceId()) !== ownId) return null;
       const playerId = Number(vis.get_PlayerId());
-      let level = NaN;
+      let level2 = NaN;
       try {
-        level = Number(vis.get_BaseLevel());
+        level2 = Number(vis.get_BaseLevel());
       } catch {
       }
       let name = "";
@@ -11992,7 +12066,7 @@ var ShockrTools = (() => {
       }
       const member = members[playerId];
       if (!name && member && member.Name) name = String(member.Name);
-      return { x, y, playerId, name: name || `#${playerId}`, level: level > 0 ? level : NaN };
+      return { x, y, playerId, name: name || `#${playerId}`, level: level2 > 0 ? level2 : NaN };
     }
     /** Own POIs (world-wide list + the ones seen on the map), each with its real loss or undefined. */
     _ownPois(own) {
@@ -12748,7 +12822,7 @@ var ShockrTools = (() => {
     if (a >= 1e4) return `${sign}${(a / 1e3).toFixed(1)}k`;
     return `${sign}${Math.round(a)}`;
   }
-  function renderTable3({ columns: columns3, rows, total = null, jumpHint = "" }) {
+  function renderTable3({ columns: columns3, rows, total = null, jumpHint = "", view = "" }) {
     const th = "padding:3px 5px;font-weight:normal;color:#999;white-space:nowrap;";
     const td = "padding:3px 5px;text-align:right;white-space:nowrap;";
     const sep = "border-left:1px solid #333;";
@@ -12775,7 +12849,7 @@ var ShockrTools = (() => {
     });
     html += "</tr>";
     for (const row of rows) {
-      html += `<tr style="border-bottom:1px solid #2a2a2a;"><td data-id="${escapeHtml(String(row.id))}" title="${escapeHtml(jumpHint)}" style="padding:3px 5px;color:#4fc3f7;cursor:pointer;white-space:nowrap;">${escapeHtml(row.name)}</td>`;
+      html += `<tr style="border-bottom:1px solid #2a2a2a;"><td data-id="${escapeHtml(String(row.id))}"${view ? ` data-view="${escapeHtml(view)}"` : ""} title="${escapeHtml(jumpHint)}" style="padding:3px 5px;color:#4fc3f7;cursor:pointer;white-space:nowrap;">${escapeHtml(row.name)}</td>`;
       columns3.forEach((c, i) => {
         html += cell(c, i, row.values[c.key], row);
       });
@@ -12791,9 +12865,9 @@ var ShockrTools = (() => {
     return html + "</table>";
   }
   var OverviewPanel = class {
-    constructor(config, { id, prefix, width = 600, defaultPosition = { x: 140, y: 90 }, title, read, render, onRowClick }) {
+    constructor(config, { id, prefix, width = 600, defaultPosition = { x: 140, y: 90 }, title, read, render: render2, onRowClick }) {
       this.config = config;
-      this._opts = { id, prefix, width, defaultPosition, title, read, render, onRowClick };
+      this._opts = { id, prefix, width, defaultPosition, title, read, render: render2, onRowClick };
       this._panel = null;
       this._title = null;
       this._content = null;
@@ -12853,7 +12927,7 @@ var ShockrTools = (() => {
       this._content.innerHTML = this._opts.render(data);
       if (this._opts.onRowClick) {
         this._content.querySelectorAll("[data-id]").forEach((el) => {
-          el.addEventListener("click", () => this._opts.onRowClick(Number(el.dataset.id)));
+          el.addEventListener("click", () => this._opts.onRowClick(Number(el.dataset.id), el.dataset.view || ""));
         });
       }
     }
@@ -13180,6 +13254,243 @@ var ShockrTools = (() => {
     }
   };
 
+  // plugins/army-overview.js
+  var TOOLBAR_ID8 = "army";
+  var RT_KEYS = ["rt_inf", "rt_veh", "rt_air"];
+  var RED2 = "color:#ff5252;";
+  var YELLOW2 = "color:#ffd740;";
+  var VIEW_OFFENSE = "offense";
+  function num3(fn) {
+    try {
+      const v = Number(fn());
+      return Number.isFinite(v) ? v : null;
+    } catch {
+      return null;
+    }
+  }
+  function fallbackTimespan(sec) {
+    const s = Math.max(0, Math.round(sec));
+    const d = Math.floor(s / 86400);
+    const h = Math.floor(s % 86400 / 3600);
+    const m = Math.floor(s % 3600 / 60);
+    const pad = (n) => String(n).padStart(2, "0");
+    if (d > 0) return `${d}:${pad(h)}:${pad(m)}:${pad(s % 60)}`;
+    if (h > 0) return `${h}:${pad(m)}:${pad(s % 60)}`;
+    return `${m}:${pad(s % 60)}`;
+  }
+  function formatDuration(sec) {
+    if (sec === null || sec === void 0 || !Number.isFinite(sec)) return "\u2014";
+    try {
+      const fmt5 = ClientLib.Vis.VisMain.FormatTimespan;
+      if (typeof fmt5 === "function") {
+        const out = fmt5(sec);
+        if (typeof out === "string" && out) return out;
+      }
+    } catch {
+    }
+    return fallbackTimespan(sec);
+  }
+  function longestRepair(values) {
+    let max = 0;
+    for (const k of RT_KEYS) {
+      const v = values[k];
+      if (v !== null && v !== void 0 && v > max) max = v;
+    }
+    return max;
+  }
+  function repairStats(charges, maxCharges, rt, health) {
+    const out = { cur: null, star: false, max: null, next: null, nextOver: false, maxNext: null };
+    if (charges === null) return out;
+    if (!(rt > 0)) return { ...out, cur: 0, max: 0 };
+    const k = Math.ceil(charges / rt);
+    out.star = health !== null && health !== void 0 && health < 100;
+    out.cur = out.star ? k - 1 : k;
+    out.max = maxCharges !== null ? Math.ceil(maxCharges / rt) : null;
+    const nextLevel = rt * k;
+    if (nextLevel - charges > 0) {
+      out.next = nextLevel - charges;
+      out.nextOver = maxCharges !== null && nextLevel > maxCharges;
+    }
+    if (out.max !== null && rt * out.max - charges > 0) out.maxNext = rt * out.max - charges;
+    return out;
+  }
+  function readCity3(city) {
+    const R = ClientLib.Base.EResourceType;
+    let ud = null;
+    try {
+      ud = city.get_CityUnitsData();
+    } catch {
+      ud = null;
+    }
+    const u = (fn) => ud ? num3(() => fn(ud)) : null;
+    const v = {
+      base_lvl: num3(() => city.get_LvlBase()),
+      base_cur: num3(() => city.GetBuildingSlotCount()),
+      base_max: num3(() => city.GetBuildingSlotLimit()),
+      base_health: num3(() => city.GetBuildingsConditionInPercent()),
+      def_lvl: num3(() => city.get_LvlDefense()),
+      def_cur: u((d) => d.get_TotalDefenseHeadCount()),
+      def_max: u((d) => d.get_UnitLimitDefense()),
+      def_health: num3(() => city.GetDefenseConditionInPercent()),
+      off_lvl: num3(() => city.get_LvlOffense()),
+      off_cur: u((d) => d.get_TotalOffenseHeadCount()),
+      off_max: u((d) => d.get_UnitLimitOffense()),
+      off_health: num3(() => city.GetOffenseConditionInPercent()),
+      rt_inf: null,
+      rt_veh: null,
+      rt_air: null,
+      charges: num3(() => city.GetResourceCount(R.RepairChargeInf)),
+      charges_max: num3(() => city.GetResourceMaxStorage(R.RepairChargeInf))
+    };
+    for (const key of ["def_health", "off_health"]) if (v[key] !== null && v[key] < 0) v[key] = 0;
+    if (ud) {
+      const G = ClientLib.Data.EUnitGroup;
+      v.rt_inf = u((d) => d.GetRepairTimeFromEUnitGroup(G.Infantry, false));
+      v.rt_veh = u((d) => d.GetRepairTimeFromEUnitGroup(G.Vehicle, false));
+      v.rt_air = u((d) => d.GetRepairTimeFromEUnitGroup(G.Aircraft, false));
+    }
+    if (v.charges !== null) v.charges = Math.floor(v.charges);
+    v.rt_max = longestRepair(v);
+    const s = repairStats(v.charges, v.charges_max, v.rt_max, v.off_health);
+    v.att_cur = s.cur;
+    v.att_star = s.star;
+    v.att_max = s.max;
+    v.next = s.next;
+    v.next_over = s.nextOver;
+    v.max_next = s.maxNext;
+    return v;
+  }
+  var level = (v) => v === null || v === void 0 ? "\u2014" : (Math.floor(v * 100) / 100).toFixed(2);
+  var pair = (a, b) => `${a === null ? "\u2014" : a} / ${b === null ? "\u2014" : b}`;
+  var percent = (v) => v === null || v === void 0 ? "\u2014" : `${Math.round(v)}%`;
+  var healthStyle = (v) => v === null || v === void 0 ? "" : v < 25 ? RED2 : v < 100 ? YELLOW2 : "";
+  var freeStyle = (cur, max, red, yellow) => {
+    if (cur === null || max === null) return "";
+    const free = max - cur;
+    return free >= red ? RED2 : yellow !== null && free >= yellow ? YELLOW2 : "";
+  };
+  var unless = (limitKey, fmt5) => (v, row) => row.values[limitKey] === 0 ? "" : fmt5(v, row);
+  function overviewColumns() {
+    const gB = t("armyGroupBase");
+    const gD = t("armyGroupDefense");
+    const gA = t("armyGroupArmy");
+    const L = t("armyColLevel");
+    const H = t("armyColHealth");
+    return [
+      { key: "base_lvl", group: gB, label: L, format: level },
+      {
+        key: "base_cur",
+        group: gB,
+        label: t("armyColBuildings"),
+        format: (v, row) => pair(v, row.values.base_max),
+        style: (v, row) => freeStyle(v, row.values.base_max, 1, null)
+      },
+      { key: "base_health", group: gB, label: H, format: percent, style: healthStyle },
+      { key: "def_lvl", group: gD, label: L, format: unless("def_max", level) },
+      {
+        key: "def_cur",
+        group: gD,
+        label: t("armyColBuildings"),
+        format: unless("def_max", (v, row) => pair(v, row.values.def_max)),
+        style: (v, row) => freeStyle(v, row.values.def_max, 5, 3)
+      },
+      { key: "def_health", group: gD, label: H, format: unless("def_max", percent), style: healthStyle },
+      { key: "off_lvl", group: gA, label: L, format: unless("off_max", level) },
+      {
+        key: "off_cur",
+        group: gA,
+        label: t("armyColUnits"),
+        format: unless("off_max", (v, row) => pair(v, row.values.off_max)),
+        style: (v, row) => freeStyle(v, row.values.off_max, 10, 5)
+      },
+      { key: "off_health", group: gA, label: H, format: unless("off_max", percent), style: healthStyle }
+    ];
+  }
+  function repairColumns() {
+    const rtStyle = (v, row) => row.values.rt_max > 0 && v === row.values.rt_max ? YELLOW2 : "";
+    const wait = (v) => v === null || v === void 0 ? "" : formatDuration(v);
+    return [
+      { key: "rt_inf", label: t("armyColInf"), format: formatDuration, style: rtStyle },
+      { key: "rt_veh", label: t("armyColVeh"), format: formatDuration, style: rtStyle },
+      { key: "rt_air", label: t("armyColAir"), format: formatDuration, style: rtStyle },
+      { key: "charges", label: t("armyColCharges"), format: formatDuration },
+      {
+        key: "att_cur",
+        label: t("armyColAttacks"),
+        format: (v, row) => `${v === null ? "\u2014" : v}${row.values.att_star ? "*" : ""} / ${row.values.att_max === null ? "\u2014" : row.values.att_max}`,
+        style: (v, row) => row.values.att_star ? RED2 : "color:#fff;font-weight:bold;"
+      },
+      { key: "next", label: t("armyColNextAt"), format: wait, style: (v, row) => row.values.next_over ? YELLOW2 : "" },
+      { key: "max_next", label: t("armyColMaxAt"), format: wait }
+    ];
+  }
+  function render(data) {
+    const armies = data.rows.filter((r) => r.values.off_max !== null && r.values.off_max > 0);
+    let html = renderTable3({ columns: overviewColumns(), rows: data.rows, jumpHint: t("ovJumpHint") });
+    html += `<div style="margin:14px 0 4px;color:#fff;font-weight:bold;">${escapeHtml(t("armyRepairTitle"))}</div>`;
+    html += armies.length ? renderTable3({ columns: repairColumns(), rows: armies, jumpHint: t("armyJumpHintOffense"), view: VIEW_OFFENSE }) : `<div style="color:#999;padding:6px 0;">${escapeHtml(t("armyNoArmies"))}</div>`;
+    return html;
+  }
+  function openOffense(id) {
+    try {
+      const uv = webfrontend.gui.UtilView;
+      if (uv && typeof uv.openVisModeInMainWindow === "function") {
+        uv.openVisModeInMainWindow(ClientLib.Data.PlayerAreaViewMode.pavmPlayerOffense, id, false);
+        return true;
+      }
+    } catch (err) {
+      console.warn("[ST] ArmyOverview: offense view failed, opening the base", err && err.message);
+    }
+    return openBase(id);
+  }
+  var ArmyOverview = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descArmyOverview");
+    }
+    constructor(config, toolbar, cli) {
+      this.name = "ArmyOverview";
+      this.config = config;
+      this.toolbar = toolbar;
+      this.cli = cli;
+      this.running = false;
+      this.panel = new OverviewPanel(config, {
+        id: "st-army-panel",
+        prefix: "ArmyOverview",
+        width: 640,
+        title: () => t("armyTitle"),
+        read: () => this.read(),
+        render,
+        onRowClick: (id, view) => view === VIEW_OFFENSE ? openOffense(id) : openBase(id)
+      });
+    }
+    async start() {
+      this.running = true;
+      this.toolbar.register({
+        id: TOOLBAR_ID8,
+        icon: ICONS.tank,
+        label: () => t("toolbarArmy"),
+        onClick: () => this.panel.toggle()
+      });
+      this.cli.register("army", () => this.panel.toggle());
+    }
+    stop() {
+      this.running = false;
+      this.panel.destroy();
+      this.toolbar.unregister(TOOLBAR_ID8);
+      this.cli.unregister("army");
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      return t(this.panel.isOpen() ? "armyStatusOpen" : "armyStatusClosed");
+    }
+    /** { rows: [{id, name, values}] }, or null without city data. */
+    read() {
+      const rows = ownBases3().map((city) => ({ id: city.get_Id(), name: city.get_Name(), values: readCity3(city) }));
+      return rows.length ? { rows } : null;
+    }
+  };
+
   // plugins/stabs-stats.js
   var RES = { TIB: 1, CRY: 2, CREDITS: 3, RP: 6, RC_BASE: 7, RC_AIR: 8, RC_INF: 9, RC_VEH: 10 };
   var RES_KEYS = Object.values(RES);
@@ -13454,9 +13765,9 @@ var ShockrTools = (() => {
     return sorted.find((x) => x.entry.valid) || sorted[0];
   }
   function formatPercent(part, whole) {
-    const percent = part / whole * 100;
-    const digits = percent <= 0 || percent >= 100 ? 0 : percent >= 10 ? 1 : 2;
-    const rounded = Math.round(percent * Math.pow(10, digits)) / Math.pow(10, digits);
+    const percent2 = part / whole * 100;
+    const digits = percent2 <= 0 || percent2 >= 100 ? 0 : percent2 >= 10 ? 1 : 2;
+    const rounded = Math.round(percent2 * Math.pow(10, digits)) / Math.pow(10, digits);
     return `${rounded.toFixed(digits)} %`;
   }
   function colorFromRatio(value) {
@@ -13818,10 +14129,10 @@ var ShockrTools = (() => {
       section.add(labels, { flex: 0 });
       this.opts.presets.forEach((preset, i) => {
         const box = new qx.ui.container.Composite(new qx.ui.layout.VBox()).set({ allowGrowX: true, decorator: "pane-light-opaque" });
-        const pair = new qx.ui.container.Composite(new qx.ui.layout.HBox()).set({ allowGrowX: true });
-        pair.add(iconButton(IMG.simulate, t("stabsLoadSimulate"), () => this.opts.onSimulate(preset.id)));
-        pair.add(iconButton(IMG.play, t("stabsViewSimulation"), () => this.opts.onReplay(preset.id)));
-        box.add(pair, { flex: 1 });
+        const pair2 = new qx.ui.container.Composite(new qx.ui.layout.HBox()).set({ allowGrowX: true });
+        pair2.add(iconButton(IMG.simulate, t("stabsLoadSimulate"), () => this.opts.onSimulate(preset.id)));
+        pair2.add(iconButton(IMG.play, t("stabsViewSimulation"), () => this.opts.onReplay(preset.id)));
+        box.add(pair2, { flex: 1 });
         this.columns[i].boxes.push(box);
         section.add(box, { flex: 1 });
       });
@@ -13872,7 +14183,7 @@ var ShockrTools = (() => {
   }
 
   // plugins/stabs.js
-  var TOOLBAR_ID8 = "stabs";
+  var TOOLBAR_ID9 = "stabs";
   var SIM_LOCK_MS = 3e3;
   var TICK_MS2 = 300;
   var KEY_NUM0 = 96;
@@ -14009,17 +14320,17 @@ var ShockrTools = (() => {
     return {
       E,
       unit: (mdbId) => resMain.GetUnit_Obj(mdbId),
-      maxHealth(level, unit, bonus, modules) {
+      maxHealth(level2, unit, bonus, modules) {
         const mod = (unit.m || []).find((m) => m.t === hpOverride);
         const u = mod && (modules || []).indexOf(mod.i) !== -1 ? Object.assign({}, unit, { lp: mod.h }) : unit;
-        return Math.floor(util.GetUnitMaxHealthByLevel(level, u, bonus)) * 16;
+        return Math.floor(util.GetUnitMaxHealthByLevel(level2, u, bonus)) * 16;
       },
       techName: (unit) => parseInt(ClientLib.Base.Tech.GetTechNameFromTechId(unit.tl, unit.f), 10),
-      repairCosts(unit, mdbId, level, ratio) {
+      repairCosts(unit, mdbId, level2, ratio) {
         if (unit.pt !== E.Offense || !ownCosts) {
-          return cities().get_CurrentCity() !== null ? util.GetUnitRepairCosts(level, mdbId, ratio) : null;
+          return cities().get_CurrentCity() !== null ? util.GetUnitRepairCosts(level2, mdbId, ratio) : null;
         }
-        return util.GetOwnUnitRepairCosts(level, mdbId, ratio);
+        return util.GetOwnUnitRepairCosts(level2, mdbId, ratio);
       },
       buildingInfo: buildingInfo(data.d.di),
       asAttacker(fn) {
@@ -14114,7 +14425,7 @@ var ShockrTools = (() => {
       }
       if (!this.parked) {
         this.toolbar.register({
-          id: TOOLBAR_ID8,
+          id: TOOLBAR_ID9,
           icon: ICONS.sim,
           label: () => t("toolbarStabs"),
           onClick: () => this.togglePanel()
@@ -14166,7 +14477,7 @@ var ShockrTools = (() => {
       this._lock = false;
       this._request = false;
       document.removeEventListener("keydown", this._onKeyDown);
-      this.toolbar.unregister(TOOLBAR_ID8);
+      this.toolbar.unregister(TOOLBAR_ID9);
       if (this._button) {
         try {
           const parent = this._button.getLayoutParent();
@@ -14605,7 +14916,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.40.0";
+  var ST_VERSION = "5.41.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -14670,6 +14981,7 @@ var ShockrTools = (() => {
       new SpamBlock(config, toolbar, cli),
       new ProductionOverview(config, toolbar, cli),
       new ResourceOverview(config, toolbar, cli),
+      new ArmyOverview(config, toolbar, cli),
       new Stabs(config, toolbar)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });

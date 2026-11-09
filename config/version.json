@@ -1,7 +1,25 @@
 {
-  "version": "5.40.0",
+  "version": "5.41.0",
   "date": "2026-11-09",
   "changelog": [
+    {
+      "version": "5.41.0",
+      "date": "2026-11-09",
+      "changes": {
+        "en": [
+          "New plugin ArmyOverview, as the MaelstromTools overview: Base / Defense / Army level, buildings or units (current / max) and health per base — tank icon in the Shockr button or /st army",
+          "Repair charges per base with an army: repair time per unit type, charges, attacks (current / max), time until the next attack and until max+1 attacks"
+        ],
+        "de": [
+          "Neues Plugin ArmyOverview, wie die MaelstromTools-Übersicht: Basis- / Verteidigungs- / Armee-Level, Gebäude bzw. Einheiten (aktuell / max) und Zustand pro Basis — Panzer-Symbol im Shockr-Knopf oder /st army",
+          "Reparaturladungen pro Basis mit Armee: Reparaturzeit pro Einheitentyp, Ladungen, Angriffe (aktuell / max), Zeit bis zum nächsten Angriff und bis Max+1 Angriffe"
+        ],
+        "nl": [
+          "Nieuwe plugin ArmyOverview, zoals het MaelstromTools-overzicht: Base- / Defense- / Army-level, gebouwen of units (huidig / max) en health per base — tank-icoon in de Shockr-knop of /st army",
+          "Repair charges per base met een leger: repair time per unit-type, charges, aanvallen (huidig / max), tijd tot de volgende aanval en tot max+1 aanvallen"
+        ]
+      }
+    },
     {
       "version": "5.40.0",
       "date": "2026-11-09",
@@ -77,27 +95,6 @@
           "Attack Tracker stuurt nu ook de repair time (RT) en research points (RP) van elke aanval mee, gelezen uit het gevechtsrapport",
           "Loot-pagina: nieuwe kolommen RP, Totaal (tib + crystal + credits + RP), RT, Opbrengst/CP en Opbrengst/RT; de samenvatting toont RP en totale RT; Gem/aanval telt nu RP mee",
           "Aanvallen van voor 5.37.0 hebben geen RP/RT en tonen —"
-        ]
-      }
-    },
-    {
-      "version": "5.36.0",
-      "date": "2026-11-02",
-      "changes": {
-        "en": [
-          "Register in one command: /st config set api.url https://packetlab.nl/shockr?code=<enrollment code> stores the server URL and registers you right away",
-          "The code is not stored; feedback in the chat (Registering... / Registered successfully / Registration failed: reason)",
-          "Already registered: the code is skipped. Without ?code= nothing changes (/st register still works)"
-        ],
-        "de": [
-          "Registrieren mit einem Befehl: /st config set api.url https://packetlab.nl/shockr?code=<Registrierungscode> speichert die Server-URL und registriert dich sofort",
-          "Der Code wird nicht gespeichert; Rückmeldung im Chat (Registriere... / Erfolgreich registriert / Registrierung fehlgeschlagen: Grund)",
-          "Bereits registriert: der Code wird übersprungen. Ohne ?code= ändert sich nichts (/st register funktioniert weiter)"
-        ],
-        "nl": [
-          "Registreren in één commando: /st config set api.url https://packetlab.nl/shockr?code=<enrollment-code> slaat de server-URL op en registreert je meteen",
-          "De code wordt niet opgeslagen; terugmelding in de chat (Bezig met registreren... / Succesvol geregistreerd / Registratie mislukt: reden)",
-          "Al geregistreerd: de code wordt overgeslagen. Zonder ?code= verandert er niets (/st register blijft werken)"
         ]
       }
     }
