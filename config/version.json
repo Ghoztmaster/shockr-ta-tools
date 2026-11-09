@@ -1,7 +1,28 @@
 {
-  "version": "5.38.0",
-  "date": "2026-11-08",
+  "version": "5.39.0",
+  "date": "2026-11-09",
   "changelog": [
+    {
+      "version": "5.39.0",
+      "date": "2026-11-09",
+      "changes": {
+        "en": [
+          "New plugin ProductionOverview: production per base per hour (continuous, bonus, POI, total) for Tiberium, Crystal, Power and Credits, with a total row — factory icon in the Shockr button or /st production",
+          "Click a base name in the overview to open that base",
+          "The plugin list (Plugins panel, /st plugin list, /st help, info page) is now alphabetical"
+        ],
+        "de": [
+          "Neues Plugin ProductionOverview: Produktion pro Basis pro Stunde (kontinuierlich, Bonus, POI, gesamt) für Tiberium, Kristall, Strom und Credits, mit Summenzeile — Fabrik-Symbol im Shockr-Knopf oder /st production",
+          "Klick auf einen Basisnamen in der Übersicht öffnet diese Basis",
+          "Die Plugin-Liste (Plugins-Panel, /st plugin list, /st help, Info-Seite) ist jetzt alphabetisch"
+        ],
+        "nl": [
+          "Nieuwe plugin ProductionOverview: productie per base per uur (continu, bonus, POI, totaal) voor Tiberium, Crystal, Power en Credits, met totaalrij — fabriek-icoon in de Shockr-knop of /st production",
+          "Klik op een basenaam in het overzicht om die base te openen",
+          "De plugin-lijst (Plugins-paneel, /st plugin list, /st help, info-pagina) staat nu op alfabet"
+        ]
+      }
+    },
     {
       "version": "5.38.0",
       "date": "2026-11-08",
@@ -86,24 +107,6 @@
           "Filters: afstand tot je base of een locatie, CP-limiet, min. level, Speler/Base/Outpost/Camp en scan-leeftijd; \"Layouts tonen\" toont alle layouts als tegels",
           "Klik op een coördinaat om hem te kopiëren voor de game-chat; Rule OUT verbergt bases die je hebt bekeken; Optimizer opent de layout in CnCOpt",
           "Fix: na een update toont de website geen ruwe tekstsleutels meer (de browser hield een oud taalbestand vast)"
-        ]
-      }
-    },
-    {
-      "version": "5.34.0",
-      "date": "2026-10-31",
-      "changes": {
-        "en": [
-          "Map Labels: the player name labels under camps and outposts now sit below the game's own label (\"Camp Lvl 25\") instead of on top of it, scaling with the zoom",
-          "New setting maplabels.offset: label height in cells from the top of the cell (e.g. 1.5); auto is the default"
-        ],
-        "de": [
-          "Map Labels: die Spielernamen-Labels unter Camps und Außenposten stehen jetzt unter dem Spiel-Label („Camp Lvl 25“) statt darauf und skalieren mit dem Zoom",
-          "Neue Einstellung maplabels.offset: Label-Höhe in Feldern ab Feldoberkante (z. B. 1.5); Standard ist auto"
-        ],
-        "nl": [
-          "Map Labels: de spelernaam-labels onder camps en outposts staan nu onder het game-label (\"Camp Lvl 25\") in plaats van erop, en schalen mee met de zoom",
-          "Nieuwe instelling maplabels.offset: labelhoogte in velden vanaf de bovenkant van het veld (bijv. 1.5); standaard auto"
         ]
       }
     }

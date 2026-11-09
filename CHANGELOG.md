@@ -1,5 +1,24 @@
 # Changelog
 
+## [5.39.0] — 2026-11-09
+
+Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+Ronde 2 van 7: MaelstromTools-functies als Shockr-plugins.
+
+### Nieuwe plugin: ProductionOverview (`plugins/production-overview.js`, standaard aan)
+- Toolbar-icoon (fabriek) of `/st production`: paneel met per eigen base per uur Continu, Bonus, POI en Totaal voor Tiberium, Crystal, Power en Credits (credits zonder POI), totaalrij onderaan; klik op de basenaam opent die base
+- Game-API (zelfde calls als het Production-venster van MaelstromTools, eigen implementatie): `city.GetResourceGrowPerHour(type, false, false)`, `city.GetResourceBonusGrowPerHour(type)`, `alliance.GetPOIBonusFromResourceType(type)`; credits via `ClientLib.Base.Resource.GetResource(Bonus)GrowPerHour(city.get_CityCreditsProduction(), false)`. Ontbrekende of falende getter: "—", telt niet mee in het totaal
+- Ververst elke 5 s zolang het paneel open is, alleen opnieuw getekend als de data veranderde
+- NIET LIVE GEVERIFIEERD: de productie-getters en het openen van een base (`webfrontend.gui.UtilView.openCityInMainWindow`, met fallback `set_CurrentOwnCityId` + `setView(pavmPlayerBase)`)
+
+### Gedeelde basis voor de overzichten (`lib/overview-panel.js`)
+- Versleepbaar paneel (zelfde DOM-stijl als MarkerNav/TargetBoard), tabel met gegroepeerde kolommen en totaalrij, `ownBases()`, `openBase(id)`, `compact(n)`; ResourceOverview en ArmyOverview (rondes 3 en 4) bouwen hierop
+
+### Plugin-lijst alfabetisch
+- Plugins-paneel, `/st plugin list`, `/st status` en `/st help` tonen de plugins op alfabet: `lib/main.js` sorteert de lijst na het starten (de startvolgorde blijft zoals hij was)
+- `config/plugins.json` (info-pagina) staat op alfabet; `tests/test_siteinfo.py` controleert dat nu, en kent AutoCollect als standaard-uit plugin (miste sinds 5.38.0)
+
 ## [5.38.0] — 2026-11-08
 
 Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

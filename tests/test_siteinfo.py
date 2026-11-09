@@ -24,7 +24,7 @@ STATIC = ROOT / "server" / "static"
 BUILD_VERSION = re.search(r"const VERSION = '([^']+)'", (ROOT / "build.js").read_text(encoding="utf-8")).group(1)
 # The repo roadmap as written (item counts change with every roadmap edit)
 ROADMAP = json.loads((ROOT / "config" / "roadmap.json").read_text(encoding="utf-8"))
-# Plugins started by lib/main.js, in order: config/plugins.json must list exactly these
+# Plugins started by lib/main.js: config/plugins.json must list exactly these, alphabetically (5.39.0)
 MAIN_JS = (ROOT / "lib" / "main.js").read_text(encoding="utf-8")
 _PLUGINS_ARRAY = re.search(r"const plugins = \[(.*?)\];", MAIN_JS, re.S).group(1)
 _VAR_CLASS = dict(re.findall(r"const (\w+) = new (\w+)\(", MAIN_JS))
@@ -91,8 +91,8 @@ class TestSiteInfo:
     def test_repo_plugins_file(self, cfg):
         plugins = SiteInfo(cfg).plugins()
         # class names in lib/main.js; the plugin name may differ in case only (Stabs -> "STABS")
-        assert [p["name"].lower() for p in plugins] == [n.lower() for n in PLUGIN_NAMES], "same plugins and order as lib/main.js"
-        off = {"RepairGuard", "AutoRepair", "UpgradeCalc"}   # the only plugins with defaultEnabled = false
+        assert [p["name"].lower() for p in plugins] == sorted(n.lower() for n in PLUGIN_NAMES), "same plugins as lib/main.js, alphabetical"
+        off = {"RepairGuard", "AutoRepair", "AutoCollect", "UpgradeCalc"}   # the only plugins with defaultEnabled = false
         for p in plugins:
             kebab = re.sub(r"([a-z0-9])([A-Z])", r"\1-\2", p["name"]).lower()
             assert p["slug"] == kebab, "slug = what /st plugin list shows"

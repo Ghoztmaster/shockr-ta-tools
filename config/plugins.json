@@ -1,69 +1,5 @@
 [
   {
-    "name": "CampTracker",
-    "slug": "camp-tracker",
-    "defaultEnabled": true,
-    "replaces": null,
-    "short": {
-      "en": "FG base markers on the world map",
-      "de": "FG-Basen-Markierungen auf der Weltkarte",
-      "nl": "FG-base markers op de wereldkaart"
-    },
-    "long": {
-      "en": "Numbered markers (#1, #2, …) on the nearest Forgotten camps, outposts and bases around your main base. Size, font, count and an offense filter are configurable. A chat alert with clickable coordinates is sent when a new camp or outpost spawns.",
-      "de": "Nummerierte Markierungen (#1, #2, …) auf den nächsten Forgotten-Camps, -Außenposten und -Basen um deine Hauptbasis. Größe, Schrift, Anzahl und ein Offensiv-Filter sind einstellbar. Bei einem neuen Camp oder Außenposten kommt eine Chat-Meldung mit anklickbaren Koordinaten.",
-      "nl": "Genummerde markers (#1, #2, …) op de dichtstbijzijnde Forgotten camps, outposts en bases rond je hoofdbase. Grootte, lettertype, aantal en een offense-filter zijn instelbaar. Bij een nieuw camp of outpost komt een chatmelding met klikbare coördinaten."
-    }
-  },
-  {
-    "name": "KillInfo",
-    "slug": "kill-info",
-    "defaultEnabled": true,
-    "replaces": null,
-    "short": {
-      "en": "Plunder panel for the selected Forgotten base",
-      "de": "Plünder-Panel für die gewählte Forgotten-Basis",
-      "nl": "Plunderpaneel voor de geselecteerde Forgotten-base"
-    },
-    "long": {
-      "en": "Type /st plunder to open a panel with the tiberium and crystal loot per defense unit of the selected Forgotten base, plus the total. Pure game-data calculation: no polling and no listeners on the game.",
-      "de": "Mit /st plunder öffnet sich ein Panel mit der Tiberium- und Kristall-Beute pro Verteidigungseinheit der gewählten Forgotten-Basis, plus Summe. Reine Spieldaten-Berechnung: kein Polling, keine Listener am Spiel.",
-      "nl": "Met /st plunder opent een paneel met de tiberium- en crystal-buit per verdedigingsunit van de geselecteerde Forgotten-base, plus het totaal. Pure berekening uit de gamedata: geen polling en geen listeners op de game."
-    }
-  },
-  {
-    "name": "PlayerStatus",
-    "slug": "player-status",
-    "defaultEnabled": true,
-    "replaces": null,
-    "short": {
-      "en": "Alliance base colors by online status",
-      "de": "Allianz-Basisfarben nach Online-Status",
-      "nl": "Alliance-basekleuren op online-status"
-    },
-    "long": {
-      "en": "Colors the bases of alliance members on the world map by online, away or offline; own bases are cyan, friends and NAPs get their own color. Switch to the familiar Maelstrom colors with /st config set colors maelstrom.",
-      "de": "Färbt die Basen der Allianzmitglieder auf der Weltkarte nach online, abwesend oder offline; eigene Basen sind cyan, Freunde und NAPs haben eine eigene Farbe. Mit /st config set colors maelstrom auf die bekannten Maelstrom-Farben umschalten.",
-      "nl": "Kleurt de bases van alliance-leden op de wereldkaart naar online, afwezig of offline; eigen bases zijn cyaan, vrienden en NAP's hebben een eigen kleur. Overschakelen naar de bekende Maelstrom-kleuren met /st config set colors maelstrom."
-    }
-  },
-  {
-    "name": "LayoutScanner",
-    "slug": "layout-scanner",
-    "defaultEnabled": true,
-    "replaces": null,
-    "short": {
-      "en": "Scans nearby Forgotten base layouts for the alliance",
-      "de": "Scannt Layouts naher Forgotten-Basen für die Allianz",
-      "nl": "Scant layouts van Forgotten-bases in de buurt voor de alliance"
-    },
-    "long": {
-      "en": "Scans the layouts of Forgotten bases around you and sends them to the alliance server. Runs automatically only after 20 minutes of inactivity and pauses while you are online; /st scan starts a scan by hand. On the world map a scan takes 100 ms per base (2 s in other views, so the shown base does not flicker).",
-      "de": "Scannt die Layouts der Forgotten-Basen in deiner Umgebung und schickt sie an den Allianz-Server. Läuft automatisch nur nach 20 Minuten Inaktivität und pausiert, solange du online bist; /st scan startet einen Scan von Hand. Auf der Weltkarte dauert ein Scan 100 ms pro Basis (2 s in anderen Ansichten, damit die angezeigte Basis nicht flackert).",
-      "nl": "Scant de layouts van Forgotten-bases om je heen en stuurt ze naar de alliance-server. Draait automatisch alleen na 20 minuten inactiviteit en pauzeert zolang je online bent; /st scan start een scan met de hand. Op de wereldkaart duurt een scan 100 ms per base (2 s in andere views, zodat de getoonde base niet flikkert)."
-    }
-  },
-  {
     "name": "AllianceScanner",
     "slug": "alliance-scanner",
     "defaultEnabled": true,
@@ -77,134 +13,6 @@
       "en": "Scans the base layouts of all members of your own alliance and sends them to the alliance server. Same rules as the Layout Scanner: automatic only when idle, paused while you are online; /st scanalliance starts it by hand. On the world map 100 ms per base, 2 s in other views.",
       "de": "Scannt die Basis-Layouts aller Mitglieder deiner eigenen Allianz und schickt sie an den Allianz-Server. Gleiche Regeln wie der Layout Scanner: automatisch nur bei Inaktivität, pausiert, solange du online bist; /st scanalliance startet ihn von Hand. Auf der Weltkarte 100 ms pro Basis, 2 s in anderen Ansichten.",
       "nl": "Scant de base-layouts van alle leden van je eigen alliance en stuurt ze naar de alliance-server. Zelfde regels als de Layout Scanner: automatisch alleen bij inactiviteit, gepauzeerd zolang je online bent; /st scanalliance start hem met de hand. Op de wereldkaart 100 ms per base, 2 s in andere views."
-    }
-  },
-  {
-    "name": "RepairGuard",
-    "slug": "repair-guard",
-    "defaultEnabled": false,
-    "replaces": null,
-    "short": {
-      "en": "Blocks the Repair All buttons",
-      "de": "Blockiert die Repair-All-Buttons",
-      "nl": "Blokkeert de Repair All-knoppen"
-    },
-    "long": {
-      "en": "Prevents a full repair of all units by accident, which saves crystal on Forgotten Attack worlds. Repairing a single unit keeps working. Off by default.",
-      "de": "Verhindert eine versehentliche Reparatur aller Einheiten, das spart Kristall auf Forgotten-Attack-Welten. Einzelne Einheiten reparieren funktioniert weiter. Standardmäßig aus.",
-      "nl": "Voorkomt dat je per ongeluk alle units repareert, wat crystal bespaart op Forgotten Attack-werelden. Een enkele unit repareren blijft werken. Standaard uit."
-    }
-  },
-  {
-    "name": "AutoRepair",
-    "slug": "auto-repair",
-    "defaultEnabled": false,
-    "replaces": null,
-    "short": {
-      "en": "Repairs damaged units right after every attack",
-      "de": "Repariert beschädigte Einheiten direkt nach jedem Angriff",
-      "nl": "Repareert beschadigde units direct na elke aanval"
-    },
-    "long": {
-      "en": "Repairs the units of the attacking base with Repair All right after every own attack, as soon as the base is no longer locked. A check every few minutes (/st config set autorepair.interval <min>, default 5) catches whatever that missed. Never while the attack screen is open. Cannot run together with RepairGuard: turning one on turns the other off. Buildings too, after an attack on your base, with /st config set autorepair.buildings true (off by default). Off by default.",
-      "de": "Repariert die Einheiten der angreifenden Basis mit Repair All direkt nach jedem eigenen Angriff, sobald die Basis nicht mehr gesperrt ist. Eine Prüfung alle paar Minuten (/st config set autorepair.interval <Min.>, Standard 5) fängt ab, was dabei verpasst wurde. Nie bei offenem Angriffsbildschirm. Läuft nicht zusammen mit RepairGuard: einschalten des einen schaltet das andere aus. Auch Gebäude, nach einem Angriff auf deine Basis, mit /st config set autorepair.buildings true (standardmäßig aus). Standardmäßig aus.",
-      "nl": "Repareert de units van de aanvallende base met Repair All direct na elke eigen aanval, zodra de base niet meer op slot staat. Een check elke paar minuten (/st config set autorepair.interval <min>, standaard 5) vangt op wat daarbij gemist wordt. Nooit als het aanvalsscherm open staat. Kan niet samen met RepairGuard: de een aanzetten zet de ander uit. Ook buildings, na een aanval op je base, met /st config set autorepair.buildings true (standaard uit). Standaard uit."
-    }
-  },
-  {
-    "name": "AutoCollect",
-    "slug": "auto-collect",
-    "defaultEnabled": false,
-    "replaces": null,
-    "short": {
-      "en": "Collects the resource packages of all your bases automatically",
-      "de": "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein",
-      "nl": "Verzamelt de resource-pakketten van al je bases automatisch"
-    },
-    "long": {
-      "en": "Every few minutes (/st config set autocollect.interval <min>, default 5, minimum 1) the resource packages of every own base are collected, the same as clicking each package. The chat reports a round that collected something: \"Collected packages on X bases\". Off by default.",
-      "de": "Alle paar Minuten (/st config set autocollect.interval <Min.>, Standard 5, Minimum 1) werden die Ressourcenpakete jeder eigenen Basis eingesammelt, wie ein Klick auf jedes Paket. Der Chat meldet eine Runde, die etwas eingesammelt hat: „Pakete in X Basen eingesammelt“. Standardmäßig aus.",
-      "nl": "Elke paar minuten (/st config set autocollect.interval <min>, standaard 5, minimaal 1) worden de resource-pakketten van elke eigen base verzameld, net als op elk pakket klikken. De chat meldt een ronde die iets verzamelde: \"Pakketten verzameld op X bases\". Standaard uit."
-    }
-  },
-  {
-    "name": "UpgradeCalc",
-    "slug": "upgrade-calc",
-    "defaultEnabled": false,
-    "replaces": null,
-    "short": {
-      "en": "Upgrade cost and saving time per building",
-      "de": "Upgrade-Kosten und Sparzeit pro Gebäude",
-      "nl": "Upgrade-kosten en spaartijd per gebouw"
-    },
-    "long": {
-      "en": "The calculator icon in the Shockr button (top left) opens, in your own base, a panel with every building that is not max level, the cost of its next level and how long you need to save for it at the current production. Fastest first. Off by default.",
-      "de": "Das Rechner-Symbol im Shockr-Knopf (oben links) öffnet in deiner eigenen Basis ein Panel mit jedem Gebäude, das nicht auf Maximalstufe ist, den Kosten der nächsten Stufe und wie lange du bei der aktuellen Produktion dafür sparen musst. Schnellste zuerst. Standardmäßig aus.",
-      "nl": "Het rekenmachine-icoon in de Shockr-knop (linksboven) opent in je eigen base een paneel met elk gebouw dat niet op max level staat, de kosten van het volgende level en hoe lang je daarvoor moet sparen bij de huidige productie. Snelste eerst. Standaard uit."
-    }
-  },
-  {
-    "name": "TargetWatcher",
-    "slug": "target-watcher",
-    "defaultEnabled": true,
-    "replaces": null,
-    "short": {
-      "en": "Tells the alliance which target you are looking at",
-      "de": "Zeigt der Allianz, welches Ziel du ansiehst",
-      "nl": "Laat de alliance zien welk target je bekijkt"
-    },
-    "long": {
-      "en": "When you open an enemy or Forgotten base, the alliance server is told you are looking at it. If other members watch the same target, you get one chat line. Shown on the Target Watch page and as 👁 on the world map.",
-      "de": "Öffnest du eine feindliche oder Forgotten-Basis, erfährt der Allianz-Server, dass du sie ansiehst. Sehen andere Mitglieder dasselbe Ziel an, bekommst du eine Chatzeile. Sichtbar auf der Target-Watch-Seite und als 👁 auf der Weltkarte.",
-      "nl": "Open je een vijandelijke of Forgotten-base, dan meldt de alliance-server dat jij ernaar kijkt. Kijken andere leden naar hetzelfde target, dan krijg je één chatregel. Zichtbaar op de Target Watch-pagina en als 👁 op de wereldkaart."
-    }
-  },
-  {
-    "name": "AttackTracker",
-    "slug": "attack-tracker",
-    "defaultEnabled": true,
-    "replaces": null,
-    "short": {
-      "en": "Logs your attacks on Forgotten targets",
-      "de": "Meldet deine Angriffe auf Forgotten-Ziele",
-      "nl": "Meldt je aanvallen op Forgotten-targets"
-    },
-    "long": {
-      "en": "Reads your own combat reports and sends your attacks on Forgotten camps, outposts and bases (won and lost) to the alliance server: loot, destroyed yes/no, CP cost and your alliance role. Each logged attack gets a chat line. PvP never leaves the browser, and your inbox is not touched. Won attacks show on the Attacks and Loot pages and as ⚔ on the world map; all attacks feed the War page of the alliance leadership.",
-      "de": "Liest deine eigenen Kampfberichte und schickt deine Angriffe auf Forgotten-Camps, -Außenposten und -Basen (gewonnen und verloren) an den Allianz-Server: Beute, zerstört ja/nein, CP-Kosten und deine Allianzrolle. Jeder gemeldete Angriff bekommt eine Chatzeile. PvP verlässt den Browser nie, dein Posteingang wird nicht angefasst. Gewonnene Angriffe erscheinen auf den Seiten Attacks und Loot und als ⚔ auf der Weltkarte; alle Angriffe speisen die War-Seite der Allianzführung.",
-      "nl": "Leest je eigen gevechtsrapporten en stuurt je aanvallen op Forgotten camps, outposts en bases (gewonnen en verloren) naar de alliance-server: buit, vernietigd ja/nee, CP-kosten en je alliance-rol. Elke gemelde aanval krijgt een chatregel. PvP verlaat de browser nooit, en je inbox wordt niet aangeraakt. Gewonnen aanvallen staan op de pagina's Attacks en Loot en als ⚔ op de wereldkaart; alle aanvallen voeden de War-pagina van de alliance-leiding."
-    }
-  },
-  {
-    "name": "WatchList",
-    "slug": "watch-list",
-    "defaultEnabled": true,
-    "replaces": null,
-    "short": {
-      "en": "Claim Forgotten targets you intend to attack",
-      "de": "Forgotten-Ziele reservieren, die du angreifen willst",
-      "nl": "Forgotten-targets claimen die je wilt aanvallen"
-    },
-    "long": {
-      "en": "With /st watch you claim the selected target, visible to the whole alliance; if someone else already claimed it, you get a warning. A claim stays until you remove it (/st unwatch), win an attack on the target, or 24 hours pass.",
-      "de": "Mit /st watch reservierst du das gewählte Ziel, sichtbar für die ganze Allianz; hat es schon jemand reserviert, bekommst du eine Warnung. Eine Reservierung bleibt, bis du sie entfernst (/st unwatch), einen Angriff auf das Ziel gewinnst oder 24 Stunden vergehen.",
-      "nl": "Met /st watch claim je het geselecteerde target, zichtbaar voor de hele alliance; heeft iemand het al geclaimd, dan krijg je een waarschuwing. Een claim blijft staan tot je hem weghaalt (/st unwatch), een aanval op het target wint of er 24 uur voorbij zijn."
-    }
-  },
-  {
-    "name": "BaseInfo",
-    "slug": "base-info",
-    "defaultEnabled": true,
-    "replaces": "CENTER DRIVEN Base Info",
-    "short": {
-      "en": "Offense/defense level and number at player bases",
-      "de": "Offensiv-/Defensivlevel und Nummer an Spielerbasen",
-      "nl": "Offense-/defense-level en nummer bij spelerbases"
-    },
-    "long": {
-      "en": "Shows a label like \"#2 23.4/21.0\" at every player base on the world map: the base number of that player and its offense/defense level. The original only showed the levels in the info panel of the selected base.",
-      "de": "Zeigt an jeder Spielerbasis auf der Weltkarte ein Label wie \"#2 23.4/21.0\": die Basisnummer dieses Spielers und das Offensiv-/Defensivlevel. Das Original zeigte die Level nur im Infofenster der gewählten Basis.",
-      "nl": "Toont bij elke spelerbase op de wereldkaart een label als \"#2 23.4/21.0\": het basenummer van die speler en het offense-/defense-level. Het origineel toonde de levels alleen in het infopaneel van de geselecteerde base."
     }
   },
   {
@@ -224,147 +32,83 @@
     }
   },
   {
-    "name": "MapLabels",
-    "slug": "map-labels",
+    "name": "AttackTracker",
+    "slug": "attack-tracker",
     "defaultEnabled": true,
     "replaces": null,
     "short": {
-      "en": "Who views, claimed or attacked a Forgotten target",
-      "de": "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat",
-      "nl": "Wie een Forgotten-target bekijkt, claimde of aanviel"
+      "en": "Logs your attacks on Forgotten targets",
+      "de": "Meldet deine Angriffe auf Forgotten-Ziele",
+      "nl": "Meldt je aanvallen op Forgotten-targets"
     },
     "long": {
-      "en": "Labels under Forgotten targets on the world map: 👁 viewing (Target Watcher), 📌 claimed (WatchList) and ⚔ attacked (Attack Tracker), with the player name. Per player only the highest status is shown.",
-      "de": "Labels unter Forgotten-Zielen auf der Weltkarte: 👁 sieht an (Target Watcher), 📌 reserviert (WatchList) und ⚔ angegriffen (Attack Tracker), mit Spielername. Pro Spieler wird nur der höchste Status gezeigt.",
-      "nl": "Labels onder Forgotten-targets op de wereldkaart: 👁 bekijkt (Target Watcher), 📌 geclaimd (WatchList) en ⚔ aangevallen (Attack Tracker), met de spelernaam. Per speler wordt alleen de hoogste status getoond."
+      "en": "Reads your own combat reports and sends your attacks on Forgotten camps, outposts and bases (won and lost) to the alliance server: loot, destroyed yes/no, CP cost and your alliance role. Each logged attack gets a chat line. PvP never leaves the browser, and your inbox is not touched. Won attacks show on the Attacks and Loot pages and as ⚔ on the world map; all attacks feed the War page of the alliance leadership.",
+      "de": "Liest deine eigenen Kampfberichte und schickt deine Angriffe auf Forgotten-Camps, -Außenposten und -Basen (gewonnen und verloren) an den Allianz-Server: Beute, zerstört ja/nein, CP-Kosten und deine Allianzrolle. Jeder gemeldete Angriff bekommt eine Chatzeile. PvP verlässt den Browser nie, dein Posteingang wird nicht angefasst. Gewonnene Angriffe erscheinen auf den Seiten Attacks und Loot und als ⚔ auf der Weltkarte; alle Angriffe speisen die War-Seite der Allianzführung.",
+      "nl": "Leest je eigen gevechtsrapporten en stuurt je aanvallen op Forgotten camps, outposts en bases (gewonnen en verloren) naar de alliance-server: buit, vernietigd ja/nee, CP-kosten en je alliance-rol. Elke gemelde aanval krijgt een chatregel. PvP verlaat de browser nooit, en je inbox wordt niet aangeraakt. Gewonnen aanvallen staan op de pagina's Attacks en Loot en als ⚔ op de wereldkaart; alle aanvallen voeden de War-pagina van de alliance-leiding."
     }
   },
   {
-    "name": "TunnelInfo",
-    "slug": "tunnel-info",
-    "defaultEnabled": true,
-    "replaces": "TA Tunnel Info",
+    "name": "AutoCollect",
+    "slug": "auto-collect",
+    "defaultEnabled": false,
+    "replaces": null,
     "short": {
-      "en": "Tunnel level, required offense and influence range",
-      "de": "Tunnel-Level, benötigte Offensive und Einflussbereich",
-      "nl": "Tunnel-level, benodigde offense en invloedsbereik"
+      "en": "Collects the resource packages of all your bases automatically",
+      "de": "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein",
+      "nl": "Verzamelt de resource-pakketten van al je bases automatisch"
     },
     "long": {
-      "en": "Every tunnel on the world map gets a label with its level and the offense you need, plus a dotted circle of its influence range. Green if your strongest offense makes it, red if not. The original only showed this while moving a base. The red circle is opaque and 3 px wide; change its colour and width with /st config set tunnel.color #rrggbb and tunnel.width 1-10.",
-      "de": "Jeder Tunnel auf der Weltkarte bekommt ein Label mit Level und benötigter Offensive, plus einen gepunkteten Kreis seines Einflussbereichs. Grün, wenn deine stärkste Offensive reicht, sonst rot. Das Original zeigte das nur beim Verlegen einer Basis. Der rote Kreis ist deckend und 3 px breit; Farbe und Breite änderst du mit /st config set tunnel.color #rrggbb und tunnel.width 1-10.",
-      "nl": "Elke tunnel op de wereldkaart krijgt een label met het level en de benodigde offense, plus een gestippelde cirkel van het invloedsbereik. Groen als je sterkste offense het haalt, anders rood. Het origineel toonde dit alleen tijdens het verplaatsen van een base. De rode cirkel is dekkend en 3 px breed; kleur en breedte wijzig je met /st config set tunnel.color #rrggbb en tunnel.width 1-10."
+      "en": "Every few minutes (/st config set autocollect.interval <min>, default 5, minimum 1) the resource packages of every own base are collected, the same as clicking each package. The chat reports a round that collected something: \"Collected packages on X bases\". Off by default.",
+      "de": "Alle paar Minuten (/st config set autocollect.interval <Min.>, Standard 5, Minimum 1) werden die Ressourcenpakete jeder eigenen Basis eingesammelt, wie ein Klick auf jedes Paket. Der Chat meldet eine Runde, die etwas eingesammelt hat: „Pakete in X Basen eingesammelt“. Standardmäßig aus.",
+      "nl": "Elke paar minuten (/st config set autocollect.interval <min>, standaard 5, minimaal 1) worden de resource-pakketten van elke eigen base verzameld, net als op elk pakket klikken. De chat meldt een ronde die iets verzamelde: \"Pakketten verzameld op X bases\". Standaard uit."
     }
   },
   {
-    "name": "FormationSaver",
-    "slug": "formation-saver",
-    "defaultEnabled": true,
-    "replaces": "TA Formation Saver",
+    "name": "AutoRepair",
+    "slug": "auto-repair",
+    "defaultEnabled": false,
+    "replaces": null,
     "short": {
-      "en": "Save attack formations by name and load them back",
-      "de": "Angriffsformationen unter einem Namen speichern und laden",
-      "nl": "Aanvalsformaties op naam opslaan en terugladen"
+      "en": "Repairs damaged units right after every attack",
+      "de": "Repariert beschädigte Einheiten direkt nach jedem Angriff",
+      "nl": "Repareert beschadigde units direct na elke aanval"
     },
     "long": {
-      "en": "In the attack screen with a target open: /st formation save <name> stores the current offense formation, /st formation load <name> puts it back. List and delete with /st formation list and /st formation delete <name>.",
-      "de": "Im Angriffsbildschirm mit offenem Ziel: /st formation save <name> speichert die aktuelle Offensiv-Formation, /st formation load <name> stellt sie wieder her. Auflisten und löschen mit /st formation list und /st formation delete <name>.",
-      "nl": "In het aanvalsscherm met een target open: /st formation save <naam> bewaart de huidige offense-formatie, /st formation load <naam> zet hem terug. Lijst en verwijderen met /st formation list en /st formation delete <naam>."
+      "en": "Repairs the units of the attacking base with Repair All right after every own attack, as soon as the base is no longer locked. A check every few minutes (/st config set autorepair.interval <min>, default 5) catches whatever that missed. Never while the attack screen is open. Cannot run together with RepairGuard: turning one on turns the other off. Buildings too, after an attack on your base, with /st config set autorepair.buildings true (off by default). Off by default.",
+      "de": "Repariert die Einheiten der angreifenden Basis mit Repair All direkt nach jedem eigenen Angriff, sobald die Basis nicht mehr gesperrt ist. Eine Prüfung alle paar Minuten (/st config set autorepair.interval <Min.>, Standard 5) fängt ab, was dabei verpasst wurde. Nie bei offenem Angriffsbildschirm. Läuft nicht zusammen mit RepairGuard: einschalten des einen schaltet das andere aus. Auch Gebäude, nach einem Angriff auf deine Basis, mit /st config set autorepair.buildings true (standardmäßig aus). Standardmäßig aus.",
+      "nl": "Repareert de units van de aanvallende base met Repair All direct na elke eigen aanval, zodra de base niet meer op slot staat. Een check elke paar minuten (/st config set autorepair.interval <min>, standaard 5) vangt op wat daarbij gemist wordt. Nooit als het aanvalsscherm open staat. Kan niet samen met RepairGuard: de een aanzetten zet de ander uit. Ook buildings, na een aanval op je base, met /st config set autorepair.buildings true (standaard uit). Standaard uit."
     }
   },
   {
-    "name": "Wavy",
-    "slug": "wavy",
+    "name": "BaseInfo",
+    "slug": "base-info",
     "defaultEnabled": true,
-    "replaces": "TA Wavy 0.6.2",
+    "replaces": "CENTER DRIVEN Base Info",
     "short": {
-      "en": "Forgotten attack waves per base",
-      "de": "Forgotten-Angriffswellen pro Basis",
-      "nl": "Forgotten-aanvalsgolven per base"
+      "en": "Offense/defense level and number at player bases",
+      "de": "Offensiv-/Defensivlevel und Nummer an Spielerbasen",
+      "nl": "Offense-/defense-level en nummer bij spelerbases"
     },
     "long": {
-      "en": "In the info panel of the selected object: the number of Forgotten bases within attack range, their level distribution and how many waves that gives. On the world map, distance lines to those bases.",
-      "de": "Im Infofenster des gewählten Objekts: die Anzahl Forgotten-Basen in Angriffsreichweite, ihre Level-Verteilung und wie viele Wellen das ergibt. Auf der Weltkarte Entfernungslinien zu diesen Basen.",
-      "nl": "In het infopaneel van het geselecteerde object: het aantal Forgotten-bases binnen aanvalsbereik, hun level-verdeling en hoeveel waves dat oplevert. Op de wereldkaart afstandslijnen naar die bases."
+      "en": "Shows a label like \"#2 23.4/21.0\" at every player base on the world map: the base number of that player and its offense/defense level. The original only showed the levels in the info panel of the selected base.",
+      "de": "Zeigt an jeder Spielerbasis auf der Weltkarte ein Label wie \"#2 23.4/21.0\": die Basisnummer dieses Spielers und das Offensiv-/Defensivlevel. Das Original zeigte die Level nur im Infofenster der gewählten Basis.",
+      "nl": "Toont bij elke spelerbase op de wereldkaart een label als \"#2 23.4/21.0\": het basenummer van die speler en het offense-/defense-level. Het origineel toonde de levels alleen in het infopaneel van de geselecteerde base."
     }
   },
   {
-    "name": "PoiAnalyser",
-    "slug": "poi-analyser",
+    "name": "CampTracker",
+    "slug": "camp-tracker",
     "defaultEnabled": true,
-    "replaces": "Info Sticker (POI part) + Real POI Bonus",
+    "replaces": null,
     "short": {
-      "en": "Alliance POI bonuses on the map and in the info panel",
-      "de": "Allianz-POI-Boni auf der Karte und im Infofenster",
-      "nl": "Alliance-POI-bonussen op de kaart en in het infopaneel"
+      "en": "FG base markers on the world map",
+      "de": "FG-Basen-Markierungen auf der Weltkarte",
+      "nl": "FG-base markers op de wereldkaart"
     },
     "long": {
-      "en": "POI labels on the world map, gold for your alliance's POIs. The base info panel shows the active POI bonuses, and for a selected POI the real gain or loss if your alliance takes or loses it.",
-      "de": "POI-Labels auf der Weltkarte, gold für die POIs eurer Allianz. Das Basis-Infofenster zeigt die aktiven POI-Boni und bei einem gewählten POI den echten Gewinn oder Verlust, wenn eure Allianz ihn erobert oder verliert.",
-      "nl": "POI-labels op de wereldkaart, goud voor de POI's van je alliance. Het base-infopaneel toont de actieve POI-bonussen, en bij een geselecteerde POI de echte winst of het verlies als je alliance hem pakt of kwijtraakt."
-    }
-  },
-  {
-    "name": "SectorHud",
-    "slug": "sector-hud",
-    "defaultEnabled": true,
-    "replaces": "WarChiefs Sector HUD 22.05.04",
-    "short": {
-      "en": "Sector HUD with view coordinates and POIs per sector",
-      "de": "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor",
-      "nl": "Sector-HUD met kijkcoördinaten en POI's per sector"
-    },
-    "long": {
-      "en": "A line top left on the world map with the coordinates and sector of the view (e.g. \"450:620 [NE]\"), plus the POIs held per sector: own green, enemy red, free grey. Left click pastes the coordinates into the chat, right click jumps to coordinates. The sector is the direction of the view centre from the world centre.",
-      "de": "Eine Zeile oben links auf der Weltkarte mit den Koordinaten und dem Sektor der Ansicht (z. B. \"450:620 [NE]\"), plus die gehaltenen POIs pro Sektor: eigene grün, feindliche rot, freie grau. Linksklick fügt die Koordinaten in den Chat ein, Rechtsklick springt zu Koordinaten. Der Sektor ist die Richtung der Ansichtsmitte vom Weltzentrum aus.",
-      "nl": "Een regel linksboven op de wereldkaart met de coördinaten en sector van het beeld (bijv. \"450:620 [NE]\"), plus de bezette POI's per sector: eigen groen, vijandelijk rood, vrij grijs. Linksklik plakt de coördinaten in de chat, rechtsklik springt naar coördinaten. De sector is de richting van het midden van het beeld vanaf het wereldcentrum."
-    }
-  },
-  {
-    "name": "MovableMenu",
-    "slug": "movable-menu",
-    "defaultEnabled": true,
-    "replaces": "MovableMenuOverlay 1.0.9",
-    "short": {
-      "en": "Drag game windows and menus to another spot",
-      "de": "Spielfenster und Menüs an eine andere Stelle ziehen",
-      "nl": "Game-vensters en menu's naar een andere plek slepen"
-    },
-    "long": {
-      "en": "Game windows and menu overlays (alliance, mail, forum, …) can be dragged by their title bar. The position is remembered per window. No game code is patched; disabling puts everything back in its original place.",
-      "de": "Spielfenster und Menü-Overlays (Allianz, Post, Forum, …) lassen sich an der Titelleiste verschieben. Die Position wird pro Fenster gespeichert. Es wird kein Spielcode gepatcht; Ausschalten stellt alles an den ursprünglichen Platz zurück.",
-      "nl": "Game-vensters en menu-overlays (alliance, mail, forum, …) zijn te verslepen aan hun titelbalk. De positie wordt per venster onthouden. Er wordt geen gamecode gepatcht; uitschakelen zet alles terug op de oorspronkelijke plek."
-    }
-  },
-  {
-    "name": "TransferAll",
-    "slug": "transfer-all",
-    "defaultEnabled": true,
-    "replaces": "Transfer All Resources 1.6.2",
-    "short": {
-      "en": "Pull all tiberium and crystal into one base in one click",
-      "de": "Alles Tiberium und Kristall mit einem Klick in eine Basis holen",
-      "nl": "Alle tiberium en crystal met één klik naar één base halen"
-    },
-    "long": {
-      "en": "A Transfer All button in the resource-transfer panel pulls all tiberium and crystal from your other bases into the open base. Tick the box first to see the cost. Free storage and your credits are respected: a full resource or an unaffordable base is skipped.",
-      "de": "Ein Alles-transferieren-Knopf im Ressourcen-Transferfenster holt alles Tiberium und Kristall aus deinen anderen Basen in die offene Basis. Erst das Kästchen anhaken, dann siehst du die Kosten. Freier Lagerplatz und deine Credits werden beachtet: volle Ressourcen oder zu teure Basen werden übersprungen.",
-      "nl": "Een Transfer All-knop in het resource-transferpaneel haalt alle tiberium en crystal uit je andere bases naar de open base. Vink eerst het vakje aan om de kosten te zien. Er wordt rekening gehouden met vrije opslag en je credits: een volle resource of een te dure base wordt overgeslagen."
-    }
-  },
-  {
-    "name": "LootSummary",
-    "slug": "loot-summary",
-    "defaultEnabled": true,
-    "replaces": "MHTools Available Loot Summary + Info 1.8.3.9",
-    "short": {
-      "en": "Lootable resources of a Forgotten target in the info panel",
-      "de": "Plünderbare Ressourcen eines Forgotten-Ziels im Infofenster",
-      "nl": "Plunderbare resources van een Forgotten-target in het infopaneel"
-    },
-    "long": {
-      "en": "Select a Forgotten camp, outpost or base on the world map and the info panel shows the lootable research, tiberium, crystal, credits and total, per CP and for the 2nd and 3rd run. Also the number of attacks possible from your current base.",
-      "de": "Wähle ein Forgotten-Camp, einen Außenposten oder eine Basis auf der Weltkarte und das Infofenster zeigt plünderbare Forschung, Tiberium, Kristall, Credits und Summe, pro KP und für den 2. und 3. Angriff. Dazu die Anzahl möglicher Angriffe von deiner aktuellen Basis.",
-      "nl": "Selecteer een Forgotten camp, outpost of base op de wereldkaart en het infopaneel toont de plunderbare research, tiberium, crystal, credits en het totaal, per CP en voor de 2e en 3e aanval. Ook het aantal mogelijke aanvallen vanaf je huidige base."
+      "en": "Numbered markers (#1, #2, …) on the nearest Forgotten camps, outposts and bases around your main base. Size, font, count and an offense filter are configurable. A chat alert with clickable coordinates is sent when a new camp or outpost spawns.",
+      "de": "Nummerierte Markierungen (#1, #2, …) auf den nächsten Forgotten-Camps, -Außenposten und -Basen um deine Hauptbasis. Größe, Schrift, Anzahl und ein Offensiv-Filter sind einstellbar. Bei einem neuen Camp oder Außenposten kommt eine Chat-Meldung mit anklickbaren Koordinaten.",
+      "nl": "Genummerde markers (#1, #2, …) op de dichtstbijzijnde Forgotten camps, outposts en bases rond je hoofdbase. Grootte, lettertype, aantal en een offense-filter zijn instelbaar. Bij een nieuw camp of outpost komt een chatmelding met klikbare coördinaten."
     }
   },
   {
@@ -384,35 +128,83 @@
     }
   },
   {
-    "name": "PvpAlert",
-    "slug": "pvp-alert",
+    "name": "FormationSaver",
+    "slug": "formation-saver",
     "defaultEnabled": true,
-    "replaces": "CENTER DRIVEN PvP Alert Status 1.00",
+    "replaces": "TA Formation Saver",
     "short": {
-      "en": "Alarm when your base is attacked while the game is in the background",
-      "de": "Alarm, wenn deine Basis angegriffen wird, während das Spiel im Hintergrund ist",
-      "nl": "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat"
+      "en": "Save attack formations by name and load them back",
+      "de": "Angriffsformationen unter einem Namen speichern und laden",
+      "nl": "Aanvalsformaties op naam opslaan en terugladen"
     },
     "long": {
-      "en": "When one of your bases is attacked while the game tab is in the background, the tab title and icon change to ALERT and a siren sounds. Everything resets when you return to the game. Siren off: /st config set PvpAlert.sound false.",
-      "de": "Wird eine deiner Basen angegriffen, während der Spiel-Tab im Hintergrund ist, zeigen Tab-Titel und -Symbol ALARM und eine Sirene ertönt. Alles wird zurückgesetzt, sobald du zum Spiel zurückkehrst. Sirene aus: /st config set PvpAlert.sound false.",
-      "nl": "Wordt een van je bases aangevallen terwijl het game-tabblad op de achtergrond staat, dan veranderen titel en icoon van het tabblad in ALARM en klinkt er een sirene. Alles reset zodra je terug in de game bent. Sirene uit: /st config set PvpAlert.sound false."
+      "en": "In the attack screen with a target open: /st formation save <name> stores the current offense formation, /st formation load <name> puts it back. List and delete with /st formation list and /st formation delete <name>.",
+      "de": "Im Angriffsbildschirm mit offenem Ziel: /st formation save <name> speichert die aktuelle Offensiv-Formation, /st formation load <name> stellt sie wieder her. Auflisten und löschen mit /st formation list und /st formation delete <name>.",
+      "nl": "In het aanvalsscherm met een target open: /st formation save <naam> bewaart de huidige offense-formatie, /st formation load <naam> zet hem terug. Lijst en verwijderen met /st formation list en /st formation delete <naam>."
     }
   },
   {
-    "name": "TargetBoard",
-    "slug": "target-board",
+    "name": "KillInfo",
+    "slug": "kill-info",
     "defaultEnabled": true,
     "replaces": null,
     "short": {
-      "en": "In-game overview of alliance targets — who is watching and who is attacking",
-      "de": "In-Game-Übersicht der Allianz-Ziele — wer schaut und wer greift an",
-      "nl": "In-game overzicht van alliance-targets — wie kijkt en wie valt aan"
+      "en": "Plunder panel for the selected Forgotten base",
+      "de": "Plünder-Panel für die gewählte Forgotten-Basis",
+      "nl": "Plunderpaneel voor de geselecteerde Forgotten-base"
     },
     "long": {
-      "en": "The Target Watch page, in the game: the radar icon in the Shockr button (or /st targets) opens a panel with every target your alliance is looking at right now — level, who watches it and since when. Two or more watchers = orange row. Click a row to centre the map on it. Refreshes every 20 s while open. Needs the alliance server (/st register).",
-      "de": "Die Target-Watch-Seite im Spiel: das Radar-Symbol im Shockr-Knopf (oder /st targets) öffnet ein Panel mit jedem Ziel, das deine Allianz gerade ansieht — Level, wer schaut und seit wann. Zwei oder mehr Beobachter = orange Zeile. Klick auf eine Zeile zentriert die Karte darauf. Aktualisiert alle 20 s, solange es offen ist. Braucht den Allianz-Server (/st register).",
-      "nl": "De Target Watch-pagina, in de game: het radar-icoon in de Shockr-knop (of /st targets) opent een paneel met elk target waar je alliance nu naar kijkt — level, wie kijkt en sinds wanneer. Twee of meer kijkers = oranje rij. Klik op een rij om de kaart erop te centreren. Ververst elke 20 s zolang het open is. Heeft de alliance-server nodig (/st register)."
+      "en": "Type /st plunder to open a panel with the tiberium and crystal loot per defense unit of the selected Forgotten base, plus the total. Pure game-data calculation: no polling and no listeners on the game.",
+      "de": "Mit /st plunder öffnet sich ein Panel mit der Tiberium- und Kristall-Beute pro Verteidigungseinheit der gewählten Forgotten-Basis, plus Summe. Reine Spieldaten-Berechnung: kein Polling, keine Listener am Spiel.",
+      "nl": "Met /st plunder opent een paneel met de tiberium- en crystal-buit per verdedigingsunit van de geselecteerde Forgotten-base, plus het totaal. Pure berekening uit de gamedata: geen polling en geen listeners op de game."
+    }
+  },
+  {
+    "name": "LayoutScanner",
+    "slug": "layout-scanner",
+    "defaultEnabled": true,
+    "replaces": null,
+    "short": {
+      "en": "Scans nearby Forgotten base layouts for the alliance",
+      "de": "Scannt Layouts naher Forgotten-Basen für die Allianz",
+      "nl": "Scant layouts van Forgotten-bases in de buurt voor de alliance"
+    },
+    "long": {
+      "en": "Scans the layouts of Forgotten bases around you and sends them to the alliance server. Runs automatically only after 20 minutes of inactivity and pauses while you are online; /st scan starts a scan by hand. On the world map a scan takes 100 ms per base (2 s in other views, so the shown base does not flicker).",
+      "de": "Scannt die Layouts der Forgotten-Basen in deiner Umgebung und schickt sie an den Allianz-Server. Läuft automatisch nur nach 20 Minuten Inaktivität und pausiert, solange du online bist; /st scan startet einen Scan von Hand. Auf der Weltkarte dauert ein Scan 100 ms pro Basis (2 s in anderen Ansichten, damit die angezeigte Basis nicht flackert).",
+      "nl": "Scant de layouts van Forgotten-bases om je heen en stuurt ze naar de alliance-server. Draait automatisch alleen na 20 minuten inactiviteit en pauzeert zolang je online bent; /st scan start een scan met de hand. Op de wereldkaart duurt een scan 100 ms per base (2 s in andere views, zodat de getoonde base niet flikkert)."
+    }
+  },
+  {
+    "name": "LootSummary",
+    "slug": "loot-summary",
+    "defaultEnabled": true,
+    "replaces": "MHTools Available Loot Summary + Info 1.8.3.9",
+    "short": {
+      "en": "Lootable resources of a Forgotten target in the info panel",
+      "de": "Plünderbare Ressourcen eines Forgotten-Ziels im Infofenster",
+      "nl": "Plunderbare resources van een Forgotten-target in het infopaneel"
+    },
+    "long": {
+      "en": "Select a Forgotten camp, outpost or base on the world map and the info panel shows the lootable research, tiberium, crystal, credits and total, per CP and for the 2nd and 3rd run. Also the number of attacks possible from your current base.",
+      "de": "Wähle ein Forgotten-Camp, einen Außenposten oder eine Basis auf der Weltkarte und das Infofenster zeigt plünderbare Forschung, Tiberium, Kristall, Credits und Summe, pro KP und für den 2. und 3. Angriff. Dazu die Anzahl möglicher Angriffe von deiner aktuellen Basis.",
+      "nl": "Selecteer een Forgotten camp, outpost of base op de wereldkaart en het infopaneel toont de plunderbare research, tiberium, crystal, credits en het totaal, per CP en voor de 2e en 3e aanval. Ook het aantal mogelijke aanvallen vanaf je huidige base."
+    }
+  },
+  {
+    "name": "MapLabels",
+    "slug": "map-labels",
+    "defaultEnabled": true,
+    "replaces": null,
+    "short": {
+      "en": "Who views, claimed or attacked a Forgotten target",
+      "de": "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat",
+      "nl": "Wie een Forgotten-target bekijkt, claimde of aanviel"
+    },
+    "long": {
+      "en": "Labels under Forgotten targets on the world map: 👁 viewing (Target Watcher), 📌 claimed (WatchList) and ⚔ attacked (Attack Tracker), with the player name. Per player only the highest status is shown.",
+      "de": "Labels unter Forgotten-Zielen auf der Weltkarte: 👁 sieht an (Target Watcher), 📌 reserviert (WatchList) und ⚔ angegriffen (Attack Tracker), mit Spielername. Pro Spieler wird nur der höchste Status gezeigt.",
+      "nl": "Labels onder Forgotten-targets op de wereldkaart: 👁 bekijkt (Target Watcher), 📌 geclaimd (WatchList) en ⚔ aangevallen (Attack Tracker), met de spelernaam. Per speler wordt alleen de hoogste status getoond."
     }
   },
   {
@@ -432,19 +224,115 @@
     }
   },
   {
-    "name": "TunnelPoiAnalyzer",
-    "slug": "tunnel-poi-analyzer",
+    "name": "MovableMenu",
+    "slug": "movable-menu",
+    "defaultEnabled": true,
+    "replaces": "MovableMenuOverlay 1.0.9",
+    "short": {
+      "en": "Drag game windows and menus to another spot",
+      "de": "Spielfenster und Menüs an eine andere Stelle ziehen",
+      "nl": "Game-vensters en menu's naar een andere plek slepen"
+    },
+    "long": {
+      "en": "Game windows and menu overlays (alliance, mail, forum, …) can be dragged by their title bar. The position is remembered per window. No game code is patched; disabling puts everything back in its original place.",
+      "de": "Spielfenster und Menü-Overlays (Allianz, Post, Forum, …) lassen sich an der Titelleiste verschieben. Die Position wird pro Fenster gespeichert. Es wird kein Spielcode gepatcht; Ausschalten stellt alles an den ursprünglichen Platz zurück.",
+      "nl": "Game-vensters en menu-overlays (alliance, mail, forum, …) zijn te verslepen aan hun titelbalk. De positie wordt per venster onthouden. Er wordt geen gamecode gepatcht; uitschakelen zet alles terug op de oorspronkelijke plek."
+    }
+  },
+  {
+    "name": "PlayerStatus",
+    "slug": "player-status",
     "defaultEnabled": true,
     "replaces": null,
     "short": {
-      "en": "Who activates each tunnel exit, spawn-risk bases, worthless POIs",
-      "de": "Wer Tunnelausgänge aktiviert, Basen mit Spawn-Risiko, wertlose POIs",
-      "nl": "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's"
+      "en": "Alliance base colors by online status",
+      "de": "Allianz-Basisfarben nach Online-Status",
+      "nl": "Alliance-basekleuren op online-status"
     },
     "long": {
-      "en": "The tunnel icon in the Shockr button (or /st tunnels) opens a panel with every tunnel exit and alliance POI you have seen on the world map. Tunnel: active once 5 different alliance players each have a base within 5 fields; shows who, how many are still missing, and the low bases in the zone that are a spawn risk (base level more than 5 below the tunnel's required level: low camps spawn in the zone). POI: its real loss for the alliance; 0/h = worthless, the bases next to it can move (flagged when they are also a tunnel spawn risk). Click a row to centre the map. Settings: /st config set tpa.players | tpa.range | tpa.guardrange | tpa.spawnmargin.",
-      "de": "Das Tunnel-Symbol im Shockr-Knopf (oder /st tunnels) öffnet ein Panel mit jedem Tunnelausgang und Allianz-POI, den du auf der Weltkarte gesehen hast. Tunnel: aktiv, sobald 5 verschiedene Allianzspieler je eine Basis innerhalb von 5 Feldern haben; zeigt wer, wie viele noch fehlen und die niedrigen Basen in der Zone mit Spawn-Risiko (Basislevel mehr als 5 unter dem nötigen Tunnellevel: niedrige Camps spawnen in der Zone). POI: sein realer Verlust für die Allianz; 0/h = wertlos, die Basen daneben können umziehen (markiert, wenn sie auch ein Spawn-Risiko an einem Tunnel sind). Klick auf eine Zeile zentriert die Karte. Einstellungen: /st config set tpa.players | tpa.range | tpa.guardrange | tpa.spawnmargin.",
-      "nl": "Het tunnel-icoon in de Shockr-knop (of /st tunnels) opent een paneel met elke tunnel exit en alliance-POI die je op de wereldkaart hebt gezien. Tunnel: actief zodra 5 verschillende alliance-spelers elk een base binnen 5 velden hebben; toont wie, hoeveel er nog missen en de lage bases in de zone met spawn-risico (base level meer dan 5 onder het vereiste tunnellevel: er spawnen lage camps in de zone). POI: de real loss voor de alliance; 0/h = waardeloos, de bases ernaast kunnen verhuizen (gemarkeerd als ze ook een spawn-risico bij een tunnel zijn). Klik op een rij om de kaart te centreren. Instellingen: /st config set tpa.players | tpa.range | tpa.guardrange | tpa.spawnmargin."
+      "en": "Colors the bases of alliance members on the world map by online, away or offline; own bases are cyan, friends and NAPs get their own color. Switch to the familiar Maelstrom colors with /st config set colors maelstrom.",
+      "de": "Färbt die Basen der Allianzmitglieder auf der Weltkarte nach online, abwesend oder offline; eigene Basen sind cyan, Freunde und NAPs haben eine eigene Farbe. Mit /st config set colors maelstrom auf die bekannten Maelstrom-Farben umschalten.",
+      "nl": "Kleurt de bases van alliance-leden op de wereldkaart naar online, afwezig of offline; eigen bases zijn cyaan, vrienden en NAP's hebben een eigen kleur. Overschakelen naar de bekende Maelstrom-kleuren met /st config set colors maelstrom."
+    }
+  },
+  {
+    "name": "PoiAnalyser",
+    "slug": "poi-analyser",
+    "defaultEnabled": true,
+    "replaces": "Info Sticker (POI part) + Real POI Bonus",
+    "short": {
+      "en": "Alliance POI bonuses on the map and in the info panel",
+      "de": "Allianz-POI-Boni auf der Karte und im Infofenster",
+      "nl": "Alliance-POI-bonussen op de kaart en in het infopaneel"
+    },
+    "long": {
+      "en": "POI labels on the world map, gold for your alliance's POIs. The base info panel shows the active POI bonuses, and for a selected POI the real gain or loss if your alliance takes or loses it.",
+      "de": "POI-Labels auf der Weltkarte, gold für die POIs eurer Allianz. Das Basis-Infofenster zeigt die aktiven POI-Boni und bei einem gewählten POI den echten Gewinn oder Verlust, wenn eure Allianz ihn erobert oder verliert.",
+      "nl": "POI-labels op de wereldkaart, goud voor de POI's van je alliance. Het base-infopaneel toont de actieve POI-bonussen, en bij een geselecteerde POI de echte winst of het verlies als je alliance hem pakt of kwijtraakt."
+    }
+  },
+  {
+    "name": "ProductionOverview",
+    "slug": "production-overview",
+    "defaultEnabled": true,
+    "replaces": null,
+    "short": {
+      "en": "Production per base per hour in one panel",
+      "de": "Produktion pro Basis pro Stunde in einem Panel",
+      "nl": "Productie per base per uur in één paneel"
+    },
+    "long": {
+      "en": "The factory icon in the Shockr button (or /st production) opens a panel with the production of every own base per hour: Continuous, Bonus (packages), POI and Total for Tiberium, Crystal, Power and Credits, with a total row below. Click a base name to open that base. Refreshes every 5 seconds while open.",
+      "de": "Das Fabrik-Symbol im Shockr-Knopf (oder /st production) öffnet ein Panel mit der Produktion jeder eigenen Basis pro Stunde: Kontinuierlich, Bonus (Pakete), POI und Gesamt für Tiberium, Kristall, Strom und Credits, mit einer Summenzeile darunter. Klick auf einen Basisnamen öffnet diese Basis. Aktualisiert sich alle 5 Sekunden, solange es offen ist.",
+      "nl": "Het fabriek-icoon in de Shockr-knop (of /st production) opent een paneel met de productie van elke eigen base per uur: Continu, Bonus (pakketten), POI en Totaal voor Tiberium, Crystal, Power en Credits, met een totaalrij onderaan. Klik op een basenaam om die base te openen. Ververst elke 5 seconden zolang het open is."
+    }
+  },
+  {
+    "name": "PvpAlert",
+    "slug": "pvp-alert",
+    "defaultEnabled": true,
+    "replaces": "CENTER DRIVEN PvP Alert Status 1.00",
+    "short": {
+      "en": "Alarm when your base is attacked while the game is in the background",
+      "de": "Alarm, wenn deine Basis angegriffen wird, während das Spiel im Hintergrund ist",
+      "nl": "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat"
+    },
+    "long": {
+      "en": "When one of your bases is attacked while the game tab is in the background, the tab title and icon change to ALERT and a siren sounds. Everything resets when you return to the game. Siren off: /st config set PvpAlert.sound false.",
+      "de": "Wird eine deiner Basen angegriffen, während der Spiel-Tab im Hintergrund ist, zeigen Tab-Titel und -Symbol ALARM und eine Sirene ertönt. Alles wird zurückgesetzt, sobald du zum Spiel zurückkehrst. Sirene aus: /st config set PvpAlert.sound false.",
+      "nl": "Wordt een van je bases aangevallen terwijl het game-tabblad op de achtergrond staat, dan veranderen titel en icoon van het tabblad in ALARM en klinkt er een sirene. Alles reset zodra je terug in de game bent. Sirene uit: /st config set PvpAlert.sound false."
+    }
+  },
+  {
+    "name": "RepairGuard",
+    "slug": "repair-guard",
+    "defaultEnabled": false,
+    "replaces": null,
+    "short": {
+      "en": "Blocks the Repair All buttons",
+      "de": "Blockiert die Repair-All-Buttons",
+      "nl": "Blokkeert de Repair All-knoppen"
+    },
+    "long": {
+      "en": "Prevents a full repair of all units by accident, which saves crystal on Forgotten Attack worlds. Repairing a single unit keeps working. Off by default.",
+      "de": "Verhindert eine versehentliche Reparatur aller Einheiten, das spart Kristall auf Forgotten-Attack-Welten. Einzelne Einheiten reparieren funktioniert weiter. Standardmäßig aus.",
+      "nl": "Voorkomt dat je per ongeluk alle units repareert, wat crystal bespaart op Forgotten Attack-werelden. Een enkele unit repareren blijft werken. Standaard uit."
+    }
+  },
+  {
+    "name": "SectorHud",
+    "slug": "sector-hud",
+    "defaultEnabled": true,
+    "replaces": "WarChiefs Sector HUD 22.05.04",
+    "short": {
+      "en": "Sector HUD with view coordinates and POIs per sector",
+      "de": "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor",
+      "nl": "Sector-HUD met kijkcoördinaten en POI's per sector"
+    },
+    "long": {
+      "en": "A line top left on the world map with the coordinates and sector of the view (e.g. \"450:620 [NE]\"), plus the POIs held per sector: own green, enemy red, free grey. Left click pastes the coordinates into the chat, right click jumps to coordinates. The sector is the direction of the view centre from the world centre.",
+      "de": "Eine Zeile oben links auf der Weltkarte mit den Koordinaten und dem Sektor der Ansicht (z. B. \"450:620 [NE]\"), plus die gehaltenen POIs pro Sektor: eigene grün, feindliche rot, freie grau. Linksklick fügt die Koordinaten in den Chat ein, Rechtsklick springt zu Koordinaten. Der Sektor ist die Richtung der Ansichtsmitte vom Weltzentrum aus.",
+      "nl": "Een regel linksboven op de wereldkaart met de coördinaten en sector van het beeld (bijv. \"450:620 [NE]\"), plus de bezette POI's per sector: eigen groen, vijandelijk rood, vrij grijs. Linksklik plakt de coördinaten in de chat, rechtsklik springt naar coördinaten. De sector is de richting van het midden van het beeld vanaf het wereldcentrum."
     }
   },
   {
@@ -461,6 +349,134 @@
       "en": "Open a mail and click \"Block sender\": every mail from that player disappears from your inbox, and a player whose mails are all blocked drops out of the list. The block-list icon in the Shockr button (or /st blocklist) opens a panel with every blocked player and an Unblock button; type a name at the top to block a player before they write. Purely client-side: nothing is sent, deleted or marked read, and the blocked player notices nothing. The unread counter still counts blocked mail.",
       "de": "Öffne eine Mail und klicke „Absender blockieren“: alle Mails dieses Spielers verschwinden aus deinem Posteingang, und ein Spieler, dessen Mails alle blockiert sind, fällt aus der Liste. Das Blocklisten-Symbol im Shockr-Knopf (oder /st blocklist) öffnet ein Panel mit allen blockierten Spielern und einem Entsperren-Knopf; oben einen Namen eingeben blockiert einen Spieler, bevor er schreibt. Rein clientseitig: nichts wird gesendet, gelöscht oder als gelesen markiert, und der blockierte Spieler merkt nichts. Der Zähler ungelesener Mails zählt blockierte Mails weiterhin mit.",
       "nl": "Open een mail en klik \"Afzender blokkeren\": alle mail van die speler verdwijnt uit je inbox, en een speler van wie alle mail geblokkeerd is valt uit de lijst. Het blokkeerlijst-icoon in de Shockr-knop (of /st blocklist) opent een paneel met alle geblokkeerde spelers en een Deblokkeren-knop; typ bovenaan een naam om een speler te blokkeren voordat die schrijft. Puur client-side: er wordt niets verstuurd, verwijderd of als gelezen gemarkeerd, en de geblokkeerde speler merkt niets. De teller van ongelezen mail telt geblokkeerde mail nog mee."
+    }
+  },
+  {
+    "name": "TargetBoard",
+    "slug": "target-board",
+    "defaultEnabled": true,
+    "replaces": null,
+    "short": {
+      "en": "In-game overview of alliance targets — who is watching and who is attacking",
+      "de": "In-Game-Übersicht der Allianz-Ziele — wer schaut und wer greift an",
+      "nl": "In-game overzicht van alliance-targets — wie kijkt en wie valt aan"
+    },
+    "long": {
+      "en": "The Target Watch page, in the game: the radar icon in the Shockr button (or /st targets) opens a panel with every target your alliance is looking at right now — level, who watches it and since when. Two or more watchers = orange row. Click a row to centre the map on it. Refreshes every 20 s while open. Needs the alliance server (/st register).",
+      "de": "Die Target-Watch-Seite im Spiel: das Radar-Symbol im Shockr-Knopf (oder /st targets) öffnet ein Panel mit jedem Ziel, das deine Allianz gerade ansieht — Level, wer schaut und seit wann. Zwei oder mehr Beobachter = orange Zeile. Klick auf eine Zeile zentriert die Karte darauf. Aktualisiert alle 20 s, solange es offen ist. Braucht den Allianz-Server (/st register).",
+      "nl": "De Target Watch-pagina, in de game: het radar-icoon in de Shockr-knop (of /st targets) opent een paneel met elk target waar je alliance nu naar kijkt — level, wie kijkt en sinds wanneer. Twee of meer kijkers = oranje rij. Klik op een rij om de kaart erop te centreren. Ververst elke 20 s zolang het open is. Heeft de alliance-server nodig (/st register)."
+    }
+  },
+  {
+    "name": "TargetWatcher",
+    "slug": "target-watcher",
+    "defaultEnabled": true,
+    "replaces": null,
+    "short": {
+      "en": "Tells the alliance which target you are looking at",
+      "de": "Zeigt der Allianz, welches Ziel du ansiehst",
+      "nl": "Laat de alliance zien welk target je bekijkt"
+    },
+    "long": {
+      "en": "When you open an enemy or Forgotten base, the alliance server is told you are looking at it. If other members watch the same target, you get one chat line. Shown on the Target Watch page and as 👁 on the world map.",
+      "de": "Öffnest du eine feindliche oder Forgotten-Basis, erfährt der Allianz-Server, dass du sie ansiehst. Sehen andere Mitglieder dasselbe Ziel an, bekommst du eine Chatzeile. Sichtbar auf der Target-Watch-Seite und als 👁 auf der Weltkarte.",
+      "nl": "Open je een vijandelijke of Forgotten-base, dan meldt de alliance-server dat jij ernaar kijkt. Kijken andere leden naar hetzelfde target, dan krijg je één chatregel. Zichtbaar op de Target Watch-pagina en als 👁 op de wereldkaart."
+    }
+  },
+  {
+    "name": "TransferAll",
+    "slug": "transfer-all",
+    "defaultEnabled": true,
+    "replaces": "Transfer All Resources 1.6.2",
+    "short": {
+      "en": "Pull all tiberium and crystal into one base in one click",
+      "de": "Alles Tiberium und Kristall mit einem Klick in eine Basis holen",
+      "nl": "Alle tiberium en crystal met één klik naar één base halen"
+    },
+    "long": {
+      "en": "A Transfer All button in the resource-transfer panel pulls all tiberium and crystal from your other bases into the open base. Tick the box first to see the cost. Free storage and your credits are respected: a full resource or an unaffordable base is skipped.",
+      "de": "Ein Alles-transferieren-Knopf im Ressourcen-Transferfenster holt alles Tiberium und Kristall aus deinen anderen Basen in die offene Basis. Erst das Kästchen anhaken, dann siehst du die Kosten. Freier Lagerplatz und deine Credits werden beachtet: volle Ressourcen oder zu teure Basen werden übersprungen.",
+      "nl": "Een Transfer All-knop in het resource-transferpaneel haalt alle tiberium en crystal uit je andere bases naar de open base. Vink eerst het vakje aan om de kosten te zien. Er wordt rekening gehouden met vrije opslag en je credits: een volle resource of een te dure base wordt overgeslagen."
+    }
+  },
+  {
+    "name": "TunnelInfo",
+    "slug": "tunnel-info",
+    "defaultEnabled": true,
+    "replaces": "TA Tunnel Info",
+    "short": {
+      "en": "Tunnel level, required offense and influence range",
+      "de": "Tunnel-Level, benötigte Offensive und Einflussbereich",
+      "nl": "Tunnel-level, benodigde offense en invloedsbereik"
+    },
+    "long": {
+      "en": "Every tunnel on the world map gets a label with its level and the offense you need, plus a dotted circle of its influence range. Green if your strongest offense makes it, red if not. The original only showed this while moving a base. The red circle is opaque and 3 px wide; change its colour and width with /st config set tunnel.color #rrggbb and tunnel.width 1-10.",
+      "de": "Jeder Tunnel auf der Weltkarte bekommt ein Label mit Level und benötigter Offensive, plus einen gepunkteten Kreis seines Einflussbereichs. Grün, wenn deine stärkste Offensive reicht, sonst rot. Das Original zeigte das nur beim Verlegen einer Basis. Der rote Kreis ist deckend und 3 px breit; Farbe und Breite änderst du mit /st config set tunnel.color #rrggbb und tunnel.width 1-10.",
+      "nl": "Elke tunnel op de wereldkaart krijgt een label met het level en de benodigde offense, plus een gestippelde cirkel van het invloedsbereik. Groen als je sterkste offense het haalt, anders rood. Het origineel toonde dit alleen tijdens het verplaatsen van een base. De rode cirkel is dekkend en 3 px breed; kleur en breedte wijzig je met /st config set tunnel.color #rrggbb en tunnel.width 1-10."
+    }
+  },
+  {
+    "name": "TunnelPoiAnalyzer",
+    "slug": "tunnel-poi-analyzer",
+    "defaultEnabled": true,
+    "replaces": null,
+    "short": {
+      "en": "Who activates each tunnel exit, spawn-risk bases, worthless POIs",
+      "de": "Wer Tunnelausgänge aktiviert, Basen mit Spawn-Risiko, wertlose POIs",
+      "nl": "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's"
+    },
+    "long": {
+      "en": "The tunnel icon in the Shockr button (or /st tunnels) opens a panel with every tunnel exit and alliance POI you have seen on the world map. Tunnel: active once 5 different alliance players each have a base within 5 fields; shows who, how many are still missing, and the low bases in the zone that are a spawn risk (base level more than 5 below the tunnel's required level: low camps spawn in the zone). POI: its real loss for the alliance; 0/h = worthless, the bases next to it can move (flagged when they are also a tunnel spawn risk). Click a row to centre the map. Settings: /st config set tpa.players | tpa.range | tpa.guardrange | tpa.spawnmargin.",
+      "de": "Das Tunnel-Symbol im Shockr-Knopf (oder /st tunnels) öffnet ein Panel mit jedem Tunnelausgang und Allianz-POI, den du auf der Weltkarte gesehen hast. Tunnel: aktiv, sobald 5 verschiedene Allianzspieler je eine Basis innerhalb von 5 Feldern haben; zeigt wer, wie viele noch fehlen und die niedrigen Basen in der Zone mit Spawn-Risiko (Basislevel mehr als 5 unter dem nötigen Tunnellevel: niedrige Camps spawnen in der Zone). POI: sein realer Verlust für die Allianz; 0/h = wertlos, die Basen daneben können umziehen (markiert, wenn sie auch ein Spawn-Risiko an einem Tunnel sind). Klick auf eine Zeile zentriert die Karte. Einstellungen: /st config set tpa.players | tpa.range | tpa.guardrange | tpa.spawnmargin.",
+      "nl": "Het tunnel-icoon in de Shockr-knop (of /st tunnels) opent een paneel met elke tunnel exit en alliance-POI die je op de wereldkaart hebt gezien. Tunnel: actief zodra 5 verschillende alliance-spelers elk een base binnen 5 velden hebben; toont wie, hoeveel er nog missen en de lage bases in de zone met spawn-risico (base level meer dan 5 onder het vereiste tunnellevel: er spawnen lage camps in de zone). POI: de real loss voor de alliance; 0/h = waardeloos, de bases ernaast kunnen verhuizen (gemarkeerd als ze ook een spawn-risico bij een tunnel zijn). Klik op een rij om de kaart te centreren. Instellingen: /st config set tpa.players | tpa.range | tpa.guardrange | tpa.spawnmargin."
+    }
+  },
+  {
+    "name": "UpgradeCalc",
+    "slug": "upgrade-calc",
+    "defaultEnabled": false,
+    "replaces": null,
+    "short": {
+      "en": "Upgrade cost and saving time per building",
+      "de": "Upgrade-Kosten und Sparzeit pro Gebäude",
+      "nl": "Upgrade-kosten en spaartijd per gebouw"
+    },
+    "long": {
+      "en": "The calculator icon in the Shockr button (top left) opens, in your own base, a panel with every building that is not max level, the cost of its next level and how long you need to save for it at the current production. Fastest first. Off by default.",
+      "de": "Das Rechner-Symbol im Shockr-Knopf (oben links) öffnet in deiner eigenen Basis ein Panel mit jedem Gebäude, das nicht auf Maximalstufe ist, den Kosten der nächsten Stufe und wie lange du bei der aktuellen Produktion dafür sparen musst. Schnellste zuerst. Standardmäßig aus.",
+      "nl": "Het rekenmachine-icoon in de Shockr-knop (linksboven) opent in je eigen base een paneel met elk gebouw dat niet op max level staat, de kosten van het volgende level en hoe lang je daarvoor moet sparen bij de huidige productie. Snelste eerst. Standaard uit."
+    }
+  },
+  {
+    "name": "WatchList",
+    "slug": "watch-list",
+    "defaultEnabled": true,
+    "replaces": null,
+    "short": {
+      "en": "Claim Forgotten targets you intend to attack",
+      "de": "Forgotten-Ziele reservieren, die du angreifen willst",
+      "nl": "Forgotten-targets claimen die je wilt aanvallen"
+    },
+    "long": {
+      "en": "With /st watch you claim the selected target, visible to the whole alliance; if someone else already claimed it, you get a warning. A claim stays until you remove it (/st unwatch), win an attack on the target, or 24 hours pass.",
+      "de": "Mit /st watch reservierst du das gewählte Ziel, sichtbar für die ganze Allianz; hat es schon jemand reserviert, bekommst du eine Warnung. Eine Reservierung bleibt, bis du sie entfernst (/st unwatch), einen Angriff auf das Ziel gewinnst oder 24 Stunden vergehen.",
+      "nl": "Met /st watch claim je het geselecteerde target, zichtbaar voor de hele alliance; heeft iemand het al geclaimd, dan krijg je een waarschuwing. Een claim blijft staan tot je hem weghaalt (/st unwatch), een aanval op het target wint of er 24 uur voorbij zijn."
+    }
+  },
+  {
+    "name": "Wavy",
+    "slug": "wavy",
+    "defaultEnabled": true,
+    "replaces": "TA Wavy 0.6.2",
+    "short": {
+      "en": "Forgotten attack waves per base",
+      "de": "Forgotten-Angriffswellen pro Basis",
+      "nl": "Forgotten-aanvalsgolven per base"
+    },
+    "long": {
+      "en": "In the info panel of the selected object: the number of Forgotten bases within attack range, their level distribution and how many waves that gives. On the world map, distance lines to those bases.",
+      "de": "Im Infofenster des gewählten Objekts: die Anzahl Forgotten-Basen in Angriffsreichweite, ihre Level-Verteilung und wie viele Wellen das ergibt. Auf der Weltkarte Entfernungslinien zu diesen Basen.",
+      "nl": "In het infopaneel van het geselecteerde object: het aantal Forgotten-bases binnen aanvalsbereik, hun level-verdeling en hoeveel waves dat oplevert. Op de wereldkaart afstandslijnen naar die bases."
     }
   }
 ]
