@@ -1,5 +1,19 @@
 # Changelog
 
+## [5.48.0] — 2026-11-09
+
+Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+Ronde 11: chat enrichment in ChatManager (`plugins/chat-manager.js`, `lib/chat-enrich.js`).
+
+### ChatManager
+- Mention highlighting (`chatmanager.mentionColor`, standaard `#ffff00`, `none` = uit): je spelernaam (`get_Player().get_Name()`) in een chatbericht wordt vet in die kleur gezet, hoofdletterongevoelig, niet midden in een langer woord. In alliance, officers, global en whisper. Je naam als afzender wordt niet gemarkeerd
+- Links klikbaar (`chatmanager.linkify`, standaard true): gewone `http://` / `https://`-tekst wordt een `<a target="_blank" rel="noopener noreferrer">`. Alleen http(s) (via `new URL`), dus nooit `javascript:`; een leesteken aan het eind hoort niet bij de link. Game-links (`[url]`, `[coords]`, `[player]`) blijven zoals ze zijn
+- Werkt op de getekende chat (MutationObserver op het chatvenster): de game-methode die berichten verwerkt heeft een versleutelde naam, dus er wordt niets in de game gepatcht
+- Selectie-vangnet (zonder instelling): chat-labels die ooit niet meer selecteerbaar zijn, worden weer selecteerbaar gezet. Op de huidige client zijn ze dat al (live getest: slepen selecteert, Ctrl+C kopieert)
+- Coördinaten in whispers: live onderzocht - alle binnenkomende berichten (alliance, officers, global, whisper in/uit) gaan door dezelfde game-methode, die `BBCode.convertBBCode` toepast vóór de splitsing per kanaal. Een `[coords]`-tag is in een whisper dus even klikbaar als in alliance, en ChatHelper tagt coördinaten in elke chatregel die je verstuurt, ook whispers. Geen extra hook nodig; vastgelegd in `lib/chat-enrich.js`
+- Live geverifieerd (2026-11-09): DOM van een chatbericht, enrichment op een kopie van de echte chat (naam gemarkeerd, link gemaakt, afzender en coördinaat-link onaangeroerd, tweede run doet niets), en een klik op zo'n link wordt door de game niet tegengehouden
+
 ## [5.47.0] — 2026-11-09
 
 Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

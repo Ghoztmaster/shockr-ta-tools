@@ -165,14 +165,14 @@
     "defaultEnabled": false,
     "replaces": null,
     "short": {
-      "en": "Close the chat at start and keep a longer chat history",
-      "de": "Chat beim Start schließen und einen längeren Chatverlauf behalten",
-      "nl": "Chat dichtklappen bij het opstarten en een langere chatgeschiedenis bewaren"
+      "en": "Chat: close at start, longer history, your name highlighted, links clickable",
+      "de": "Chat: beim Start schließen, längerer Verlauf, dein Name hervorgehoben, Links anklickbar",
+      "nl": "Chat: dichtklappen bij opstarten, langere geschiedenis, je naam gemarkeerd, links klikbaar"
     },
     "long": {
-      "en": "Off by default: /st plugin enable chat-manager. The game keeps only 64 messages per chat channel; ChatManager keeps up to 512 (/st config set chatmanager.historyLength 64-512, default 512), also for channels that were already open. /st config set chatmanager.closeOnStart true closes the chat window every time the game loads.",
-      "de": "Standardmäßig aus: /st plugin enable chat-manager. Das Spiel behält nur 64 Nachrichten pro Chat-Kanal; ChatManager behält bis zu 512 (/st config set chatmanager.historyLength 64-512, Standard 512), auch für bereits geöffnete Kanäle. /st config set chatmanager.closeOnStart true schließt das Chatfenster bei jedem Laden des Spiels.",
-      "nl": "Standaard uit: /st plugin enable chat-manager. De game bewaart maar 64 berichten per chatkanaal; ChatManager bewaart er tot 512 (/st config set chatmanager.historyLength 64-512, standaard 512), ook voor kanalen die al open waren. /st config set chatmanager.closeOnStart true klapt het chatvenster dicht elke keer dat de game laadt."
+      "en": "Off by default: /st plugin enable chat-manager. The game keeps only 64 messages per chat channel; ChatManager keeps up to 512 (chatmanager.historyLength 64-512, default 512), also for channels that were already open. Your player name in chat messages is highlighted (chatmanager.mentionColor, default #ffff00; none = off) and plain http(s) links become clickable and open in a new tab (chatmanager.linkify, default true). chatmanager.closeOnStart true closes the chat window every time the game loads. Set with /st config set.",
+      "de": "Standardmäßig aus: /st plugin enable chat-manager. Das Spiel behält nur 64 Nachrichten pro Chat-Kanal; ChatManager behält bis zu 512 (chatmanager.historyLength 64-512, Standard 512), auch für bereits geöffnete Kanäle. Dein Spielername in Chatnachrichten wird hervorgehoben (chatmanager.mentionColor, Standard #ffff00; none = aus) und einfache http(s)-Links werden anklickbar und öffnen in einem neuen Tab (chatmanager.linkify, Standard true). chatmanager.closeOnStart true schließt das Chatfenster bei jedem Laden des Spiels. Einstellen mit /st config set.",
+      "nl": "Standaard uit: /st plugin enable chat-manager. De game bewaart maar 64 berichten per chatkanaal; ChatManager bewaart er tot 512 (chatmanager.historyLength 64-512, standaard 512), ook voor kanalen die al open waren. Je spelernaam in chatberichten wordt gemarkeerd (chatmanager.mentionColor, standaard #ffff00; none = uit) en gewone http(s)-links worden klikbaar en openen in een nieuw tabblad (chatmanager.linkify, standaard true). chatmanager.closeOnStart true klapt het chatvenster dicht elke keer dat de game laadt. Instellen met /st config set."
     }
   },
   {

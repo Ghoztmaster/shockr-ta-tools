@@ -1,7 +1,22 @@
 {
-  "version": "5.47.0",
+  "version": "5.48.0",
   "date": "2026-11-09",
   "changelog": [
+    {
+      "version": "5.48.0",
+      "date": "2026-11-09",
+      "changes": {
+        "en": [
+          "ChatManager: your player name highlighted in chat (chatmanager.mentionColor) and plain http(s) links clickable (chatmanager.linkify)"
+        ],
+        "de": [
+          "ChatManager: dein Spielername im Chat hervorgehoben (chatmanager.mentionColor) und einfache http(s)-Links anklickbar (chatmanager.linkify)"
+        ],
+        "nl": [
+          "ChatManager: je spelernaam gemarkeerd in de chat (chatmanager.mentionColor) en gewone http(s)-links klikbaar (chatmanager.linkify)"
+        ]
+      }
+    },
     {
       "version": "5.47.0",
       "date": "2026-11-09",
@@ -62,24 +77,6 @@
         ],
         "nl": [
           "Nieuwe plugin MissionHider (standaard uit): verbergt de mission tracker links; /st plugin enable mission-hider"
-        ]
-      }
-    },
-    {
-      "version": "5.43.0",
-      "date": "2026-11-09",
-      "changes": {
-        "en": [
-          "New plugin SupportCalibrate: \"Calibrate all support\" in the world-map menu of an own or alliance base calibrates every support weapon in range on it",
-          "Support panel (crosshair icon or /st support): where each weapon is calibrated, Recall per base and Recall all; /st support recall [base] from the chat"
-        ],
-        "de": [
-          "Neues Plugin SupportCalibrate: „Alle Unterstützung kalibrieren“ im Weltkarten-Menü einer eigenen oder Allianz-Basis kalibriert jede Unterstützungswaffe in Reichweite darauf",
-          "Support-Panel (Fadenkreuz-Symbol oder /st support): worauf jede Waffe kalibriert ist, Zurückrufen pro Basis und Alle zurückrufen; /st support recall [Basis] aus dem Chat"
-        ],
-        "nl": [
-          "Nieuwe plugin SupportCalibrate: \"Calibrate all support\" in het wereldkaart-menu van een eigen of alliance-base kalibreert elk support weapon in bereik erop",
-          "Support-paneel (vizier-icoon of /st support): waar elk weapon op gekalibreerd is, Recall per base en Recall all; /st support recall [base] vanuit de chat"
         ]
       }
     }

@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.47.0
+// @version         5.48.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -102,7 +102,7 @@ var ShockrTools = (() => {
   });
 
   // <define:__ST_PLUGIN_SHORT__>
-  var define_ST_PLUGIN_SHORT_default = { AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, ArmyOverview: { en: "Base, defense, army and repair charges of every base in one panel", de: "Basis, Verteidigung, Armee und Reparaturladungen jeder Basis in einem Panel", nl: "Base, defense, leger en repair charges van elke base in \xE9\xE9n paneel" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, AutoCollect: { en: "Collects the resource packages of all your bases automatically", de: "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein", nl: "Verzamelt de resource-pakketten van al je bases automatisch" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, BaseStatus: { en: "One panel with cooldown, protection, alert and support weapon of every base", de: "Ein Panel mit Cooldown, Schutz, Alarm und Unterst\xFCtzungswaffe jeder Basis", nl: "E\xE9n paneel met cooldown, protection, alert en support weapon van elke base" }, CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, ChatManager: { en: "Close the chat at start and keep a longer chat history", de: "Chat beim Start schlie\xDFen und einen l\xE4ngeren Chatverlauf behalten", nl: "Chat dichtklappen bij het opstarten en een langere chatgeschiedenis bewaren" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, McvTimer: { en: "Progress to the next MCV in a small movable panel", de: "Fortschritt zum n\xE4chsten MBF in einem kleinen verschiebbaren Panel", nl: "Voortgang naar de volgende MCV in een klein verplaatsbaar paneel" }, MissionHider: { en: "Hide the mission tracker on the left", de: "Das Missionsfenster links ausblenden", nl: "De mission tracker links verbergen" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, ProductionOverview: { en: "Production per base per hour in one panel", de: "Produktion pro Basis pro Stunde in einem Panel", nl: "Productie per base per uur in \xE9\xE9n paneel" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, ResourceOverview: { en: "Storage per base: how full, and when it is full", de: "Lager pro Basis: wie voll, und wann es voll ist", nl: "Opslag per base: hoe vol, en wanneer hij vol is" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" }, SupportCalibrate: { en: "Calibrate all support weapons on a base in one click from the world-map menu", de: "Alle Unterst\xFCtzungswaffen mit einem Klick im Weltkarten-Men\xFC auf eine Basis kalibrieren", nl: "Alle support weapons met \xE9\xE9n klik vanuit het wereldkaart-menu op een base kalibreren" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, UpgradePriority: { en: "Which production building to upgrade first, per resource, over all bases", de: "Welches Produktionsgeb\xE4ude zuerst ausbauen, pro Ressource, \xFCber alle Basen", nl: "Welk productiegebouw eerst upgraden, per resource, over alle bases" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" } };
+  var define_ST_PLUGIN_SHORT_default = { AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, ArmyOverview: { en: "Base, defense, army and repair charges of every base in one panel", de: "Basis, Verteidigung, Armee und Reparaturladungen jeder Basis in einem Panel", nl: "Base, defense, leger en repair charges van elke base in \xE9\xE9n paneel" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, AutoCollect: { en: "Collects the resource packages of all your bases automatically", de: "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein", nl: "Verzamelt de resource-pakketten van al je bases automatisch" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, BaseStatus: { en: "One panel with cooldown, protection, alert and support weapon of every base", de: "Ein Panel mit Cooldown, Schutz, Alarm und Unterst\xFCtzungswaffe jeder Basis", nl: "E\xE9n paneel met cooldown, protection, alert en support weapon van elke base" }, CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, ChatManager: { en: "Chat: close at start, longer history, your name highlighted, links clickable", de: "Chat: beim Start schlie\xDFen, l\xE4ngerer Verlauf, dein Name hervorgehoben, Links anklickbar", nl: "Chat: dichtklappen bij opstarten, langere geschiedenis, je naam gemarkeerd, links klikbaar" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, McvTimer: { en: "Progress to the next MCV in a small movable panel", de: "Fortschritt zum n\xE4chsten MBF in einem kleinen verschiebbaren Panel", nl: "Voortgang naar de volgende MCV in een klein verplaatsbaar paneel" }, MissionHider: { en: "Hide the mission tracker on the left", de: "Das Missionsfenster links ausblenden", nl: "De mission tracker links verbergen" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, ProductionOverview: { en: "Production per base per hour in one panel", de: "Produktion pro Basis pro Stunde in einem Panel", nl: "Productie per base per uur in \xE9\xE9n paneel" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, ResourceOverview: { en: "Storage per base: how full, and when it is full", de: "Lager pro Basis: wie voll, und wann es voll ist", nl: "Opslag per base: hoe vol, en wanneer hij vol is" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" }, SupportCalibrate: { en: "Calibrate all support weapons on a base in one click from the world-map menu", de: "Alle Unterst\xFCtzungswaffen mit einem Klick im Weltkarten-Men\xFC auf eine Basis kalibrieren", nl: "Alle support weapons met \xE9\xE9n klik vanuit het wereldkaart-menu op een base kalibreren" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, UpgradePriority: { en: "Which production building to upgrade first, per resource, over all bases", de: "Welches Produktionsgeb\xE4ude zuerst ausbauen, pro Ressource, \xFCber alle Basen", nl: "Welk productiegebouw eerst upgraden, per resource, over alle bases" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" } };
 
   // lib/game-ready.js
   async function waitForGame({ maxAttempts = 200, intervalMs = 100 } = {}) {
@@ -717,11 +717,13 @@ var ShockrTools = (() => {
       upUpgraded: "Upgrade: {ok} of {n} sent",
       upStatus: "tab {tab}",
       // ChatManager (5.47.0)
-      descChatManager: "Close the chat at start (chatmanager.closeOnStart) and keep a longer chat history (chatmanager.historyLength)",
+      descChatManager: "Chat: close at start, longer history, your name highlighted, links clickable (chatmanager.*)",
       helpSetChatClose: "ChatManager: close the chat when the game loads (true/false, default false)",
       helpSetChatHistory: "ChatManager: messages kept per chat channel (64-512, default 512)",
+      helpSetChatMention: "ChatManager: colour of your player name in chat (#hex or colour word, default #ffff00; none = off)",
+      helpSetChatLinkify: "ChatManager: http(s) links in chat clickable, open in a new tab (true/false, default true)",
       chatManagerEnabled: "ChatManager: chat history {n} messages per channel",
-      chatManagerStatusOn: "history {n} per channel, {grown} channel(s) grown",
+      chatManagerStatusOn: "history {n} per channel, {grown} channel(s) grown, {enriched} mention(s)/link(s) marked",
       chatManagerStatusOff: "off",
       apiKeyRejected: "\u26A0 API key rejected \u2014 check /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: not recognized \u2014 scan a base first to register.",
@@ -1357,11 +1359,13 @@ var ShockrTools = (() => {
       upUpgraded: "Ausbau: {ok} von {n} gesendet",
       upStatus: "Tab {tab}",
       // ChatManager (5.47.0)
-      descChatManager: "Chat beim Start schlie\xDFen (chatmanager.closeOnStart) und einen l\xE4ngeren Chatverlauf behalten (chatmanager.historyLength)",
+      descChatManager: "Chat: beim Start schlie\xDFen, l\xE4ngerer Verlauf, dein Name hervorgehoben, Links anklickbar (chatmanager.*)",
       helpSetChatClose: "ChatManager: Chat beim Laden des Spiels schlie\xDFen (true/false, Standard false)",
       helpSetChatHistory: "ChatManager: behaltene Nachrichten pro Chat-Kanal (64-512, Standard 512)",
+      helpSetChatMention: "ChatManager: Farbe deines Spielernamens im Chat (#hex oder Farbwort, Standard #ffff00; none = aus)",
+      helpSetChatLinkify: "ChatManager: http(s)-Links im Chat anklickbar, \xF6ffnen in neuem Tab (true/false, Standard true)",
       chatManagerEnabled: "ChatManager: Chatverlauf {n} Nachrichten pro Kanal",
-      chatManagerStatusOn: "Verlauf {n} pro Kanal, {grown} Kanal/Kan\xE4le vergr\xF6\xDFert",
+      chatManagerStatusOn: "Verlauf {n} pro Kanal, {grown} Kanal/Kan\xE4le vergr\xF6\xDFert, {enriched} Erw\xE4hnung(en)/Link(s) markiert",
       chatManagerStatusOff: "aus",
       apiKeyRejected: "\u26A0 API-Key abgelehnt \u2014 pr\xFCfe /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: nicht erkannt \u2014 scanne zuerst eine Basis, um dich zu registrieren.",
@@ -1987,11 +1991,13 @@ var ShockrTools = (() => {
       upUpgraded: "Upgrade: {ok} van {n} verstuurd",
       upStatus: "tabblad {tab}",
       // ChatManager (5.47.0)
-      descChatManager: "Chat dichtklappen bij het opstarten (chatmanager.closeOnStart) en een langere chatgeschiedenis bewaren (chatmanager.historyLength)",
+      descChatManager: "Chat: dichtklappen bij opstarten, langere geschiedenis, je naam gemarkeerd, links klikbaar (chatmanager.*)",
       helpSetChatClose: "ChatManager: chat dichtklappen als de game laadt (true/false, standaard false)",
       helpSetChatHistory: "ChatManager: bewaarde berichten per chatkanaal (64-512, standaard 512)",
+      helpSetChatMention: "ChatManager: kleur van je spelernaam in de chat (#hex of kleurwoord, standaard #ffff00; none = uit)",
+      helpSetChatLinkify: "ChatManager: http(s)-links in de chat klikbaar, openen in een nieuw tabblad (true/false, standaard true)",
       chatManagerEnabled: "ChatManager: chatgeschiedenis {n} berichten per kanaal",
-      chatManagerStatusOn: "geschiedenis {n} per kanaal, {grown} kanaal/kanalen vergroot",
+      chatManagerStatusOn: "geschiedenis {n} per kanaal, {grown} kanaal/kanalen vergroot, {enriched} vermelding(en)/link(s) gemarkeerd",
       chatManagerStatusOff: "uit",
       apiKeyRejected: "\u26A0 API-key geweigerd \u2014 controleer /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: niet herkend \u2014 scan eerst een base om je te registreren.",
@@ -3747,6 +3753,8 @@ var ShockrTools = (() => {
     ["autocollect.interval", "helpSetAutoCollectInterval"],
     ["chatmanager.closeOnStart", "helpSetChatClose"],
     ["chatmanager.historyLength", "helpSetChatHistory"],
+    ["chatmanager.mentionColor", "helpSetChatMention"],
+    ["chatmanager.linkify", "helpSetChatLinkify"],
     ["mcvtimer.compact", "helpSetMcvCompact"],
     ["tpa.players", "helpSetTpaPlayers"],
     ["tpa.range", "helpSetTpaRange"],
@@ -5707,7 +5715,7 @@ var ShockrTools = (() => {
       this._scanning = true;
       const startTime = Date.now();
       let scanned = 0;
-      let skipped = 0;
+      let skipped2 = 0;
       let aborted = false;
       let loaded = 0;
       let loadMs = 0;
@@ -5733,7 +5741,7 @@ var ShockrTools = (() => {
             if (existingCity) {
               const version2 = existingCity.get_Version();
               if (scannedVersions.get(cityId) === version2) {
-                skipped++;
+                skipped2++;
                 continue;
               }
             }
@@ -5751,7 +5759,7 @@ var ShockrTools = (() => {
           loaded++;
           const version = city.get_Version();
           if (scannedVersions.get(cityId) === version) {
-            skipped++;
+            skipped2++;
             continue;
           }
           const payload = extractScan(city);
@@ -5772,9 +5780,9 @@ var ShockrTools = (() => {
         await this.api.flush();
         const duration = ((Date.now() - startTime) / 1e3).toFixed(1);
         if (scanned > 0) {
-          chatMessage(`[ST] ${t("scanComplete", { scanned, skipped, duration })}`);
+          chatMessage(`[ST] ${t("scanComplete", { scanned, skipped: skipped2, duration })}`);
         }
-        console.log(`[ST] LayoutScanner: ${scanned} sent, ${skipped} skipped, ${duration}s, city load avg ${loaded ? Math.round(loadMs / loaded) : "-"} ms (${loadFailed} not loaded)${aborted ? " (aborted: player online)" : ""}`);
+        console.log(`[ST] LayoutScanner: ${scanned} sent, ${skipped2} skipped, ${duration}s, city load avg ${loaded ? Math.round(loadMs / loaded) : "-"} ms (${loadFailed} not loaded)${aborted ? " (aborted: player online)" : ""}`);
       } catch (e) {
         console.error("[ST] LayoutScanner error:", e);
         chatMessage(`[ST] ${t("scanFailed", { error: e.message })}`);
@@ -5877,7 +5885,7 @@ var ShockrTools = (() => {
       this._scanning = true;
       const startTime = Date.now();
       let scanned = 0;
-      let skipped = 0;
+      let skipped2 = 0;
       let aborted = false;
       let loaded = 0;
       let loadMs = 0;
@@ -5898,7 +5906,7 @@ var ShockrTools = (() => {
           try {
             const existingCity = cities2.GetCity(cityId);
             if (existingCity && scannedVersions2.get(cityId) === existingCity.get_Version()) {
-              skipped++;
+              skipped2++;
               continue;
             }
           } catch {
@@ -5914,7 +5922,7 @@ var ShockrTools = (() => {
           loaded++;
           const version = city.get_Version();
           if (scannedVersions2.get(cityId) === version) {
-            skipped++;
+            skipped2++;
             continue;
           }
           const payload = extractScan(city);
@@ -5935,9 +5943,9 @@ var ShockrTools = (() => {
         await this.api.flush();
         const duration = ((Date.now() - startTime) / 1e3).toFixed(1);
         if (manual || scanned > 0) {
-          chatMessage(`[ST] ${t("allianceScanComplete", { scanned, skipped, duration })}`);
+          chatMessage(`[ST] ${t("allianceScanComplete", { scanned, skipped: skipped2, duration })}`);
         }
-        console.log(`[ST] AllianceScanner: ${scanned} sent, ${skipped} skipped, ${duration}s, city load avg ${loaded ? Math.round(loadMs / loaded) : "-"} ms (${loadFailed} not loaded)${aborted ? ` (aborted: ${aborted})` : ""}`);
+        console.log(`[ST] AllianceScanner: ${scanned} sent, ${skipped2} skipped, ${duration}s, city load avg ${loaded ? Math.round(loadMs / loaded) : "-"} ms (${loadFailed} not loaded)${aborted ? ` (aborted: ${aborted})` : ""}`);
       } catch (e) {
         console.error("[ST] AllianceScanner error:", e);
         chatMessage(`[ST] ${t("allianceScanFailed", { error: e.message })}`);
@@ -10467,15 +10475,15 @@ var ShockrTools = (() => {
       }
       this.busy = false;
       const name = String(target.get_Name());
-      const skipped = [
+      const skipped2 = [
         ...plan.skippedFull.map((k) => t("transferAllSkippedFull", { res: t(`poiShort_${k}`) })),
         ...plan.skippedCredits ? [t("transferAllSkippedCredits", { n: plan.skippedCredits })] : [],
         ...failed ? [t("transferAllFailed", { n: failed })] : []
       ];
       if (done.tib || done.cry) {
-        console.log(`[ST] Transferred all resources to ${name} (tib ${fmtNumber(done.tib)}, cry ${fmtNumber(done.cry)})` + (skipped.length ? ` \u2014 ${skipped.join(", ")}` : ""));
+        console.log(`[ST] Transferred all resources to ${name} (tib ${fmtNumber(done.tib)}, cry ${fmtNumber(done.cry)})` + (skipped2.length ? ` \u2014 ${skipped2.join(", ")}` : ""));
       } else {
-        console.log(`[ST] TransferAll: nothing transferred to ${name}` + (skipped.length ? ` \u2014 ${skipped.join(", ")}` : ""));
+        console.log(`[ST] TransferAll: nothing transferred to ${name}` + (skipped2.length ? ` \u2014 ${skipped2.join(", ")}` : ""));
       }
       return { done, failed, skippedFull: plan.skippedFull, skippedCredits: plan.skippedCredits };
     }
@@ -14900,11 +14908,134 @@ var ShockrTools = (() => {
     }
   };
 
+  // lib/chat-enrich.js
+  var URL_RE = /\bhttps?:\/\/[^\s<>"'\[\]]+/gi;
+  var TRAILING = /[.,;:!?)]+$/;
+  var SKIP = 'a,[onclick],[id^="CHAT_SENDER_"],[data-st-cm],script,style';
+  var DEFAULT_COLOR2 = "#ffff00";
+  function safeUrl(text) {
+    try {
+      const u = new URL(text);
+      return u.protocol === "http:" || u.protocol === "https:" ? u.href : null;
+    } catch {
+      return null;
+    }
+  }
+  function mentionColor(value) {
+    if (value === void 0 || value === null) return DEFAULT_COLOR2;
+    const v = String(value).trim();
+    if (v === "" || v.toLowerCase() === "none" || v.toLowerCase() === "off") return null;
+    if (/^#[0-9a-f]{3}([0-9a-f]{3})?([0-9a-f]{2})?$/i.test(v) || /^[a-z]{3,20}$/i.test(v)) return v;
+    return DEFAULT_COLOR2;
+  }
+  function escapeRe(s) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+  function segments(text, { name = "", linkify = true } = {}) {
+    const hits = [];
+    if (linkify) {
+      for (const m of text.matchAll(URL_RE)) {
+        const raw = m[0].replace(TRAILING, "");
+        const href = safeUrl(raw);
+        if (href) hits.push({ start: m.index, end: m.index + raw.length, type: "url", href });
+      }
+    }
+    if (name) {
+      const re = new RegExp(`(?<![\\w])${escapeRe(name)}(?![\\w])`, "gi");
+      for (const m of text.matchAll(re)) {
+        const start = m.index;
+        const end = start + m[0].length;
+        if (!hits.some((h) => start < h.end && end > h.start)) hits.push({ start, end, type: "mention" });
+      }
+    }
+    if (!hits.length) return [{ type: "text", value: text }];
+    hits.sort((a, b) => a.start - b.start);
+    const out = [];
+    let last = 0;
+    for (const h of hits) {
+      if (h.start > last) out.push({ type: "text", value: text.slice(last, h.start) });
+      const seg = { type: h.type, value: text.slice(h.start, h.end) };
+      if (h.href) seg.href = h.href;
+      out.push(seg);
+      last = h.end;
+    }
+    if (last < text.length) out.push({ type: "text", value: text.slice(last) });
+    return out;
+  }
+  function skipped(node, root) {
+    for (let el = node.parentElement; el && el !== root; el = el.parentElement) {
+      if (el.matches && el.matches(SKIP)) return true;
+    }
+    return false;
+  }
+  function enrich(root, { name = "", linkify = true, color = DEFAULT_COLOR2 } = {}) {
+    const doc = root.ownerDocument;
+    const walker = doc.createTreeWalker(
+      root,
+      4
+      /* NodeFilter.SHOW_TEXT */
+    );
+    const nodes = [];
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      if (n.nodeValue && n.nodeValue.trim() && !skipped(n, root)) nodes.push(n);
+    }
+    const mentionName = color ? name : "";
+    let added = 0;
+    for (const n of nodes) {
+      const segs = segments(n.nodeValue, { name: mentionName, linkify });
+      if (segs.length === 1 && segs[0].type === "text") continue;
+      const frag = doc.createDocumentFragment();
+      for (const s of segs) {
+        if (s.type === "text") {
+          frag.appendChild(doc.createTextNode(s.value));
+          continue;
+        }
+        added++;
+        if (s.type === "url") {
+          const a = doc.createElement("a");
+          a.href = s.href;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+          a.textContent = s.value;
+          a.setAttribute("data-st-cm", "url");
+          a.style.cssText = "color:#4fc3f7;text-decoration:underline;cursor:pointer;";
+          frag.appendChild(a);
+        } else {
+          const span2 = doc.createElement("span");
+          span2.textContent = s.value;
+          span2.setAttribute("data-st-cm", "mention");
+          span2.style.cssText = `color:${color};font-weight:bold;`;
+          frag.appendChild(span2);
+        }
+      }
+      n.parentNode.replaceChild(frag, n);
+    }
+    return added;
+  }
+  function keepSelectable(root) {
+    let fixed2 = 0;
+    try {
+      const seen = /* @__PURE__ */ new Set();
+      for (const el of root.querySelectorAll("div[qxselectable]")) {
+        const w = qx.ui.core.Widget.getWidgetByElement(el);
+        if (!w || seen.has(w) || typeof w.getSelectable !== "function") continue;
+        seen.add(w);
+        if (w.classname === "qx.ui.basic.Label" && !w.getSelectable()) {
+          w.setSelectable(true);
+          fixed2++;
+        }
+      }
+    } catch {
+    }
+    return fixed2;
+  }
+
   // plugins/chat-manager.js
   var DEFAULT_HISTORY = 512;
   var MIN_HISTORY = 64;
   var MAX_HISTORY = 512;
   var STARTUP_WINDOW_MS = 3 * 60 * 1e3;
+  var FIND_CHAT_MS = 2e3;
   function historyLength(config) {
     const v = Math.round(Number(config.get("chatmanager.historyLength", DEFAULT_HISTORY)));
     if (!Number.isFinite(v)) return DEFAULT_HISTORY;
@@ -14931,12 +15062,18 @@ var ShockrTools = (() => {
       this._push = null;
       this._wrapper = null;
       this._grown = 0;
+      this._observer = null;
+      this._chatRoot = null;
+      this._findTimer = null;
+      this._pending = false;
+      this._enriched = 0;
     }
     async start() {
       this.running = true;
       this.applyHistory();
       const atStartup = typeof performance === "undefined" || performance.now() < STARTUP_WINDOW_MS;
       if (atStartup && this.config.get("chatmanager.closeOnStart", false) === true) this.closeChat();
+      this._startEnrich();
       chatMessage(`[ST] ${t("chatManagerEnabled", { n: historyLength(this.config) })}`);
     }
     stop() {
@@ -14946,12 +15083,13 @@ var ShockrTools = (() => {
       const P = this._ringProto();
       if (P && this._wrapper && P.push === this._wrapper) P.push = this._push;
       this._oldSize = this._push = this._wrapper = null;
+      this._stopEnrich();
       console.log("[ST] ChatManager: stopped (chat history back to the game default for new channels)");
     }
     /** One-line status for `/st status`. */
     statusText() {
       if (!this.running) return t("chatManagerStatusOff");
-      return t("chatManagerStatusOn", { n: historyLength(this.config), grown: this._grown });
+      return t("chatManagerStatusOn", { n: historyLength(this.config), grown: this._grown, enriched: this._enriched });
     }
     _widgetClass() {
       try {
@@ -15000,6 +15138,75 @@ var ShockrTools = (() => {
       };
       P.push = this._wrapper;
       console.log(`[ST] ChatManager: chat history ${old} -> ${size}`);
+    }
+    // ─── Enrichment (5.48.0) ──────────────────────────────────────────
+    _chatDom() {
+      try {
+        return qx.core.Init.getApplication().getChat().getContentElement().getDomElement();
+      } catch {
+        return null;
+      }
+    }
+    _playerName() {
+      try {
+        return String(ClientLib.Data.MainData.GetInstance().get_Player().get_Name() || "");
+      } catch {
+        return "";
+      }
+    }
+    _enrichOptions() {
+      return {
+        name: this._playerName(),
+        linkify: this.config.get("chatmanager.linkify", true) !== false,
+        color: mentionColor(this.config.get("chatmanager.mentionColor", void 0))
+      };
+    }
+    /** Observe the chat window; every change (a new message re-renders the pane) is enriched. */
+    _startEnrich() {
+      const root = this._chatDom();
+      if (!root || typeof MutationObserver === "undefined") {
+        if (this.running && !this._findTimer) {
+          this._findTimer = setTimeout(() => {
+            this._findTimer = null;
+            if (this.running) this._startEnrich();
+          }, FIND_CHAT_MS);
+        }
+        return;
+      }
+      this._chatRoot = root;
+      this._observer = new MutationObserver(() => this._schedule());
+      this.enrichNow();
+    }
+    _stopEnrich() {
+      if (this._findTimer) clearTimeout(this._findTimer);
+      this._findTimer = null;
+      if (this._observer) this._observer.disconnect();
+      this._observer = null;
+      this._chatRoot = null;
+    }
+    _schedule() {
+      if (this._pending) return;
+      this._pending = true;
+      setTimeout(() => {
+        this._pending = false;
+        if (this.running) this.enrichNow();
+      }, 0);
+    }
+    /** One pass: enrich + selection safety net, with our own changes not observed. */
+    enrichNow() {
+      const root = this._chatRoot;
+      if (!root) return 0;
+      let added = 0;
+      if (this._observer) this._observer.disconnect();
+      try {
+        added = enrich(root, this._enrichOptions());
+        this._enriched += added;
+        if (keepSelectable(root)) console.log("[ST] ChatManager: chat text made selectable again");
+      } catch (err) {
+        console.warn("[ST] ChatManager: enrich failed", err && err.message);
+      }
+      if (this._observer && this.running) this._observer.observe(root, { childList: true, subtree: true, characterData: true });
+      return added;
     }
     /** Close the chat window (as MaelstromTools' "Chat closed at start"). */
     closeChat() {
@@ -16443,7 +16650,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.47.0";
+  var ST_VERSION = "5.48.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
