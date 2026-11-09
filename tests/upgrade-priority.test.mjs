@@ -26,7 +26,7 @@ const M = { TiberiumPackageSize: 20, TiberiumProduction: 21, CrystalPackageSize:
 /** A refinery: credits production +gain/h on the next level, cost tib/power. */
 function building(id, { tech = T.Refinery, level = 10, gain = 100, tib = 1000, power = 500, x = 1, y = 2 } = {}) {
     return {
-        get_Id: () => id, get_CurrentLevel: () => level, get_TechName: () => tech,
+        get_Id: () => id, get_CurrentLevel: () => level, get_TechName: () => String(tech),   // the live client returns a string
         get_CoordX: () => x, get_CoordY: () => y, get_MainModifierTypeId: () => M.PackageTime,
         get_TechGameData_Obj: () => ({ tib, power }),
         dv: { OwnProdModifiers: { d: { [M.CreditsProduction]: { TotalValue: 0, NewLvlDelta: gain } } } },

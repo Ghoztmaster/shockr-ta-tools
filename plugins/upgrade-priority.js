@@ -39,8 +39,11 @@
  * all bases (HuffyTools read an empty cache, so it was always 0); "top" lists a row
  * only once; "Upgrade all" goes through the shown affordable rows in order (HuffyTools
  * popped from the end and stopped at the first row that was not affordable).
- * NOT VERIFIED LIVE: GetBuildingDetailViewInfo / OwnProdModifiers / UpgradeBuilding
- * on the current client.
+ * VERIFIED LIVE (2026-11-09): get_Buildings().d, GetBuildingDetailViewInfo().OwnProdModifiers,
+ * get_MainModifierTypeId, GetTechLevelResourceRequirements_Obj and the gain formula
+ * (Accumulator 34: +47264/h; Power Plant 14: +726 production + 456 packages).
+ * get_TechName() returns a STRING - compared as a number (5.46.0 showed no buildings).
+ * NOT VERIFIED LIVE: UpgradeBuilding.
  */
 import { chatMessage } from '../lib/main.js';
 import { t, escapeHtml } from '../lib/i18n.js';
@@ -76,7 +79,7 @@ function typeName(tech) {
     const key = {
         [T.PowerPlant]: 'upPowerPlant', [T.Refinery]: 'upRefinery', [T.Harvester]: 'upHarvester',
         [T.Harvester_Crystal]: 'upHarvester', [T.Silo]: 'upSilo', [T.Accumulator]: 'upAccumulator',
-    }[tech];
+    }[Number(tech)];
     return key ? t(key) : '?';
 }
 
@@ -177,7 +180,7 @@ export function cityRows(city, tab, totalTib) {
         try {
             const level = b.get_CurrentLevel();
             if (level + 1 > cap) continue;
-            const tech = b.get_TechName();
+            const tech = Number(b.get_TechName());      // the client returns a string ("16"); ETechName holds numbers
             if (!spec.techs.includes(tech)) continue;
             const dv = city.GetBuildingDetailViewInfo(b);
             if (!dv || !dv.OwnProdModifiers) continue;

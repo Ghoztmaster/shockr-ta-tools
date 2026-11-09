@@ -14543,7 +14543,7 @@ var ShockrTools = (() => {
       [T.Harvester_Crystal]: "upHarvester",
       [T.Silo]: "upSilo",
       [T.Accumulator]: "upAccumulator"
-    }[tech];
+    }[Number(tech)];
     return key ? t(key) : "?";
   }
   function gainPerHour(mods, mainId, pkgType, prodType) {
@@ -14637,7 +14637,7 @@ var ShockrTools = (() => {
       try {
         const level2 = b.get_CurrentLevel();
         if (level2 + 1 > cap) continue;
-        const tech = b.get_TechName();
+        const tech = Number(b.get_TechName());
         if (!spec.techs.includes(tech)) continue;
         const dv = city.GetBuildingDetailViewInfo(b);
         if (!dv || !dv.OwnProdModifiers) continue;

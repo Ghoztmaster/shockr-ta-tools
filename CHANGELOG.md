@@ -13,7 +13,7 @@ Ronde 9 (extra na de MaelstromTools-reeks).
 - Upgrade via `SendCommand('UpgradeBuilding', {cityid, posX, posY, isPaid: true})`, één voor één
 - Afwijkingen van HuffyTools: "betaalbaar via transfer" telt echt de Tiberium van alle bases (bij HuffyTools altijd 0); top-lijst toont elke rij één keer; Upgrade all loopt de getoonde betaalbare rijen op volgorde af
 - UpgradeCalc blijft apart (kosten van de huidige base)
-- NIET LIVE GEVERIFIEERD: `GetBuildingDetailViewInfo`, `OwnProdModifiers` en `UpgradeBuilding` op de huidige client
+- Live geverifieerd (2026-11-09): gebouwdata, `OwnProdModifiers` en de gain-formule (Accumulator 34: +47.264/h; Power Plant 14: +1.182/h). `get_TechName()` geeft op de huidige client een string ("16"); die wordt nu als getal vergeleken - zonder dat bleef elke tab leeg. NIET live getest: `UpgradeBuilding` zelf
 
 ## [5.45.0] — 2026-11-09
 
