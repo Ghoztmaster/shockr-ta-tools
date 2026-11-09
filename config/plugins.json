@@ -112,6 +112,22 @@
     }
   },
   {
+    "name": "BaseStatus",
+    "slug": "base-status",
+    "defaultEnabled": true,
+    "replaces": null,
+    "short": {
+      "en": "One panel with cooldown, protection, alert and support weapon of every base",
+      "de": "Ein Panel mit Cooldown, Schutz, Alarm und Unterstützungswaffe jeder Basis",
+      "nl": "Eén paneel met cooldown, protection, alert en support weapon van elke base"
+    },
+    "long": {
+      "en": "The crosshair icon in the Shockr button (or /st basestatus) opens a panel with every own base: time left on the move cooldown and on protection, the base name in red when it is alerted, the support weapon (name and level), where it is calibrated, a Recall button per base and Recall all on top. Click a base name to open the base; the focus button centres the world map on it.",
+      "de": "Das Fadenkreuz-Symbol im Shockr-Knopf (oder /st basestatus) öffnet ein Panel mit jeder eigenen Basis: Restzeit von Umzugs-Cooldown und Schutz, der Basisname rot bei Alarm, die Unterstützungswaffe (Name und Level), worauf sie kalibriert ist, ein Zurückrufen-Knopf pro Basis und oben Alle zurückrufen. Klick auf einen Basisnamen öffnet die Basis; der Fokus-Knopf zentriert die Weltkarte darauf.",
+      "nl": "Het vizier-icoon in de Shockr-knop (of /st basestatus) opent een paneel met elke eigen base: resterende tijd van de verhuis-cooldown en van protection, de basenaam in rood als hij alerted is, het support weapon (naam en level), waar het op gekalibreerd is, een Recall-knop per base en bovenaan Recall all. Klik op een basenaam om de base te openen; de focus-knop centreert de wereldkaart erop."
+    }
+  },
+  {
     "name": "CampTracker",
     "slug": "camp-tracker",
     "defaultEnabled": true,
@@ -421,14 +437,14 @@
     "defaultEnabled": true,
     "replaces": null,
     "short": {
-      "en": "Calibrate all support weapons on a base in one click; recall per base or all",
-      "de": "Alle Unterstützungswaffen mit einem Klick auf eine Basis kalibrieren; pro Basis oder alle zurückrufen",
-      "nl": "Alle support weapons met één klik op een base kalibreren; per base of allemaal terugroepen"
+      "en": "Calibrate all support weapons on a base in one click from the world-map menu",
+      "de": "Alle Unterstützungswaffen mit einem Klick im Weltkarten-Menü auf eine Basis kalibrieren",
+      "nl": "Alle support weapons met één klik vanuit het wereldkaart-menu op een base kalibreren"
     },
     "long": {
-      "en": "Click an own or alliance base on the world map: the menu gets a \"Calibrate all support\" button that calibrates every own support weapon in range on that base (bases already on it are left alone; the chat reports how many were calibrated or out of range). The crosshair icon in the Shockr button (or /st support) opens a panel with every support weapon, where it is calibrated, a Recall button per base and Recall all. /st support recall [base name] does the same from the chat.",
-      "de": "Klick auf eine eigene oder Allianz-Basis auf der Weltkarte: das Menü bekommt einen Knopf „Alle Unterstützung kalibrieren“, der jede eigene Unterstützungswaffe in Reichweite auf diese Basis kalibriert (bereits darauf kalibrierte bleiben unverändert; der Chat meldet, wie viele kalibriert oder außer Reichweite sind). Das Fadenkreuz-Symbol im Shockr-Knopf (oder /st support) öffnet ein Panel mit jeder Unterstützungswaffe, worauf sie kalibriert ist, einem Zurückrufen-Knopf pro Basis und Alle zurückrufen. /st support recall [Basisname] macht dasselbe aus dem Chat.",
-      "nl": "Klik op een eigen of alliance-base op de wereldkaart: het menu krijgt een knop \"Calibrate all support\" die elk eigen support weapon in bereik op die base kalibreert (wat er al op staat blijft ongemoeid; de chat meldt hoeveel er gekalibreerd of buiten bereik zijn). Het vizier-icoon in de Shockr-knop (of /st support) opent een paneel met elk support weapon, waar het op gekalibreerd is, een Recall-knop per base en Recall all. /st support recall [basenaam] doet hetzelfde vanuit de chat."
+      "en": "Click an own or alliance base on the world map: the menu gets a \"Calibrate all support\" button that calibrates every own support weapon in range on that base (bases already on it are left alone; the chat reports how many were calibrated or out of range). /st support recall [base name] recalls support from the chat. Where each weapon is calibrated, with Recall buttons, is in the BaseStatus panel.",
+      "de": "Klick auf eine eigene oder Allianz-Basis auf der Weltkarte: das Menü bekommt einen Knopf „Alle Unterstützung kalibrieren“, der jede eigene Unterstützungswaffe in Reichweite auf diese Basis kalibriert (bereits darauf kalibrierte bleiben unverändert; der Chat meldet, wie viele kalibriert oder außer Reichweite sind). /st support recall [Basisname] ruft Unterstützung aus dem Chat zurück. Worauf jede Waffe kalibriert ist, mit Zurückrufen-Knöpfen, steht im BaseStatus-Panel.",
+      "nl": "Klik op een eigen of alliance-base op de wereldkaart: het menu krijgt een knop \"Calibrate all support\" die elk eigen support weapon in bereik op die base kalibreert (wat er al op staat blijft ongemoeid; de chat meldt hoeveel er gekalibreerd of buiten bereik zijn). /st support recall [basenaam] roept support terug vanuit de chat. Waar elk weapon op gekalibreerd is, met Recall-knoppen, staat in het BaseStatus-paneel."
     }
   },
   {

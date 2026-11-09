@@ -1,5 +1,20 @@
 # Changelog
 
+## [5.45.0] — 2026-11-09
+
+Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+Ronde 8 (extra na de MaelstromTools-reeks).
+
+### Nieuwe plugin: BaseStatus (`plugins/base-status.js`, standaard aan)
+- Toolbar-icoon (vizier) of `/st basestatus`: per eigen base de verhuis-cooldown (`max(get_MoveCooldownEndStep, get_MoveRestictionEndStep)`), protection (`get_ProtectionEndStep`), alerted (basenaam rood, `get_isAlerted`), support weapon (naam + level), gekalibreerd op, Recall per base en bovenaan Recall all
+- Tijden via `GetTimespanString(eindstap, serverstap)`; "00:00" wordt leeg getoond, zoals MaelstromTools
+- Klik op de basenaam opent de base; de focus-knop centreert de wereldkaart (`UtilView.centerCityOnRegionViewWindow`)
+- Live geverifieerd (2026-11-09): alle getters op de huidige client
+
+### SupportCalibrate
+- Het eigen paneel en toolbar-icoon vervallen; die informatie staat nu in BaseStatus. De menu-knop "Calibrate all support", `/st support recall [base]` en `/st support debug` blijven
+
 ## [5.44.0] — 2026-11-09
 
 Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

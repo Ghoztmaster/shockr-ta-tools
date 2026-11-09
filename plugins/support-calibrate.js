@@ -5,16 +5,14 @@
  * support-calibrate.js — calibrate every support weapon in range on one base,
  * and recall support, per base or all at once.
  *
- * On by default. Three entry points:
+ * On by default. Two entry points (the panel moved to BaseStatus in 5.45.0):
  *   1. World map, menu of an own or alliance base: "Calibrate all support".
  *      Every own base whose support weapon reaches that base gets
  *      SetDedicatedSupport(target). Bases already calibrated on it are left
  *      alone (setting it again could restart the calibration); the chat says
  *      how many were calibrated, already on it, or out of range.
- *   2. Shockr toolbar (crosshair icon) or `/st support`: panel with every own
- *      base that has a support weapon — weapon (level), calibrated on, a
- *      Recall button per base and "Recall all". Click a base name: base view.
- *   3. `/st support recall` (all) / `/st support recall <base name>`.
+ *   2. `/st support recall` (all) / `/st support recall <base name>`.
+ *   recallCity / recallAll are also used by the BaseStatus panel.
  *
  * Game API (the same calls as MaelstromTools' support functions; own implementation):
  *   menu hook:  webfrontend.gui.region.RegionCityMenu.prototype.showMenu(visObject) wrapped;
@@ -26,8 +24,6 @@
  *               in range: (x - targetX)² + (y - targetY)² <= r²
  *   calibrate:  city.SetDedicatedSupport(targetId); current: city.get_SupportDedicatedBaseId() / ...BaseName()
  *   recall:     city.RecallDedicatedSupport()
- *   name/level: ClientLib.Base.Tech.GetProductionBuildingNameFromFaction(
- *                 GetTechNameFromTechId(city.get_SupportData().get_Type(), faction), faction), supportData.get_Level()
  * On stop: the original showMenu is put back (when nobody wrapped after us)
  * and our buttons are removed.
  *
@@ -36,16 +32,13 @@
  * ran, and the structure of the menu (own keys with qx classname / basename,
  * inherited Composite keys, and the widget tree with button labels). The first
  * menu open also logs how many Composites were found, and warns when none.
- * NOT VERIFIED LIVE on the current client (taken from MaelstromTools 0.1.5.5).
+ * VERIFIED LIVE (2026-11-09): the Composite route (a test button showed up in the
+ * menu of an own base) and the support getters; calibrating itself not (the test
+ * account has no support weapon).
  */
 import { chatMessage } from '../lib/main.js';
 import { t, escapeHtml } from '../lib/i18n.js';
-import { ICONS } from '../lib/toolbar.js';
-import { OverviewPanel, ownBases, openBase } from '../lib/overview-panel.js';
-
-const TOOLBAR_ID = 'support';
-const VIEW_RECALL = 'recall';
-const VIEW_RECALL_ALL = 'recallall';
+import { ownBases } from '../lib/overview-panel.js';
 
 /** Map position of an own base (data city); get_X/get_Y as MaelstromTools, else get_PosX/Y. */
 function cityPos(city) {
@@ -139,62 +132,6 @@ export function recallAll() {
     return names;
 }
 
-/** "Ion Cannon Support (24)" or "—". */
-function weaponLabel(city) {
-    try {
-        const sd = city.get_SupportData();
-        if (!sd) return '—';
-        const faction = ClientLib.Data.MainData.GetInstance().get_Player().get_Faction();
-        const Tech = ClientLib.Base.Tech;
-        const name = Tech.GetProductionBuildingNameFromFaction(Tech.GetTechNameFromTechId(sd.get_Type(), faction), faction);
-        return `${name || '?'} (${sd.get_Level()})`;
-    } catch {
-        return '—';
-    }
-}
-
-/** Panel rows: own bases with a support weapon. */
-export function readSupport() {
-    const rows = [];
-    for (const city of ownBases()) {
-        try {
-            if (!supportWeapon(city)) continue;
-            const id = dedicatedId(city);
-            let on = null;
-            if (id) {
-                try { on = city.get_SupportDedicatedBaseName() || String(id); } catch { on = String(id); }
-            }
-            rows.push({ id: city.get_Id(), name: city.get_Name(), weapon: weaponLabel(city), on });
-        } catch { /* skip */ }
-    }
-    return rows;
-}
-
-const BTN = 'cursor:pointer;padding:1px 8px;border:1px solid #5f8fb4;border-radius:3px;background:#0d2a40;color:#4fc3f7;white-space:nowrap;';
-
-export function renderSupport(rows) {
-    if (!rows.length) return `<div style="color:#999;padding:12px 0;text-align:center;">${escapeHtml(t('supportNone'))}</div>`;
-    const th = 'padding:3px 5px;text-align:left;font-weight:normal;color:#999;';
-    const td = 'padding:3px 5px;white-space:nowrap;';
-    const any = rows.some(r => r.on);
-    let html = '';
-    if (any) {
-        html += `<div style="margin:4px 0 6px;"><span data-id="0" data-view="${VIEW_RECALL_ALL}" style="${BTN}">${escapeHtml(t('supportRecallAll'))}</span></div>`;
-    }
-    html += '<table style="border-collapse:collapse;width:100%;">'
-        + `<tr style="border-bottom:1px solid #444;"><th style="${th}">${escapeHtml(t('ovColBase'))}</th>`
-        + `<th style="${th}">${escapeHtml(t('supportColWeapon'))}</th><th style="${th}">${escapeHtml(t('supportColOn'))}</th><th></th></tr>`;
-    for (const r of rows) {
-        html += '<tr style="border-bottom:1px solid #2a2a2a;">'
-            + `<td data-id="${r.id}" title="${escapeHtml(t('ovJumpHint'))}" style="${td}color:#4fc3f7;cursor:pointer;">${escapeHtml(r.name)}</td>`
-            + `<td style="${td}">${escapeHtml(r.weapon)}</td>`
-            + `<td style="${td}${r.on ? 'color:#fff;' : 'color:#777;'}">${escapeHtml(r.on || t('supportNotCalibrated'))}</td>`
-            + `<td style="${td}text-align:right;">${r.on ? `<span data-id="${r.id}" data-view="${VIEW_RECALL}" style="${BTN}">${escapeHtml(t('supportRecall'))}</span>` : ''}</td>`
-            + '</tr>';
-    }
-    return html + '</table>';
-}
-
 // ─── Diagnostics helpers ─────────────────────────────────────────────
 
 function qxName(o) {
@@ -267,10 +204,9 @@ export class SupportCalibrate {
     /** Short description for `/st help`. */
     get description() { return t('descSupportCalibrate'); }
 
-    constructor(config, toolbar, cli) {
+    constructor(config, cli) {
         this.name = 'SupportCalibrate';
         this.config = config;
-        this.toolbar = toolbar;
         this.cli = cli;
         this.running = false;
         this._proto = null;
@@ -280,42 +216,25 @@ export class SupportCalibrate {
         this._menus = new Set();       // menu instances that carry them
         this._diag = { calls: 0, lastError: null, composites: null };
         this._target = null;           // visObject of the open menu
-        this.panel = new OverviewPanel(config, {
-            id: 'st-support-panel',
-            prefix: 'SupportCalibrate',
-            width: 480,
-            title: () => t('supportTitle'),
-            read: () => readSupport(),
-            render: (rows) => renderSupport(rows),
-            onRowClick: (id, view) => this._onPanelClick(id, view),
-        });
     }
 
     async start() {
         this.running = true;
         this._installMenuHook();
-        this.toolbar.register({
-            id: TOOLBAR_ID,
-            icon: ICONS.crosshair,
-            label: () => t('toolbarSupport'),
-            onClick: () => this.panel.toggle(),
-        });
         this.cli.register('support', (args) => this._command(args));
     }
 
     stop() {
         this.running = false;
         this._removeMenuHook();
-        this.panel.destroy();
-        this.toolbar.unregister(TOOLBAR_ID);
         this.cli.unregister('support');
     }
 
     /** One-line status for `/st status`. */
     statusText() {
         try {
-            const rows = readSupport();
-            return t('supportStatus', { n: rows.length, on: rows.filter(r => r.on).length });
+            const bases = ownBases().filter(c => supportWeapon(c));
+            return t('supportStatus', { n: bases.length, on: bases.filter(c => dedicatedId(c)).length });
         } catch {
             return t('supportStatusNoData');
         }
@@ -325,10 +244,6 @@ export class SupportCalibrate {
 
     _command(args) {
         const [action, ...rest] = args;
-        if (!action) {
-            this.panel.toggle();
-            return;
-        }
         if (action === 'debug') {
             this.debug();
             return;
@@ -352,18 +267,6 @@ export class SupportCalibrate {
 
     _reportRecall(names) {
         chatMessage(`[ST] ${escapeHtml(names.length ? t('supportRecalled', { bases: names.join(', ') }) : t('supportNothingToRecall'))}`);
-        this.panel.refresh();
-    }
-
-    _onPanelClick(id, view) {
-        if (view === VIEW_RECALL_ALL) {
-            this._reportRecall(recallAll());
-        } else if (view === VIEW_RECALL) {
-            const city = ownBases().find(c => c.get_Id() === id);
-            this._reportRecall(city && recallCity(city) ? [city.get_Name()] : []);
-        } else {
-            openBase(id);
-        }
     }
 
     // ─── Diagnostics ─────────────────────────────────────────────────
@@ -407,7 +310,7 @@ export class SupportCalibrate {
         let proto = null;
         try { proto = webfrontend.gui.region.RegionCityMenu.prototype; } catch { proto = null; }
         if (!proto || typeof proto.showMenu !== 'function') {
-            console.warn('[ST] SupportCalibrate: RegionCityMenu.showMenu not found - no menu button (panel and /st support still work)');
+            console.warn('[ST] SupportCalibrate: RegionCityMenu.showMenu not found - no menu button (/st support recall still works)');
             return;
         }
         const plugin = this;
@@ -490,6 +393,5 @@ export class SupportCalibrate {
         if (res.already.length) parts.push(t('supportAlready', { n: res.already.length }));
         if (res.outOfRange.length) parts.push(t('supportOutOfRange', { n: res.outOfRange.length }));
         chatMessage(`[ST] ${escapeHtml(parts.join(' · '))}`);
-        this.panel.refresh();
     }
 }

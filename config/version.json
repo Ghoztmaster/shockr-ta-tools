@@ -1,7 +1,25 @@
 {
-  "version": "5.44.0",
+  "version": "5.45.0",
   "date": "2026-11-09",
   "changelog": [
+    {
+      "version": "5.45.0",
+      "date": "2026-11-09",
+      "changes": {
+        "en": [
+          "New plugin BaseStatus (crosshair icon or /st basestatus): cooldown, protection, alert and support weapon of every base, with Recall and focus on the map",
+          "SupportCalibrate: its panel moved into BaseStatus; the world-map button and /st support recall stay"
+        ],
+        "de": [
+          "Neues Plugin BaseStatus (Fadenkreuz-Symbol oder /st basestatus): Cooldown, Schutz, Alarm und Unterstützungswaffe jeder Basis, mit Zurückrufen und Fokus auf der Karte",
+          "SupportCalibrate: das Panel ist in BaseStatus aufgegangen; Weltkarten-Knopf und /st support recall bleiben"
+        ],
+        "nl": [
+          "Nieuwe plugin BaseStatus (vizier-icoon of /st basestatus): cooldown, protection, alert en support weapon van elke base, met Recall en focus op de kaart",
+          "SupportCalibrate: het paneel is opgegaan in BaseStatus; de wereldkaart-knop en /st support recall blijven"
+        ]
+      }
+    },
     {
       "version": "5.44.0",
       "date": "2026-11-09",
@@ -68,24 +86,6 @@
         "nl": [
           "Nieuwe plugin ArmyOverview, zoals het MaelstromTools-overzicht: Base- / Defense- / Army-level, gebouwen of units (huidig / max) en health per base — tank-icoon in de Shockr-knop of /st army",
           "Repair charges per base met een leger: repair time per unit-type, charges, aanvallen (huidig / max), tijd tot de volgende aanval en tot max+1 aanvallen"
-        ]
-      }
-    },
-    {
-      "version": "5.40.0",
-      "date": "2026-11-09",
-      "changes": {
-        "en": [
-          "New plugin ResourceOverview: storage per base for Tiberium, Crystal and Power — stock, max, fill % and when it is full — silo icon in the Shockr button or /st resources",
-          "Red = full, yellow = over 75 %; the total row shows the overall percentage"
-        ],
-        "de": [
-          "Neues Plugin ResourceOverview: Lager pro Basis für Tiberium, Kristall und Strom — Bestand, Maximum, Füllstand % und wann es voll ist — Silo-Symbol im Shockr-Knopf oder /st resources",
-          "Rot = voll, gelb = über 75 %; die Summenzeile zeigt den Gesamtprozentsatz"
-        ],
-        "nl": [
-          "Nieuwe plugin ResourceOverview: opslag per base voor Tiberium, Crystal en Power — voorraad, max, vulling % en wanneer hij vol is — silo-icoon in de Shockr-knop of /st resources",
-          "Rood = vol, geel = boven 75 %; de totaalrij toont het totaalpercentage"
         ]
       }
     }

@@ -1,4 +1,4 @@
-// SupportCalibrate (plugins/support-calibrate.js): calibrate in range, recall, menu hook.
+// SupportCalibrate (plugins/support-calibrate.js): calibrate in range, recall, menu hook (panel: base-status.test.mjs).
 // Run: npm test
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -116,12 +116,11 @@ test('isSupportTarget: own and alliance bases only', () => {
 test('menu hook: button added once to the Composite, hidden for enemies, calibrates; stop restores', async () => {
     const near = city(1, 'Near');
     setup([near]);
-    globalThis.document = { addEventListener() {}, removeEventListener() {} };   // panel.destroy() on stop
     const shown = [];
     class RegionCityMenu { showMenu(v) { shown.push(v); } }
     const original = RegionCityMenu.prototype.showMenu;
     webfrontend.gui.region = { RegionCityMenu };
-    const plugin = new mod.SupportCalibrate(fakeConfig(), stub(), stub());
+    const plugin = new mod.SupportCalibrate(fakeConfig(), stub());
     await plugin.start();
     const menu = new RegionCityMenu();
     const added = [];
@@ -142,15 +141,4 @@ test('menu hook: button added once to the Composite, hidden for enemies, calibra
     assert.equal(RegionCityMenu.prototype.showMenu, original);
     assert.equal(added[0].disposed, true);
     assert.equal(menu.__stSupportButtons, undefined);
-});
-
-test('renderSupport: recall buttons only for calibrated bases, recall-all when any', () => {
-    setup([city(1, 'A', { dedicated: 9 }), city(2, 'B')]);
-    const html = mod.renderSupport(mod.readSupport());
-    assert.match(html, /data-view="recallall"/);
-    assert.match(html, /data-id="1" data-view="recall"/);
-    assert.doesNotMatch(html, /data-id="2" data-view="recall"/);
-    assert.match(html, /Ion Cannon \(24\)/);
-    assert.match(html, /Target9/);
-    assert.match(mod.renderSupport([]), /No base with a support weapon/);
 });
