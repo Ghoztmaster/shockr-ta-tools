@@ -1,7 +1,25 @@
 {
-  "version": "5.41.0",
+  "version": "5.42.0",
   "date": "2026-11-09",
   "changelog": [
+    {
+      "version": "5.42.0",
+      "date": "2026-11-09",
+      "changes": {
+        "en": [
+          "New plugin McvTimer: small movable panel with the progress to the next MCV — credits and research points, % and estimated time (off by default — /st plugin enable mcv-timer)",
+          "Compact / extended view with the ▾/▸ button; /st mcv shows or hides the panel"
+        ],
+        "de": [
+          "Neues Plugin McvTimer: kleines verschiebbares Panel mit dem Fortschritt zum nächsten MBF — Credits und Forschungspunkte, % und geschätzte Zeit (standardmäßig aus — /st plugin enable mcv-timer)",
+          "Kompakte / erweiterte Ansicht mit dem ▾/▸-Knopf; /st mcv zeigt oder verbirgt das Panel"
+        ],
+        "nl": [
+          "Nieuwe plugin McvTimer: klein verplaatsbaar paneel met de voortgang naar de volgende MCV — credits en research points, % en geschatte tijd (standaard uit — /st plugin enable mcv-timer)",
+          "Compacte / uitgebreide weergave met de ▾/▸-knop; /st mcv toont of verbergt het paneel"
+        ]
+      }
+    },
     {
       "version": "5.41.0",
       "date": "2026-11-09",
@@ -74,27 +92,6 @@
         "nl": [
           "Nieuwe plugin AutoCollect: verzamelt de resource-pakketten van al je bases automatisch (standaard uit — /st plugin enable auto-collect)",
           "Interval: /st config set autocollect.interval <min> (standaard 5); de chat meldt \"Pakketten verzameld op X bases\""
-        ]
-      }
-    },
-    {
-      "version": "5.37.0",
-      "date": "2026-11-05",
-      "changes": {
-        "en": [
-          "Attack Tracker now also sends the repair time (RT) and research points (RP) of each attack, read from the combat report",
-          "Loot page: new columns RP, Total (tib + crystal + credits + RP), RT, Yield/CP and Yield/RT; the summary shows RP and total RT; Avg/attack now includes RP",
-          "Attacks from before 5.37.0 have no RP/RT and show —"
-        ],
-        "de": [
-          "Attack Tracker sendet jetzt auch die Reparaturzeit (RT) und Forschungspunkte (FP) jedes Angriffs, aus dem Kampfbericht gelesen",
-          "Beute-Seite: neue Spalten FP, Gesamt (Tib + Kristall + Credits + FP), RT, Ertrag/KP und Ertrag/RT; die Zusammenfassung zeigt FP und die gesamte RT; Ø/Angriff enthält jetzt FP",
-          "Angriffe vor 5.37.0 haben keine FP/RT und zeigen —"
-        ],
-        "nl": [
-          "Attack Tracker stuurt nu ook de repair time (RT) en research points (RP) van elke aanval mee, gelezen uit het gevechtsrapport",
-          "Loot-pagina: nieuwe kolommen RP, Totaal (tib + crystal + credits + RP), RT, Opbrengst/CP en Opbrengst/RT; de samenvatting toont RP en totale RT; Gem/aanval telt nu RP mee",
-          "Aanvallen van voor 5.37.0 hebben geen RP/RT en tonen —"
         ]
       }
     }

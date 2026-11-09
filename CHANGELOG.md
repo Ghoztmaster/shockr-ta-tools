@@ -1,5 +1,20 @@
 # Changelog
 
+## [5.42.0] — 2026-11-09
+
+Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+Ronde 5 van 7: MaelstromTools-functies als Shockr-plugins.
+
+### Nieuwe plugin: McvTimer (`plugins/mcv-timer.js`, standaard uit)
+- Klein versleepbaar paneel (DOM, zelfde stijl als de andere Shockr-panels) met de voortgang naar de volgende MCV, zoals het "Next MCV"-venster van MaelstromTools (NetquiK-mod; eigen implementatie)
+- Uitgebreid: tijd tot genoeg credits (`1d.04:30`, het formaat van MaelstromTools), credits huidig / nodig met %, RP huidig / nodig met %. Groen = genoeg, rood = nog niet
+- Compact (▾/▸): `C$ (+overschot)` of `T$ <tijd>`, en `RP (+overschot)` of `RP (@ %)`. Keuze in `mcvtimer.compact`, positie in `McvTimer.x/y` (Shockr-config, localStorage)
+- `/st mcv` toont/verbergt het paneel; ververst elke 10 s; alle MCV's onderzocht: melding in het paneel
+- Game-API: `GetTechIdFromTechNameAndFaction(ETechName.Research_BaseFound, faction)`, `get_PlayerResearch().GetResearchItemFomMdbId(id).get_NextLevelInfo_Obj().rr` (benodigde credits/RP), `GetCreditsCount()`, `get_ResearchPoints()`, credits/uur = `(get_Credits().Delta + .ExtraBonusDelta) × get_Time().get_StepsPerHour()`
+- NIET LIVE GEVERIFIEERD: de research-getters uit MaelstromTools 0.1.5.5 Mod MCV op de huidige client
+- `tests/test_siteinfo.py`: McvTimer bij de standaard-uit plugins
+
 ## [5.41.0] — 2026-11-09
 
 Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

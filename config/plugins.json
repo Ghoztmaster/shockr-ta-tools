@@ -240,6 +240,22 @@
     }
   },
   {
+    "name": "McvTimer",
+    "slug": "mcv-timer",
+    "defaultEnabled": false,
+    "replaces": null,
+    "short": {
+      "en": "Progress to the next MCV in a small movable panel",
+      "de": "Fortschritt zum nächsten MBF in einem kleinen verschiebbaren Panel",
+      "nl": "Voortgang naar de volgende MCV in een klein verplaatsbaar paneel"
+    },
+    "long": {
+      "en": "A small panel (drag it by its header) with the progress to the next MCV: credits current / needed with % and the estimated time, and research points current / needed with %. Green = enough, red = not yet. The ▾/▸ button switches to a compact view; position and view are remembered. /st mcv shows or hides the panel. Refreshes every 10 seconds. Off by default.",
+      "de": "Ein kleines Panel (an der Kopfzeile verschieben) mit dem Fortschritt zum nächsten MBF: Credits aktuell / benötigt mit % und geschätzter Zeit, und Forschungspunkte aktuell / benötigt mit %. Grün = genug, rot = noch nicht. Der ▾/▸-Knopf schaltet auf eine kompakte Ansicht; Position und Ansicht werden gemerkt. /st mcv zeigt oder verbirgt das Panel. Aktualisiert sich alle 10 Sekunden. Standardmäßig aus.",
+      "nl": "Een klein paneel (versleep het aan de kop) met de voortgang naar de volgende MCV: credits huidig / nodig met % en de geschatte tijd, en research points huidig / nodig met %. Groen = genoeg, rood = nog niet. De ▾/▸-knop schakelt naar een compacte weergave; positie en weergave worden onthouden. /st mcv toont of verbergt het paneel. Ververst elke 10 seconden. Standaard uit."
+    }
+  },
+  {
     "name": "MovableMenu",
     "slug": "movable-menu",
     "defaultEnabled": true,

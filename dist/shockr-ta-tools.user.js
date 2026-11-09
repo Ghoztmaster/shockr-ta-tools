@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.41.0
+// @version         5.42.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -102,7 +102,7 @@ var ShockrTools = (() => {
   });
 
   // <define:__ST_PLUGIN_SHORT__>
-  var define_ST_PLUGIN_SHORT_default = { AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, ArmyOverview: { en: "Base, defense, army and repair charges of every base in one panel", de: "Basis, Verteidigung, Armee und Reparaturladungen jeder Basis in einem Panel", nl: "Base, defense, leger en repair charges van elke base in \xE9\xE9n paneel" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, AutoCollect: { en: "Collects the resource packages of all your bases automatically", de: "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein", nl: "Verzamelt de resource-pakketten van al je bases automatisch" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, ProductionOverview: { en: "Production per base per hour in one panel", de: "Produktion pro Basis pro Stunde in einem Panel", nl: "Productie per base per uur in \xE9\xE9n paneel" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, ResourceOverview: { en: "Storage per base: how full, and when it is full", de: "Lager pro Basis: wie voll, und wann es voll ist", nl: "Opslag per base: hoe vol, en wanneer hij vol is" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" } };
+  var define_ST_PLUGIN_SHORT_default = { AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, ArmyOverview: { en: "Base, defense, army and repair charges of every base in one panel", de: "Basis, Verteidigung, Armee und Reparaturladungen jeder Basis in einem Panel", nl: "Base, defense, leger en repair charges van elke base in \xE9\xE9n paneel" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, AutoCollect: { en: "Collects the resource packages of all your bases automatically", de: "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein", nl: "Verzamelt de resource-pakketten van al je bases automatisch" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, McvTimer: { en: "Progress to the next MCV in a small movable panel", de: "Fortschritt zum n\xE4chsten MBF in einem kleinen verschiebbaren Panel", nl: "Voortgang naar de volgende MCV in een klein verplaatsbaar paneel" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, ProductionOverview: { en: "Production per base per hour in one panel", de: "Produktion pro Basis pro Stunde in einem Panel", nl: "Productie per base per uur in \xE9\xE9n paneel" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, ResourceOverview: { en: "Storage per base: how full, and when it is full", de: "Lager pro Basis: wie voll, und wann es voll ist", nl: "Opslag per base: hoe vol, en wanneer hij vol is" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" } };
 
   // lib/game-ready.js
   async function waitForGame({ maxAttempts = 200, intervalMs = 100 } = {}) {
@@ -634,6 +634,24 @@ var ShockrTools = (() => {
       armyJumpHintOffense: "Click to open the offense view of this base",
       armyStatusOpen: "panel open",
       armyStatusClosed: "panel closed (/st army)",
+      // McvTimer (5.42.0)
+      descMcvTimer: "Small movable panel with the progress to the next MCV: credits and research points, % and estimated time",
+      helpCmdMcv: "Show/hide the MCV timer panel",
+      helpSetMcvCompact: "McvTimer compact view (default false; the \u25BE/\u25B8 button does the same)",
+      mcvTitle: "Next MCV",
+      mcvTimeLabel: "Time C$:",
+      mcvTimerReady: "ready",
+      mcvNoGrowth: "no growth",
+      mcvCredits: "Credits",
+      mcvRp: "RP",
+      mcvOk: "OK!",
+      mcvExpand: "Extended view",
+      mcvCollapse: "Compact view",
+      mcvAllDone: "Every MCV is researched",
+      mcvNoData: "No research data yet",
+      mcvStatus: "credits {credits}% \xB7 RP {rp}%",
+      mcvStatusDone: "every MCV researched",
+      mcvStatusNoData: "no research data yet",
       apiKeyRejected: "\u26A0 API key rejected \u2014 check /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: not recognized \u2014 scan a base first to register.",
       scansFailed: "\u26A0 {count} scan(s) failed to send",
@@ -1185,6 +1203,24 @@ var ShockrTools = (() => {
       armyJumpHintOffense: "Klicken, um die Offensiv-Ansicht dieser Basis zu \xF6ffnen",
       armyStatusOpen: "Panel offen",
       armyStatusClosed: "Panel zu (/st army)",
+      // McvTimer (5.42.0)
+      descMcvTimer: "Kleines verschiebbares Panel mit dem Fortschritt zum n\xE4chsten MBF: Credits und Forschungspunkte, % und gesch\xE4tzte Zeit",
+      helpCmdMcv: "MBF-Timer-Panel zeigen/verbergen",
+      helpSetMcvCompact: "McvTimer kompakte Ansicht (Standard false; der \u25BE/\u25B8-Knopf macht dasselbe)",
+      mcvTitle: "N\xE4chstes MBF",
+      mcvTimeLabel: "Zeit C$:",
+      mcvTimerReady: "bereit",
+      mcvNoGrowth: "kein Wachstum",
+      mcvCredits: "Credits",
+      mcvRp: "FP",
+      mcvOk: "OK!",
+      mcvExpand: "Erweiterte Ansicht",
+      mcvCollapse: "Kompakte Ansicht",
+      mcvAllDone: "Alle MBF sind erforscht",
+      mcvNoData: "Noch keine Forschungsdaten",
+      mcvStatus: "Credits {credits}% \xB7 FP {rp}%",
+      mcvStatusDone: "alle MBF erforscht",
+      mcvStatusNoData: "noch keine Forschungsdaten",
       apiKeyRejected: "\u26A0 API-Key abgelehnt \u2014 pr\xFCfe /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: nicht erkannt \u2014 scanne zuerst eine Basis, um dich zu registrieren.",
       scansFailed: "\u26A0 {count} Scan(s) konnten nicht gesendet werden",
@@ -1726,6 +1762,24 @@ var ShockrTools = (() => {
       armyJumpHintOffense: "Klik om de offense-weergave van deze base te openen",
       armyStatusOpen: "paneel open",
       armyStatusClosed: "paneel dicht (/st army)",
+      // McvTimer (5.42.0)
+      descMcvTimer: "Klein verplaatsbaar paneel met de voortgang naar de volgende MCV: credits en research points, % en geschatte tijd",
+      helpCmdMcv: "MCV-timer-paneel tonen/verbergen",
+      helpSetMcvCompact: "McvTimer compacte weergave (standaard false; de \u25BE/\u25B8-knop doet hetzelfde)",
+      mcvTitle: "Volgende MCV",
+      mcvTimeLabel: "Tijd C$:",
+      mcvTimerReady: "klaar",
+      mcvNoGrowth: "geen groei",
+      mcvCredits: "Credits",
+      mcvRp: "RP",
+      mcvOk: "OK!",
+      mcvExpand: "Uitgebreide weergave",
+      mcvCollapse: "Compacte weergave",
+      mcvAllDone: "Alle MCV's zijn onderzocht",
+      mcvNoData: "Nog geen researchgegevens",
+      mcvStatus: "credits {credits}% \xB7 RP {rp}%",
+      mcvStatusDone: "alle MCV's onderzocht",
+      mcvStatusNoData: "nog geen researchgegevens",
       apiKeyRejected: "\u26A0 API-key geweigerd \u2014 controleer /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: niet herkend \u2014 scan eerst een base om je te registreren.",
       scansFailed: "\u26A0 {count} scan(s) konden niet verstuurd worden",
@@ -3458,6 +3512,7 @@ var ShockrTools = (() => {
     { cmd: "production", usage: "/st production", key: "helpCmdProduction" },
     { cmd: "resources", usage: "/st resources", key: "helpCmdResources" },
     { cmd: "army", usage: "/st army", key: "helpCmdArmy" },
+    { cmd: "mcv", usage: "/st mcv", key: "helpCmdMcv" },
     { cmd: "tunnels", usage: "/st tunnels", key: "helpCmdTunnels" },
     { cmd: "blocklist", usage: "/st blocklist", key: "helpCmdBlocklist" },
     { cmd: "blocklist", usage: "/st blocklist remove <name>", key: "helpCmdBlocklistRemove" },
@@ -3474,6 +3529,7 @@ var ShockrTools = (() => {
     ["autorepair.interval", "helpSetAutoRepairInterval"],
     ["autorepair.buildings", "helpSetAutoRepairBuildings"],
     ["autocollect.interval", "helpSetAutoCollectInterval"],
+    ["mcvtimer.compact", "helpSetMcvCompact"],
     ["tpa.players", "helpSetTpaPlayers"],
     ["tpa.range", "helpSetTpaRange"],
     ["tpa.guardrange", "helpSetTpaGuardRange"],
@@ -12836,10 +12892,10 @@ var ShockrTools = (() => {
     if (columns3.some((c) => c.group)) {
       html += `<tr><th style="${th}"></th>`;
       for (let i = 0; i < columns3.length; ) {
-        let span = 1;
-        while (i + span < columns3.length && columns3[i + span].group === columns3[i].group) span++;
-        html += `<th colspan="${span}" style="${th}${sep}text-align:center;color:#ccc;">${escapeHtml(columns3[i].group || "")}</th>`;
-        i += span;
+        let span2 = 1;
+        while (i + span2 < columns3.length && columns3[i + span2].group === columns3[i].group) span2++;
+        html += `<th colspan="${span2}" style="${th}${sep}text-align:center;color:#ccc;">${escapeHtml(columns3[i].group || "")}</th>`;
+        i += span2;
       }
       html += "</tr>";
     }
@@ -13281,9 +13337,9 @@ var ShockrTools = (() => {
   function formatDuration(sec) {
     if (sec === null || sec === void 0 || !Number.isFinite(sec)) return "\u2014";
     try {
-      const fmt5 = ClientLib.Vis.VisMain.FormatTimespan;
-      if (typeof fmt5 === "function") {
-        const out = fmt5(sec);
+      const fmt6 = ClientLib.Vis.VisMain.FormatTimespan;
+      if (typeof fmt6 === "function") {
+        const out = fmt6(sec);
         if (typeof out === "string" && out) return out;
       }
     } catch {
@@ -13369,7 +13425,7 @@ var ShockrTools = (() => {
     const free = max - cur;
     return free >= red ? RED2 : yellow !== null && free >= yellow ? YELLOW2 : "";
   };
-  var unless = (limitKey, fmt5) => (v, row) => row.values[limitKey] === 0 ? "" : fmt5(v, row);
+  var unless = (limitKey, fmt6) => (v, row) => row.values[limitKey] === 0 ? "" : fmt6(v, row);
   function overviewColumns() {
     const gB = t("armyGroupBase");
     const gD = t("armyGroupDefense");
@@ -13488,6 +13544,185 @@ var ShockrTools = (() => {
     read() {
       const rows = ownBases3().map((city) => ({ id: city.get_Id(), name: city.get_Name(), values: readCity3(city) }));
       return rows.length ? { rows } : null;
+    }
+  };
+
+  // plugins/mcv-timer.js
+  var PANEL_ID11 = "st-mcv-panel";
+  var REFRESH_MS6 = 10 * 1e3;
+  var PANEL_WIDTH6 = 230;
+  var GREEN = "#92ff7f";
+  var RED3 = "#ff8a7f";
+  function fmt5(n) {
+    try {
+      const f = webfrontend.phe.cnc.gui.util.Numbers.formatNumbersCompact;
+      if (typeof f === "function") return f(n);
+    } catch {
+    }
+    return compact2(n);
+  }
+  function daysFromHours(hours) {
+    const d = Math.floor(hours / 24);
+    const rest = hours - d * 24;
+    const h = Math.floor(rest);
+    const m = Math.floor((rest - h) * 60);
+    return `${d}d.${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  }
+  function progress({ credits: credits2, creditsNeeded, rp, rpNeeded, creditsPerHour }) {
+    const part = (have, need) => {
+      const pct2 = need > 0 ? have / need * 100 : 100;
+      return { have, need, pct: pct2, ok: pct2 >= 100 };
+    };
+    const c = part(credits2, creditsNeeded);
+    c.hoursLeft = !c.ok && creditsPerHour > 0 ? (creditsNeeded - credits2) / creditsPerHour : null;
+    return { credits: c, rp: part(rp, rpNeeded) };
+  }
+  function readMcv() {
+    const md = ClientLib.Data.MainData.GetInstance();
+    const player = md.get_Player();
+    const techId = ClientLib.Base.Tech.GetTechIdFromTechNameAndFaction(ClientLib.Base.ETechName.Research_BaseFound, player.get_Faction());
+    const item = player.get_PlayerResearch().GetResearchItemFomMdbId(techId);
+    if (!item) return void 0;
+    const next = item.get_NextLevelInfo_Obj();
+    if (!next) return null;
+    const needed = {};
+    for (const r of Object.values(next.rr || {})) if (r && r.t > 0) needed[r.t] = r.c;
+    const R = ClientLib.Base.EResourceType;
+    const cr = player.get_Credits();
+    return {
+      credits: Number(player.GetCreditsCount()) || 0,
+      creditsNeeded: Number(needed[R.Gold]) || 0,
+      rp: Number(player.get_ResearchPoints()) || 0,
+      rpNeeded: Number(needed[R.ResearchPoints]) || 0,
+      creditsPerHour: ((Number(cr.Delta) || 0) + (Number(cr.ExtraBonusDelta) || 0)) * md.get_Time().get_StepsPerHour()
+    };
+  }
+  var span = (color, text) => `<span style="color:${color};">${escapeHtml(text)}</span>`;
+  function renderExtended(p) {
+    const c = p.credits;
+    const r = p.rp;
+    const timer = c.ok ? span(GREEN, t("mcvTimerReady")) : c.hoursLeft !== null ? escapeHtml(daysFromHours(c.hoursLeft)) : span(RED3, t("mcvNoGrowth"));
+    const line = (label, x) => `<div>${span(x.ok ? GREEN : RED3, label)} <span style="color:#ff8f00;">${escapeHtml(fmt5(x.have))}</span> / ${escapeHtml(fmt5(x.need))} <span style="color:#aaa;">${x.ok ? escapeHtml(t("mcvOk")) : `${Math.floor(x.pct * 10) / 10}%`}</span></div>`;
+    return `<div>${escapeHtml(t("mcvTimeLabel"))} ${timer}</div>` + line(t("mcvCredits"), c) + line(t("mcvRp"), r);
+  }
+  function renderCompact(p) {
+    const c = p.credits;
+    const r = p.rp;
+    const cLine = c.ok ? span(GREEN, `C$ (+${fmt5(c.have - c.need)})`) : span(RED3, `T$ ${c.hoursLeft !== null ? daysFromHours(c.hoursLeft) : t("mcvNoGrowth")}`);
+    const rLine = r.ok ? span(GREEN, `RP (+${fmt5(r.have - r.need)})`) : span(RED3, `RP (@${Math.floor(r.pct * 10) / 10}%)`);
+    return `<div>${cLine}</div><div>${rLine}</div>`;
+  }
+  var McvTimer = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descMcvTimer");
+    }
+    constructor(config, cli) {
+      this.name = "McvTimer";
+      this.defaultEnabled = false;
+      this.config = config;
+      this.cli = cli;
+      this.running = false;
+      this._panel = null;
+      this._body = null;
+      this._toggle = null;
+      this._title = null;
+      this._timer = null;
+      this._hidden = false;
+      this._last = void 0;
+    }
+    async start() {
+      this.running = true;
+      this._hidden = false;
+      this._ensurePanel();
+      this.refresh();
+      this._timer = setInterval(() => this.refresh(), REFRESH_MS6);
+      this.cli.register("mcv", () => this.toggleVisible());
+    }
+    stop() {
+      this.running = false;
+      if (this._timer) clearInterval(this._timer);
+      this._timer = null;
+      this.cli.unregister("mcv");
+      if (this._panel) this._panel.remove();
+      this._panel = null;
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      if (this._last === null) return t("mcvStatusDone");
+      if (!this._last) return t("mcvStatusNoData");
+      const p = progress(this._last);
+      return t("mcvStatus", { credits: Math.floor(p.credits.pct), rp: Math.floor(p.rp.pct) });
+    }
+    isCompact() {
+      const v = this.config.get("mcvtimer.compact", false);
+      return v === true || v === "true";
+    }
+    toggleVisible() {
+      this._hidden = !this._hidden;
+      if (this._panel) this._panel.style.display = this._hidden ? "none" : "block";
+    }
+    toggleCompact() {
+      this.config.set("mcvtimer.compact", !this.isCompact());
+      this.refresh();
+    }
+    refresh() {
+      if (!this.running || !this._panel) return;
+      try {
+        this._last = readMcv();
+      } catch (err) {
+        this._last = void 0;
+        console.warn("[ST] McvTimer: read failed", err && err.message);
+      }
+      const compact4 = this.isCompact();
+      this._title.textContent = t("mcvTitle");
+      this._toggle.textContent = compact4 ? "\u25B8" : "\u25BE";
+      this._toggle.title = t(compact4 ? "mcvExpand" : "mcvCollapse");
+      if (this._last === null) {
+        this._body.innerHTML = `<div style="color:#aaa;">${escapeHtml(t("mcvAllDone"))}</div>`;
+      } else if (!this._last) {
+        this._body.innerHTML = `<div style="color:#aaa;">${escapeHtml(t("mcvNoData"))}</div>`;
+      } else {
+        const p = progress(this._last);
+        this._body.innerHTML = compact4 ? renderCompact(p) : renderExtended(p);
+      }
+    }
+    _ensurePanel() {
+      if (this._panel && document.body.contains(this._panel)) return;
+      const fallback = { x: Math.max(0, window.innerWidth - PANEL_WIDTH6 - 20), y: Math.max(0, window.innerHeight - 160) };
+      const pos = clampPosition(
+        loadPosition(this.config, "McvTimer", fallback),
+        { w: PANEL_WIDTH6, h: 40 },
+        { w: window.innerWidth, h: window.innerHeight }
+      );
+      const panel = document.createElement("div");
+      panel.id = PANEL_ID11;
+      panel.style.cssText = `
+            position: fixed; left: ${pos.x}px; top: ${pos.y}px; z-index: 9998;
+            min-width: 140px; max-width: ${PANEL_WIDTH6}px; box-sizing: border-box;
+            background: rgba(20, 20, 20, 0.88); color: #ddd;
+            border: 1px solid #444; border-radius: 4px;
+            font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 12px; line-height: 1.5;
+            pointer-events: auto;`;
+      const header = document.createElement("div");
+      header.style.cssText = "display:flex;align-items:center;gap:6px;padding:3px 8px;cursor:move;user-select:none;border-bottom:1px solid #333;";
+      const title = document.createElement("div");
+      title.style.cssText = "flex:1;color:#fff;font-weight:bold;";
+      title.textContent = t("mcvTitle");
+      const toggle = document.createElement("div");
+      toggle.style.cssText = "cursor:pointer;color:#999;font-size:13px;line-height:1;";
+      toggle.addEventListener("mousedown", (e) => e.stopPropagation());
+      toggle.addEventListener("click", () => this.toggleCompact());
+      header.append(title, toggle);
+      const body = document.createElement("div");
+      body.style.cssText = "padding:4px 8px 6px;white-space:nowrap;";
+      panel.append(header, body);
+      document.body.appendChild(panel);
+      makeDraggable(panel, header, { config: this.config, prefix: "McvTimer" });
+      this._panel = panel;
+      this._body = body;
+      this._toggle = toggle;
+      this._title = title;
     }
   };
 
@@ -13801,25 +14036,25 @@ var ShockrTools = (() => {
     if (!hp || hp.max <= 0) return EMPTY;
     return { text: formatPercent(hp.end, hp.max), color: colorFromRatio(hp.end / hp.max) };
   }
-  function repairCell(entity, seconds, fmt5) {
+  function repairCell(entity, seconds, fmt6) {
     const hp = entity && entity.hp;
     if (!hp || hp.max <= 0) return EMPTY;
-    return { text: fmt5.time(seconds), color: colorFromRatio(1 - hp.end / hp.max) };
+    return { text: fmt6.time(seconds), color: colorFromRatio(1 - hp.end / hp.max) };
   }
-  function lootCell(stats, loot, types, fmt5) {
+  function lootCell(stats, loot, types, fmt6) {
     if (!stats || stats.enemy.overall.hp.max <= 0 || !loot) return EMPTY;
     const got = types.reduce((s, k) => s + stats.enemy.overall.res[k], 0);
     const all = types.reduce((s, k) => s + (loot[k] || 0), 0);
-    return { text: fmt5.number(got), color: colorFromRatio(1 - got / all) };
+    return { text: fmt6.number(got), color: colorFromRatio(1 - got / all) };
   }
-  function columnCells(view, fmt5) {
+  function columnCells(view, fmt6) {
     const s = view && view.stats;
     const e = s ? s.enemy : null;
     const o = s ? s.offense : null;
     const rc = o ? o.overall.res : null;
     const battle = {
       outcome: s ? battleOutcome(s) : null,
-      duration: { text: s && s.battleDuration > 0 ? fmt5.time(s.battleDuration / 1e3) : "-:--", color: null },
+      duration: { text: s && s.battleDuration > 0 ? fmt6.time(s.battleDuration / 1e3) : "-:--", color: null },
       base: { text: view && view.base ? view.base : "-", color: null },
       morale: view && view.morale ? {
         text: view.morale.text,
@@ -13830,16 +14065,16 @@ var ShockrTools = (() => {
     for (const k of ENEMY_ROWS) enemy[k] = hpCell(e && e[k]);
     const has = o && o.overall.hp.max > 0;
     const repair = {
-      storage: { text: view && view.storage !== null && view.storage !== void 0 ? fmt5.time(view.storage) : "-", color: null },
+      storage: { text: view && view.storage !== null && view.storage !== void 0 ? fmt6.time(view.storage) : "-", color: null },
       // the slowest repair type: TABS' "repair points" row, the bottleneck, glows
-      overall: { ...repairCell(o && o.overall, rc ? Math.max(rc[RES.RC_BASE], rc[RES.RC_AIR], rc[RES.RC_INF], rc[RES.RC_VEH]) : 0, fmt5), glow: true },
-      crystal: has ? { text: fmt5.number(rc[RES.CRY]), color: colorFromRatio(1) } : EMPTY,
-      infantry: repairCell(o && o.infantry, rc ? rc[RES.RC_INF] : 0, fmt5),
-      vehicle: repairCell(o && o.vehicle, rc ? rc[RES.RC_VEH] : 0, fmt5),
-      aircraft: repairCell(o && o.aircraft, rc ? rc[RES.RC_AIR] : 0, fmt5)
+      overall: { ...repairCell(o && o.overall, rc ? Math.max(rc[RES.RC_BASE], rc[RES.RC_AIR], rc[RES.RC_INF], rc[RES.RC_VEH]) : 0, fmt6), glow: true },
+      crystal: has ? { text: fmt6.number(rc[RES.CRY]), color: colorFromRatio(1) } : EMPTY,
+      infantry: repairCell(o && o.infantry, rc ? rc[RES.RC_INF] : 0, fmt6),
+      vehicle: repairCell(o && o.vehicle, rc ? rc[RES.RC_VEH] : 0, fmt6),
+      aircraft: repairCell(o && o.aircraft, rc ? rc[RES.RC_AIR] : 0, fmt6)
     };
     const loot = {};
-    for (const k of LOOT_ROWS) loot[k] = lootCell(s, view && view.loot, LOOT_TYPES2[k], fmt5);
+    for (const k of LOOT_ROWS) loot[k] = lootCell(s, view && view.loot, LOOT_TYPES2[k], fmt6);
     return { battle, enemy, repair, loot };
   }
 
@@ -14783,11 +15018,11 @@ var ShockrTools = (() => {
       }
       const current = targetReady() ? this._currentKey() : null;
       const loot = lootFromCurrentCity();
-      const fmt5 = { time: timespan, number: compact3 };
+      const fmt6 = { time: timespan, number: compact3 };
       const columns3 = ["live", "cy"].map((id) => {
         const shown = this._columns[id] || null;
         const view = shown ? this._columnView(shown.entry, loot) : null;
-        return { cells: columnCells(view, fmt5), dim: !!shown && shown.key !== current, view };
+        return { cells: columnCells(view, fmt6), dim: !!shown && shown.key !== current, view };
       });
       this._win.update({
         columns: columns3,
@@ -14916,7 +15151,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.41.0";
+  var ST_VERSION = "5.42.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -14982,6 +15217,7 @@ var ShockrTools = (() => {
       new ProductionOverview(config, toolbar, cli),
       new ResourceOverview(config, toolbar, cli),
       new ArmyOverview(config, toolbar, cli),
+      new McvTimer(config, cli),
       new Stabs(config, toolbar)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });
