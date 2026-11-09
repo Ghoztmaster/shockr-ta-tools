@@ -1,9 +1,9 @@
 [
   {
     "message": {
-      "en": "v5.48.0 released — ChatManager (/st plugin enable chat-manager) now highlights your player name in chat and makes plain http(s) links clickable, on top of up to 512 messages per channel and closing the chat at start. Colour: /st config set chatmanager.mentionColor #ffff00. Also since 5.46: UpgradePriority (arrow icon, /st upgrades). Tampermonkey updates by itself; never update via Import.",
-      "de": "v5.48.0 veröffentlicht — ChatManager (/st plugin enable chat-manager) hebt jetzt deinen Spielernamen im Chat hervor und macht einfache http(s)-Links anklickbar, zusätzlich zu bis zu 512 Nachrichten pro Kanal und dem Schließen des Chats beim Start. Farbe: /st config set chatmanager.mentionColor #ffff00. Seit 5.46 außerdem: UpgradePriority (Pfeil-Symbol, /st upgrades). Tampermonkey aktualisiert selbst; nie über Importieren aktualisieren.",
-      "nl": "v5.48.0 uitgebracht — ChatManager (/st plugin enable chat-manager) markeert nu je spelernaam in de chat en maakt gewone http(s)-links klikbaar, naast tot 512 berichten per kanaal en de chat dichtklappen bij opstarten. Kleur: /st config set chatmanager.mentionColor #ffff00. Sinds 5.46 ook: UpgradePriority (pijl-icoon, /st upgrades). Tampermonkey werkt zelf bij; werk nooit bij via Importeren."
+      "en": "v5.49.0 released — ChatManager (/st plugin enable chat-manager) now has a compact mode (/st config set chatmanager.compact true) and an adjustable chat width: drag the right edge of the chat (double-click = game default). Since 5.48: your player name highlighted and http(s) links clickable. Tampermonkey updates by itself; never update via Import.",
+      "de": "v5.49.0 veröffentlicht — ChatManager (/st plugin enable chat-manager) hat jetzt einen Kompaktmodus (/st config set chatmanager.compact true) und eine einstellbare Chatbreite: den rechten Rand des Chats ziehen (Doppelklick = Spielstandard). Seit 5.48: dein Spielername hervorgehoben und http(s)-Links anklickbar. Tampermonkey aktualisiert selbst; nie über Importieren aktualisieren.",
+      "nl": "v5.49.0 uitgebracht — ChatManager (/st plugin enable chat-manager) heeft nu een compacte modus (/st config set chatmanager.compact true) en een instelbare chatbreedte: sleep de rechterrand van de chat (dubbelklik = game-standaard). Sinds 5.48: je spelernaam gemarkeerd en http(s)-links klikbaar. Tampermonkey werkt zelf bij; werk nooit bij via Importeren."
     },
     "type": "info",
     "active": true

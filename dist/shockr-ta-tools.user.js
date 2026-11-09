@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.48.0
+// @version         5.49.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -717,11 +717,15 @@ var ShockrTools = (() => {
       upUpgraded: "Upgrade: {ok} of {n} sent",
       upStatus: "tab {tab}",
       // ChatManager (5.47.0)
-      descChatManager: "Chat: close at start, longer history, your name highlighted, links clickable (chatmanager.*)",
+      descChatManager: "Chat: close at start, longer history, your name highlighted, links clickable, compact mode, adjustable width (chatmanager.*)",
       helpSetChatClose: "ChatManager: close the chat when the game loads (true/false, default false)",
       helpSetChatHistory: "ChatManager: messages kept per chat channel (64-512, default 512)",
       helpSetChatMention: "ChatManager: colour of your player name in chat (#hex or colour word, default #ffff00; none = off)",
       helpSetChatLinkify: "ChatManager: http(s) links in chat clickable, open in a new tab (true/false, default true)",
+      helpSetChatCompact: "ChatManager: smaller chat text with tighter lines (true/false, default false)",
+      helpSetChatWidth: "ChatManager: width of the docked chat in px (200 to half the screen; null = game default). Or drag the chat's right edge",
+      chatWidthHandle: "Drag to change the chat width (double-click: game default)",
+      chatWidthDefault: "game default",
       chatManagerEnabled: "ChatManager: chat history {n} messages per channel",
       chatManagerStatusOn: "history {n} per channel, {grown} channel(s) grown, {enriched} mention(s)/link(s) marked",
       chatManagerStatusOff: "off",
@@ -1359,11 +1363,15 @@ var ShockrTools = (() => {
       upUpgraded: "Ausbau: {ok} von {n} gesendet",
       upStatus: "Tab {tab}",
       // ChatManager (5.47.0)
-      descChatManager: "Chat: beim Start schlie\xDFen, l\xE4ngerer Verlauf, dein Name hervorgehoben, Links anklickbar (chatmanager.*)",
+      descChatManager: "Chat: beim Start schlie\xDFen, l\xE4ngerer Verlauf, dein Name hervorgehoben, Links anklickbar, Kompaktmodus, einstellbare Breite (chatmanager.*)",
       helpSetChatClose: "ChatManager: Chat beim Laden des Spiels schlie\xDFen (true/false, Standard false)",
       helpSetChatHistory: "ChatManager: behaltene Nachrichten pro Chat-Kanal (64-512, Standard 512)",
       helpSetChatMention: "ChatManager: Farbe deines Spielernamens im Chat (#hex oder Farbwort, Standard #ffff00; none = aus)",
       helpSetChatLinkify: "ChatManager: http(s)-Links im Chat anklickbar, \xF6ffnen in neuem Tab (true/false, Standard true)",
+      helpSetChatCompact: "ChatManager: kleinerer Chattext mit engeren Zeilen (true/false, Standard false)",
+      helpSetChatWidth: "ChatManager: Breite des angedockten Chats in px (200 bis halbe Bildschirmbreite; null = Spielstandard). Oder den rechten Rand des Chats ziehen",
+      chatWidthHandle: "Ziehen, um die Chatbreite zu \xE4ndern (Doppelklick: Spielstandard)",
+      chatWidthDefault: "Spielstandard",
       chatManagerEnabled: "ChatManager: Chatverlauf {n} Nachrichten pro Kanal",
       chatManagerStatusOn: "Verlauf {n} pro Kanal, {grown} Kanal/Kan\xE4le vergr\xF6\xDFert, {enriched} Erw\xE4hnung(en)/Link(s) markiert",
       chatManagerStatusOff: "aus",
@@ -1991,11 +1999,15 @@ var ShockrTools = (() => {
       upUpgraded: "Upgrade: {ok} van {n} verstuurd",
       upStatus: "tabblad {tab}",
       // ChatManager (5.47.0)
-      descChatManager: "Chat: dichtklappen bij opstarten, langere geschiedenis, je naam gemarkeerd, links klikbaar (chatmanager.*)",
+      descChatManager: "Chat: dichtklappen bij opstarten, langere geschiedenis, je naam gemarkeerd, links klikbaar, compacte modus, instelbare breedte (chatmanager.*)",
       helpSetChatClose: "ChatManager: chat dichtklappen als de game laadt (true/false, standaard false)",
       helpSetChatHistory: "ChatManager: bewaarde berichten per chatkanaal (64-512, standaard 512)",
       helpSetChatMention: "ChatManager: kleur van je spelernaam in de chat (#hex of kleurwoord, standaard #ffff00; none = uit)",
       helpSetChatLinkify: "ChatManager: http(s)-links in de chat klikbaar, openen in een nieuw tabblad (true/false, standaard true)",
+      helpSetChatCompact: "ChatManager: kleinere chattekst met krappere regels (true/false, standaard false)",
+      helpSetChatWidth: "ChatManager: breedte van de gedockte chat in px (200 tot de helft van het scherm; null = game-standaard). Of sleep de rechterrand van de chat",
+      chatWidthHandle: "Sleep om de chatbreedte te veranderen (dubbelklik: game-standaard)",
+      chatWidthDefault: "game-standaard",
       chatManagerEnabled: "ChatManager: chatgeschiedenis {n} berichten per kanaal",
       chatManagerStatusOn: "geschiedenis {n} per kanaal, {grown} kanaal/kanalen vergroot, {enriched} vermelding(en)/link(s) gemarkeerd",
       chatManagerStatusOff: "uit",
@@ -3755,6 +3767,8 @@ var ShockrTools = (() => {
     ["chatmanager.historyLength", "helpSetChatHistory"],
     ["chatmanager.mentionColor", "helpSetChatMention"],
     ["chatmanager.linkify", "helpSetChatLinkify"],
+    ["chatmanager.compact", "helpSetChatCompact"],
+    ["chatmanager.width", "helpSetChatWidth"],
     ["mcvtimer.compact", "helpSetMcvCompact"],
     ["tpa.players", "helpSetTpaPlayers"],
     ["tpa.range", "helpSetTpaRange"],
@@ -15036,6 +15050,24 @@ var ShockrTools = (() => {
   var MAX_HISTORY = 512;
   var STARTUP_WINDOW_MS = 3 * 60 * 1e3;
   var FIND_CHAT_MS = 2e3;
+  var MIN_WIDTH = 200;
+  var MAX_WIDTH_SHARE = 0.5;
+  var COMPACT_SIZE = 10;
+  var COMPACT_LINE_HEIGHT = 1.15;
+  var HANDLE_ATTR = "data-st-cm-handle";
+  var DOCK_FALLBACK = { dock_width: 122, dock_maxwidth: 624 };
+  function chatWidth(value, screenWidth2) {
+    if (value === void 0 || value === null) return null;
+    const s = String(value).trim().toLowerCase();
+    if (["", "null", "reset", "default", "none"].includes(s)) return null;
+    const n = Math.round(Number(value));
+    if (!Number.isFinite(n)) return null;
+    const max = Math.max(MIN_WIDTH, Math.floor(screenWidth2 * MAX_WIDTH_SHARE));
+    return Math.min(max, Math.max(MIN_WIDTH, n));
+  }
+  function screenWidth() {
+    return typeof window !== "undefined" && window.innerWidth ? window.innerWidth : 1920;
+  }
   function historyLength(config) {
     const v = Math.round(Number(config.get("chatmanager.historyLength", DEFAULT_HISTORY)));
     if (!Number.isFinite(v)) return DEFAULT_HISTORY;
@@ -15053,10 +15085,22 @@ var ShockrTools = (() => {
     get description() {
       return t("descChatManager");
     }
-    constructor(config) {
+    constructor(config, cli = null) {
       this.name = "ChatManager";
       this.defaultEnabled = false;
       this.config = config;
+      this._setWA = null;
+      this._setDocked = null;
+      this._customWidth = false;
+      this._ownMinWidth = DOCK_FALLBACK.dock_width;
+      this._dragWidth = null;
+      this._handle = null;
+      this._fonts = /* @__PURE__ */ new Map();
+      this._compactFont = null;
+      if (cli && typeof cli.onConfigSet === "function") {
+        cli.onConfigSet("chatmanager.compact", (v) => this.setCompact(v));
+        cli.onConfigSet("chatmanager.width", (v) => this.setWidth(v));
+      }
       this.running = false;
       this._oldSize = null;
       this._push = null;
@@ -15175,9 +15219,11 @@ var ShockrTools = (() => {
       }
       this._chatRoot = root;
       this._observer = new MutationObserver(() => this._schedule());
+      this._startLayout();
       this.enrichNow();
     }
     _stopEnrich() {
+      this._stopLayout();
       if (this._findTimer) clearTimeout(this._findTimer);
       this._findTimer = null;
       if (this._observer) this._observer.disconnect();
@@ -15202,11 +15248,267 @@ var ShockrTools = (() => {
         added = enrich(root, this._enrichOptions());
         this._enriched += added;
         if (keepSelectable(root)) console.log("[ST] ChatManager: chat text made selectable again");
+        this.applyCompact();
+        this._updateHandle();
       } catch (err) {
         console.warn("[ST] ChatManager: enrich failed", err && err.message);
       }
       if (this._observer && this.running) this._observer.observe(root, { childList: true, subtree: true, characterData: true });
       return added;
+    }
+    // ─── Layout: compact mode and chat width (5.49.0) ─────────────────
+    _chat() {
+      try {
+        return qx.core.Init.getApplication().getChat();
+      } catch {
+        return null;
+      }
+    }
+    _dims() {
+      try {
+        return webfrontend.gui.chat.ChatWindow.dimension || DOCK_FALLBACK;
+      } catch {
+        return DOCK_FALLBACK;
+      }
+    }
+    _resizeDesktop() {
+      try {
+        qx.core.Init.getApplication().triggerDesktopResize();
+      } catch {
+      }
+    }
+    /** Shadow the game's width calls on the chat instance, then apply width, handle and compact. */
+    _startLayout() {
+      const chat = this._chat();
+      if (!chat || typeof chat.setWidthAvailable !== "function" || this._setWA) return;
+      const plugin = this;
+      const ownWA = chat.setWidthAvailable;
+      const ownDocked = chat.setDocked;
+      this._setWA = function() {
+        const r = ownWA.apply(this, arguments);
+        plugin._applyWidth();
+        return r;
+      };
+      chat.setWidthAvailable = this._setWA;
+      if (typeof ownDocked === "function") {
+        this._setDocked = function() {
+          const r = ownDocked.apply(this, arguments);
+          plugin._applyWidth();
+          plugin._updateHandle();
+          return r;
+        };
+        chat.setDocked = this._setDocked;
+      }
+      this._applyWidth();
+      this._updateHandle();
+      this.applyCompact();
+    }
+    _stopLayout() {
+      const chat = this._chat();
+      if (chat) {
+        if (this._setWA && chat.setWidthAvailable === this._setWA) delete chat.setWidthAvailable;
+        if (this._setDocked && chat.setDocked === this._setDocked) delete chat.setDocked;
+      }
+      this._setWA = this._setDocked = null;
+      if (this._handle && this._handle.parentNode) this._handle.parentNode.removeChild(this._handle);
+      this._handle = null;
+      this._restoreFonts();
+      this._resetWidth();
+    }
+    /** The width we want now: while dragging the drag width, else the setting (null = game). */
+    _wantedWidth() {
+      if (this._dragWidth !== null) return this._dragWidth;
+      return chatWidth(this.config.get("chatmanager.width", null), screenWidth());
+    }
+    /** Set our width on the docked chat (called after every game width call). */
+    _applyWidth() {
+      const chat = this._chat();
+      if (!chat || !this.running || !this._setWA) return;
+      try {
+        if (typeof chat.getDocked === "function" && !chat.getDocked()) {
+          if (this._customWidth) chat.setMinWidth(this._ownMinWidth);
+          this._customWidth = false;
+          return;
+        }
+        const w = this._wantedWidth();
+        if (w === null) {
+          this._resetWidth();
+          return;
+        }
+        if (!this._customWidth) this._ownMinWidth = chat.getMinWidth();
+        chat.set({ minWidth: w, maxWidth: w, width: w });
+        this._customWidth = true;
+      } catch (err) {
+        console.warn("[ST] ChatManager: chat width failed", err && err.message);
+      }
+    }
+    /** Back to the game's own width (as its widthAvailable apply would set it). */
+    _resetWidth() {
+      if (!this._customWidth) return;
+      this._customWidth = false;
+      const chat = this._chat();
+      if (!chat) return;
+      try {
+        const d = this._dims();
+        chat.setMinWidth(this._ownMinWidth);
+        if (typeof chat.getDocked !== "function" || chat.getDocked()) {
+          chat.setMaxWidth(d.dock_maxwidth);
+          chat.setWidth(Math.max(d.dock_width, chat.getWidthAvailable()));
+        }
+      } catch (err) {
+        console.warn("[ST] ChatManager: chat width reset failed", err && err.message);
+      }
+    }
+    /** The drag handle on the chat's free (right) edge, only while docked. */
+    _updateHandle() {
+      const root = this._chatRoot || this._chatDom();
+      const chat = this._chat();
+      if (!root || !chat || !this.running) return;
+      const docked = typeof chat.getDocked !== "function" || chat.getDocked();
+      if (!this._handle) this._handle = this._makeHandle(root.ownerDocument);
+      if (this._handle.parentNode !== root) root.appendChild(this._handle);
+      this._handle.style.display = docked ? "block" : "none";
+    }
+    _makeHandle(doc) {
+      const h = doc.createElement("div");
+      h.setAttribute(HANDLE_ATTR, "1");
+      h.title = t("chatWidthHandle");
+      h.style.cssText = "position:absolute;top:0;right:0;width:6px;height:100%;cursor:ew-resize;z-index:1000;";
+      h.addEventListener("pointerdown", (e) => this._onDragStart(e));
+      h.addEventListener("dblclick", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.setWidth(null);
+      });
+      h.addEventListener("mouseenter", () => {
+        h.style.background = "rgba(79,195,247,0.5)";
+      });
+      h.addEventListener("mouseleave", () => {
+        if (this._dragWidth === null) h.style.background = "";
+      });
+      return h;
+    }
+    _onDragStart(e) {
+      if (e.button !== 0) return;
+      const chat = this._chat();
+      if (!chat) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const doc = e.target.ownerDocument;
+      const win = doc.defaultView || window;
+      const startX = e.clientX;
+      const bounds = chat.getBounds && chat.getBounds();
+      const startW = bounds ? bounds.width : chat.getWidth();
+      const oldSelect = doc.body.style.userSelect;
+      doc.body.style.userSelect = "none";
+      this._dragWidth = chatWidth(startW, screenWidth());
+      let frame = 0;
+      const move = (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        this._dragWidth = chatWidth(startW + (ev.clientX - startX), screenWidth());
+        if (frame) return;
+        frame = win.requestAnimationFrame(() => {
+          frame = 0;
+          this._applyWidth();
+          this._resizeDesktop();
+        });
+      };
+      const up = (ev) => {
+        ev.stopPropagation();
+        win.removeEventListener("pointermove", move, true);
+        win.removeEventListener("pointerup", up, true);
+        if (frame) win.cancelAnimationFrame(frame);
+        doc.body.style.userSelect = oldSelect;
+        if (this._handle) this._handle.style.background = "";
+        const w = this._dragWidth;
+        this._dragWidth = null;
+        if (ev.clientX === startX) return;
+        this.config.set("chatmanager.width", w);
+        this._applyWidth();
+        this._resizeDesktop();
+        console.log(`[ST] ChatManager: chat width ${w}px`);
+      };
+      win.addEventListener("pointermove", move, true);
+      win.addEventListener("pointerup", up, true);
+    }
+    /** `/st config set chatmanager.width <px|null>`: clamp, store, apply, confirm. */
+    setWidth(value) {
+      const w = chatWidth(value, screenWidth());
+      this.config.set("chatmanager.width", w);
+      this._applyWidth();
+      this._resizeDesktop();
+      chatMessage(`[ST] chatmanager.width = ${w === null ? t("chatWidthDefault") : `${w} px`}`);
+    }
+    /** `/st config set chatmanager.compact <true|false>`: store, apply, confirm. */
+    setCompact(value) {
+      const on = value === true || /^(on|yes|1)$/i.test(String(value));
+      this.config.set("chatmanager.compact", on);
+      this.applyCompact();
+      chatMessage(`[ST] chatmanager.compact = ${on}`);
+    }
+    /** The chat's message Labels (rich + selectable), found through the widget tree. */
+    _chatLabels() {
+      const chat = this._chat();
+      const out = [];
+      if (!chat) return out;
+      const seen = /* @__PURE__ */ new Set();
+      const walk = (w) => {
+        if (!w || seen.has(w)) return;
+        seen.add(w);
+        if (w.classname === "qx.ui.basic.Label" && w.getRich && w.getRich() && w.getSelectable && w.getSelectable()) out.push(w);
+        const kids = typeof w._getChildren === "function" ? w._getChildren() : [];
+        for (const k of kids) walk(k);
+      };
+      try {
+        walk(chat);
+      } catch {
+      }
+      return out;
+    }
+    _font() {
+      if (this._compactFont) return this._compactFont;
+      let family = ["Segoe UI", "Tahoma", "Liberation Sans", "Arial"];
+      try {
+        const def = qx.theme.manager.Font.getInstance().resolve("default");
+        if (def && typeof def.getFamily === "function" && def.getFamily()) family = def.getFamily();
+      } catch {
+      }
+      const f = new qx.bom.Font(COMPACT_SIZE, family);
+      f.setLineHeight(COMPACT_LINE_HEIGHT);
+      this._compactFont = f;
+      return f;
+    }
+    /** Compact on: every chat Label gets the small font (once); off: own fonts back. */
+    applyCompact() {
+      const on = this.running && this.config.get("chatmanager.compact", false) === true;
+      if (!on) {
+        this._restoreFonts();
+        return 0;
+      }
+      let n = 0;
+      try {
+        const font = this._font();
+        for (const label of this._chatLabels()) {
+          if (this._fonts.has(label)) continue;
+          this._fonts.set(label, label.getFont());
+          label.setFont(font);
+          n++;
+        }
+      } catch (err) {
+        console.warn("[ST] ChatManager: compact failed", err && err.message);
+      }
+      return n;
+    }
+    _restoreFonts() {
+      for (const [label, font] of this._fonts) {
+        try {
+          if (font === null || font === void 0) label.resetFont();
+          else label.setFont(font);
+        } catch {
+        }
+      }
+      this._fonts.clear();
     }
     /** Close the chat window (as MaelstromTools' "Chat closed at start"). */
     closeChat() {
@@ -16650,7 +16952,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.48.0";
+  var ST_VERSION = "5.49.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -16720,7 +17022,7 @@ var ShockrTools = (() => {
       new SupportCalibrate(config, cli),
       new BaseStatus(config, toolbar, cli),
       new UpgradePriority(config, toolbar, cli),
-      new ChatManager(config),
+      new ChatManager(config, cli),
       new MissionHider(config),
       new Stabs(config, toolbar)
     ];

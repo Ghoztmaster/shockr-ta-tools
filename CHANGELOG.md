@@ -1,5 +1,19 @@
 # Changelog
 
+## [5.49.0] — 2026-11-09
+
+Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+Ronde 12: chat-layout in ChatManager (`plugins/chat-manager.js`).
+
+### ChatManager
+- Compacte modus (`chatmanager.compact`, standaard false): de chattekst wordt 10px met regelhoogte 1.15 (game: 12px / 1.4), via `setFont` op het chat-Label zodat qx de hoogte opnieuw meet. De berichtregels hebben zelf geen padding; de regelhoogte is de ruimte tussen de regels. Onthouden in de config, direct toegepast bij `/st config set`
+- Chatbreedte (`chatmanager.width`, standaard null = game-standaard): sleep de rechterrand van de gedockte chat; tijdens het slepen `triggerDesktopResize()`, bij loslaten opgeslagen in de config. Minimaal 200px, maximaal de helft van het scherm. Dubbelklik op de rand of `/st config set chatmanager.width null` = terug naar de game-standaard
+- Rechterrand in plaats van linkerrand: de chat zit linksonder op left 0, dus de vrije rand is rechts
+- Hoe: de game zet de breedte van de gedockte chat via `setWidthAvailable` (links van de onderbalk, max 624px). De plugin legt `setWidthAvailable` / `setDocked` op de chat-instantie over (geen versleutelde namen) en zet daarna zijn eigen breedte. De gedockte chat groeit in de game bij hover tot 624px en krimpt daarna terug (eigenschap `focusedOrMoused`); met een eigen breedte zet de plugin minWidth = maxWidth = breedte, zodat hover die niet verschuift. Met `null` blijft dat game-gedrag zoals het is. Een bredere chat overlapt de onderbalk. Een losgemaakte chat heeft zijn eigen resize van de game en blijft ongemoeid
+- Bij uitzetten: lettertype en breedte terug naar de game, rand weg
+- Live geverifieerd (2026-11-09): `ChatWindow.dimension`, `setWidthAvailable`-pad in `_onDesktopResize`, compact-lettertype via `setFont` (hoogte 101 → 69px), en de plugin zelf in de game: echte muissleep 450 → 601px en opgeslagen, hover verandert niets, ver doorslepen stopt op 960px (helft van 1920), dubbelklik terug naar de game-standaard (hover-groei werkt weer), compact aan/uit (10px ↔ 12px), uitzetten zet alles terug (breedte, lettertype, rand, overgelegde methodes)
+
 ## [5.48.0] — 2026-11-09
 
 Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

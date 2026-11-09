@@ -1,7 +1,22 @@
 {
-  "version": "5.48.0",
+  "version": "5.49.0",
   "date": "2026-11-09",
   "changelog": [
+    {
+      "version": "5.49.0",
+      "date": "2026-11-09",
+      "changes": {
+        "en": [
+          "ChatManager: compact mode (chatmanager.compact) and an adjustable chat width - drag the chat's right edge (chatmanager.width)"
+        ],
+        "de": [
+          "ChatManager: Kompaktmodus (chatmanager.compact) und einstellbare Chatbreite - den rechten Rand des Chats ziehen (chatmanager.width)"
+        ],
+        "nl": [
+          "ChatManager: compacte modus (chatmanager.compact) en instelbare chatbreedte - sleep de rechterrand van de chat (chatmanager.width)"
+        ]
+      }
+    },
     {
       "version": "5.48.0",
       "date": "2026-11-09",
@@ -62,21 +77,6 @@
         "nl": [
           "Nieuwe plugin BaseStatus (vizier-icoon of /st basestatus): cooldown, protection, alert en support weapon van elke base, met Recall en focus op de kaart",
           "SupportCalibrate: het paneel is opgegaan in BaseStatus; de wereldkaart-knop en /st support recall blijven"
-        ]
-      }
-    },
-    {
-      "version": "5.44.0",
-      "date": "2026-11-09",
-      "changes": {
-        "en": [
-          "New plugin MissionHider (off by default): hides the mission tracker on the left; /st plugin enable mission-hider"
-        ],
-        "de": [
-          "Neues Plugin MissionHider (standardmäßig aus): blendet das Missionsfenster links aus; /st plugin enable mission-hider"
-        ],
-        "nl": [
-          "Nieuwe plugin MissionHider (standaard uit): verbergt de mission tracker links; /st plugin enable mission-hider"
         ]
       }
     }
