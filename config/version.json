@@ -1,7 +1,22 @@
 {
-  "version": "5.46.0",
+  "version": "5.47.0",
   "date": "2026-11-09",
   "changelog": [
+    {
+      "version": "5.47.0",
+      "date": "2026-11-09",
+      "changes": {
+        "en": [
+          "New plugin ChatManager (off by default): up to 512 chat messages per channel instead of 64, and optionally close the chat when the game loads; /st plugin enable chat-manager"
+        ],
+        "de": [
+          "Neues Plugin ChatManager (standardmäßig aus): bis zu 512 Chatnachrichten pro Kanal statt 64, und optional den Chat beim Laden schließen; /st plugin enable chat-manager"
+        ],
+        "nl": [
+          "Nieuwe plugin ChatManager (standaard uit): tot 512 chatberichten per kanaal in plaats van 64, en optioneel de chat dichtklappen als de game laadt; /st plugin enable chat-manager"
+        ]
+      }
+    },
     {
       "version": "5.46.0",
       "date": "2026-11-09",
@@ -65,24 +80,6 @@
         "nl": [
           "Nieuwe plugin SupportCalibrate: \"Calibrate all support\" in het wereldkaart-menu van een eigen of alliance-base kalibreert elk support weapon in bereik erop",
           "Support-paneel (vizier-icoon of /st support): waar elk weapon op gekalibreerd is, Recall per base en Recall all; /st support recall [base] vanuit de chat"
-        ]
-      }
-    },
-    {
-      "version": "5.42.0",
-      "date": "2026-11-09",
-      "changes": {
-        "en": [
-          "New plugin McvTimer: small movable panel with the progress to the next MCV — credits and research points, % and estimated time (off by default — /st plugin enable mcv-timer)",
-          "Compact / extended view with the ▾/▸ button; /st mcv shows or hides the panel"
-        ],
-        "de": [
-          "Neues Plugin McvTimer: kleines verschiebbares Panel mit dem Fortschritt zum nächsten MBF — Credits und Forschungspunkte, % und geschätzte Zeit (standardmäßig aus — /st plugin enable mcv-timer)",
-          "Kompakte / erweiterte Ansicht mit dem ▾/▸-Knopf; /st mcv zeigt oder verbirgt das Panel"
-        ],
-        "nl": [
-          "Nieuwe plugin McvTimer: klein verplaatsbaar paneel met de voortgang naar de volgende MCV — credits en research points, % en geschatte tijd (standaard uit — /st plugin enable mcv-timer)",
-          "Compacte / uitgebreide weergave met de ▾/▸-knop; /st mcv toont of verbergt het paneel"
         ]
       }
     }

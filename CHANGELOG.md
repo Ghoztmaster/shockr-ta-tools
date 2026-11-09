@@ -1,5 +1,18 @@
 # Changelog
 
+## [5.47.0] — 2026-11-09
+
+Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+Ronde 10 (laatste extra ronde na de MaelstromTools-reeks).
+
+### Nieuwe plugin: ChatManager (`plugins/chat-manager.js`, standaard uit)
+- Chatgeschiedenis: `webfrontend.gui.chat.ChatWidget.recvbufsize` (game-standaard 64) wordt `chatmanager.historyLength` (standaard 512, min 64, max 512); dat geldt voor kanalen die daarna worden aangemaakt
+- Kanalen die al bestonden houden hun buffer van 64 - daarom wikkelt de plugin ook `RingArray.prototype.push`: een buffer met precies de oude capaciteit groeit bij het volgende bericht via zijn eigen `resize(n)` (berichten blijven behouden). Het globale kanaal (`recvbufsizeGlobal`, 1000) en de verzonden-geschiedenis (32) blijven ongemoeid. Afwijking van MaelstromTools, dat alleen de statische waarde zette
+- `chatmanager.closeOnStart` (standaard false): chat dichtklappen via `app.toggleChat(false)` + `triggerDesktopResize()` als de game laadt (binnen 3 minuten na het laden van de pagina; niet als je de plugin later in de sessie aanzet)
+- Bij uitzetten: `recvbufsize` en `push` terug; al vergrote buffers houden hun grootte
+- Live geverifieerd (2026-11-09): `toggleChat`, `recvbufsize` (64), `recvbufsizeGlobal` (1000), `RingArray.resize` / `push`
+
 ## [5.46.0] — 2026-11-09
 
 Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
