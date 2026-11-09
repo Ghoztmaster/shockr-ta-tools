@@ -112,6 +112,22 @@
     }
   },
   {
+    "name": "AutoCollect",
+    "slug": "auto-collect",
+    "defaultEnabled": false,
+    "replaces": null,
+    "short": {
+      "en": "Collects the resource packages of all your bases automatically",
+      "de": "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein",
+      "nl": "Verzamelt de resource-pakketten van al je bases automatisch"
+    },
+    "long": {
+      "en": "Every few minutes (/st config set autocollect.interval <min>, default 5, minimum 1) the resource packages of every own base are collected, the same as clicking each package. The chat reports a round that collected something: \"Collected packages on X bases\". Off by default.",
+      "de": "Alle paar Minuten (/st config set autocollect.interval <Min.>, Standard 5, Minimum 1) werden die Ressourcenpakete jeder eigenen Basis eingesammelt, wie ein Klick auf jedes Paket. Der Chat meldet eine Runde, die etwas eingesammelt hat: „Pakete in X Basen eingesammelt“. Standardmäßig aus.",
+      "nl": "Elke paar minuten (/st config set autocollect.interval <min>, standaard 5, minimaal 1) worden de resource-pakketten van elke eigen base verzameld, net als op elk pakket klikken. De chat meldt een ronde die iets verzamelde: \"Pakketten verzameld op X bases\". Standaard uit."
+    }
+  },
+  {
     "name": "UpgradeCalc",
     "slug": "upgrade-calc",
     "defaultEnabled": false,

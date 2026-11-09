@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.38.0] — 2026-11-08
+
+Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+Ronde 1 van 7: MaelstromTools-functies als Shockr-plugins.
+
+### Nieuwe plugin: AutoCollect (`plugins/auto-collect.js`, standaard uit)
+- Elke `autocollect.interval` minuten (standaard 5, minimaal 1; elke ronde opnieuw gelezen) per eigen base (geen ghost): `city.CanCollectResources()` → `city.CollectAllResources()`, dezelfde ClientLib-calls als MaelstromTools' "collect all packages" (eigen implementatie)
+- Eerste ronde 10 s na start; chat alleen bij een ronde die iets verzamelde: "[ST] Collected packages on X bases"; `/st status` toont interval, laatste ronde en aantal rondes
+- Ontbreekt een van de twee functies (client gewijzigd): base overgeslagen, één waarschuwing in de console
+- NIET LIVE GEVERIFIEERD: de twee City-calls op de huidige client
+
 ## [5.37.0] — 2026-11-05
 
 Userscript + server (website), `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

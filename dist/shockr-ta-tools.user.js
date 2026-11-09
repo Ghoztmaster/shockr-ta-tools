@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.37.0
+// @version         5.38.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -102,7 +102,7 @@ var ShockrTools = (() => {
   });
 
   // <define:__ST_PLUGIN_SHORT__>
-  var define_ST_PLUGIN_SHORT_default = { CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" } };
+  var define_ST_PLUGIN_SHORT_default = { CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, AutoCollect: { en: "Collects the resource packages of all your bases automatically", de: "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein", nl: "Verzamelt de resource-pakketten van al je bases automatisch" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" } };
 
   // lib/game-ready.js
   async function waitForGame({ maxAttempts = 200, intervalMs = 100 } = {}) {
@@ -555,6 +555,7 @@ var ShockrTools = (() => {
       helpSetTpaPlayers: "Players needed to activate a tunnel exit (default 5)",
       helpSetAutoRepairBuildings: "AutoRepair also repairs buildings after an attack on your base (default false)",
       helpSetAutoRepairInterval: "AutoRepair safety-net check, minutes (default 5)",
+      helpSetAutoCollectInterval: "AutoCollect: collect packages every N minutes (default 5)",
       helpSetTunnelWidth: "Width of the red tunnel circle, 1-10 px (default 3)",
       helpSetTunnelColor: "Colour of the red tunnel circle, #rrggbb (default #ff3600)",
       helpHelp: "This message",
@@ -574,6 +575,7 @@ var ShockrTools = (() => {
       descAttackTracker: "Log your attacks on Forgotten targets (won and lost) to the alliance server",
       descTargetBoard: "In-game overview of alliance targets \u2014 who is watching and who is attacking",
       descMarkerNav: "Marker Navigator: list of your map markers, click to jump",
+      descAutoCollect: "Collect the resource packages of all your bases automatically (autocollect.interval)",
       descTunnelPoi: "Tunnel & POI Analyzer: who activates each tunnel exit, low bases that are a spawn risk, which POI bases can move",
       descStabs: "STABS battle simulator (replaces TABS): simulate an attack and see HP, repair and loot",
       // ── Shared ──
@@ -670,6 +672,11 @@ var ShockrTools = (() => {
       autoRepairNever: "none yet",
       autoRepairSkipCombat: "skipped: attack screen open",
       autoRepairSkipLocked: "skipped (lockdown): {bases}",
+      autoCollectEnabled: "Auto Collect active \u2014 packages are collected every {min} min",
+      autoCollectCollected: "Collected packages on {count} bases",
+      autoCollectStatusOff: "off",
+      autoCollectStatusOn: "every {min} min \xB7 last collect {last} \xB7 {count} round(s)",
+      autoCollectNever: "none yet",
       // ── UpgradeCalc ──
       upgradeCalcTitle: "Upgrades",
       upgradeCalcError: "Upgrade Calculator: error \u2014 {error}",
@@ -1047,6 +1054,7 @@ var ShockrTools = (() => {
       helpSetTpaPlayers: "Spieler, die einen Tunnelausgang aktivieren (Standard 5)",
       helpSetAutoRepairBuildings: "AutoRepair repariert nach einem Angriff auf deine Basis auch Geb\xE4ude (Standard false)",
       helpSetAutoRepairInterval: "AutoRepair-Sicherheitspr\xFCfung, Minuten (Standard 5)",
+      helpSetAutoCollectInterval: "AutoCollect: Pakete alle N Minuten einsammeln (Standard 5)",
       helpSetTunnelWidth: "Breite des roten Tunnelkreises, 1-10 px (Standard 3)",
       helpSetTunnelColor: "Farbe des roten Tunnelkreises, #rrggbb (Standard #ff3600)",
       helpHelp: "Diese Hilfe",
@@ -1065,6 +1073,7 @@ var ShockrTools = (() => {
       descAttackTracker: "Angriffe auf Forgotten-Ziele (gewonnen und verloren) an den Allianz-Server melden",
       descTargetBoard: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an",
       descMarkerNav: "Marker-Navigator: Liste deiner Kartenmarkierungen, Klick springt hin",
+      descAutoCollect: "Die Ressourcenpakete aller deiner Basen automatisch einsammeln (autocollect.interval)",
       descTunnelPoi: "Tunnel- & POI-Analyse: wer welchen Tunnelausgang aktiviert, niedrige Basen mit Spawn-Risiko, welche POI-Basen umziehen k\xF6nnen",
       descStabs: "STABS-Kampfsimulator (ersetzt TABS): Angriff simulieren, HP, Reparatur und Beute sehen",
       close: "Schlie\xDFen",
@@ -1153,6 +1162,11 @@ var ShockrTools = (() => {
       autoRepairNever: "noch keine",
       autoRepairSkipCombat: "\xFCbersprungen: Angriffsbildschirm offen",
       autoRepairSkipLocked: "\xFCbersprungen (Lockdown): {bases}",
+      autoCollectEnabled: "Auto Collect aktiv \u2014 Pakete werden alle {min} Min. eingesammelt",
+      autoCollectCollected: "Pakete in {count} Basen eingesammelt",
+      autoCollectStatusOff: "aus",
+      autoCollectStatusOn: "alle {min} Min. \xB7 zuletzt eingesammelt {last} \xB7 {count} Runde(n)",
+      autoCollectNever: "noch nie",
       upgradeCalcTitle: "Upgrades",
       upgradeCalcError: "Upgrade Calculator: Fehler \u2014 {error}",
       upgradeCalcPerHour: "/h",
@@ -1527,6 +1541,7 @@ var ShockrTools = (() => {
       helpSetTpaPlayers: "Spelers nodig om een tunnel exit te activeren (standaard 5)",
       helpSetAutoRepairBuildings: "AutoRepair repareert na een aanval op je base ook gebouwen (standaard false)",
       helpSetAutoRepairInterval: "AutoRepair-vangnetcheck, minuten (standaard 5)",
+      helpSetAutoCollectInterval: "AutoCollect: pakketten elke N minuten verzamelen (standaard 5)",
       helpSetTunnelWidth: "Breedte van de rode tunnelcirkel, 1-10 px (standaard 3)",
       helpSetTunnelColor: "Kleur van de rode tunnelcirkel, #rrggbb (standaard #ff3600)",
       helpHelp: "Dit bericht",
@@ -1545,6 +1560,7 @@ var ShockrTools = (() => {
       descAttackTracker: "Aanvallen op Forgotten-targets (gewonnen en verloren) melden aan de alliance-server",
       descTargetBoard: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan",
       descMarkerNav: "Marker-navigator: lijst van je kaartmarkers, klik om erheen te springen",
+      descAutoCollect: "De resource-pakketten van al je bases automatisch verzamelen (autocollect.interval)",
       descTunnelPoi: "Tunnel & POI Analyzer: wie elke tunnel exit activeert, lage bases met spawn-risico, welke POI-bases kunnen verhuizen",
       descStabs: "STABS-gevechtssimulator (vervangt TABS): simuleer een aanval en zie HP, repair en loot",
       close: "Sluiten",
@@ -1633,6 +1649,11 @@ var ShockrTools = (() => {
       autoRepairNever: "nog geen",
       autoRepairSkipCombat: "overgeslagen: aanvalsscherm open",
       autoRepairSkipLocked: "overgeslagen (lockdown): {bases}",
+      autoCollectEnabled: "Auto Collect actief \u2014 pakketten worden elke {min} min verzameld",
+      autoCollectCollected: "Pakketten verzameld op {count} bases",
+      autoCollectStatusOff: "uit",
+      autoCollectStatusOn: "elke {min} min \xB7 laatst verzameld {last} \xB7 {count} ronde(s)",
+      autoCollectNever: "nog niet",
       upgradeCalcTitle: "Upgrades",
       upgradeCalcError: "Upgrade Calculator: fout \u2014 {error}",
       upgradeCalcPerHour: "/u",
@@ -3287,6 +3308,7 @@ var ShockrTools = (() => {
     ["tunnel.width", "helpSetTunnelWidth"],
     ["autorepair.interval", "helpSetAutoRepairInterval"],
     ["autorepair.buildings", "helpSetAutoRepairBuildings"],
+    ["autocollect.interval", "helpSetAutoCollectInterval"],
     ["tpa.players", "helpSetTpaPlayers"],
     ["tpa.range", "helpSetTpaRange"],
     ["tpa.guardrange", "helpSetTpaGuardRange"],
@@ -5921,6 +5943,98 @@ var ShockrTools = (() => {
       } catch {
         return String(id);
       }
+    }
+  };
+
+  // plugins/auto-collect.js
+  var DEFAULT_INTERVAL_MIN2 = 5;
+  var MIN_INTERVAL_MIN2 = 1;
+  var FIRST_CHECK_DELAY_MS2 = 10 * 1e3;
+  var AutoCollect = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descAutoCollect");
+    }
+    constructor(config) {
+      this.name = "AutoCollect";
+      this.defaultEnabled = false;
+      this.config = config;
+      this.running = false;
+      this._timer = null;
+      this._lastCollectAt = 0;
+      this._rounds = 0;
+      this._warnedMissing = false;
+    }
+    async start() {
+      this.running = true;
+      this._schedule(FIRST_CHECK_DELAY_MS2);
+      chatMessage(`[ST] ${t("autoCollectEnabled", { min: this.intervalMin() })}`);
+      console.log(`[ST] AutoCollect: started (every ${this.intervalMin()} min)`);
+    }
+    stop() {
+      this.running = false;
+      if (this._timer) clearTimeout(this._timer);
+      this._timer = null;
+      console.log("[ST] AutoCollect: stopped");
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      if (!this.running) return t("autoCollectStatusOff");
+      const last = this._lastCollectAt ? new Date(this._lastCollectAt).toLocaleTimeString("de-DE", { hour12: false }) : t("autoCollectNever");
+      return t("autoCollectStatusOn", { min: this.intervalMin(), last, count: this._rounds });
+    }
+    /** Interval from `autocollect.interval`, default 5, at least 1 minute. */
+    intervalMin() {
+      const v = Number(this.config.get("autocollect.interval", DEFAULT_INTERVAL_MIN2));
+      if (!Number.isFinite(v)) return DEFAULT_INTERVAL_MIN2;
+      return Math.max(MIN_INTERVAL_MIN2, v);
+    }
+    _schedule(ms) {
+      if (this._timer) clearTimeout(this._timer);
+      this._timer = setTimeout(() => {
+        this._timer = null;
+        if (!this.running) return;
+        try {
+          this.collect();
+        } catch (err) {
+          console.error("[ST] AutoCollect: collect failed", err);
+        }
+        if (this.running) this._schedule(this.intervalMin() * 60 * 1e3);
+      }, ms);
+    }
+    /**
+     * Collect the packages of every own, non-ghost base that has any.
+     * @returns {Array<string>} names of the bases that were collected
+     */
+    collect() {
+      const collected = [];
+      const all = ClientLib.Data.MainData.GetInstance().get_Cities().get_AllCities().d;
+      for (const city of Object.values(all)) {
+        let name = "?";
+        try {
+          if (!city || !city.IsOwnBase() || city.get_IsGhostMode()) continue;
+          name = city.get_Name();
+          if (typeof city.CanCollectResources !== "function" || typeof city.CollectAllResources !== "function") {
+            if (!this._warnedMissing) {
+              console.warn("[ST] AutoCollect: CanCollectResources / CollectAllResources not found on City - client changed?");
+              this._warnedMissing = true;
+            }
+            continue;
+          }
+          if (!city.CanCollectResources()) continue;
+          city.CollectAllResources();
+          collected.push(name);
+          console.log(`[ST] AutoCollect: ${name} - CollectAllResources called`);
+        } catch (err) {
+          console.error(`[ST] AutoCollect: ${name} - collect failed`, err);
+        }
+      }
+      if (collected.length) {
+        this._lastCollectAt = Date.now();
+        this._rounds++;
+        chatMessage(`[ST] ${t("autoCollectCollected", { count: collected.length })}`);
+      }
+      return collected;
     }
   };
 
@@ -13923,7 +14037,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.37.0";
+  var ST_VERSION = "5.38.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -13964,6 +14078,7 @@ var ShockrTools = (() => {
       new AllianceScanner(config, cli, api, idle, online),
       new RepairGuard(config),
       new AutoRepair(config),
+      new AutoCollect(config),
       new UpgradeCalc(config, toolbar),
       targetWatcher,
       attackTracker,

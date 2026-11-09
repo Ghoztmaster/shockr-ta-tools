@@ -1,7 +1,25 @@
 {
-  "version": "5.37.0",
-  "date": "2026-11-05",
+  "version": "5.38.0",
+  "date": "2026-11-08",
   "changelog": [
+    {
+      "version": "5.38.0",
+      "date": "2026-11-08",
+      "changes": {
+        "en": [
+          "New plugin AutoCollect: collects the resource packages of all your bases automatically (off by default — /st plugin enable auto-collect)",
+          "Interval: /st config set autocollect.interval <min> (default 5); the chat reports \"Collected packages on X bases\""
+        ],
+        "de": [
+          "Neues Plugin AutoCollect: sammelt die Ressourcenpakete aller deiner Basen automatisch ein (standardmäßig aus — /st plugin enable auto-collect)",
+          "Intervall: /st config set autocollect.interval <Min.> (Standard 5); der Chat meldet „Pakete in X Basen eingesammelt“"
+        ],
+        "nl": [
+          "Nieuwe plugin AutoCollect: verzamelt de resource-pakketten van al je bases automatisch (standaard uit — /st plugin enable auto-collect)",
+          "Interval: /st config set autocollect.interval <min> (standaard 5); de chat meldt \"Pakketten verzameld op X bases\""
+        ]
+      }
+    },
     {
       "version": "5.37.0",
       "date": "2026-11-05",
@@ -86,27 +104,6 @@
         "nl": [
           "Map Labels: de spelernaam-labels onder camps en outposts staan nu onder het game-label (\"Camp Lvl 25\") in plaats van erop, en schalen mee met de zoom",
           "Nieuwe instelling maplabels.offset: labelhoogte in velden vanaf de bovenkant van het veld (bijv. 1.5); standaard auto"
-        ]
-      }
-    },
-    {
-      "version": "5.33.0",
-      "date": "2026-10-30",
-      "changes": {
-        "en": [
-          "New War page on the website for the alliance leadership (CIC, Second Commander, Officer): every Forgotten target per sector and tunnel as open, attacked or destroyed, who attacked and when, the loot, and the most active players",
-          "Attack Tracker now also logs lost attacks, plus destroyed yes/no, CP cost and the defender's health, and confirms each logged attack in chat",
-          "Attacks are kept 30 days on the server (was 7)"
-        ],
-        "de": [
-          "Neue War-Seite auf der Website für die Allianzführung (CIC, Second Commander, Officer): jedes Forgotten-Ziel pro Sektor und Tunnel als offen, angegriffen oder zerstört, wer wann angegriffen hat, die Beute und die aktivsten Spieler",
-          "Attack Tracker meldet jetzt auch verlorene Angriffe, dazu zerstört ja/nein, CP-Kosten und die Verteidiger-Gesundheit, und bestätigt jeden gemeldeten Angriff im Chat",
-          "Angriffe bleiben 30 Tage auf dem Server (bisher 7)"
-        ],
-        "nl": [
-          "Nieuwe War-pagina op de website voor de alliance-leiding (CIC, Second Commander, Officer): elk Forgotten-target per sector en tunnel als open, aangevallen of vernietigd, wie wanneer aanviel, de buit en de meest actieve spelers",
-          "Attack Tracker meldt nu ook verloren aanvallen, plus vernietigd ja/nee, CP-kosten en de gezondheid van de verdediger, en bevestigt elke gemelde aanval in de chat",
-          "Aanvallen blijven 30 dagen op de server (was 7)"
         ]
       }
     }
