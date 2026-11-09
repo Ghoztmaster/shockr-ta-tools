@@ -544,6 +544,22 @@
     }
   },
   {
+    "name": "UpgradePriority",
+    "slug": "upgrade-priority",
+    "defaultEnabled": true,
+    "replaces": null,
+    "short": {
+      "en": "Which production building to upgrade first, per resource, over all bases",
+      "de": "Welches Produktionsgebäude zuerst ausbauen, pro Ressource, über alle Basen",
+      "nl": "Welk productiegebouw eerst upgraden, per resource, over alle bases"
+    },
+    "long": {
+      "en": "The arrow icon in the Shockr button (or /st upgrades) opens a panel with tabs Tiberium, Crystal, Power and Credits. Per base it ranks the buildings that produce that resource by factor (cost per extra production, lower is better): type and coordinates, level, gain per hour, factor, Tiberium and Power cost, cost per gain, ETA until the base can pay it, and an Upgrade button. Filters per tab: only top buildings, only affordable, and each base on or off; Upgrade all upgrades every affordable building shown. The tab and filters are remembered.",
+      "de": "Das Pfeil-Symbol im Shockr-Knopf (oder /st upgrades) öffnet ein Panel mit den Tabs Tiberium, Kristall, Strom und Credits. Pro Basis werden die Gebäude, die diese Ressource produzieren, nach Faktor sortiert (Kosten pro Mehrproduktion, niedriger ist besser): Typ und Koordinaten, Level, Ertrag pro Stunde, Faktor, Tiberium- und Stromkosten, Kosten pro Ertrag, ETA bis die Basis es bezahlen kann, und ein Ausbauen-Knopf. Filter pro Tab: nur Top-Gebäude, nur bezahlbare und jede Basis an oder aus; Alle ausbauen baut jedes angezeigte bezahlbare Gebäude aus. Tab und Filter werden gemerkt.",
+      "nl": "Het pijl-icoon in de Shockr-knop (of /st upgrades) opent een paneel met tabbladen Tiberium, Crystal, Power en Credits. Per base staan de gebouwen die die resource produceren op factor gesorteerd (kosten per extra productie, lager is beter): type en coördinaten, level, gain per uur, factor, Tiberium- en Power-kosten, kosten per gain, ETA tot de base het kan betalen, en een Upgrade-knop. Filters per tabblad: alleen top-gebouwen, alleen betaalbare en elke base aan of uit; Upgrade all upgradet elk getoond betaalbaar gebouw. Tabblad en filters worden onthouden."
+    }
+  },
+  {
     "name": "WatchList",
     "slug": "watch-list",
     "defaultEnabled": true,

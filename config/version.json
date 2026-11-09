@@ -1,7 +1,22 @@
 {
-  "version": "5.45.0",
+  "version": "5.46.0",
   "date": "2026-11-09",
   "changelog": [
+    {
+      "version": "5.46.0",
+      "date": "2026-11-09",
+      "changes": {
+        "en": [
+          "New plugin UpgradePriority (arrow icon or /st upgrades): which production building to upgrade first per resource, with gain/h, factor, ETA, Upgrade and Upgrade all"
+        ],
+        "de": [
+          "Neues Plugin UpgradePriority (Pfeil-Symbol oder /st upgrades): welches Produktionsgebäude zuerst ausbauen pro Ressource, mit Ertrag/h, Faktor, ETA, Ausbauen und Alle ausbauen"
+        ],
+        "nl": [
+          "Nieuwe plugin UpgradePriority (pijl-icoon of /st upgrades): welk productiegebouw eerst upgraden per resource, met gain/h, factor, ETA, Upgrade en Upgrade all"
+        ]
+      }
+    },
     {
       "version": "5.45.0",
       "date": "2026-11-09",
@@ -68,24 +83,6 @@
         "nl": [
           "Nieuwe plugin McvTimer: klein verplaatsbaar paneel met de voortgang naar de volgende MCV — credits en research points, % en geschatte tijd (standaard uit — /st plugin enable mcv-timer)",
           "Compacte / uitgebreide weergave met de ▾/▸-knop; /st mcv toont of verbergt het paneel"
-        ]
-      }
-    },
-    {
-      "version": "5.41.0",
-      "date": "2026-11-09",
-      "changes": {
-        "en": [
-          "New plugin ArmyOverview, as the MaelstromTools overview: Base / Defense / Army level, buildings or units (current / max) and health per base — tank icon in the Shockr button or /st army",
-          "Repair charges per base with an army: repair time per unit type, charges, attacks (current / max), time until the next attack and until max+1 attacks"
-        ],
-        "de": [
-          "Neues Plugin ArmyOverview, wie die MaelstromTools-Übersicht: Basis- / Verteidigungs- / Armee-Level, Gebäude bzw. Einheiten (aktuell / max) und Zustand pro Basis — Panzer-Symbol im Shockr-Knopf oder /st army",
-          "Reparaturladungen pro Basis mit Armee: Reparaturzeit pro Einheitentyp, Ladungen, Angriffe (aktuell / max), Zeit bis zum nächsten Angriff und bis Max+1 Angriffe"
-        ],
-        "nl": [
-          "Nieuwe plugin ArmyOverview, zoals het MaelstromTools-overzicht: Base- / Defense- / Army-level, gebouwen of units (huidig / max) en health per base — tank-icoon in de Shockr-knop of /st army",
-          "Repair charges per base met een leger: repair time per unit-type, charges, aanvallen (huidig / max), tijd tot de volgende aanval en tot max+1 aanvallen"
         ]
       }
     }

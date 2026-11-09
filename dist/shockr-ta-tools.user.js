@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.45.0
+// @version         5.46.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -102,7 +102,7 @@ var ShockrTools = (() => {
   });
 
   // <define:__ST_PLUGIN_SHORT__>
-  var define_ST_PLUGIN_SHORT_default = { AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, ArmyOverview: { en: "Base, defense, army and repair charges of every base in one panel", de: "Basis, Verteidigung, Armee und Reparaturladungen jeder Basis in einem Panel", nl: "Base, defense, leger en repair charges van elke base in \xE9\xE9n paneel" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, AutoCollect: { en: "Collects the resource packages of all your bases automatically", de: "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein", nl: "Verzamelt de resource-pakketten van al je bases automatisch" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, BaseStatus: { en: "One panel with cooldown, protection, alert and support weapon of every base", de: "Ein Panel mit Cooldown, Schutz, Alarm und Unterst\xFCtzungswaffe jeder Basis", nl: "E\xE9n paneel met cooldown, protection, alert en support weapon van elke base" }, CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, McvTimer: { en: "Progress to the next MCV in a small movable panel", de: "Fortschritt zum n\xE4chsten MBF in einem kleinen verschiebbaren Panel", nl: "Voortgang naar de volgende MCV in een klein verplaatsbaar paneel" }, MissionHider: { en: "Hide the mission tracker on the left", de: "Das Missionsfenster links ausblenden", nl: "De mission tracker links verbergen" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, ProductionOverview: { en: "Production per base per hour in one panel", de: "Produktion pro Basis pro Stunde in einem Panel", nl: "Productie per base per uur in \xE9\xE9n paneel" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, ResourceOverview: { en: "Storage per base: how full, and when it is full", de: "Lager pro Basis: wie voll, und wann es voll ist", nl: "Opslag per base: hoe vol, en wanneer hij vol is" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" }, SupportCalibrate: { en: "Calibrate all support weapons on a base in one click from the world-map menu", de: "Alle Unterst\xFCtzungswaffen mit einem Klick im Weltkarten-Men\xFC auf eine Basis kalibrieren", nl: "Alle support weapons met \xE9\xE9n klik vanuit het wereldkaart-menu op een base kalibreren" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" } };
+  var define_ST_PLUGIN_SHORT_default = { AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, ArmyOverview: { en: "Base, defense, army and repair charges of every base in one panel", de: "Basis, Verteidigung, Armee und Reparaturladungen jeder Basis in einem Panel", nl: "Base, defense, leger en repair charges van elke base in \xE9\xE9n paneel" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, AutoCollect: { en: "Collects the resource packages of all your bases automatically", de: "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein", nl: "Verzamelt de resource-pakketten van al je bases automatisch" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, BaseStatus: { en: "One panel with cooldown, protection, alert and support weapon of every base", de: "Ein Panel mit Cooldown, Schutz, Alarm und Unterst\xFCtzungswaffe jeder Basis", nl: "E\xE9n paneel met cooldown, protection, alert en support weapon van elke base" }, CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, McvTimer: { en: "Progress to the next MCV in a small movable panel", de: "Fortschritt zum n\xE4chsten MBF in einem kleinen verschiebbaren Panel", nl: "Voortgang naar de volgende MCV in een klein verplaatsbaar paneel" }, MissionHider: { en: "Hide the mission tracker on the left", de: "Das Missionsfenster links ausblenden", nl: "De mission tracker links verbergen" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, ProductionOverview: { en: "Production per base per hour in one panel", de: "Produktion pro Basis pro Stunde in einem Panel", nl: "Productie per base per uur in \xE9\xE9n paneel" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, ResourceOverview: { en: "Storage per base: how full, and when it is full", de: "Lager pro Basis: wie voll, und wann es voll ist", nl: "Opslag per base: hoe vol, en wanneer hij vol is" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" }, SupportCalibrate: { en: "Calibrate all support weapons on a base in one click from the world-map menu", de: "Alle Unterst\xFCtzungswaffen mit einem Klick im Weltkarten-Men\xFC auf eine Basis kalibrieren", nl: "Alle support weapons met \xE9\xE9n klik vanuit het wereldkaart-menu op een base kalibreren" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, UpgradePriority: { en: "Which production building to upgrade first, per resource, over all bases", de: "Welches Produktionsgeb\xE4ude zuerst ausbauen, pro Ressource, \xFCber alle Basen", nl: "Welk productiegebouw eerst upgraden, per resource, over alle bases" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" } };
 
   // lib/game-ready.js
   async function waitForGame({ maxAttempts = 200, intervalMs = 100 } = {}) {
@@ -689,6 +689,33 @@ var ShockrTools = (() => {
       baseStatusFocus: "Centre on the world map",
       baseStatusNoData: "No base data yet",
       baseStatusStatus: "{n} base(s), {cooldown} with cooldown, {alerted} alerted",
+      // UpgradePriority (5.46.0)
+      descUpgradePriority: "Which production building to upgrade first, per resource, over all bases (gain/h, factor, ETA, upgrade)",
+      helpCmdUpgrades: "Open/close the upgrade priority panel (optional tab: tib, cry, power, credits)",
+      toolbarUpgradePriority: "Upgrade priority",
+      upTitle: "Upgrade priority",
+      upOnlyTop: "only top buildings",
+      upOnlyAffordable: "only affordable",
+      upUpgradeAll: "Upgrade all",
+      upUpgradeAllHint: "Upgrade every affordable building shown",
+      upUpgrade: "Upgrade",
+      upTransfer: "transfer",
+      upTransferHint: "Affordable after transferring Tiberium from your other bases",
+      upNone: "No building to upgrade with these filters",
+      upColType: "Type (coord)",
+      upColLevel: "to Level",
+      upColGain: "Gain/h",
+      upColFactor: "Factor",
+      upColTibGain: "Tib/gain",
+      upColPowGain: "Pow/gain",
+      upColEta: "ETA",
+      upPowerPlant: "Power Plant",
+      upRefinery: "Refinery",
+      upHarvester: "Harvester",
+      upSilo: "Silo",
+      upAccumulator: "Accumulator",
+      upUpgraded: "Upgrade: {ok} of {n} sent",
+      upStatus: "tab {tab}",
       apiKeyRejected: "\u26A0 API key rejected \u2014 check /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: not recognized \u2014 scan a base first to register.",
       scansFailed: "\u26A0 {count} scan(s) failed to send",
@@ -1295,6 +1322,33 @@ var ShockrTools = (() => {
       baseStatusFocus: "Auf der Weltkarte zentrieren",
       baseStatusNoData: "Noch keine Basisdaten",
       baseStatusStatus: "{n} Basis/Basen, {cooldown} mit Cooldown, {alerted} alarmiert",
+      // UpgradePriority (5.46.0)
+      descUpgradePriority: "Welches Produktionsgeb\xE4ude zuerst ausbauen, pro Ressource, \xFCber alle Basen (Ertrag/h, Faktor, ETA, Ausbau)",
+      helpCmdUpgrades: "Ausbau-Priorit\xE4t-Panel \xF6ffnen/schlie\xDFen (optionaler Tab: tib, cry, power, credits)",
+      toolbarUpgradePriority: "Ausbau-Priorit\xE4t",
+      upTitle: "Ausbau-Priorit\xE4t",
+      upOnlyTop: "nur Top-Geb\xE4ude",
+      upOnlyAffordable: "nur bezahlbare",
+      upUpgradeAll: "Alle ausbauen",
+      upUpgradeAllHint: "Jedes angezeigte bezahlbare Geb\xE4ude ausbauen",
+      upUpgrade: "Ausbauen",
+      upTransfer: "Transfer",
+      upTransferHint: "Bezahlbar nach Transfer von Tiberium aus deinen anderen Basen",
+      upNone: "Kein Geb\xE4ude zum Ausbauen mit diesen Filtern",
+      upColType: "Typ (Koord.)",
+      upColLevel: "auf Level",
+      upColGain: "Ertrag/h",
+      upColFactor: "Faktor",
+      upColTibGain: "Tib/Ertrag",
+      upColPowGain: "Strom/Ertrag",
+      upColEta: "ETA",
+      upPowerPlant: "Kraftwerk",
+      upRefinery: "Raffinerie",
+      upHarvester: "Sammler",
+      upSilo: "Silo",
+      upAccumulator: "Akkumulator",
+      upUpgraded: "Ausbau: {ok} von {n} gesendet",
+      upStatus: "Tab {tab}",
       apiKeyRejected: "\u26A0 API-Key abgelehnt \u2014 pr\xFCfe /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: nicht erkannt \u2014 scanne zuerst eine Basis, um dich zu registrieren.",
       scansFailed: "\u26A0 {count} Scan(s) konnten nicht gesendet werden",
@@ -1891,6 +1945,33 @@ var ShockrTools = (() => {
       baseStatusFocus: "Centreren op de wereldkaart",
       baseStatusNoData: "Nog geen basegegevens",
       baseStatusStatus: "{n} base(s), {cooldown} met cooldown, {alerted} alerted",
+      // UpgradePriority (5.46.0)
+      descUpgradePriority: "Welk productiegebouw eerst upgraden, per resource, over alle bases (gain/h, factor, ETA, upgrade)",
+      helpCmdUpgrades: "Upgrade-prioriteit-paneel openen/sluiten (optioneel tabblad: tib, cry, power, credits)",
+      toolbarUpgradePriority: "Upgrade-prioriteit",
+      upTitle: "Upgrade-prioriteit",
+      upOnlyTop: "alleen top-gebouwen",
+      upOnlyAffordable: "alleen betaalbare",
+      upUpgradeAll: "Upgrade all",
+      upUpgradeAllHint: "Elk getoond betaalbaar gebouw upgraden",
+      upUpgrade: "Upgrade",
+      upTransfer: "transfer",
+      upTransferHint: "Betaalbaar na een transfer van Tiberium uit je andere bases",
+      upNone: "Geen gebouw om te upgraden met deze filters",
+      upColType: "Type (co\xF6rd.)",
+      upColLevel: "naar level",
+      upColGain: "Gain/h",
+      upColFactor: "Factor",
+      upColTibGain: "Tib/gain",
+      upColPowGain: "Pow/gain",
+      upColEta: "ETA",
+      upPowerPlant: "Power Plant",
+      upRefinery: "Refinery",
+      upHarvester: "Harvester",
+      upSilo: "Silo",
+      upAccumulator: "Accumulator",
+      upUpgraded: "Upgrade: {ok} van {n} verstuurd",
+      upStatus: "tabblad {tab}",
       apiKeyRejected: "\u26A0 API-key geweigerd \u2014 controleer /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: niet herkend \u2014 scan eerst een base om je te registreren.",
       scansFailed: "\u26A0 {count} scan(s) konden niet verstuurd worden",
@@ -3406,8 +3487,8 @@ var ShockrTools = (() => {
     }
     /** Wait until the scan slot is free (>= SCAN_MIN_INTERVAL_MS since the previous request). */
     async _paceScan() {
-      const wait = this._nextScanAt - Date.now();
-      if (wait > 0) await sleep2(wait);
+      const wait2 = this._nextScanAt - Date.now();
+      if (wait2 > 0) await sleep2(wait2);
       this._nextScanAt = Date.now() + SCAN_MIN_INTERVAL_MS;
     }
     /**
@@ -3625,6 +3706,7 @@ var ShockrTools = (() => {
     { cmd: "army", usage: "/st army", key: "helpCmdArmy" },
     { cmd: "mcv", usage: "/st mcv", key: "helpCmdMcv" },
     { cmd: "basestatus", usage: "/st basestatus", key: "helpCmdBaseStatus" },
+    { cmd: "upgrades", usage: "/st upgrades [tib|cry|power|credits]", key: "helpCmdUpgrades" },
     { cmd: "support", usage: "/st support recall [base]", key: "helpCmdSupportRecall" },
     { cmd: "tunnels", usage: "/st tunnels", key: "helpCmdTunnels" },
     { cmd: "blocklist", usage: "/st blocklist", key: "helpCmdBlocklist" },
@@ -3999,6 +4081,7 @@ var ShockrTools = (() => {
     silo: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 21.5V8a7 4 0 0 1 14 0v13.5z"/><path d="M5 12.5h14M5 17h14"/><path d="M3 21.5h18" stroke-linecap="round"/></svg>',
     tank: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><rect x="2.5" y="14" width="19" height="6" rx="3"/><path d="M6 14v-3.5h10V14"/><path d="M16 11.5h6"/><circle cx="7" cy="17" r="0.8" fill="currentColor"/><circle cx="12" cy="17" r="0.8" fill="currentColor"/><circle cx="17" cy="17" r="0.8" fill="currentColor"/></svg>',
     crosshair: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="7.5"/><path d="M12 1.5v6M12 16.5v6M1.5 12h6M16.5 12h6"/></svg>',
+    upgrade: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l7 7h-4.2v6H9.2v-6H5z"/><path d="M6 20.5h12"/></svg>',
     tunnel: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2.5 21.5v-9a9.5 9.5 0 0 1 19 0v9z"/><path d="M7 21.5v-8a5 5 0 0 1 10 0v8"/><path d="M12 17.5v4" stroke-linecap="round"/></svg>'
   };
   var Toolbar = class {
@@ -6534,7 +6617,7 @@ var ShockrTools = (() => {
   }
   function getUpgradeRows(city) {
     const stock = { tib: city.GetResourceCount(RES_TIB2), power: city.GetResourceCount(RES_POWER) };
-    const rate = {
+    const rate2 = {
       tib: city.GetResourceGrowPerHour(RES_TIB2, true, true),
       power: city.GetResourceGrowPerHour(RES_POWER, true, true)
     };
@@ -6546,8 +6629,8 @@ var ShockrTools = (() => {
         const cost = getUpgradeCost(b, level2 + 1);
         if (!cost) return;
         const hours = Math.max(
-          hoursNeeded(cost.tib, stock.tib, rate.tib),
-          hoursNeeded(cost.power, stock.power, rate.power)
+          hoursNeeded(cost.tib, stock.tib, rate2.tib),
+          hoursNeeded(cost.power, stock.power, rate2.power)
         );
         rows.push({
           name: buildings.length > 1 ? `${name} ${i + 1}` : name,
@@ -6559,7 +6642,7 @@ var ShockrTools = (() => {
       });
     }
     rows.sort((a, b) => a.hours - b.hours || a.tib + a.power - (b.tib + b.power));
-    return { rows, stock, rate };
+    return { rows, stock, rate: rate2 };
   }
   function getBuildingsByType(city) {
     const bd = city.get_CityBuildingsData();
@@ -6622,14 +6705,14 @@ var ShockrTools = (() => {
     if (coll.d) return Object.values(coll.d);
     return [];
   }
-  function renderPanel2(city, { rows, stock, rate }) {
+  function renderPanel2(city, { rows, stock, rate: rate2 }) {
     const td = "padding:1px 4px;";
     const num4 = td + "text-align:right;white-space:nowrap;";
     const tibColor = "color:#8bc34a;";
     const powColor = "color:#ffca28;";
     const perHour = t("upgradeCalcPerHour");
     let html = `<div style="font-weight:bold;margin-bottom:4px;color:#fff;">\u{1F527} ${t("upgradeCalcTitle")} \u2014 ${escapeHtml3(city.get_Name())}</div>`;
-    html += `<div style="margin-bottom:6px;color:#aaa;"><span style="${tibColor}">${t("upgradeCalcTib")}</span> ${fmt2(stock.tib)} (+${fmt2(rate.tib)}${perHour}) \xB7 <span style="${powColor}">${t("upgradeCalcPower")}</span> ${fmt2(stock.power)} (+${fmt2(rate.power)}${perHour})</div>`;
+    html += `<div style="margin-bottom:6px;color:#aaa;"><span style="${tibColor}">${t("upgradeCalcTib")}</span> ${fmt2(stock.tib)} (+${fmt2(rate2.tib)}${perHour}) \xB7 <span style="${powColor}">${t("upgradeCalcPower")}</span> ${fmt2(stock.power)} (+${fmt2(rate2.power)}${perHour})</div>`;
     if (!rows.length) {
       return html + `<div style="color:#999;">${t("upgradeCalcAllMax")}</div>`;
     }
@@ -7259,12 +7342,12 @@ var ShockrTools = (() => {
     /** Request the next report: one at a time, REQUEST_SPACING_MS apart. */
     _processNext() {
       if (!this.running || this._inFlight || this._nextRequestTimer || !this._pending.length) return;
-      const wait = REQUEST_SPACING_MS - (Date.now() - this._lastRequestAt);
-      if (wait > 0) {
+      const wait2 = REQUEST_SPACING_MS - (Date.now() - this._lastRequestAt);
+      if (wait2 > 0) {
         this._nextRequestTimer = setTimeout(() => {
           this._nextRequestTimer = null;
           this._processNext();
-        }, wait);
+        }, wait2);
         return;
       }
       const item = this._pending.shift();
@@ -7324,11 +7407,11 @@ var ShockrTools = (() => {
     // ─── POST ────────────────────────────────────────────────────────
     _scheduleFlush() {
       if (this._flushTimer) return;
-      const wait = Math.max(0, POST_MIN_INTERVAL_MS2 - (Date.now() - this._lastPostAt));
+      const wait2 = Math.max(0, POST_MIN_INTERVAL_MS2 - (Date.now() - this._lastPostAt));
       this._flushTimer = setTimeout(() => {
         this._flushTimer = null;
         this.flush();
-      }, wait);
+      }, wait2);
     }
     /** Send what the outbox holds — one POST, at most one per POST_MIN_INTERVAL_MS. */
     async flush() {
@@ -10269,8 +10352,8 @@ var ShockrTools = (() => {
       }
       this._listeners = [];
       if (this._widgets) {
-        const { container, button, check, cost } = this._widgets;
-        for (const w of [button, check, cost]) {
+        const { container, button, check: check2, cost } = this._widgets;
+        for (const w of [button, check2, cost]) {
           try {
             container.remove(w);
             w.dispose();
@@ -10301,23 +10384,23 @@ var ShockrTools = (() => {
         enabled: false,
         toolTipText: t("transferAllTooltip")
       });
-      const check = new qx.ui.form.CheckBox("");
-      check.setToolTipText(t("transferAllCheckTooltip"));
+      const check2 = new qx.ui.form.CheckBox("");
+      check2.setToolTipText(t("transferAllCheckTooltip"));
       const cost = new qx.ui.basic.Label("").set({ textColor: COST_OK });
       const on = (widget, type, fn) => this._listeners.push({ widget, id: widget.addListener(type, fn, this) });
-      on(check, "changeValue", () => this._onCheck());
+      on(check2, "changeValue", () => this._onCheck());
       on(button, "click", () => this.transfer());
-      on(overlay, "appear", () => check.setValue(false));
+      on(overlay, "appear", () => check2.setValue(false));
       container.add(button, { right: 2, top: 100 });
-      container.add(check, { right: 96, top: 104 });
+      container.add(check2, { right: 96, top: 104 });
       container.add(cost, { right: 2, top: 126 });
-      this._widgets = { container, button, check, cost };
+      this._widgets = { container, button, check: check2, cost };
       return true;
     }
     /** Checkbox: show the cost of transferring everything, arm the button. */
     _onCheck() {
-      const { button, check, cost } = this._widgets;
-      const armed = !!check.getValue();
+      const { button, check: check2, cost } = this._widgets;
+      const armed = !!check2.getValue();
       button.setEnabled(armed && !this.busy);
       if (!armed) {
         cost.setValue("");
@@ -13313,11 +13396,11 @@ var ShockrTools = (() => {
     for (const [key, type] of [["tib", R.Tiberium], ["cry", R.Crystal], ["power", R.Power]]) {
       const cur = num2(() => city.GetResourceCount(type));
       const max = num2(() => city.GetResourceMaxStorage(type));
-      const rate = num2(() => city.GetResourceGrowPerHour(type, true, true));
+      const rate2 = num2(() => city.GetResourceGrowPerHour(type, true, true));
       v[`${key}_cur`] = cur;
       v[`${key}_max`] = max;
       v[`${key}_pct`] = pct(cur, max);
-      const full = fullAt(cur, max, rate, now);
+      const full = fullAt(cur, max, rate2, now);
       v[`${key}_full`] = full === null ? null : Math.round(full / 6e4) * 6e4;
     }
     return v;
@@ -13578,7 +13661,7 @@ var ShockrTools = (() => {
   }
   function repairColumns() {
     const rtStyle = (v, row) => row.values.rt_max > 0 && v === row.values.rt_max ? YELLOW2 : "";
-    const wait = (v) => v === null || v === void 0 ? "" : formatDuration(v);
+    const wait2 = (v) => v === null || v === void 0 ? "" : formatDuration(v);
     return [
       { key: "rt_inf", label: t("armyColInf"), format: formatDuration, style: rtStyle },
       { key: "rt_veh", label: t("armyColVeh"), format: formatDuration, style: rtStyle },
@@ -13590,8 +13673,8 @@ var ShockrTools = (() => {
         format: (v, row) => `${v === null ? "\u2014" : v}${row.values.att_star ? "*" : ""} / ${row.values.att_max === null ? "\u2014" : row.values.att_max}`,
         style: (v, row) => row.values.att_star ? RED2 : "color:#fff;font-weight:bold;"
       },
-      { key: "next", label: t("armyColNextAt"), format: wait, style: (v, row) => row.values.next_over ? YELLOW2 : "" },
-      { key: "max_next", label: t("armyColMaxAt"), format: wait }
+      { key: "next", label: t("armyColNextAt"), format: wait2, style: (v, row) => row.values.next_over ? YELLOW2 : "" },
+      { key: "max_next", label: t("armyColMaxAt"), format: wait2 }
     ];
   }
   function render(data) {
@@ -14429,6 +14512,371 @@ var ShockrTools = (() => {
     }
   };
 
+  // plugins/upgrade-priority.js
+  var TOOLBAR_ID10 = "upgrades";
+  var TABS = ["tib", "cry", "power", "credits"];
+  var DEFAULT_TAB = "credits";
+  var TAB_LABEL = { tib: "resTiberium", cry: "resCrystal", power: "resPower", credits: "resCredits" };
+  var UPGRADE_GAP_MS = 100;
+  var AFTER_UPGRADE_MS = 1e3;
+  var STATE = { AFFORDABLE: 1, TRANSFER: 2, NO: 3 };
+  function tabSpec(tab) {
+    const T = ClientLib.Base.ETechName;
+    const M = ClientLib.Base.EModifierType;
+    switch (tab) {
+      case "tib":
+        return { techs: [T.Harvester, T.Harvester_Crystal, T.Silo], pkg: M.TiberiumPackageSize, prod: M.TiberiumProduction };
+      case "cry":
+        return { techs: [T.Harvester, T.Harvester_Crystal, T.Silo], pkg: M.CrystalPackageSize, prod: M.CrystalProduction };
+      case "power":
+        return { techs: [T.PowerPlant, T.Accumulator], pkg: M.PowerPackageSize, prod: M.PowerProduction };
+      default:
+        return { techs: [T.Refinery, T.PowerPlant], pkg: M.CreditsPackageSize, prod: M.CreditsProduction };
+    }
+  }
+  function typeName(tech) {
+    const T = ClientLib.Base.ETechName;
+    const key = {
+      [T.PowerPlant]: "upPowerPlant",
+      [T.Refinery]: "upRefinery",
+      [T.Harvester]: "upHarvester",
+      [T.Harvester_Crystal]: "upHarvester",
+      [T.Silo]: "upSilo",
+      [T.Accumulator]: "upAccumulator"
+    }[tech];
+    return key ? t(key) : "?";
+  }
+  function gainPerHour(mods, mainId, pkgType, prodType) {
+    let gain = 0;
+    for (const key of Object.keys(mods)) {
+      const m = mods[key];
+      const type = Number(key);
+      if (type === Number(pkgType)) {
+        const main = mods[mainId];
+        if (!main) continue;
+        const prev = 3600 / main.TotalValue * m.TotalValue;
+        const next = 3600 / (main.TotalValue + main.NewLvlDelta) * (m.TotalValue + m.NewLvlDelta);
+        const d = next - prev;
+        if (Number.isFinite(d)) gain += d;
+      } else if (type === Number(prodType)) {
+        const d = Number(m.NewLvlDelta);
+        if (Number.isFinite(d)) gain += d;
+      }
+    }
+    return gain;
+  }
+  function rate({ gain, costs, have, perHour, totalTib }) {
+    const R = ClientLib.Base.EResourceType;
+    let factor = 0;
+    let eta = 0;
+    let enough = true;
+    let tibOk = true;
+    let powerOk = true;
+    for (const [type, count] of Object.entries(costs)) {
+      if (!(count > 0)) continue;
+      const prod = perHour[type] || 0;
+      if (prod > 0) factor = Math.max(factor, 3600 * (count / gain) / prod);
+      const missing = count - (have[type] || 0);
+      if (missing > 0) {
+        enough = false;
+        if (Number(type) === R.Tiberium) tibOk = false;
+        if (Number(type) === R.Power) powerOk = false;
+        if (Number(type) === R.Tiberium || Number(type) === R.Power) {
+          eta = Math.max(eta, prod > 0 ? 3600 * missing / prod : Infinity);
+        }
+      }
+    }
+    let state = STATE.NO;
+    if (enough) state = STATE.AFFORDABLE;
+    else if (powerOk && (tibOk || totalTib >= (costs[R.Tiberium] || 0))) state = STATE.TRANSFER;
+    return { factor, eta, state };
+  }
+  function topRows(rows) {
+    if (!rows.length) return [];
+    const firstNo = rows.findIndex((r) => r.state !== STATE.AFFORDABLE);
+    const firstYes = rows.findIndex((r) => r.state === STATE.AFFORDABLE);
+    const beforeYes = firstYes === -1 ? rows.length - 1 : firstYes - 1;
+    const pick = new Set([firstNo, beforeYes, firstYes].filter((i) => i >= 0));
+    return [...pick].sort((a, b) => a - b).map((i) => rows[i]);
+  }
+  function resMap(city) {
+    const R = ClientLib.Base.EResourceType;
+    const have = {};
+    for (const type of [R.Tiberium, R.Crystal, R.Power]) {
+      try {
+        have[type] = Number(city.GetResourceCount(type)) || 0;
+      } catch {
+        have[type] = 0;
+      }
+    }
+    return have;
+  }
+  function perHourMap(city) {
+    const R = ClientLib.Base.EResourceType;
+    let p = null;
+    try {
+      p = readCity(city, ClientLib.Data.MainData.GetInstance().get_Alliance());
+    } catch {
+      p = null;
+    }
+    if (!p) return {};
+    return { [R.Tiberium]: p.tib.total || 0, [R.Crystal]: p.cry.total || 0, [R.Power]: p.power.total || 0 };
+  }
+  function cityRows(city, tab, totalTib) {
+    const spec = tabSpec(tab);
+    const R = ClientLib.Base.EResourceType;
+    let cap = Infinity;
+    try {
+      cap = Number(ClientLib.Data.MainData.GetInstance().get_Server().get_PlayerUpgradeCap()) || Infinity;
+    } catch {
+    }
+    const have = resMap(city);
+    const perHour = perHourMap(city);
+    const rows = [];
+    for (const b of Object.values(city.get_Buildings().d)) {
+      try {
+        const level2 = b.get_CurrentLevel();
+        if (level2 + 1 > cap) continue;
+        const tech = b.get_TechName();
+        if (!spec.techs.includes(tech)) continue;
+        const dv = city.GetBuildingDetailViewInfo(b);
+        if (!dv || !dv.OwnProdModifiers) continue;
+        const gain = gainPerHour(dv.OwnProdModifiers.d, b.get_MainModifierTypeId(), spec.pkg, spec.prod);
+        if (!(gain > 0)) continue;
+        const costs = {};
+        for (const req of ClientLib.Base.Util.GetTechLevelResourceRequirements_Obj(level2 + 1, b.get_TechGameData_Obj()) || []) {
+          if (!req || Number(req.Type) === 0) continue;
+          costs[req.Type] = Number(req.Count) || 0;
+        }
+        const r = rate({ gain, costs, have, perHour, totalTib });
+        const tib = costs[R.Tiberium] || 0;
+        const power = costs[R.Power] || 0;
+        rows.push({
+          id: b.get_Id(),
+          cityId: city.get_Id(),
+          city: city.get_Name(),
+          type: typeName(tech),
+          x: b.get_CoordX(),
+          y: b.get_CoordY(),
+          level: level2 + 1,
+          gain,
+          factor: r.factor,
+          tib,
+          power,
+          tibPerGain: tib / gain,
+          powPerGain: power / gain,
+          eta: r.eta,
+          state: r.state
+        });
+      } catch (err) {
+        console.warn("[ST] UpgradePriority: building skipped", err && err.message);
+      }
+    }
+    return rows.sort((a, b) => a.factor - b.factor);
+  }
+  function readPriority(filters) {
+    const { tab, top, affordable, cityOn } = filters;
+    const R = ClientLib.Base.EResourceType;
+    const bases = ownBases3();
+    let totalTib = 0;
+    for (const c of bases) {
+      try {
+        totalTib += Number(c.GetResourceCount(R.Tiberium)) || 0;
+      } catch {
+      }
+    }
+    const cities2 = [];
+    const rows = [];
+    for (const city of bases) {
+      const id = city.get_Id();
+      const on = cityOn(id);
+      cities2.push({ id, name: city.get_Name(), on });
+      if (!on) continue;
+      let list = cityRows(city, tab, totalTib);
+      if (affordable) list = list.filter((r) => r.state === STATE.AFFORDABLE);
+      if (top) list = topRows(list);
+      rows.push(...list);
+    }
+    return { tab, top, affordable, cities: cities2, rows };
+  }
+  var BTN3 = "cursor:pointer;padding:1px 8px;border:1px solid #5f8fb4;border-radius:3px;background:#0d2a40;color:#4fc3f7;white-space:nowrap;";
+  function check(on, label, view, id = 0) {
+    return `<span data-id="${id}" data-view="${view}" style="cursor:pointer;white-space:nowrap;margin-right:12px;${on ? "color:#fff;" : "color:#888;"}">${on ? "\u2611" : "\u2610"} ${escapeHtml(label)}</span>`;
+  }
+  function fixed(n, digits) {
+    if (!Number.isFinite(n)) return "\u2014";
+    return Math.abs(n) >= 1e4 ? compact2(n) : n.toFixed(digits);
+  }
+  function renderPriority(d) {
+    const tabs = TABS.map((tab, i) => {
+      const sel = tab === d.tab;
+      return `<span data-id="${i}" data-view="tab" style="cursor:pointer;padding:3px 10px;margin-right:4px;border:1px solid ${sel ? "#5f8fb4" : "#444"};border-radius:3px 3px 0 0;${sel ? "background:#0d2a40;color:#4fc3f7;" : "color:#999;"}">${escapeHtml(t(TAB_LABEL[tab]))}</span>`;
+    }).join("");
+    let html = `<div style="margin:2px 0 8px;">${tabs}</div>`;
+    html += '<div style="margin:0 0 6px;line-height:1.9;">' + check(d.top, t("upOnlyTop"), "top") + check(d.affordable, t("upOnlyAffordable"), "affordable") + `<span data-id="0" data-view="upgradeall" title="${escapeHtml(t("upUpgradeAllHint"))}" style="${BTN3}">${escapeHtml(t("upUpgradeAll"))}</span></div><div style="margin:0 0 8px;line-height:1.9;">` + d.cities.map((c) => check(c.on, c.name, "city", c.id)).join("") + "</div>";
+    if (!d.rows.length) return html + `<div style="color:#999;padding:12px 0;text-align:center;">${escapeHtml(t("upNone"))}</div>`;
+    const th = "padding:3px 5px;font-weight:normal;color:#999;white-space:nowrap;";
+    const td = "padding:3px 5px;white-space:nowrap;";
+    const head = [
+      ["ovColBase", "left"],
+      ["upColType", "left"],
+      ["upColLevel", "right"],
+      ["upColGain", "right"],
+      ["upColFactor", "right"],
+      ["resTiberium", "right"],
+      ["resPower", "right"],
+      ["upColTibGain", "right"],
+      ["upColPowGain", "right"],
+      ["upColEta", "right"]
+    ];
+    html += '<table style="border-collapse:collapse;width:100%;"><tr style="border-bottom:1px solid #444;">' + head.map(([k, a]) => `<th style="${th}text-align:${a};">${escapeHtml(t(k))}</th>`).join("") + "<th></th></tr>";
+    for (const r of d.rows) {
+      let action = "";
+      if (r.state === STATE.AFFORDABLE) action = `<span data-id="${r.id}" data-view="upgrade" style="${BTN3}">${escapeHtml(t("upUpgrade"))}</span>`;
+      else if (r.state === STATE.TRANSFER) action = `<span style="color:#e0b84f;" title="${escapeHtml(t("upTransferHint"))}">${escapeHtml(t("upTransfer"))}</span>`;
+      const right = `${td}text-align:right;`;
+      html += `<tr style="border-bottom:1px solid #2a2a2a;${r.state === STATE.NO ? "color:#888;" : ""}"><td data-id="${r.cityId}" title="${escapeHtml(t("ovJumpHint"))}" style="${td}color:#4fc3f7;cursor:pointer;">${escapeHtml(r.city)}</td><td style="${td}">${escapeHtml(`${r.type} (${r.x}:${r.y})`)}</td><td style="${right}">${r.level}</td><td style="${right}">${fixed(r.gain, 2)}</td><td style="${right}">${fixed(r.factor, 5)}</td><td style="${right}">${compact2(r.tib)}</td><td style="${right}">${compact2(r.power)}</td><td style="${right}">${compact2(r.tibPerGain)}</td><td style="${right}">${compact2(r.powPerGain)}</td><td style="${right}">${r.eta > 0 ? escapeHtml(formatDuration(r.eta)) : ""}</td><td style="${right}">${action}</td></tr>`;
+    }
+    return html + "</table>";
+  }
+  function sendUpgrade(row) {
+    return new Promise((resolve) => {
+      try {
+        ClientLib.Net.CommunicationManager.GetInstance().SendCommand(
+          "UpgradeBuilding",
+          { cityid: row.cityId, posX: row.x, posY: row.y, isPaid: true },
+          phe.cnc.Util.createEventDelegate(
+            ClientLib.Net.CommandResult,
+            null,
+            (ctx, result) => resolve(Number(result) === 0)
+          ),
+          null,
+          true
+        );
+        console.log(`[ST] UpgradePriority: ${row.city} - UpgradeBuilding ${row.type} (${row.x}:${row.y}) to ${row.level}`);
+      } catch (err) {
+        console.warn("[ST] UpgradePriority: UpgradeBuilding failed", err && err.message);
+        resolve(false);
+      }
+    });
+  }
+  var wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  var UpgradePriority = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descUpgradePriority");
+    }
+    constructor(config, toolbar, cli) {
+      this.name = "UpgradePriority";
+      this.config = config;
+      this.toolbar = toolbar;
+      this.cli = cli;
+      this.running = false;
+      this.busy = false;
+      this.panel = new OverviewPanel(config, {
+        id: "st-upgradeprio-panel",
+        prefix: "UpgradePriority",
+        width: 860,
+        title: () => t("upTitle"),
+        read: () => readPriority(this.filters()),
+        render: (d) => renderPriority(d),
+        onRowClick: (id, view) => this._onClick(id, view)
+      });
+    }
+    async start() {
+      this.running = true;
+      this.toolbar.register({
+        id: TOOLBAR_ID10,
+        icon: ICONS.upgrade,
+        label: () => t("toolbarUpgradePriority"),
+        onClick: () => this.panel.toggle()
+      });
+      this.cli.register("upgrades", (args) => this._command(args));
+    }
+    stop() {
+      this.running = false;
+      this.panel.destroy();
+      this.toolbar.unregister(TOOLBAR_ID10);
+      this.cli.unregister("upgrades");
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      return t("upStatus", { tab: t(TAB_LABEL[this.tab()]) });
+    }
+    tab() {
+      const v = String(this.config.get("upgradeprio.tab", DEFAULT_TAB));
+      return TABS.includes(v) ? v : DEFAULT_TAB;
+    }
+    /** Persistent filters of the selected tab. */
+    filters() {
+      const tab = this.tab();
+      return {
+        tab,
+        top: this.config.get(`upgradeprio.top.${tab}`, true) !== false,
+        affordable: this.config.get(`upgradeprio.affordable.${tab}`, true) !== false,
+        cityOn: (id) => this.config.get(`upgradeprio.city.${tab}.${id}`, true) !== false
+      };
+    }
+    _command(args) {
+      const tab = String(args[0] || "").toLowerCase();
+      if (TABS.includes(tab)) {
+        this.config.set("upgradeprio.tab", tab);
+        if (!this.panel.isOpen()) this.panel.open();
+        else this.panel.refresh();
+        return;
+      }
+      this.panel.toggle();
+    }
+    _onClick(id, view) {
+      const f = this.filters();
+      switch (view) {
+        case "tab":
+          if (TABS[id]) this.config.set("upgradeprio.tab", TABS[id]);
+          break;
+        case "top":
+          this.config.set(`upgradeprio.top.${f.tab}`, !f.top);
+          break;
+        case "affordable":
+          this.config.set(`upgradeprio.affordable.${f.tab}`, !f.affordable);
+          break;
+        case "city":
+          this.config.set(`upgradeprio.city.${f.tab}.${id}`, !f.cityOn(id));
+          break;
+        case "upgrade": {
+          const row = (this.panel.data && this.panel.data.rows || []).find((r) => r.id === id);
+          if (row) this.upgrade([row]);
+          return;
+        }
+        case "upgradeall":
+          this.upgrade((this.panel.data && this.panel.data.rows || []).filter((r) => r.state === STATE.AFFORDABLE));
+          return;
+        default:
+          openBase(id);
+          return;
+      }
+      this.panel.refresh();
+    }
+    /** Upgrade rows one after another; chat reports how many went through. */
+    async upgrade(rows) {
+      if (this.busy || !rows.length) return 0;
+      this.busy = true;
+      let ok = 0;
+      try {
+        for (let i = 0; i < rows.length; i++) {
+          if (!this.running) break;
+          if (await sendUpgrade(rows[i])) ok++;
+          if (i < rows.length - 1) await wait(UPGRADE_GAP_MS);
+        }
+      } finally {
+        this.busy = false;
+      }
+      chatMessage(`[ST] ${escapeHtml(t("upUpgraded", { ok, n: rows.length }))}`);
+      await wait(AFTER_UPGRADE_MS);
+      this.panel.refresh();
+      return ok;
+    }
+  };
+
   // plugins/stabs-stats.js
   var RES = { TIB: 1, CRY: 2, CREDITS: 3, RP: 6, RC_BASE: 7, RC_AIR: 8, RC_INF: 9, RC_VEH: 10 };
   var RES_KEYS = Object.values(RES);
@@ -15121,7 +15569,7 @@ var ShockrTools = (() => {
   }
 
   // plugins/stabs.js
-  var TOOLBAR_ID10 = "stabs";
+  var TOOLBAR_ID11 = "stabs";
   var SIM_LOCK_MS = 3e3;
   var TICK_MS2 = 300;
   var KEY_NUM0 = 96;
@@ -15363,7 +15811,7 @@ var ShockrTools = (() => {
       }
       if (!this.parked) {
         this.toolbar.register({
-          id: TOOLBAR_ID10,
+          id: TOOLBAR_ID11,
           icon: ICONS.sim,
           label: () => t("toolbarStabs"),
           onClick: () => this.togglePanel()
@@ -15415,7 +15863,7 @@ var ShockrTools = (() => {
       this._lock = false;
       this._request = false;
       document.removeEventListener("keydown", this._onKeyDown);
-      this.toolbar.unregister(TOOLBAR_ID10);
+      this.toolbar.unregister(TOOLBAR_ID11);
       if (this._button) {
         try {
           const parent = this._button.getLayoutParent();
@@ -15854,7 +16302,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.45.0";
+  var ST_VERSION = "5.46.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -15923,6 +16371,7 @@ var ShockrTools = (() => {
       new McvTimer(config, cli),
       new SupportCalibrate(config, cli),
       new BaseStatus(config, toolbar, cli),
+      new UpgradePriority(config, toolbar, cli),
       new MissionHider(config),
       new Stabs(config, toolbar)
     ];

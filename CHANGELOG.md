@@ -1,5 +1,20 @@
 # Changelog
 
+## [5.46.0] — 2026-11-09
+
+Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+Ronde 9 (extra na de MaelstromTools-reeks).
+
+### Nieuwe plugin: UpgradePriority (`plugins/upgrade-priority.js`, standaard aan)
+- Toolbar-icoon (pijl omhoog) of `/st upgrades [tib|cry|power|credits]`: tabbladen per resource; per base de productiegebouwen gesorteerd op factor, met type (coörd.), naar level, gain/h, factor, Tiberium- en Power-kosten, Tib/gain, Pow/gain, ETA en een Upgrade-knop
+- Eigen implementatie van de HuffyTools.UpgradePriority-logica (MaelstromTools 0.1.5.5): gain/h uit `OwnProdModifiers` (production `NewLvlDelta` + package size via de main modifier), kosten via `GetTechLevelResourceRequirements_Obj`, factor = max over kostensoorten van `3600 * (kosten / gain) / productie per uur`, gebouwen boven `get_PlayerUpgradeCap()` overgeslagen
+- Filters per tabblad: alleen top-gebouwen, alleen betaalbare, per base aan/uit; Upgrade all. Tabblad en filters in de config (`upgradeprio.*`)
+- Upgrade via `SendCommand('UpgradeBuilding', {cityid, posX, posY, isPaid: true})`, één voor één
+- Afwijkingen van HuffyTools: "betaalbaar via transfer" telt echt de Tiberium van alle bases (bij HuffyTools altijd 0); top-lijst toont elke rij één keer; Upgrade all loopt de getoonde betaalbare rijen op volgorde af
+- UpgradeCalc blijft apart (kosten van de huidige base)
+- NIET LIVE GEVERIFIEERD: `GetBuildingDetailViewInfo`, `OwnProdModifiers` en `UpgradeBuilding` op de huidige client
+
 ## [5.45.0] — 2026-11-09
 
 Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
