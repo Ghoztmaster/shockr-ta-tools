@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.42.0
+// @version         5.43.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -102,7 +102,7 @@ var ShockrTools = (() => {
   });
 
   // <define:__ST_PLUGIN_SHORT__>
-  var define_ST_PLUGIN_SHORT_default = { AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, ArmyOverview: { en: "Base, defense, army and repair charges of every base in one panel", de: "Basis, Verteidigung, Armee und Reparaturladungen jeder Basis in einem Panel", nl: "Base, defense, leger en repair charges van elke base in \xE9\xE9n paneel" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, AutoCollect: { en: "Collects the resource packages of all your bases automatically", de: "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein", nl: "Verzamelt de resource-pakketten van al je bases automatisch" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, McvTimer: { en: "Progress to the next MCV in a small movable panel", de: "Fortschritt zum n\xE4chsten MBF in einem kleinen verschiebbaren Panel", nl: "Voortgang naar de volgende MCV in een klein verplaatsbaar paneel" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, ProductionOverview: { en: "Production per base per hour in one panel", de: "Produktion pro Basis pro Stunde in einem Panel", nl: "Productie per base per uur in \xE9\xE9n paneel" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, ResourceOverview: { en: "Storage per base: how full, and when it is full", de: "Lager pro Basis: wie voll, und wann es voll ist", nl: "Opslag per base: hoe vol, en wanneer hij vol is" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" } };
+  var define_ST_PLUGIN_SHORT_default = { AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, ArmyOverview: { en: "Base, defense, army and repair charges of every base in one panel", de: "Basis, Verteidigung, Armee und Reparaturladungen jeder Basis in einem Panel", nl: "Base, defense, leger en repair charges van elke base in \xE9\xE9n paneel" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, AutoCollect: { en: "Collects the resource packages of all your bases automatically", de: "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein", nl: "Verzamelt de resource-pakketten van al je bases automatisch" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, McvTimer: { en: "Progress to the next MCV in a small movable panel", de: "Fortschritt zum n\xE4chsten MBF in einem kleinen verschiebbaren Panel", nl: "Voortgang naar de volgende MCV in een klein verplaatsbaar paneel" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, ProductionOverview: { en: "Production per base per hour in one panel", de: "Produktion pro Basis pro Stunde in einem Panel", nl: "Productie per base per uur in \xE9\xE9n paneel" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, ResourceOverview: { en: "Storage per base: how full, and when it is full", de: "Lager pro Basis: wie voll, und wann es voll ist", nl: "Opslag per base: hoe vol, en wanneer hij vol is" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" }, SupportCalibrate: { en: "Calibrate all support weapons on a base in one click; recall per base or all", de: "Alle Unterst\xFCtzungswaffen mit einem Klick auf eine Basis kalibrieren; pro Basis oder alle zur\xFCckrufen", nl: "Alle support weapons met \xE9\xE9n klik op een base kalibreren; per base of allemaal terugroepen" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" } };
 
   // lib/game-ready.js
   async function waitForGame({ maxAttempts = 200, intervalMs = 100 } = {}) {
@@ -652,6 +652,29 @@ var ShockrTools = (() => {
       mcvStatus: "credits {credits}% \xB7 RP {rp}%",
       mcvStatusDone: "every MCV researched",
       mcvStatusNoData: "no research data yet",
+      // SupportCalibrate (5.43.0)
+      descSupportCalibrate: "Calibrate all support weapons in range on a base (world-map menu) and recall support per base or all at once",
+      helpCmdSupport: "Open/close the support panel",
+      helpCmdSupportRecall: "Recall all support, or the support of one base",
+      toolbarSupport: "Support",
+      supportTitle: "Support weapons",
+      supportCalibrateAll: "Calibrate all support",
+      supportColWeapon: "Weapon",
+      supportColOn: "Calibrated on",
+      supportNotCalibrated: "not calibrated",
+      supportRecall: "Recall",
+      supportRecallAll: "Recall all",
+      supportNone: "No base with a support weapon",
+      supportCalibrated: "Support calibrated on {name}: {n} weapon(s)",
+      supportAlready: "{n} already on it",
+      supportOutOfRange: "{n} out of range",
+      supportRecalled: "Support recalled: {bases}",
+      supportNothingToRecall: "No support to recall",
+      supportUnknownBase: 'No own base named "{name}"',
+      supportUsage: "Usage: /st support | /st support recall [base name] | /st support debug",
+      supportDebug: "Support debug: menu hook {hook}, called {calls}x, {composites} Composite(s), {menus} menu(s) - details in the console (F12)",
+      supportStatus: "{n} support weapon(s), {on} calibrated",
+      supportStatusNoData: "no base data yet",
       apiKeyRejected: "\u26A0 API key rejected \u2014 check /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: not recognized \u2014 scan a base first to register.",
       scansFailed: "\u26A0 {count} scan(s) failed to send",
@@ -1221,6 +1244,29 @@ var ShockrTools = (() => {
       mcvStatus: "Credits {credits}% \xB7 FP {rp}%",
       mcvStatusDone: "alle MBF erforscht",
       mcvStatusNoData: "noch keine Forschungsdaten",
+      // SupportCalibrate (5.43.0)
+      descSupportCalibrate: "Alle Unterst\xFCtzungswaffen in Reichweite auf eine Basis kalibrieren (Weltkarten-Men\xFC) und Unterst\xFCtzung pro Basis oder alle zur\xFCckrufen",
+      helpCmdSupport: "Support-Panel \xF6ffnen/schlie\xDFen",
+      helpCmdSupportRecall: "Alle Unterst\xFCtzung zur\xFCckrufen, oder die einer Basis",
+      toolbarSupport: "Support",
+      supportTitle: "Unterst\xFCtzungswaffen",
+      supportCalibrateAll: "Alle Unterst\xFCtzung kalibrieren",
+      supportColWeapon: "Waffe",
+      supportColOn: "Kalibriert auf",
+      supportNotCalibrated: "nicht kalibriert",
+      supportRecall: "Zur\xFCckrufen",
+      supportRecallAll: "Alle zur\xFCckrufen",
+      supportNone: "Keine Basis mit Unterst\xFCtzungswaffe",
+      supportCalibrated: "Unterst\xFCtzung auf {name} kalibriert: {n} Waffe(n)",
+      supportAlready: "{n} bereits darauf",
+      supportOutOfRange: "{n} au\xDFer Reichweite",
+      supportRecalled: "Unterst\xFCtzung zur\xFCckgerufen: {bases}",
+      supportNothingToRecall: "Keine Unterst\xFCtzung zum Zur\xFCckrufen",
+      supportUnknownBase: "Keine eigene Basis namens \u201E{name}\u201C",
+      supportUsage: "Verwendung: /st support | /st support recall [Basisname] | /st support debug",
+      supportDebug: "Support-Debug: Men\xFC-Hook {hook}, {calls}x aufgerufen, {composites} Composite(s), {menus} Men\xFC(s) - Details in der Konsole (F12)",
+      supportStatus: "{n} Unterst\xFCtzungswaffe(n), {on} kalibriert",
+      supportStatusNoData: "noch keine Basisdaten",
       apiKeyRejected: "\u26A0 API-Key abgelehnt \u2014 pr\xFCfe /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: nicht erkannt \u2014 scanne zuerst eine Basis, um dich zu registrieren.",
       scansFailed: "\u26A0 {count} Scan(s) konnten nicht gesendet werden",
@@ -1780,6 +1826,29 @@ var ShockrTools = (() => {
       mcvStatus: "credits {credits}% \xB7 RP {rp}%",
       mcvStatusDone: "alle MCV's onderzocht",
       mcvStatusNoData: "nog geen researchgegevens",
+      // SupportCalibrate (5.43.0)
+      descSupportCalibrate: "Alle support weapons in bereik op een base kalibreren (wereldkaart-menu) en support per base of allemaal terugroepen",
+      helpCmdSupport: "Support-paneel openen/sluiten",
+      helpCmdSupportRecall: "Alle support terugroepen, of die van \xE9\xE9n base",
+      toolbarSupport: "Support",
+      supportTitle: "Support weapons",
+      supportCalibrateAll: "Calibrate all support",
+      supportColWeapon: "Weapon",
+      supportColOn: "Gekalibreerd op",
+      supportNotCalibrated: "niet gekalibreerd",
+      supportRecall: "Recall",
+      supportRecallAll: "Recall all",
+      supportNone: "Geen base met een support weapon",
+      supportCalibrated: "Support gekalibreerd op {name}: {n} weapon(s)",
+      supportAlready: "{n} stond er al op",
+      supportOutOfRange: "{n} buiten bereik",
+      supportRecalled: "Support teruggeroepen: {bases}",
+      supportNothingToRecall: "Geen support om terug te roepen",
+      supportUnknownBase: 'Geen eigen base met de naam "{name}"',
+      supportUsage: "Gebruik: /st support | /st support recall [basenaam] | /st support debug",
+      supportDebug: "Support-debug: menu-hook {hook}, {calls}x aangeroepen, {composites} Composite(s), {menus} menu(s) - details in de console (F12)",
+      supportStatus: "{n} support weapon(s), {on} gekalibreerd",
+      supportStatusNoData: "nog geen basegegevens",
       apiKeyRejected: "\u26A0 API-key geweigerd \u2014 controleer /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: niet herkend \u2014 scan eerst een base om je te registreren.",
       scansFailed: "\u26A0 {count} scan(s) konden niet verstuurd worden",
@@ -3513,6 +3582,8 @@ var ShockrTools = (() => {
     { cmd: "resources", usage: "/st resources", key: "helpCmdResources" },
     { cmd: "army", usage: "/st army", key: "helpCmdArmy" },
     { cmd: "mcv", usage: "/st mcv", key: "helpCmdMcv" },
+    { cmd: "support", usage: "/st support", key: "helpCmdSupport" },
+    { cmd: "support", usage: "/st support recall [base]", key: "helpCmdSupportRecall" },
     { cmd: "tunnels", usage: "/st tunnels", key: "helpCmdTunnels" },
     { cmd: "blocklist", usage: "/st blocklist", key: "helpCmdBlocklist" },
     { cmd: "blocklist", usage: "/st blocklist remove <name>", key: "helpCmdBlocklistRemove" },
@@ -3885,6 +3956,7 @@ var ShockrTools = (() => {
     factory: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2.5 21.5v-11l5 3v-3l5 3v-3l5 3V3.5h4v18z"/><path d="M6 17.5h2M11 17.5h2M16 17.5h2" stroke-linecap="round"/></svg>',
     silo: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 21.5V8a7 4 0 0 1 14 0v13.5z"/><path d="M5 12.5h14M5 17h14"/><path d="M3 21.5h18" stroke-linecap="round"/></svg>',
     tank: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><rect x="2.5" y="14" width="19" height="6" rx="3"/><path d="M6 14v-3.5h10V14"/><path d="M16 11.5h6"/><circle cx="7" cy="17" r="0.8" fill="currentColor"/><circle cx="12" cy="17" r="0.8" fill="currentColor"/><circle cx="17" cy="17" r="0.8" fill="currentColor"/></svg>',
+    crosshair: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="7.5"/><path d="M12 1.5v6M12 16.5v6M1.5 12h6M16.5 12h6"/></svg>',
     tunnel: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2.5 21.5v-9a9.5 9.5 0 0 1 19 0v9z"/><path d="M7 21.5v-8a5 5 0 0 1 10 0v8"/><path d="M12 17.5v4" stroke-linecap="round"/></svg>'
   };
   var Toolbar = class {
@@ -13726,6 +13798,440 @@ var ShockrTools = (() => {
     }
   };
 
+  // plugins/support-calibrate.js
+  var TOOLBAR_ID9 = "support";
+  var VIEW_RECALL = "recall";
+  var VIEW_RECALL_ALL = "recallall";
+  function cityPos(city) {
+    const x = typeof city.get_X === "function" ? city.get_X() : city.get_PosX();
+    const y = typeof city.get_Y === "function" ? city.get_Y() : city.get_PosY();
+    return { x: Number(x), y: Number(y) };
+  }
+  function supportWeapon(city) {
+    try {
+      return typeof city.get_SupportWeapon === "function" ? city.get_SupportWeapon() : null;
+    } catch {
+      return null;
+    }
+  }
+  function dedicatedId(city) {
+    try {
+      return Number(city.get_SupportDedicatedBaseId()) || 0;
+    } catch {
+      return 0;
+    }
+  }
+  function isSupportTarget(visObject) {
+    try {
+      if (!visObject) return false;
+      if (visObject.get_VisObjectType() !== ClientLib.Vis.VisObject.EObjectType.RegionCityType) return false;
+      const T = ClientLib.Vis.Region.RegionCity.ERegionCityType;
+      const type = visObject.get_Type();
+      return type === T.Own || type === T.Alliance;
+    } catch {
+      return false;
+    }
+  }
+  function calibrateAll(target) {
+    const out = { calibrated: [], already: [], outOfRange: [] };
+    for (const city of ownBases3()) {
+      let name = "?";
+      try {
+        name = city.get_Name();
+        const weapon = supportWeapon(city);
+        if (!weapon) continue;
+        const r = Number(weapon.r);
+        const p = cityPos(city);
+        const dx = p.x - target.x;
+        const dy = p.y - target.y;
+        if (!(r > 0) || dx * dx + dy * dy > r * r) {
+          out.outOfRange.push(name);
+          continue;
+        }
+        if (dedicatedId(city) === target.id) {
+          out.already.push(name);
+          continue;
+        }
+        city.SetDedicatedSupport(target.id);
+        out.calibrated.push(name);
+        console.log(`[ST] SupportCalibrate: ${name} - SetDedicatedSupport(${target.id})`);
+      } catch (err) {
+        console.error(`[ST] SupportCalibrate: ${name} - calibrate failed`, err);
+      }
+    }
+    return out;
+  }
+  function recallCity(city) {
+    if (!dedicatedId(city)) return false;
+    city.RecallDedicatedSupport();
+    console.log(`[ST] SupportCalibrate: ${city.get_Name()} - RecallDedicatedSupport()`);
+    return true;
+  }
+  function recallAll() {
+    const names2 = [];
+    for (const city of ownBases3()) {
+      try {
+        if (recallCity(city)) names2.push(city.get_Name());
+      } catch (err) {
+        console.error("[ST] SupportCalibrate: recall failed", err);
+      }
+    }
+    return names2;
+  }
+  function weaponLabel(city) {
+    try {
+      const sd = city.get_SupportData();
+      if (!sd) return "\u2014";
+      const faction = ClientLib.Data.MainData.GetInstance().get_Player().get_Faction();
+      const Tech = ClientLib.Base.Tech;
+      const name = Tech.GetProductionBuildingNameFromFaction(Tech.GetTechNameFromTechId(sd.get_Type(), faction), faction);
+      return `${name || "?"} (${sd.get_Level()})`;
+    } catch {
+      return "\u2014";
+    }
+  }
+  function readSupport() {
+    const rows = [];
+    for (const city of ownBases3()) {
+      try {
+        if (!supportWeapon(city)) continue;
+        const id = dedicatedId(city);
+        let on = null;
+        if (id) {
+          try {
+            on = city.get_SupportDedicatedBaseName() || String(id);
+          } catch {
+            on = String(id);
+          }
+        }
+        rows.push({ id: city.get_Id(), name: city.get_Name(), weapon: weaponLabel(city), on });
+      } catch {
+      }
+    }
+    return rows;
+  }
+  var BTN2 = "cursor:pointer;padding:1px 8px;border:1px solid #5f8fb4;border-radius:3px;background:#0d2a40;color:#4fc3f7;white-space:nowrap;";
+  function renderSupport(rows) {
+    if (!rows.length) return `<div style="color:#999;padding:12px 0;text-align:center;">${escapeHtml(t("supportNone"))}</div>`;
+    const th = "padding:3px 5px;text-align:left;font-weight:normal;color:#999;";
+    const td = "padding:3px 5px;white-space:nowrap;";
+    const any = rows.some((r) => r.on);
+    let html = "";
+    if (any) {
+      html += `<div style="margin:4px 0 6px;"><span data-id="0" data-view="${VIEW_RECALL_ALL}" style="${BTN2}">${escapeHtml(t("supportRecallAll"))}</span></div>`;
+    }
+    html += `<table style="border-collapse:collapse;width:100%;"><tr style="border-bottom:1px solid #444;"><th style="${th}">${escapeHtml(t("ovColBase"))}</th><th style="${th}">${escapeHtml(t("supportColWeapon"))}</th><th style="${th}">${escapeHtml(t("supportColOn"))}</th><th></th></tr>`;
+    for (const r of rows) {
+      html += `<tr style="border-bottom:1px solid #2a2a2a;"><td data-id="${r.id}" title="${escapeHtml(t("ovJumpHint"))}" style="${td}color:#4fc3f7;cursor:pointer;">${escapeHtml(r.name)}</td><td style="${td}">${escapeHtml(r.weapon)}</td><td style="${td}${r.on ? "color:#fff;" : "color:#777;"}">${escapeHtml(r.on || t("supportNotCalibrated"))}</td><td style="${td}text-align:right;">${r.on ? `<span data-id="${r.id}" data-view="${VIEW_RECALL}" style="${BTN2}">${escapeHtml(t("supportRecall"))}</span>` : ""}</td></tr>`;
+    }
+    return html + "</table>";
+  }
+  function qxName(o) {
+    try {
+      return o && typeof o === "object" ? o.classname || o.constructor && o.constructor.classname || null : null;
+    } catch {
+      return null;
+    }
+  }
+  function widgetLabel(o) {
+    try {
+      return typeof o.getLabel === "function" ? o.getLabel() : void 0;
+    } catch {
+      return void 0;
+    }
+  }
+  function widgetTree(w, depth = 0) {
+    if (!w || depth > 5) return [];
+    let kids = [];
+    try {
+      kids = typeof w.getChildren === "function" ? w.getChildren() : [];
+    } catch {
+      kids = [];
+    }
+    return (kids || []).map((k) => ({
+      cls: qxName(k),
+      base: k && k.basename,
+      label: widgetLabel(k),
+      children: widgetTree(k, depth + 1)
+    }));
+  }
+  function describeMenu(menu) {
+    const own = [];
+    const inherited = [];
+    try {
+      for (const k in menu) {
+        let v;
+        try {
+          v = menu[k];
+        } catch {
+          continue;
+        }
+        if (!v || typeof v !== "object" || !qxName(v)) continue;
+        const entry = { key: k, cls: qxName(v), base: v.basename, label: widgetLabel(v) };
+        if (Object.prototype.hasOwnProperty.call(menu, k)) own.push(entry);
+        else if (v.basename === "Composite") inherited.push(entry);
+      }
+    } catch {
+    }
+    return { cls: qxName(menu), own, inheritedComposites: inherited, tree: widgetTree(menu) };
+  }
+  function describeTarget(v, allowed) {
+    const get = (fn) => {
+      try {
+        return fn();
+      } catch {
+        return null;
+      }
+    };
+    return {
+      visType: get(() => v.get_VisObjectType()),
+      regionCityType: get(() => ClientLib.Vis.VisObject.EObjectType.RegionCityType),
+      type: get(() => v.get_Type()),
+      ownAlliance: get(() => [ClientLib.Vis.Region.RegionCity.ERegionCityType.Own, ClientLib.Vis.Region.RegionCity.ERegionCityType.Alliance]),
+      name: get(() => v.get_Name()),
+      allowed
+    };
+  }
+  function findMenuInstances() {
+    const out = [];
+    try {
+      const Cls = webfrontend.gui.region.RegionCityMenu;
+      const reg = qx.core.ObjectRegistry.getRegistry();
+      for (const k in reg) if (reg[k] instanceof Cls) out.push(reg[k]);
+    } catch {
+    }
+    return out;
+  }
+  var SupportCalibrate = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descSupportCalibrate");
+    }
+    constructor(config, toolbar, cli) {
+      this.name = "SupportCalibrate";
+      this.config = config;
+      this.toolbar = toolbar;
+      this.cli = cli;
+      this.running = false;
+      this._proto = null;
+      this._original = null;
+      this._wrapper = null;
+      this._buttons = [];
+      this._menus = /* @__PURE__ */ new Set();
+      this._diag = { calls: 0, lastError: null, composites: null };
+      this._target = null;
+      this.panel = new OverviewPanel(config, {
+        id: "st-support-panel",
+        prefix: "SupportCalibrate",
+        width: 480,
+        title: () => t("supportTitle"),
+        read: () => readSupport(),
+        render: (rows) => renderSupport(rows),
+        onRowClick: (id, view) => this._onPanelClick(id, view)
+      });
+    }
+    async start() {
+      this.running = true;
+      this._installMenuHook();
+      this.toolbar.register({
+        id: TOOLBAR_ID9,
+        icon: ICONS.crosshair,
+        label: () => t("toolbarSupport"),
+        onClick: () => this.panel.toggle()
+      });
+      this.cli.register("support", (args) => this._command(args));
+    }
+    stop() {
+      this.running = false;
+      this._removeMenuHook();
+      this.panel.destroy();
+      this.toolbar.unregister(TOOLBAR_ID9);
+      this.cli.unregister("support");
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      try {
+        const rows = readSupport();
+        return t("supportStatus", { n: rows.length, on: rows.filter((r) => r.on).length });
+      } catch {
+        return t("supportStatusNoData");
+      }
+    }
+    // ─── Chat command ────────────────────────────────────────────────
+    _command(args) {
+      const [action, ...rest] = args;
+      if (!action) {
+        this.panel.toggle();
+        return;
+      }
+      if (action === "debug") {
+        this.debug();
+        return;
+      }
+      if (action !== "recall") {
+        chatMessage(`[ST] ${escapeHtml(t("supportUsage"))}`);
+        return;
+      }
+      const name = rest.join(" ").trim();
+      if (!name || name.toLowerCase() === "all") {
+        this._reportRecall(recallAll());
+        return;
+      }
+      const city = ownBases3().find((c) => c.get_Name().toLowerCase() === name.toLowerCase());
+      if (!city) {
+        chatMessage(`[ST] ${escapeHtml(t("supportUnknownBase", { name }))}`);
+        return;
+      }
+      this._reportRecall(recallCity(city) ? [city.get_Name()] : []);
+    }
+    _reportRecall(names2) {
+      chatMessage(`[ST] ${escapeHtml(names2.length ? t("supportRecalled", { bases: names2.join(", ") }) : t("supportNothingToRecall"))}`);
+      this.panel.refresh();
+    }
+    _onPanelClick(id, view) {
+      if (view === VIEW_RECALL_ALL) {
+        this._reportRecall(recallAll());
+      } else if (view === VIEW_RECALL) {
+        const city = ownBases3().find((c) => c.get_Id() === id);
+        this._reportRecall(city && recallCity(city) ? [city.get_Name()] : []);
+      } else {
+        openBase(id);
+      }
+    }
+    // ─── Diagnostics ─────────────────────────────────────────────────
+    /** `/st support debug`: hook state + menu structure to the console, a summary to the chat. */
+    debug() {
+      let proto = null;
+      try {
+        proto = webfrontend.gui.region.RegionCityMenu.prototype;
+      } catch {
+        proto = null;
+      }
+      const current = proto && proto.showMenu;
+      const menus = [...this._menus];
+      if (!menus.length) menus.push(...findMenuInstances());
+      const report = {
+        classFound: !!proto,
+        hookInstalled: !!this._wrapper,
+        wrapperIsCurrent: !!current && current === this._wrapper,
+        currentShowMenuSource: typeof current === "function" ? String(current).slice(0, 400) : String(current),
+        wrapperCalls: this._diag.calls,
+        lastError: this._diag.lastError,
+        compositesFound: this._diag.composites,
+        lastTarget: this._diag.lastTarget || null,
+        buttonsAdded: this._buttons.length,
+        menus: menus.map(describeMenu)
+      };
+      console.log("[ST] SupportCalibrate debug", report);
+      try {
+        console.log("[ST] SupportCalibrate debug (JSON)", JSON.stringify(report, null, 1));
+      } catch {
+      }
+      let hook = "not installed";
+      if (report.wrapperIsCurrent) hook = "on top";
+      else if (report.hookInstalled) hook = "not on top";
+      chatMessage(`[ST] ${escapeHtml(t("supportDebug", {
+        hook,
+        calls: report.wrapperCalls,
+        composites: report.compositesFound === null ? "-" : report.compositesFound,
+        menus: report.menus.length
+      }))}`);
+      return report;
+    }
+    // ─── World-map menu ──────────────────────────────────────────────
+    _installMenuHook() {
+      let proto = null;
+      try {
+        proto = webfrontend.gui.region.RegionCityMenu.prototype;
+      } catch {
+        proto = null;
+      }
+      if (!proto || typeof proto.showMenu !== "function") {
+        console.warn("[ST] SupportCalibrate: RegionCityMenu.showMenu not found - no menu button (panel and /st support still work)");
+        return;
+      }
+      const plugin = this;
+      const original = proto.showMenu;
+      const wrapper = function(visObject) {
+        try {
+          plugin._diag.calls++;
+          if (plugin.running) plugin._onShowMenu(this, visObject);
+        } catch (err) {
+          plugin._diag.lastError = err && err.message;
+          console.error("[ST] SupportCalibrate: menu hook failed", err);
+        }
+        return original.apply(this, arguments);
+      };
+      proto.showMenu = wrapper;
+      this._proto = proto;
+      this._original = original;
+      this._wrapper = wrapper;
+    }
+    _removeMenuHook() {
+      if (this._proto && this._proto.showMenu === this._wrapper) this._proto.showMenu = this._original;
+      for (const b of this._buttons) {
+        try {
+          const parent = b.getLayoutParent();
+          if (parent) parent.remove(b);
+          b.dispose();
+        } catch {
+        }
+      }
+      this._buttons = [];
+      for (const m of this._menus) delete m.__stSupportButtons;
+      this._menus.clear();
+      this._proto = this._original = this._wrapper = null;
+    }
+    /** First show of a menu instance: add our button to its Composite children; then show/hide it per target. */
+    _onShowMenu(menu, visObject) {
+      this._target = visObject;
+      if (!menu.__stSupportButtons) {
+        menu.__stSupportButtons = [];
+        this._menus.add(menu);
+        for (const k of Object.keys(menu)) {
+          const c = menu[k];
+          if (!c || c.basename !== "Composite" || typeof c.add !== "function") continue;
+          const button = new qx.ui.form.Button(t("supportCalibrateAll"));
+          button.addListener("execute", () => this._calibrateFromMenu());
+          c.add(button);
+          menu.__stSupportButtons.push(button);
+          this._buttons.push(button);
+        }
+        this._diag.composites = menu.__stSupportButtons.length;
+        console.log(`[ST] SupportCalibrate: menu opened first time - ${this._diag.composites} Composite(s) found for the button`);
+        if (!this._diag.composites) {
+          console.warn("[ST] SupportCalibrate: no Composite on the menu - structure:", describeMenu(menu));
+        }
+      }
+      const show = isSupportTarget(visObject);
+      this._diag.lastTarget = describeTarget(visObject, show);
+      for (const b of menu.__stSupportButtons) {
+        try {
+          b.setLabel(t("supportCalibrateAll"));
+          b.setVisibility(show ? "visible" : "excluded");
+        } catch {
+        }
+      }
+    }
+    _calibrateFromMenu() {
+      const v = this._target;
+      if (!isSupportTarget(v)) return;
+      let target;
+      try {
+        target = { id: v.get_Id(), x: Number(v.get_RawX()), y: Number(v.get_RawY()), name: v.get_Name() };
+      } catch (err) {
+        console.error("[ST] SupportCalibrate: target not readable", err);
+        return;
+      }
+      const res = calibrateAll(target);
+      const parts = [t("supportCalibrated", { name: target.name, n: res.calibrated.length })];
+      if (res.already.length) parts.push(t("supportAlready", { n: res.already.length }));
+      if (res.outOfRange.length) parts.push(t("supportOutOfRange", { n: res.outOfRange.length }));
+      chatMessage(`[ST] ${escapeHtml(parts.join(" \xB7 "))}`);
+      this.panel.refresh();
+    }
+  };
+
   // plugins/stabs-stats.js
   var RES = { TIB: 1, CRY: 2, CREDITS: 3, RP: 6, RC_BASE: 7, RC_AIR: 8, RC_INF: 9, RC_VEH: 10 };
   var RES_KEYS = Object.values(RES);
@@ -14418,7 +14924,7 @@ var ShockrTools = (() => {
   }
 
   // plugins/stabs.js
-  var TOOLBAR_ID9 = "stabs";
+  var TOOLBAR_ID10 = "stabs";
   var SIM_LOCK_MS = 3e3;
   var TICK_MS2 = 300;
   var KEY_NUM0 = 96;
@@ -14660,7 +15166,7 @@ var ShockrTools = (() => {
       }
       if (!this.parked) {
         this.toolbar.register({
-          id: TOOLBAR_ID9,
+          id: TOOLBAR_ID10,
           icon: ICONS.sim,
           label: () => t("toolbarStabs"),
           onClick: () => this.togglePanel()
@@ -14712,7 +15218,7 @@ var ShockrTools = (() => {
       this._lock = false;
       this._request = false;
       document.removeEventListener("keydown", this._onKeyDown);
-      this.toolbar.unregister(TOOLBAR_ID9);
+      this.toolbar.unregister(TOOLBAR_ID10);
       if (this._button) {
         try {
           const parent = this._button.getLayoutParent();
@@ -15151,7 +15657,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.42.0";
+  var ST_VERSION = "5.43.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -15218,6 +15724,7 @@ var ShockrTools = (() => {
       new ResourceOverview(config, toolbar, cli),
       new ArmyOverview(config, toolbar, cli),
       new McvTimer(config, cli),
+      new SupportCalibrate(config, toolbar, cli),
       new Stabs(config, toolbar)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });

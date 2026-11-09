@@ -1,7 +1,25 @@
 {
-  "version": "5.42.0",
+  "version": "5.43.0",
   "date": "2026-11-09",
   "changelog": [
+    {
+      "version": "5.43.0",
+      "date": "2026-11-09",
+      "changes": {
+        "en": [
+          "New plugin SupportCalibrate: \"Calibrate all support\" in the world-map menu of an own or alliance base calibrates every support weapon in range on it",
+          "Support panel (crosshair icon or /st support): where each weapon is calibrated, Recall per base and Recall all; /st support recall [base] from the chat"
+        ],
+        "de": [
+          "Neues Plugin SupportCalibrate: „Alle Unterstützung kalibrieren“ im Weltkarten-Menü einer eigenen oder Allianz-Basis kalibriert jede Unterstützungswaffe in Reichweite darauf",
+          "Support-Panel (Fadenkreuz-Symbol oder /st support): worauf jede Waffe kalibriert ist, Zurückrufen pro Basis und Alle zurückrufen; /st support recall [Basis] aus dem Chat"
+        ],
+        "nl": [
+          "Nieuwe plugin SupportCalibrate: \"Calibrate all support\" in het wereldkaart-menu van een eigen of alliance-base kalibreert elk support weapon in bereik erop",
+          "Support-paneel (vizier-icoon of /st support): waar elk weapon op gekalibreerd is, Recall per base en Recall all; /st support recall [base] vanuit de chat"
+        ]
+      }
+    },
     {
       "version": "5.42.0",
       "date": "2026-11-09",
@@ -74,24 +92,6 @@
           "Nieuwe plugin ProductionOverview: productie per base per uur (continu, bonus, POI, totaal) voor Tiberium, Crystal, Power en Credits, met totaalrij — fabriek-icoon in de Shockr-knop of /st production",
           "Klik op een basenaam in het overzicht om die base te openen",
           "De plugin-lijst (Plugins-paneel, /st plugin list, /st help, info-pagina) staat nu op alfabet"
-        ]
-      }
-    },
-    {
-      "version": "5.38.0",
-      "date": "2026-11-08",
-      "changes": {
-        "en": [
-          "New plugin AutoCollect: collects the resource packages of all your bases automatically (off by default — /st plugin enable auto-collect)",
-          "Interval: /st config set autocollect.interval <min> (default 5); the chat reports \"Collected packages on X bases\""
-        ],
-        "de": [
-          "Neues Plugin AutoCollect: sammelt die Ressourcenpakete aller deiner Basen automatisch ein (standardmäßig aus — /st plugin enable auto-collect)",
-          "Intervall: /st config set autocollect.interval <Min.> (Standard 5); der Chat meldet „Pakete in X Basen eingesammelt“"
-        ],
-        "nl": [
-          "Nieuwe plugin AutoCollect: verzamelt de resource-pakketten van al je bases automatisch (standaard uit — /st plugin enable auto-collect)",
-          "Interval: /st config set autocollect.interval <min> (standaard 5); de chat meldt \"Pakketten verzameld op X bases\""
         ]
       }
     }

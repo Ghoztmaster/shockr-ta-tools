@@ -1,5 +1,18 @@
 # Changelog
 
+## [5.43.0] — 2026-11-09
+
+Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+Ronde 6 van 7: MaelstromTools-functies als Shockr-plugins.
+
+### Nieuwe plugin: SupportCalibrate (`plugins/support-calibrate.js`, standaard aan)
+- Wereldkaart, menu van een eigen of alliance-base: knop "Calibrate all support". Elke eigen base waarvan het support weapon die base bereikt (`(x − doelX)² + (y − doelY)² <= weapon.r²`) krijgt `SetDedicatedSupport(doel)`; bases die er al op staan worden overgeslagen (opnieuw zetten kan de kalibratie herstarten - afwijking van MaelstromTools). Chat: aantal gekalibreerd / stond er al op / buiten bereik
+- Menu-hook zoals MaelstromTools: `RegionCityMenu.prototype.showMenu` gewikkeld, qx-knop in de Composite-kinderen van het menu, alleen zichtbaar bij `RegionCityType` met type Own of Alliance. Bij stop: origineel terug (als niemand er later overheen wikkelde) en onze knoppen weg
+- Toolbar-icoon (vizier) of `/st support`: paneel met per base het support weapon (naam + level), waar het op gekalibreerd is, Recall per base en Recall all (`RecallDedicatedSupport()`); klik op de basenaam opent de base
+- `/st support recall` roept alles terug, `/st support recall <basenaam>` één base
+- NIET LIVE GEVERIFIEERD: de menu-hook en de support-calls uit MaelstromTools 0.1.5.5 op de huidige client
+
 ## [5.42.0] — 2026-11-09
 
 Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
