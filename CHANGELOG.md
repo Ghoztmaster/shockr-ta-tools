@@ -1,5 +1,18 @@
 # Changelog
 
+## [5.40.0] — 2026-11-09
+
+Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+Ronde 3 van 7: MaelstromTools-functies als Shockr-plugins.
+
+### Nieuwe plugin: ResourceOverview (`plugins/resource-overview.js`, standaard aan)
+- Toolbar-icoon (silo) of `/st resources`: paneel met per eigen base voor Tiberium, Crystal en Power de voorraad, max opslag, vulling % en "vol om" (kloktijd; met datum als het niet vandaag is). Rood = vol, geel = boven 75 %
+- Totaalrij: voorraad en opslag opgeteld, met het totaalpercentage (geen "vol om")
+- Klik op de basenaam opent die base (gedeelde `openBase` uit `lib/overview-panel.js`)
+- Game-API: `city.GetResourceCount(type)` en `city.GetResourceMaxStorage(type)` (zoals TransferAll), groei via `city.GetResourceGrowPerHour(type, true, true)` (zoals UpgradeCalc, incl. pakketten en POI). Vol om = nu + (max - voorraad) / groei per uur; geen groei of onbekend: "—"
+- Voorraad en "vol om" afgerond (hele eenheden, minuten), zodat de verversing elke 5 s niet steeds opnieuw tekent
+
 ## [5.39.0] — 2026-11-09
 
 Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

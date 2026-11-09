@@ -320,6 +320,22 @@
     }
   },
   {
+    "name": "ResourceOverview",
+    "slug": "resource-overview",
+    "defaultEnabled": true,
+    "replaces": null,
+    "short": {
+      "en": "Storage per base: how full, and when it is full",
+      "de": "Lager pro Basis: wie voll, und wann es voll ist",
+      "nl": "Opslag per base: hoe vol, en wanneer hij vol is"
+    },
+    "long": {
+      "en": "The silo icon in the Shockr button (or /st resources) opens a panel with the storage of every own base for Tiberium, Crystal and Power: current stock, max storage, fill % and the time the storage is full. Red = full, yellow = more than 75 %. The total row shows the summed stock and storage with the overall percentage. Click a base name to open that base.",
+      "de": "Das Silo-Symbol im Shockr-Knopf (oder /st resources) öffnet ein Panel mit dem Lager jeder eigenen Basis für Tiberium, Kristall und Strom: aktueller Bestand, maximales Lager, Füllstand % und die Uhrzeit, zu der das Lager voll ist. Rot = voll, gelb = über 75 %. Die Summenzeile zeigt Bestand und Lager zusammen mit dem Gesamtprozentsatz. Klick auf einen Basisnamen öffnet diese Basis.",
+      "nl": "Het silo-icoon in de Shockr-knop (of /st resources) opent een paneel met de opslag van elke eigen base voor Tiberium, Crystal en Power: huidige voorraad, max opslag, vulling % en het tijdstip waarop de opslag vol is. Rood = vol, geel = boven 75 %. De totaalrij toont voorraad en opslag opgeteld met het totaalpercentage. Klik op een basenaam om die base te openen."
+    }
+  },
+  {
     "name": "SectorHud",
     "slug": "sector-hud",
     "defaultEnabled": true,

@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.39.0
+// @version         5.40.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -102,7 +102,7 @@ var ShockrTools = (() => {
   });
 
   // <define:__ST_PLUGIN_SHORT__>
-  var define_ST_PLUGIN_SHORT_default = { AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, AutoCollect: { en: "Collects the resource packages of all your bases automatically", de: "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein", nl: "Verzamelt de resource-pakketten van al je bases automatisch" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, ProductionOverview: { en: "Production per base per hour in one panel", de: "Produktion pro Basis pro Stunde in einem Panel", nl: "Productie per base per uur in \xE9\xE9n paneel" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" } };
+  var define_ST_PLUGIN_SHORT_default = { AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, AutoCollect: { en: "Collects the resource packages of all your bases automatically", de: "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein", nl: "Verzamelt de resource-pakketten van al je bases automatisch" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, ProductionOverview: { en: "Production per base per hour in one panel", de: "Produktion pro Basis pro Stunde in einem Panel", nl: "Productie per base per uur in \xE9\xE9n paneel" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, ResourceOverview: { en: "Storage per base: how full, and when it is full", de: "Lager pro Basis: wie voll, und wann es voll ist", nl: "Opslag per base: hoe vol, en wanneer hij vol is" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" } };
 
   // lib/game-ready.js
   async function waitForGame({ maxAttempts = 200, intervalMs = 100 } = {}) {
@@ -599,6 +599,17 @@ var ShockrTools = (() => {
       ovTotal: "Total",
       ovJumpHint: "Click to open this base",
       ovNoData: "No base data available",
+      // ResourceOverview (5.40.0)
+      descResourceOverview: "Storage per base: stock, max, fill % and when it is full; red = full, yellow = over 75 %",
+      helpCmdResources: "Open/close the resource (storage) overview",
+      toolbarResources: "Resources",
+      resTitle: "Storage per base",
+      resColCurrent: "Stock",
+      resColMax: "Max",
+      resColFullAt: "Full at",
+      resFull: "full",
+      resStatusOpen: "panel open",
+      resStatusClosed: "panel closed (/st resources)",
       apiKeyRejected: "\u26A0 API key rejected \u2014 check /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: not recognized \u2014 scan a base first to register.",
       scansFailed: "\u26A0 {count} scan(s) failed to send",
@@ -1115,6 +1126,17 @@ var ShockrTools = (() => {
       ovTotal: "Gesamt",
       ovJumpHint: "Klicken, um diese Basis zu \xF6ffnen",
       ovNoData: "Keine Basisdaten verf\xFCgbar",
+      // ResourceOverview (5.40.0)
+      descResourceOverview: "Lager pro Basis: Bestand, Maximum, F\xFCllstand % und wann es voll ist; rot = voll, gelb = \xFCber 75 %",
+      helpCmdResources: "Ressourcen-(Lager-)\xDCbersicht \xF6ffnen/schlie\xDFen",
+      toolbarResources: "Ressourcen",
+      resTitle: "Lager pro Basis",
+      resColCurrent: "Bestand",
+      resColMax: "Max",
+      resColFullAt: "Voll um",
+      resFull: "voll",
+      resStatusOpen: "Panel offen",
+      resStatusClosed: "Panel zu (/st resources)",
       apiKeyRejected: "\u26A0 API-Key abgelehnt \u2014 pr\xFCfe /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: nicht erkannt \u2014 scanne zuerst eine Basis, um dich zu registrieren.",
       scansFailed: "\u26A0 {count} Scan(s) konnten nicht gesendet werden",
@@ -1621,6 +1643,17 @@ var ShockrTools = (() => {
       ovTotal: "Totaal",
       ovJumpHint: "Klik om deze base te openen",
       ovNoData: "Geen basegegevens beschikbaar",
+      // ResourceOverview (5.40.0)
+      descResourceOverview: "Opslag per base: voorraad, max, vulling % en wanneer hij vol is; rood = vol, geel = boven 75 %",
+      helpCmdResources: "Resource-(opslag-)overzicht openen/sluiten",
+      toolbarResources: "Resources",
+      resTitle: "Opslag per base",
+      resColCurrent: "Voorraad",
+      resColMax: "Max",
+      resColFullAt: "Vol om",
+      resFull: "vol",
+      resStatusOpen: "paneel open",
+      resStatusClosed: "paneel dicht (/st resources)",
       apiKeyRejected: "\u26A0 API-key geweigerd \u2014 controleer /st config set api.key",
       notAMember: "\u26A0\uFE0F Server: niet herkend \u2014 scan eerst een base om je te registreren.",
       scansFailed: "\u26A0 {count} scan(s) konden niet verstuurd worden",
@@ -2694,8 +2727,8 @@ var ShockrTools = (() => {
     _parseValue(str) {
       if (str === "true") return true;
       if (str === "false") return false;
-      const num2 = parseFloat(str);
-      if (!isNaN(num2) && String(num2) === str) return num2;
+      const num3 = parseFloat(str);
+      if (!isNaN(num3) && String(num3) === str) return num3;
       return str;
     }
   };
@@ -3351,6 +3384,7 @@ var ShockrTools = (() => {
     { cmd: "targets", usage: "/st targets", key: "helpCmdTargets" },
     { cmd: "markers", usage: "/st markers", key: "helpCmdMarkers" },
     { cmd: "production", usage: "/st production", key: "helpCmdProduction" },
+    { cmd: "resources", usage: "/st resources", key: "helpCmdResources" },
     { cmd: "tunnels", usage: "/st tunnels", key: "helpCmdTunnels" },
     { cmd: "blocklist", usage: "/st blocklist", key: "helpCmdBlocklist" },
     { cmd: "blocklist", usage: "/st blocklist remove <name>", key: "helpCmdBlocklistRemove" },
@@ -3720,6 +3754,7 @@ var ShockrTools = (() => {
     pin: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 22s-7-7.2-7-12.5a7 7 0 0 1 14 0C19 14.8 12 22 12 22z"/><circle cx="12" cy="9.5" r="2.6" fill="currentColor" stroke="none"/></svg>',
     block: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M5.3 5.3l13.4 13.4"/></svg>',
     factory: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2.5 21.5v-11l5 3v-3l5 3v-3l5 3V3.5h4v18z"/><path d="M6 17.5h2M11 17.5h2M16 17.5h2" stroke-linecap="round"/></svg>',
+    silo: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 21.5V8a7 4 0 0 1 14 0v13.5z"/><path d="M5 12.5h14M5 17h14"/><path d="M3 21.5h18" stroke-linecap="round"/></svg>',
     tunnel: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2.5 21.5v-9a9.5 9.5 0 0 1 19 0v9z"/><path d="M7 21.5v-8a5 5 0 0 1 10 0v8"/><path d="M12 17.5v4" stroke-linecap="round"/></svg>'
   };
   var Toolbar = class {
@@ -4666,14 +4701,14 @@ var ShockrTools = (() => {
     }
     const sorted = [...rows.values()].sort((a, b) => b.tib + b.cry - (a.tib + a.cry));
     const td = "padding:1px 4px;";
-    const num2 = td + "text-align:right;";
+    const num3 = td + "text-align:right;";
     let html = `<div style="font-weight:bold;margin-bottom:6px;color:#fff;">\u2694 ${t("plunderTitle")} \u2014 ${escapeHtml2(city.get_Name())}</div>`;
     html += '<table style="width:100%;border-collapse:collapse;">';
-    html += `<tr style="color:#999;"><th style="${td}text-align:left;">${t("plunderUnit")}</th><th style="${num2}">${t("plunderLevel")}</th><th style="${num2}">#</th><th style="${num2}color:#8bc34a;">${t("plunderTib")}</th><th style="${num2}color:#42a5f5;">${t("plunderCrystal")}</th></tr>`;
+    html += `<tr style="color:#999;"><th style="${td}text-align:left;">${t("plunderUnit")}</th><th style="${num3}">${t("plunderLevel")}</th><th style="${num3}">#</th><th style="${num3}color:#8bc34a;">${t("plunderTib")}</th><th style="${num3}color:#42a5f5;">${t("plunderCrystal")}</th></tr>`;
     for (const r of sorted) {
-      html += `<tr><td style="${td}">${escapeHtml2(r.name)}</td><td style="${num2}">${r.level}</td><td style="${num2}">${r.count}</td><td style="${num2}">${fmt(r.tib)}</td><td style="${num2}">${fmt(r.cry)}</td></tr>`;
+      html += `<tr><td style="${td}">${escapeHtml2(r.name)}</td><td style="${num3}">${r.level}</td><td style="${num3}">${r.count}</td><td style="${num3}">${fmt(r.tib)}</td><td style="${num3}">${fmt(r.cry)}</td></tr>`;
     }
-    html += `<tr style="border-top:1px solid #555;font-weight:bold;"><td style="${td}" colspan="3">${t("plunderTotal")}</td><td style="${num2}color:#8bc34a;">${fmt(totalTib)}</td><td style="${num2}color:#42a5f5;">${fmt(totalCry)}</td></tr>`;
+    html += `<tr style="border-top:1px solid #555;font-weight:bold;"><td style="${td}" colspan="3">${t("plunderTotal")}</td><td style="${num3}color:#8bc34a;">${fmt(totalTib)}</td><td style="${num3}color:#42a5f5;">${fmt(totalCry)}</td></tr>`;
     html += "</table>";
     return html;
   }
@@ -4889,10 +4924,10 @@ var ShockrTools = (() => {
     DECODE_TABLE[BASE62_CHARS.charCodeAt(i)] = i;
   }
   var Base62 = {
-    encode(num2, padLength = 0) {
-      if (num2 === 0 && padLength <= 1) return BASE62_CHARS[0];
+    encode(num3, padLength = 0) {
+      if (num3 === 0 && padLength <= 1) return BASE62_CHARS[0];
       const output = [];
-      let current = num2;
+      let current = num3;
       while (current > 0) {
         output.push(BASE62_CHARS[current % BASE]);
         current = Math.floor(current / BASE);
@@ -6345,7 +6380,7 @@ var ShockrTools = (() => {
   }
   function renderPanel2(city, { rows, stock, rate }) {
     const td = "padding:1px 4px;";
-    const num2 = td + "text-align:right;white-space:nowrap;";
+    const num3 = td + "text-align:right;white-space:nowrap;";
     const tibColor = "color:#8bc34a;";
     const powColor = "color:#ffca28;";
     const perHour = t("upgradeCalcPerHour");
@@ -6355,10 +6390,10 @@ var ShockrTools = (() => {
       return html + `<div style="color:#999;">${t("upgradeCalcAllMax")}</div>`;
     }
     html += '<table style="width:100%;border-collapse:collapse;">';
-    html += `<tr style="color:#999;"><th style="${td}text-align:left;">${t("upgradeCalcBuilding")}</th><th style="${num2}">${t("upgradeCalcLevel")}</th><th style="${num2}${tibColor}">${t("upgradeCalcTib")}</th><th style="${num2}${powColor}">${t("upgradeCalcPower")}</th><th style="${num2}">${t("upgradeCalcTime")}</th></tr>`;
+    html += `<tr style="color:#999;"><th style="${td}text-align:left;">${t("upgradeCalcBuilding")}</th><th style="${num3}">${t("upgradeCalcLevel")}</th><th style="${num3}${tibColor}">${t("upgradeCalcTib")}</th><th style="${num3}${powColor}">${t("upgradeCalcPower")}</th><th style="${num3}">${t("upgradeCalcTime")}</th></tr>`;
     for (const r of rows) {
       const ready = r.hours === 0;
-      html += `<tr><td style="${td}">${escapeHtml3(r.name)}</td><td style="${num2}">${r.level}\u2192${r.level + 1}</td><td style="${num2}">${fmt2(r.tib)}</td><td style="${num2}">${fmt2(r.power)}</td><td style="${num2}${ready ? "color:#8bc34a;font-weight:bold;" : ""}">${fmtHours(r.hours)}</td></tr>`;
+      html += `<tr><td style="${td}">${escapeHtml3(r.name)}</td><td style="${num3}">${r.level}\u2192${r.level + 1}</td><td style="${num3}">${fmt2(r.tib)}</td><td style="${num3}">${fmt2(r.power)}</td><td style="${num3}${ready ? "color:#8bc34a;font-weight:bold;" : ""}">${fmtHours(r.hours)}</td></tr>`;
     }
     html += "</table>";
     return html;
@@ -12713,42 +12748,42 @@ var ShockrTools = (() => {
     if (a >= 1e4) return `${sign}${(a / 1e3).toFixed(1)}k`;
     return `${sign}${Math.round(a)}`;
   }
-  function renderTable3({ columns: columns2, rows, total = null, jumpHint = "" }) {
+  function renderTable3({ columns: columns3, rows, total = null, jumpHint = "" }) {
     const th = "padding:3px 5px;font-weight:normal;color:#999;white-space:nowrap;";
     const td = "padding:3px 5px;text-align:right;white-space:nowrap;";
     const sep = "border-left:1px solid #333;";
-    const groupStart = (i) => i > 0 && columns2[i].group !== columns2[i - 1].group;
+    const groupStart = (i) => i > 0 && columns3[i].group !== columns3[i - 1].group;
     const cell = (c, i, v, row) => {
       const text = c.format ? c.format(v, row) : compact2(v);
       const extra = c.style ? c.style(v, row) || "" : "";
       return `<td style="${td}${groupStart(i) || i === 0 ? sep : ""}${extra}">${escapeHtml(String(text))}</td>`;
     };
     let html = '<table style="border-collapse:collapse;width:100%;">';
-    if (columns2.some((c) => c.group)) {
+    if (columns3.some((c) => c.group)) {
       html += `<tr><th style="${th}"></th>`;
-      for (let i = 0; i < columns2.length; ) {
+      for (let i = 0; i < columns3.length; ) {
         let span = 1;
-        while (i + span < columns2.length && columns2[i + span].group === columns2[i].group) span++;
-        html += `<th colspan="${span}" style="${th}${sep}text-align:center;color:#ccc;">${escapeHtml(columns2[i].group || "")}</th>`;
+        while (i + span < columns3.length && columns3[i + span].group === columns3[i].group) span++;
+        html += `<th colspan="${span}" style="${th}${sep}text-align:center;color:#ccc;">${escapeHtml(columns3[i].group || "")}</th>`;
         i += span;
       }
       html += "</tr>";
     }
     html += `<tr style="border-bottom:1px solid #444;"><th style="${th}text-align:left;">${escapeHtml(t("ovColBase"))}</th>`;
-    columns2.forEach((c, i) => {
+    columns3.forEach((c, i) => {
       html += `<th style="${th}text-align:right;${groupStart(i) || i === 0 ? sep : ""}">${escapeHtml(c.label)}</th>`;
     });
     html += "</tr>";
     for (const row of rows) {
       html += `<tr style="border-bottom:1px solid #2a2a2a;"><td data-id="${escapeHtml(String(row.id))}" title="${escapeHtml(jumpHint)}" style="padding:3px 5px;color:#4fc3f7;cursor:pointer;white-space:nowrap;">${escapeHtml(row.name)}</td>`;
-      columns2.forEach((c, i) => {
+      columns3.forEach((c, i) => {
         html += cell(c, i, row.values[c.key], row);
       });
       html += "</tr>";
     }
     if (total) {
       html += `<tr style="border-top:2px solid #555;font-weight:bold;"><td style="padding:3px 5px;color:#fff;">${escapeHtml(total.name || t("ovTotal"))}</td>`;
-      columns2.forEach((c, i) => {
+      columns3.forEach((c, i) => {
         html += cell(c, i, total.values[c.key], total);
       });
       html += "</tr>";
@@ -12985,6 +13020,163 @@ var ShockrTools = (() => {
       }));
       if (!rows.length) return null;
       return { rows, total: { values: totals(rows) } };
+    }
+  };
+
+  // plugins/resource-overview.js
+  var TOOLBAR_ID7 = "resources";
+  var RESOURCES2 = ["tib", "cry", "power"];
+  var RES_KEY2 = { tib: "resTiberium", cry: "resCrystal", power: "resPower" };
+  var WARN_PCT = 75;
+  var RED = "color:#ff5252;font-weight:bold;";
+  var YELLOW = "color:#ffd740;";
+  function num2(fn) {
+    try {
+      const v = Number(fn());
+      return Number.isFinite(v) ? v : null;
+    } catch {
+      return null;
+    }
+  }
+  function pct(cur, max) {
+    if (cur === null || max === null || !(max > 0)) return null;
+    return cur / max * 100;
+  }
+  function fullAt(cur, max, ratePerHour, now) {
+    if (cur === null || max === null || !(max > 0)) return null;
+    if (cur >= max) return now;
+    if (ratePerHour === null || !(ratePerHour > 0)) return null;
+    return now + (max - cur) / ratePerHour * 3600 * 1e3;
+  }
+  function formatFullAt(ts, now) {
+    if (ts === null || ts === void 0) return "\u2014";
+    if (ts <= now) return t("resFull");
+    const d = new Date(ts);
+    const n = new Date(now);
+    const time = d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit", hour12: false });
+    if (d.toDateString() === n.toDateString()) return time;
+    return `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}. ${time}`;
+  }
+  function levelStyle(p) {
+    if (p === null || p === void 0) return "";
+    if (p >= 100) return RED;
+    if (p > WARN_PCT) return YELLOW;
+    return "";
+  }
+  function readCity2(city, now) {
+    const R = ClientLib.Base.EResourceType;
+    const v = {};
+    for (const [key, type] of [["tib", R.Tiberium], ["cry", R.Crystal], ["power", R.Power]]) {
+      const cur = num2(() => city.GetResourceCount(type));
+      const max = num2(() => city.GetResourceMaxStorage(type));
+      const rate = num2(() => city.GetResourceGrowPerHour(type, true, true));
+      v[`${key}_cur`] = cur;
+      v[`${key}_max`] = max;
+      v[`${key}_pct`] = pct(cur, max);
+      const full = fullAt(cur, max, rate, now);
+      v[`${key}_full`] = full === null ? null : Math.round(full / 6e4) * 6e4;
+    }
+    return v;
+  }
+  function totals2(rows) {
+    const v = {};
+    for (const r of RESOURCES2) {
+      let cur = null;
+      let max = null;
+      for (const row of rows) {
+        const c = row.values[`${r}_cur`];
+        const m = row.values[`${r}_max`];
+        if (c !== null && m !== null) {
+          cur = (cur || 0) + c;
+          max = (max || 0) + m;
+        }
+      }
+      v[`${r}_cur`] = cur;
+      v[`${r}_max`] = max;
+      v[`${r}_pct`] = pct(cur, max);
+      v[`${r}_full`] = null;
+    }
+    return v;
+  }
+  function columns2(now) {
+    const cols = [];
+    for (const r of RESOURCES2) {
+      const group = t(RES_KEY2[r]);
+      const rowPct = (row) => row.values[`${r}_pct`];
+      cols.push({ key: `${r}_cur`, group, label: t("resColCurrent"), style: (v, row) => levelStyle(rowPct(row)) });
+      cols.push({ key: `${r}_max`, group, label: t("resColMax") });
+      cols.push({
+        key: `${r}_pct`,
+        group,
+        label: "%",
+        format: (v) => v === null || v === void 0 ? "\u2014" : `${Math.floor(v)}%`,
+        style: (v) => levelStyle(v)
+      });
+      cols.push({
+        key: `${r}_full`,
+        group,
+        label: t("resColFullAt"),
+        format: (v, row) => row.id === void 0 ? "" : formatFullAt(v, now),
+        style: (v, row) => levelStyle(rowPct(row))
+      });
+    }
+    return cols;
+  }
+  var ResourceOverview = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descResourceOverview");
+    }
+    constructor(config, toolbar, cli) {
+      this.name = "ResourceOverview";
+      this.config = config;
+      this.toolbar = toolbar;
+      this.cli = cli;
+      this.running = false;
+      this.panel = new OverviewPanel(config, {
+        id: "st-resource-panel",
+        prefix: "ResourceOverview",
+        width: 760,
+        title: () => t("resTitle"),
+        read: () => this.read(),
+        render: (data) => renderTable3({ columns: columns2(data.now), rows: data.rows, total: data.total, jumpHint: t("ovJumpHint") }),
+        onRowClick: (id) => openBase(id)
+      });
+    }
+    async start() {
+      this.running = true;
+      this.toolbar.register({
+        id: TOOLBAR_ID7,
+        icon: ICONS.silo,
+        label: () => t("toolbarResources"),
+        onClick: () => this.panel.toggle()
+      });
+      this.cli.register("resources", () => this.panel.toggle());
+    }
+    stop() {
+      this.running = false;
+      this.panel.destroy();
+      this.toolbar.unregister(TOOLBAR_ID7);
+      this.cli.unregister("resources");
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      return t(this.panel.isOpen() ? "resStatusOpen" : "resStatusClosed");
+    }
+    /** { now, rows: [{id, name, values}], total: {values} }, or null without city data. */
+    read(now = Date.now()) {
+      now = Math.floor(now / 6e4) * 6e4;
+      const rows = ownBases3().map((city) => ({
+        id: city.get_Id(),
+        name: city.get_Name(),
+        values: readCity2(city, now)
+      }));
+      if (!rows.length) return null;
+      for (const row of rows) for (const r of RESOURCES2) {
+        const k = `${r}_cur`;
+        if (row.values[k] !== null) row.values[k] = Math.floor(row.values[k]);
+      }
+      return { now, rows, total: { values: totals2(rows) } };
     }
   };
 
@@ -13680,7 +13872,7 @@ var ShockrTools = (() => {
   }
 
   // plugins/stabs.js
-  var TOOLBAR_ID7 = "stabs";
+  var TOOLBAR_ID8 = "stabs";
   var SIM_LOCK_MS = 3e3;
   var TICK_MS2 = 300;
   var KEY_NUM0 = 96;
@@ -13922,7 +14114,7 @@ var ShockrTools = (() => {
       }
       if (!this.parked) {
         this.toolbar.register({
-          id: TOOLBAR_ID7,
+          id: TOOLBAR_ID8,
           icon: ICONS.sim,
           label: () => t("toolbarStabs"),
           onClick: () => this.togglePanel()
@@ -13974,7 +14166,7 @@ var ShockrTools = (() => {
       this._lock = false;
       this._request = false;
       document.removeEventListener("keydown", this._onKeyDown);
-      this.toolbar.unregister(TOOLBAR_ID7);
+      this.toolbar.unregister(TOOLBAR_ID8);
       if (this._button) {
         try {
           const parent = this._button.getLayoutParent();
@@ -14281,15 +14473,15 @@ var ShockrTools = (() => {
       const current = targetReady() ? this._currentKey() : null;
       const loot = lootFromCurrentCity();
       const fmt5 = { time: timespan, number: compact3 };
-      const columns2 = ["live", "cy"].map((id) => {
+      const columns3 = ["live", "cy"].map((id) => {
         const shown = this._columns[id] || null;
         const view = shown ? this._columnView(shown.entry, loot) : null;
         return { cells: columnCells(view, fmt5), dim: !!shown && shown.key !== current, view };
       });
       this._win.update({
-        columns: columns2,
-        enemyRows: visibleEnemyRows(columns2[0].view && columns2[0].view.stats),
-        moraleVisible: columns2.some((c) => c.view && c.view.morale && c.view.morale.text !== "100%"),
+        columns: columns3,
+        enemyRows: visibleEnemyRows(columns3[0].view && columns3[0].view.stats),
+        moraleVisible: columns3.some((c) => c.view && c.view.morale && c.view.morale.text !== "100%"),
         cacheCount: this._cacheCount(),
         outcomeTitles: { "total-defeat": t("stabsTotalDefeat"), "total-victory": t("stabsTotalVictory"), victory: t("stabsVictory") }
       });
@@ -14413,7 +14605,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.39.0";
+  var ST_VERSION = "5.40.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -14477,6 +14669,7 @@ var ShockrTools = (() => {
       new TunnelPoiAnalyzer(config, toolbar, cli),
       new SpamBlock(config, toolbar, cli),
       new ProductionOverview(config, toolbar, cli),
+      new ResourceOverview(config, toolbar, cli),
       new Stabs(config, toolbar)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });
