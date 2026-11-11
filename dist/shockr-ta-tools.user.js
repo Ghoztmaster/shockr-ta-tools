@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.49.0
+// @version         5.51.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -133,6 +133,7 @@ var ShockrTools = (() => {
   }
 
   // lib/clientlib-patch.js
+  var ID = "[A-Za-z_$][\\w$]*";
   function findInFunction(proto, funcName, patterns, matchGroup = 1) {
     const func = proto[funcName];
     if (typeof func !== "function") return null;
@@ -140,6 +141,13 @@ var ShockrTools = (() => {
     for (const re of patterns) {
       const m = src.match(re);
       if (m && m[matchGroup]) return m[matchGroup];
+    }
+    return null;
+  }
+  function matchSource(src, patterns, accept = () => true) {
+    for (const re of patterns) {
+      const m = src.match(re);
+      if (m && accept(m)) return m;
     }
     return null;
   }
@@ -159,6 +167,12 @@ var ShockrTools = (() => {
         return this[obfuscatedName];
       }
     });
+  }
+  function defineFieldMethod(proto, publicName, obfuscatedName) {
+    if (typeof proto[publicName] === "function") return;
+    proto[publicName] = function() {
+      return this[obfuscatedName];
+    };
   }
   function applyPatches(patches) {
     return patches.map((patch) => {
@@ -191,7 +205,8 @@ var ShockrTools = (() => {
             prop.matchGroup || 1
           );
           if (obfName) {
-            defineGetter(proto, prop.publicName, obfName);
+            if (prop.kind === "method") defineFieldMethod(proto, prop.publicName, obfName);
+            else defineGetter(proto, prop.publicName, obfName);
             result.matched[prop.publicName] = obfName;
           } else {
             result.ok = false;
@@ -201,6 +216,41 @@ var ShockrTools = (() => {
       }
       return result;
     });
+  }
+  var UNIT_PATTERNS = [
+    // 2026-09: for(t in{d:this.TBXDNO}...for(i in{d:this.IPEJRQ}
+    /\{d:this\.([A-Z]{6})\}\.d\.d\).*\{d:this\.([A-Z]{6})\}/,
+    // infernal wrapper 1.52: for(.+a:this.XXXX...a:this.YYYY
+    /for ?\(.+[a-z]:this\.([A-Z]{6}).+[a-z]:this\.([A-Z]{6})/,
+    // any name length, whitespace and newlines allowed: {d: this.X} ... {d: this.Y}
+    new RegExp(String.raw`\{\s*\w+\s*:\s*this\.(${ID})\s*\}[\s\S]*\{\s*\w+\s*:\s*this\.(${ID})\s*\}`)
+  ];
+  var SIM_PATTERNS = [
+    // infernal wrapper 1.52 (game 22.x and later)
+    /this\.([a-zA-Z]+)=\(new \$I\.([a-zA-Z]+)\)\..+\{this\.\1\.([a-zA-Z]+)\((?:false|!1)\)/,
+    // optional parentheses around `new`, whitespace, newlines, any identifier
+    new RegExp(String.raw`this\.(${ID})\s*=\s*\(?\s*new\s+\$I\.(${ID})\s*\)?[\s\S]+\{\s*this\.\1\.(${ID})\(\s*(?:false|!1|0)\s*\)`),
+    // the step call not right after `{` (e.g. `;this.X.Y(!1)` or `while(this.X.Y(!1))`)
+    new RegExp(String.raw`this\.(${ID})\s*=\s*\(?\s*new\s+\$I\.(${ID})\s*\)?[\s\S]+[;,(&|]\s*this\.\1\.(${ID})\(\s*(?:false|!1|0)\s*\)`)
+  ];
+  function findSimulation(proto) {
+    const lib = typeof $I !== "undefined" ? $I : null;
+    const accept = (m) => typeof lib?.[m[2]]?.prototype?.[m[3]] === "function";
+    const names2 = ["StartBattle", ...Object.keys(proto).filter((n) => n !== "StartBattle")];
+    for (const name of names2) {
+      let fn;
+      try {
+        fn = proto[name];
+      } catch {
+        continue;
+      }
+      if (typeof fn !== "function") continue;
+      const src = fn.toString();
+      if (!src.includes("$I.")) continue;
+      const m = matchSource(src, SIM_PATTERNS, accept);
+      if (m) return { field: m[1], cls: m[2], step: m[3] };
+    }
+    return null;
   }
   var PATCHES = [
     {
@@ -290,25 +340,57 @@ var ShockrTools = (() => {
         {
           publicName: "$OffenseUnits",
           funcName: "HasUnitMdbId",
-          patterns: [
-            // 2026-09: for(t in{d:this.TBXDNO}...for(i in{d:this.IPEJRQ}
-            /\{d:this\.([A-Z]{6})\}\.d\.d\).*\{d:this\.([A-Z]{6})\}/,
-            // older: for(.+a:this.XXXX...a:this.YYYY
-            /for ?\(.+[a-z]:this\.([A-Z]{6}).+[a-z]:this\.([A-Z]{6})/
-          ],
+          patterns: UNIT_PATTERNS,
           matchGroup: 1
           // first collection = offense
         },
         {
           publicName: "$DefenseUnits",
           funcName: "HasUnitMdbId",
-          patterns: [
-            // same regex, second capture group
-            /\{d:this\.([A-Z]{6})\}\.d\.d\).*\{d:this\.([A-Z]{6})\}/,
-            /for ?\(.+[a-z]:this\.([A-Z]{6}).+[a-z]:this\.([A-Z]{6})/
-          ],
+          patterns: UNIT_PATTERNS,
           matchGroup: 2
           // second collection = defense
+        },
+        // 5.51.0: wrapper methods for TABS — city.get_CityUnitsData().get_OffenseUnits().d
+        {
+          publicName: "get_OffenseUnits",
+          kind: "method",
+          funcName: "HasUnitMdbId",
+          patterns: UNIT_PATTERNS,
+          matchGroup: 1
+        },
+        {
+          publicName: "get_DefenseUnits",
+          kind: "method",
+          funcName: "HasUnitMdbId",
+          patterns: UNIT_PATTERNS,
+          matchGroup: 2
+        }
+      ]
+    },
+    // 5.51.0: wrapper functions for TABS — bG.get_Simulation().DoStep(false)
+    {
+      name: "Battleground",
+      getProto: () => ClientLib.Vis.Battleground.Battleground.prototype,
+      properties: [
+        {
+          publicName: "get_Simulation",
+          resolver(proto) {
+            const sim = findSimulation(proto);
+            if (!sim) return false;
+            defineFieldMethod(proto, "get_Simulation", sim.field);
+            return sim.field;
+          }
+        },
+        {
+          publicName: "DoStep",
+          resolver(proto) {
+            const sim = findSimulation(proto);
+            if (!sim) return false;
+            const simProto = $I[sim.cls].prototype;
+            if (typeof simProto.DoStep !== "function") simProto.DoStep = simProto[sim.step];
+            return `$I.${sim.cls}.prototype.${sim.step}`;
+          }
         }
       ]
     },
@@ -717,7 +799,7 @@ var ShockrTools = (() => {
       upUpgraded: "Upgrade: {ok} of {n} sent",
       upStatus: "tab {tab}",
       // ChatManager (5.47.0)
-      descChatManager: "Chat: close at start, longer history, your name highlighted, links clickable, compact mode, adjustable width (chatmanager.*)",
+      descChatManager: "Chat: close at start, longer history, your name highlighted, links clickable, compact mode, adjustable width, unread badges, auto-scroll toggle (chatmanager.*)",
       helpSetChatClose: "ChatManager: close the chat when the game loads (true/false, default false)",
       helpSetChatHistory: "ChatManager: messages kept per chat channel (64-512, default 512)",
       helpSetChatMention: "ChatManager: colour of your player name in chat (#hex or colour word, default #ffff00; none = off)",
@@ -726,6 +808,11 @@ var ShockrTools = (() => {
       helpSetChatWidth: "ChatManager: width of the docked chat in px (200 to half the screen; null = game default). Or drag the chat's right edge",
       chatWidthHandle: "Drag to change the chat width (double-click: game default)",
       chatWidthDefault: "game default",
+      helpSetChatUnread: "ChatManager: count bubble on chat tabs with unread messages and on the chat button while the chat is closed (true/false, default true)",
+      helpSetChatAutoScroll: 'ChatManager: chat follows new messages (true/false, default true); also the \u2B07 button in the chat. Off: a "\u2193 X new messages" bar appears',
+      chatScrollPause: "Auto-scroll on - click to stay where you are",
+      chatScrollResume: "Auto-scroll off - click to follow new messages again",
+      chatNewMessages: "\u2193 {n} new message(s)",
       chatManagerEnabled: "ChatManager: chat history {n} messages per channel",
       chatManagerStatusOn: "history {n} per channel, {grown} channel(s) grown, {enriched} mention(s)/link(s) marked",
       chatManagerStatusOff: "off",
@@ -1363,7 +1450,7 @@ var ShockrTools = (() => {
       upUpgraded: "Ausbau: {ok} von {n} gesendet",
       upStatus: "Tab {tab}",
       // ChatManager (5.47.0)
-      descChatManager: "Chat: beim Start schlie\xDFen, l\xE4ngerer Verlauf, dein Name hervorgehoben, Links anklickbar, Kompaktmodus, einstellbare Breite (chatmanager.*)",
+      descChatManager: "Chat: beim Start schlie\xDFen, l\xE4ngerer Verlauf, dein Name hervorgehoben, Links anklickbar, Kompaktmodus, einstellbare Breite, Ungelesen-Z\xE4hler, Auto-Scroll-Schalter (chatmanager.*)",
       helpSetChatClose: "ChatManager: Chat beim Laden des Spiels schlie\xDFen (true/false, Standard false)",
       helpSetChatHistory: "ChatManager: behaltene Nachrichten pro Chat-Kanal (64-512, Standard 512)",
       helpSetChatMention: "ChatManager: Farbe deines Spielernamens im Chat (#hex oder Farbwort, Standard #ffff00; none = aus)",
@@ -1372,6 +1459,11 @@ var ShockrTools = (() => {
       helpSetChatWidth: "ChatManager: Breite des angedockten Chats in px (200 bis halbe Bildschirmbreite; null = Spielstandard). Oder den rechten Rand des Chats ziehen",
       chatWidthHandle: "Ziehen, um die Chatbreite zu \xE4ndern (Doppelklick: Spielstandard)",
       chatWidthDefault: "Spielstandard",
+      helpSetChatUnread: "ChatManager: Z\xE4hler auf Chat-Tabs mit ungelesenen Nachrichten und auf dem Chat-Knopf, solange der Chat geschlossen ist (true/false, Standard true)",
+      helpSetChatAutoScroll: 'ChatManager: Chat folgt neuen Nachrichten (true/false, Standard true); auch der \u2B07-Knopf im Chat. Aus: eine Leiste "\u2193 X neue Nachrichten" erscheint',
+      chatScrollPause: "Auto-Scroll an - klicken, um an der Stelle zu bleiben",
+      chatScrollResume: "Auto-Scroll aus - klicken, um neuen Nachrichten wieder zu folgen",
+      chatNewMessages: "\u2193 {n} neue Nachricht(en)",
       chatManagerEnabled: "ChatManager: Chatverlauf {n} Nachrichten pro Kanal",
       chatManagerStatusOn: "Verlauf {n} pro Kanal, {grown} Kanal/Kan\xE4le vergr\xF6\xDFert, {enriched} Erw\xE4hnung(en)/Link(s) markiert",
       chatManagerStatusOff: "aus",
@@ -1999,7 +2091,7 @@ var ShockrTools = (() => {
       upUpgraded: "Upgrade: {ok} van {n} verstuurd",
       upStatus: "tabblad {tab}",
       // ChatManager (5.47.0)
-      descChatManager: "Chat: dichtklappen bij opstarten, langere geschiedenis, je naam gemarkeerd, links klikbaar, compacte modus, instelbare breedte (chatmanager.*)",
+      descChatManager: "Chat: dichtklappen bij opstarten, langere geschiedenis, je naam gemarkeerd, links klikbaar, compacte modus, instelbare breedte, ongelezen-teller, auto-scroll aan/uit (chatmanager.*)",
       helpSetChatClose: "ChatManager: chat dichtklappen als de game laadt (true/false, standaard false)",
       helpSetChatHistory: "ChatManager: bewaarde berichten per chatkanaal (64-512, standaard 512)",
       helpSetChatMention: "ChatManager: kleur van je spelernaam in de chat (#hex of kleurwoord, standaard #ffff00; none = uit)",
@@ -2008,6 +2100,11 @@ var ShockrTools = (() => {
       helpSetChatWidth: "ChatManager: breedte van de gedockte chat in px (200 tot de helft van het scherm; null = game-standaard). Of sleep de rechterrand van de chat",
       chatWidthHandle: "Sleep om de chatbreedte te veranderen (dubbelklik: game-standaard)",
       chatWidthDefault: "game-standaard",
+      helpSetChatUnread: "ChatManager: teller op chattabs met ongelezen berichten en op de chatknop zolang de chat dicht is (true/false, standaard true)",
+      helpSetChatAutoScroll: 'ChatManager: chat volgt nieuwe berichten (true/false, standaard true); ook de \u2B07-knop in de chat. Uit: er verschijnt een balk "\u2193 X nieuwe berichten"',
+      chatScrollPause: "Auto-scroll aan - klik om te blijven staan waar je bent",
+      chatScrollResume: "Auto-scroll uit - klik om nieuwe berichten weer te volgen",
+      chatNewMessages: "\u2193 {n} nieuwe bericht(en)",
       chatManagerEnabled: "ChatManager: chatgeschiedenis {n} berichten per kanaal",
       chatManagerStatusOn: "geschiedenis {n} per kanaal, {grown} kanaal/kanalen vergroot, {enriched} vermelding(en)/link(s) gemarkeerd",
       chatManagerStatusOff: "uit",
@@ -3769,6 +3866,8 @@ var ShockrTools = (() => {
     ["chatmanager.linkify", "helpSetChatLinkify"],
     ["chatmanager.compact", "helpSetChatCompact"],
     ["chatmanager.width", "helpSetChatWidth"],
+    ["chatmanager.unreadBadge", "helpSetChatUnread"],
+    ["chatmanager.autoScroll", "helpSetChatAutoScroll"],
     ["mcvtimer.compact", "helpSetMcvCompact"],
     ["tpa.players", "helpSetTpaPlayers"],
     ["tpa.range", "helpSetTpaRange"],
@@ -15044,6 +15143,368 @@ var ShockrTools = (() => {
     return fixed2;
   }
 
+  // lib/chat-activity.js
+  var CHANNEL = { all: 1, alliance: 2, officers: 4, whisper: 8, global: 16 };
+  var MARK = "data-st-cm";
+  var USER_MS = 1500;
+  function tabUnread(unread, flags) {
+    let n = 0;
+    for (const [ch, count] of Object.entries(unread)) {
+      if (flags & CHANNEL.all || flags & Number(ch)) n += count;
+    }
+    return n;
+  }
+  function markRead(unread, flags) {
+    for (const ch of Object.keys(unread)) {
+      if (flags & CHANNEL.all || flags & Number(ch)) delete unread[ch];
+    }
+    return unread;
+  }
+  function badgeText(n) {
+    return n > 99 ? "99+" : String(n);
+  }
+  function setText(el, text) {
+    if (el.textContent !== text) el.textContent = text;
+  }
+  function setStyle(el, prop, value) {
+    if (el.style[prop] !== value) el.style[prop] = value;
+  }
+  var ChatActivity = class {
+    constructor(config) {
+      this.config = config;
+      this.unread = {};
+      this.newCount = 0;
+      this.running = false;
+      this._listeners = [];
+      this._badges = /* @__PURE__ */ new Map();
+      this._chatButton = null;
+      this._scrollBtn = null;
+      this._bar = null;
+      this._root = null;
+      this._userAt = 0;
+      this._onUser = () => {
+        this._userAt = Date.now();
+      };
+      this._frame = 0;
+    }
+    _app() {
+      try {
+        return qx.core.Init.getApplication();
+      } catch {
+        return null;
+      }
+    }
+    _chat() {
+      const app = this._app();
+      try {
+        return app ? app.getChat() : null;
+      } catch {
+        return null;
+      }
+    }
+    _widget() {
+      const chat = this._chat();
+      try {
+        return chat && typeof chat.getChatWidget === "function" ? chat.getChatWidget() : null;
+      } catch {
+        return null;
+      }
+    }
+    _tabView() {
+      const w = this._widget();
+      if (!w || typeof w._getChildren !== "function") return null;
+      return w._getChildren().find((c) => typeof c.getSelection === "function" && typeof c.getChildren === "function") || null;
+    }
+    _pages() {
+      const tv = this._tabView();
+      return tv ? tv.getChildren().filter((p) => p.meta && typeof p.meta.flags === "number") : [];
+    }
+    _selected() {
+      const tv = this._tabView();
+      const sel = tv && tv.getSelection()[0];
+      return sel && sel.meta ? sel : null;
+    }
+    _isOpen() {
+      const chat = this._chat();
+      try {
+        return !!chat && chat.isVisible();
+      } catch {
+        return false;
+      }
+    }
+    _following() {
+      return this.config.get("chatmanager.autoScroll", true) !== false;
+    }
+    _badgesOn() {
+      return this.config.get("chatmanager.unreadBadge", true) !== false;
+    }
+    _listen(obj, event, fn) {
+      if (obj && typeof obj.addListener === "function") this._listeners.push([obj, obj.addListener(event, fn, this)]);
+    }
+    /** Hook the game's chat events; false when the chat widget is not there yet. */
+    start(root) {
+      const w = this._widget();
+      if (!w || typeof w.addListener !== "function" || this.running) return this.running;
+      this.running = true;
+      this._root = root;
+      if (root && typeof root.addEventListener === "function") {
+        for (const ev of ["wheel", "pointerdown", "keydown"]) root.addEventListener(ev, this._onUser, true);
+      }
+      this._listen(w, "chatmessagein", (e) => this.onIncoming(e.getData()));
+      this._listen(w, "chatmessageout", (e) => this.onShown(e.getData()));
+      const chat = this._chat();
+      this._listen(chat, "changeVisibility", () => {
+        const s = this._selected();
+        if (s && this._isOpen()) this.onShown(s.meta.flags);
+        else this.refresh();
+      });
+      this._listen(chat, "resize", () => this._placeSoon());
+      for (const page of this._pages()) {
+        try {
+          const sb = page.ui.scrcontent.getChildControl("scrollbar-y");
+          this._listen(sb, "scroll", () => this.onScroll(page));
+        } catch {
+        }
+      }
+      if (!this._following()) this._pause(true);
+      this.refresh();
+      return true;
+    }
+    stop() {
+      for (const [obj, id] of this._listeners) {
+        try {
+          obj.removeListenerById(id);
+        } catch {
+        }
+      }
+      this._listeners = [];
+      if (this._root && typeof this._root.removeEventListener === "function") {
+        for (const ev of ["wheel", "pointerdown", "keydown"]) this._root.removeEventListener(ev, this._onUser, true);
+      }
+      for (const el of [...this._badges.values(), this._scrollBtn, this._bar]) {
+        if (el && el.parentNode) el.parentNode.removeChild(el);
+      }
+      this._badges.clear();
+      this._scrollBtn = this._bar = this._root = this._chatButton = null;
+      for (const page of this._pages()) if (page.autoscroll === false) page.autoscroll = true;
+      if (this._frame && typeof cancelAnimationFrame === "function") cancelAnimationFrame(this._frame);
+      this._frame = 0;
+      this.running = false;
+      this.unread = {};
+      this.newCount = 0;
+    }
+    /** A message came in on channel `flag`. */
+    onIncoming(flag) {
+      if (!this.running) return;
+      const f = Number(flag) || 0;
+      const sel = this._selected();
+      const shown = this._isOpen() && sel && (sel.meta.flags & CHANNEL.all || sel.meta.flags & f);
+      if (!shown) this.unread[f] = (this.unread[f] || 0) + 1;
+      else if (sel.autoscroll === false) this.newCount++;
+      this.refresh();
+    }
+    /** A tab was shown (switch or chat opened): its channels are read. */
+    onShown(flags) {
+      if (!this.running) return;
+      markRead(this.unread, Number(flags) || 0);
+      this.newCount = 0;
+      if (!this._following()) this._pause(true);
+      this.refresh();
+    }
+    /** The shown tab's scrollbar moved (after the game's own listener set page.autoscroll). */
+    onScroll(page) {
+      if (!this.running || page !== this._selected()) return;
+      if (page.autoscroll === true && !this._following()) {
+        if (Date.now() - this._userAt > USER_MS) {
+          page.autoscroll = false;
+          return;
+        }
+        this.config.set("chatmanager.autoScroll", true);
+      }
+      if (page.autoscroll === true) this.newCount = 0;
+      this.refresh();
+    }
+    /**
+     * Stop following in the shown tab (again after the game's own scrollToEnd(true) of a tab
+     * switch). toEnd: a tab that is shown opens at its newest message first (VERIFIED LIVE:
+     * without it a reopened, paused chat sat at its oldest line), then stays there.
+     */
+    _pause(toEnd = false) {
+      const pause = () => {
+        const p = this._selected();
+        if (!p) return;
+        if (toEnd) {
+          try {
+            p.ui.scrcontent.scrollToY(p.ui.scrcontent.getChildControl("scrollbar-y").getMaximum());
+          } catch {
+          }
+        }
+        p.autoscroll = false;
+        this.refresh();
+      };
+      pause();
+      setTimeout(pause, 0);
+      if (toEnd) setTimeout(pause, 300);
+    }
+    /** ⬇ button / `chatmanager.autoScroll`: true = follow (and jump to the end), false = stay. */
+    setFollow(on) {
+      this.config.set("chatmanager.autoScroll", !!on);
+      if (!this.running) return;
+      if (on) {
+        this.newCount = 0;
+        const w = this._widget();
+        try {
+          w.scrollToEnd(true);
+        } catch {
+          const p = this._selected();
+          if (p) p.autoscroll = true;
+        }
+      } else {
+        this._pause();
+      }
+      this.refresh();
+    }
+    toggleFollow() {
+      const sel = this._selected();
+      const paused = sel ? sel.autoscroll === false : !this._following();
+      this.setFollow(paused);
+    }
+    /** Draw badges and the scroll button / bar from the current state (only real changes touch the DOM). */
+    refresh() {
+      if (!this.running) return;
+      try {
+        this._renderBadges();
+        this._placeScrollUi();
+      } catch (err) {
+        console.warn("[ST] ChatManager: chat activity failed", err && err.message);
+      }
+    }
+    _placeSoon() {
+      if (this._frame || typeof requestAnimationFrame !== "function") return;
+      this._frame = requestAnimationFrame(() => {
+        this._frame = 0;
+        this.refresh();
+      });
+    }
+    _findChatButton() {
+      if (this._chatButton) return this._chatButton;
+      const app = this._app();
+      let found = null;
+      const walk = (w, depth) => {
+        if (!w || found || depth > 4) return;
+        if (w.classname === "webfrontend.gui.chat.ChatButtonWidget") {
+          found = w;
+          return;
+        }
+        for (const k of typeof w._getChildren === "function" ? w._getChildren() : []) walk(k, depth + 1);
+      };
+      try {
+        walk(app.getRoot(), 0);
+      } catch {
+      }
+      this._chatButton = found;
+      return found;
+    }
+    _renderBadges() {
+      const on = this._badgesOn();
+      const open = this._isOpen();
+      const sel = this._selected();
+      let total = 0;
+      for (const n of Object.values(this.unread)) total += n;
+      for (const page of this._pages()) {
+        const n = on && open && page !== sel ? tabUnread(this.unread, page.meta.flags) : 0;
+        try {
+          this._badge(page.getButton(), n);
+        } catch {
+        }
+      }
+      this._badge(this._findChatButton(), on && !open ? total : 0);
+    }
+    _badge(widget, n) {
+      if (!widget) return;
+      let b = this._badges.get(widget);
+      if (n <= 0) {
+        if (b) setStyle(b, "display", "none");
+        return;
+      }
+      const dom = widget.getContentElement && widget.getContentElement().getDomElement();
+      if (!dom) return;
+      if (!b) {
+        b = dom.ownerDocument.createElement("div");
+        b.setAttribute(MARK, "badge");
+        b.style.cssText = "position:absolute;top:1px;right:1px;min-width:15px;height:15px;padding:0 3px;box-sizing:border-box;border-radius:8px;background:#e53935;color:#fff;font:bold 10px/15px Arial,sans-serif;text-align:center;z-index:30;pointer-events:none;";
+        this._badges.set(widget, b);
+      }
+      if (b.parentNode !== dom) dom.appendChild(b);
+      setText(b, badgeText(n));
+      setStyle(b, "display", "block");
+    }
+    _makeScrollUi(doc) {
+      const btn = doc.createElement("div");
+      btn.setAttribute(MARK, "scroll");
+      btn.textContent = "\u2B07";
+      btn.style.cssText = "position:absolute;width:18px;height:18px;border-radius:9px;font:bold 12px/18px Arial,sans-serif;text-align:center;cursor:pointer;z-index:1001;user-select:none;";
+      const bar = doc.createElement("div");
+      bar.setAttribute(MARK, "scroll");
+      bar.style.cssText = "position:absolute;height:18px;padding:0 8px;border-radius:9px;background:#f57c00;color:#fff;font:bold 11px/18px Arial,sans-serif;cursor:pointer;z-index:1001;user-select:none;white-space:nowrap;";
+      for (const el of [btn, bar]) el.addEventListener("pointerdown", (e) => e.stopPropagation());
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.toggleFollow();
+      });
+      bar.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.setFollow(true);
+      });
+      this._scrollBtn = btn;
+      this._bar = bar;
+    }
+    _placeScrollUi() {
+      const root = this._root;
+      const sel = this._selected();
+      let scEl = null;
+      try {
+        scEl = sel.ui.scrcontent.getContentElement().getDomElement();
+      } catch {
+      }
+      if (!root || !scEl || !this._isOpen()) {
+        if (this._scrollBtn) setStyle(this._scrollBtn, "display", "none");
+        if (this._bar) setStyle(this._bar, "display", "none");
+        return;
+      }
+      if (!this._scrollBtn) this._makeScrollUi(root.ownerDocument);
+      for (const el of [this._scrollBtn, this._bar]) if (el.parentNode !== root) root.appendChild(el);
+      const rr = root.getBoundingClientRect();
+      const sr = scEl.getBoundingClientRect();
+      let sbw = 15;
+      try {
+        const b = sel.ui.scrcontent.getChildControl("scrollbar-y").getBounds();
+        if (b) sbw = b.width;
+      } catch {
+      }
+      const bottom = `${Math.round(Math.max(0, rr.bottom - sr.bottom) + 4)}px`;
+      const right = `${Math.round(Math.max(0, rr.right - (sr.right - sbw)) + 4)}px`;
+      const paused = sel.autoscroll === false;
+      const btn = this._scrollBtn;
+      setStyle(btn, "display", "block");
+      setStyle(btn, "bottom", bottom);
+      setStyle(btn, "right", right);
+      setStyle(btn, "background", paused ? "#f57c00" : "rgba(0,0,0,0.45)");
+      setStyle(btn, "color", paused ? "#fff" : "rgba(255,255,255,0.75)");
+      const tip = paused ? t("chatScrollResume") : t("chatScrollPause");
+      if (btn.title !== tip) btn.title = tip;
+      const bar = this._bar;
+      if (paused && this.newCount > 0) {
+        setText(bar, t("chatNewMessages", { n: this.newCount }));
+        setStyle(bar, "display", "block");
+        setStyle(bar, "bottom", bottom);
+        setStyle(bar, "left", `${Math.round(Math.max(0, sr.left - rr.left) + 6)}px`);
+      } else {
+        setStyle(bar, "display", "none");
+      }
+    }
+  };
+
   // plugins/chat-manager.js
   var DEFAULT_HISTORY = 512;
   var MIN_HISTORY = 64;
@@ -15097,9 +15558,12 @@ var ShockrTools = (() => {
       this._handle = null;
       this._fonts = /* @__PURE__ */ new Map();
       this._compactFont = null;
+      this.activity = new ChatActivity(config);
       if (cli && typeof cli.onConfigSet === "function") {
         cli.onConfigSet("chatmanager.compact", (v) => this.setCompact(v));
         cli.onConfigSet("chatmanager.width", (v) => this.setWidth(v));
+        cli.onConfigSet("chatmanager.unreadBadge", (v) => this.setUnreadBadge(v));
+        cli.onConfigSet("chatmanager.autoScroll", (v) => this.setAutoScroll(v));
       }
       this.running = false;
       this._oldSize = null;
@@ -15220,9 +15684,11 @@ var ShockrTools = (() => {
       this._chatRoot = root;
       this._observer = new MutationObserver(() => this._schedule());
       this._startLayout();
+      this.activity.start(root);
       this.enrichNow();
     }
     _stopEnrich() {
+      this.activity.stop();
       this._stopLayout();
       if (this._findTimer) clearTimeout(this._findTimer);
       this._findTimer = null;
@@ -15250,6 +15716,7 @@ var ShockrTools = (() => {
         if (keepSelectable(root)) console.log("[ST] ChatManager: chat text made selectable again");
         this.applyCompact();
         this._updateHandle();
+        this.activity.refresh();
       } catch (err) {
         console.warn("[ST] ChatManager: enrich failed", err && err.message);
       }
@@ -15446,6 +15913,19 @@ var ShockrTools = (() => {
       this.config.set("chatmanager.compact", on);
       this.applyCompact();
       chatMessage(`[ST] chatmanager.compact = ${on}`);
+    }
+    /** `/st config set chatmanager.unreadBadge <true|false>`. */
+    setUnreadBadge(value) {
+      const on = value !== false && !/^(off|no|0|false)$/i.test(String(value));
+      this.config.set("chatmanager.unreadBadge", on);
+      this.activity.refresh();
+      chatMessage(`[ST] chatmanager.unreadBadge = ${on}`);
+    }
+    /** `/st config set chatmanager.autoScroll <true|false>` (the ⬇ button does the same). */
+    setAutoScroll(value) {
+      const on = value !== false && !/^(off|no|0|false)$/i.test(String(value));
+      this.activity.setFollow(on);
+      chatMessage(`[ST] chatmanager.autoScroll = ${on}`);
     }
     /** The chat's message Labels (rich + selectable), found through the widget tree. */
     _chatLabels() {
@@ -16952,7 +17432,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.49.0";
+  var ST_VERSION = "5.51.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
@@ -16965,7 +17445,7 @@ var ShockrTools = (() => {
     const patchResults = applyPatches(PATCHES);
     const failed = patchResults.filter((r) => !r.ok);
     if (failed.length > 0) {
-      const names2 = failed.map((r) => r.name).join(", ");
+      const names2 = failed.map((r) => r.failed?.length ? `${r.name} (${r.failed.join(", ")})` : r.name).join(", ");
       console.warn(`[ST] Patch failures: ${names2}`);
       chatMessage(`[ST] ${t("patchFailed", { names: names2 })}`);
     }

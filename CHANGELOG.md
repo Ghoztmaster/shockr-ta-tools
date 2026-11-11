@@ -1,5 +1,44 @@
 # Changelog
 
+## [5.51.0] — 2026-11-11
+
+Userscript, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Infernal wrapper ingebouwd (`lib/clientlib-patch.js`)
+- De vier functies die TABS V2 van het losse "infernal wrapper"-script (NetquiK 1.52) verwacht, staan nu in Shockr, op dezelfde globals en met dezelfde namen, zodat TABS ze zonder aanpassing vindt:
+  - `ClientLib.Vis.Battleground.Battleground.prototype.get_Simulation()`
+  - `$I.<simulatieklasse>.prototype.DoStep` (één stap van de gevechtssimulatie)
+  - `ClientLib.Data.CityUnits.prototype.get_OffenseUnits()` en `get_DefenseUnits()`
+- Fingerprint-aanpak zoals de bestaande patches, met de regex van de wrapper als eerste patroon en fallbacks erachter: haakjes rond `new` optioneel, witruimte en regeleinden, elke identifier-lengte, de stap-aanroep ook na `;`/`(` (bijv. `while(...)`). Wordt `StartBattle` niet (meer) herkend, dan zoekt de patch in de andere Battleground-functies
+- Een treffer telt alleen als de gevonden stap-methode echt een functie is op `$I[klasse].prototype`; anders volgt het volgende patroon, en zonder treffer de chatmelding
+- Bestaat de methode al (de game zelf, of de wrapper staat nog aan), dan blijft die staan
+- `get_OffenseUnits`/`get_DefenseUnits` gebruiken dezelfde patronen als `$OffenseUnits`/`$DefenseUnits` (nu één gedeelde lijst `UNIT_PATTERNS`, met een extra fallback voor witruimte en langere namen)
+- De wrapper deed meer (`System`/`SharedLib` = `$I`, phe-, Opera- en blank.gif-fixes, `GetNerfAndBoostModifier`); dat zit er niet in. TABS gebruikt het niet; andere scripts mogelijk wel, dus de wrapper alleen weghalen als niets anders hem nodig heeft
+
+### Patch-melding
+- `[ST] ⚠ Patch failed: ...` noemt nu ook de functies, bijv. `Battleground (get_Simulation, DoStep)`
+
+### Tests
+- `tests/clientlib-patch.test.mjs`: wrapper-vorm, fallbacks, hernoemde `StartBattle`, bestaande methode blijft, stap-methode ontbreekt = melding in plaats van een verkeerde patch
+- NIET LIVE GEVERIFIEERD: de patronen op de huidige client (de wrapper-regex is die van 1.52, die nu in gebruik is)
+
+## [5.50.0] — 2026-11-09
+
+Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+Ronde 13 (laatste ChatManager-ronde): ongelezen-teller en auto-scroll-schakelaar (`plugins/chat-manager.js`, nieuw `lib/chat-activity.js`).
+
+### ChatManager
+- Ongelezen-teller (`chatmanager.unreadBadge`, standaard true): een rood bolletje met het aantal op chattabs met ongelezen berichten, en op de chatknop zolang de chat dicht is. Openen van de chat of de tab zet de teller van die kanalen op nul; de All-tab telt alles en leest alles
+- Hook: het game-event `chatmessagein` van `ChatWidget` (komt voor elk binnenkomend bericht met het kanaal, niet voor je eigen berichten); `chatmessageout` komt als een tab getoond wordt. Geen versleutelde namen. De game zelf laat alleen het tab-icoon knipperen
+- Auto-scroll (`chatmanager.autoScroll`, standaard true): ⬇-knop rechtsonder in de chat. Uit: de chat blijft staan, en bij nieuwe berichten verschijnt een oranje balk "↓ X nieuwe berichten" die naar beneden scrollt en auto-scroll weer aanzet. Zelf naar beneden scrollen zet hem ook weer aan. De stand wordt onthouden in de config
+- Gebouwd op de game zelf: elke tab heeft een eigen `autoscroll`-vlag (omhoog scrollen zet hem uit, onderaan aankomen weer aan, `scrollToEnd(true)`); "uit" is die vlag op false, ook na de scroll-naar-onder die de game bij een tabwissel doet
+- De ⬇-knop staat tegen de zichtbare rand: de gedockte chat is smaller dan zijn inhoud (scrollbalk valt buiten beeld tot je erover beweegt)
+- Alleen een scroll naar onder vlak na je eigen invoer in de chat (wiel, klik, toets) zet auto-scroll weer aan; de scroll-naar-onder die de game zelf doet bij een tabwissel of het openen van de chat wordt weer gepauzeerd. Live gevonden: een tijdvenster na de tabwissel was niet genoeg, de scroll van de game kan later komen
+- Een getoonde tab opent op pauze bij het nieuwste bericht en blijft daar staan. Live gevonden: zonder dat stond een heropende, gepauzeerde chat op de oudste regel
+- Live geverifieerd (2026-11-09) met de plugin in de game en lokaal nagebootste berichten (`showMessage` + `fireDataEvent`, niets verstuurd): echte klik op ⬇ pauzeert (positie blijft 173 terwijl de inhoud groeit naar 223), balk "↓ 3", klik op de balk scrollt naar onder en zet aan, zelf omhoog en weer naar onder scrollen zet aan, bolletjes op de tabs (All 3, Whisper 1, Global 2) en op de chatknop (6), heropenen en tabwissel wissen de juiste tellers, gepauzeerd heropenen en wisselen blijft op pauze bij het nieuwste bericht, uitzetten laat niets achter
+- Bij uitzetten: listeners weg, bolletjes/knop/balk weg, geen tab blijft op pauze staan
+
 ## [5.49.0] — 2026-11-09
 
 Userscript, `config/version.json`, `config/announcements.json` en `config/plugins.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

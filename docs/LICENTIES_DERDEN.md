@@ -32,6 +32,7 @@ Doel: per bestand vastleggen welke externe code erin zit, van wie, onder welke l
 |---|---|---|---|---|---|
 | `lib/packer.js` | Shockr Tools `blacha/st` (base.n, base.62, pack/*) | Blayne Chard | MIT | code | ✅ geregeld: NOTICE + headerregel |
 | `lib/clientlib-patch.js` | `blacha/st` patch.data / client.patcher | Blayne Chard | MIT | code | ✅ geregeld |
+| `lib/clientlib-patch.js` (5.51.0: `get_Simulation`, `DoStep`, `get_OffenseUnits`, `get_DefenseUnits`) | infernal wrapper 1.52 | infernal_me, KRS_L, krisan (NetquiK) | niet vermeld | feiten (namen van de wrapper-functies; twee fingerprint-regexes als startpunt) | geen: eigen implementatie, bronvermelding in de header |
 | `lib/city-util.js` | `blacha/st` util/city.ts | Blayne Chard | MIT | code | ✅ geregeld |
 | `lib/scanner-util.js` | `blacha/st` util/city.scan.ts | Blayne Chard | MIT | code | ✅ geregeld |
 | `lib/cli.js` | `blacha/st` st.cli.ts | Blayne Chard | MIT | code | ✅ geregeld |

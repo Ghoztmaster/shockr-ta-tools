@@ -14,6 +14,9 @@
  *   chatmanager.compact       (default false) — smaller chat text, tighter lines
  *   chatmanager.width         (default null = game default) — width of the docked chat in px,
  *                             200..50% of the screen; also set by dragging the chat's edge
+ *   chatmanager.unreadBadge   (default true) — count bubble on chat tabs / the chat button
+ *   chatmanager.autoScroll    (default true) — the ⬇ button: follow new messages or stay put
+ *                             ("↓ X new messages" bar); details in lib/chat-activity.js
  * Without a setting: the chat Labels are kept selectable (safety net; the current
  * client already allows selecting and copying). Enrichment details and the
  * "coordinates in whispers" finding: lib/chat-enrich.js.
@@ -54,6 +57,7 @@
 import { chatMessage } from '../lib/main.js';
 import { t } from '../lib/i18n.js';
 import { enrich, keepSelectable, mentionColor } from '../lib/chat-enrich.js';
+import { ChatActivity } from '../lib/chat-activity.js';
 
 export const DEFAULT_HISTORY = 512;
 export const MIN_HISTORY = 64;
@@ -116,9 +120,12 @@ export class ChatManager {
         this._handle = null;
         this._fonts = new Map();   // Label → its own font, while compact
         this._compactFont = null;
+        this.activity = new ChatActivity(config);
         if (cli && typeof cli.onConfigSet === 'function') {
             cli.onConfigSet('chatmanager.compact', (v) => this.setCompact(v));
             cli.onConfigSet('chatmanager.width', (v) => this.setWidth(v));
+            cli.onConfigSet('chatmanager.unreadBadge', (v) => this.setUnreadBadge(v));
+            cli.onConfigSet('chatmanager.autoScroll', (v) => this.setAutoScroll(v));
         }
         this.running = false;
         this._oldSize = null;      // recvbufsize before we changed it
@@ -232,10 +239,12 @@ export class ChatManager {
         this._chatRoot = root;
         this._observer = new MutationObserver(() => this._schedule());
         this._startLayout();
+        this.activity.start(root);
         this.enrichNow();
     }
 
     _stopEnrich() {
+        this.activity.stop();
         this._stopLayout();
         if (this._findTimer) clearTimeout(this._findTimer);
         this._findTimer = null;
@@ -263,6 +272,7 @@ export class ChatManager {
             if (keepSelectable(root)) console.log('[ST] ChatManager: chat text made selectable again');
             this.applyCompact();       // a new chat pane gets the compact font too
             this._updateHandle();      // re-attach if the game rebuilt the window DOM
+            this.activity.refresh();   // badges / scroll button (only real changes touch the DOM)
         } catch (err) {
             console.warn('[ST] ChatManager: enrich failed', err && err.message);
         }
@@ -457,6 +467,21 @@ export class ChatManager {
         this.config.set('chatmanager.compact', on);
         this.applyCompact();
         chatMessage(`[ST] chatmanager.compact = ${on}`);
+    }
+
+    /** `/st config set chatmanager.unreadBadge <true|false>`. */
+    setUnreadBadge(value) {
+        const on = value !== false && !/^(off|no|0|false)$/i.test(String(value));
+        this.config.set('chatmanager.unreadBadge', on);
+        this.activity.refresh();
+        chatMessage(`[ST] chatmanager.unreadBadge = ${on}`);
+    }
+
+    /** `/st config set chatmanager.autoScroll <true|false>` (the ⬇ button does the same). */
+    setAutoScroll(value) {
+        const on = value !== false && !/^(off|no|0|false)$/i.test(String(value));
+        this.activity.setFollow(on);
+        chatMessage(`[ST] chatmanager.autoScroll = ${on}`);
     }
 
     /** The chat's message Labels (rich + selectable), found through the widget tree. */

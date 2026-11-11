@@ -1,7 +1,40 @@
 {
-  "version": "5.49.0",
-  "date": "2026-11-09",
+  "version": "5.51.0",
+  "date": "2026-11-11",
   "changelog": [
+    {
+      "version": "5.51.0",
+      "date": "2026-11-11",
+      "changes": {
+        "en": [
+          "Infernal wrapper built in: get_Simulation, DoStep, get_OffenseUnits and get_DefenseUnits, so TABS no longer needs the separate infernal wrapper script",
+          "Patch failures in chat now name the function, e.g. Battleground (get_Simulation, DoStep)"
+        ],
+        "de": [
+          "Infernal Wrapper eingebaut: get_Simulation, DoStep, get_OffenseUnits und get_DefenseUnits - TABS braucht das separate Infernal-Wrapper-Script nicht mehr",
+          "Patch-Fehler im Chat nennen jetzt die Funktion, z. B. Battleground (get_Simulation, DoStep)"
+        ],
+        "nl": [
+          "Infernal wrapper ingebouwd: get_Simulation, DoStep, get_OffenseUnits en get_DefenseUnits - TABS heeft het losse infernal wrapper-script niet meer nodig",
+          "Patch-meldingen in de chat noemen nu de functie, bijv. Battleground (get_Simulation, DoStep)"
+        ]
+      }
+    },
+    {
+      "version": "5.50.0",
+      "date": "2026-11-09",
+      "changes": {
+        "en": [
+          "ChatManager: unread count on chat tabs and the chat button (chatmanager.unreadBadge) and a ⬇ auto-scroll toggle with a \"new messages\" bar (chatmanager.autoScroll)"
+        ],
+        "de": [
+          "ChatManager: Ungelesen-Zähler auf Chat-Tabs und dem Chat-Knopf (chatmanager.unreadBadge) und ein ⬇-Auto-Scroll-Schalter mit Leiste \"neue Nachrichten\" (chatmanager.autoScroll)"
+        ],
+        "nl": [
+          "ChatManager: ongelezen-teller op chattabs en de chatknop (chatmanager.unreadBadge) en een ⬇-auto-scrollknop met balk \"nieuwe berichten\" (chatmanager.autoScroll)"
+        ]
+      }
+    },
     {
       "version": "5.49.0",
       "date": "2026-11-09",
@@ -44,39 +77,6 @@
         ],
         "nl": [
           "Nieuwe plugin ChatManager (standaard uit): tot 512 chatberichten per kanaal in plaats van 64, en optioneel de chat dichtklappen als de game laadt; /st plugin enable chat-manager"
-        ]
-      }
-    },
-    {
-      "version": "5.46.0",
-      "date": "2026-11-09",
-      "changes": {
-        "en": [
-          "New plugin UpgradePriority (arrow icon or /st upgrades): which production building to upgrade first per resource, with gain/h, factor, ETA, Upgrade and Upgrade all"
-        ],
-        "de": [
-          "Neues Plugin UpgradePriority (Pfeil-Symbol oder /st upgrades): welches Produktionsgebäude zuerst ausbauen pro Ressource, mit Ertrag/h, Faktor, ETA, Ausbauen und Alle ausbauen"
-        ],
-        "nl": [
-          "Nieuwe plugin UpgradePriority (pijl-icoon of /st upgrades): welk productiegebouw eerst upgraden per resource, met gain/h, factor, ETA, Upgrade en Upgrade all"
-        ]
-      }
-    },
-    {
-      "version": "5.45.0",
-      "date": "2026-11-09",
-      "changes": {
-        "en": [
-          "New plugin BaseStatus (crosshair icon or /st basestatus): cooldown, protection, alert and support weapon of every base, with Recall and focus on the map",
-          "SupportCalibrate: its panel moved into BaseStatus; the world-map button and /st support recall stay"
-        ],
-        "de": [
-          "Neues Plugin BaseStatus (Fadenkreuz-Symbol oder /st basestatus): Cooldown, Schutz, Alarm und Unterstützungswaffe jeder Basis, mit Zurückrufen und Fokus auf der Karte",
-          "SupportCalibrate: das Panel ist in BaseStatus aufgegangen; Weltkarten-Knopf und /st support recall bleiben"
-        ],
-        "nl": [
-          "Nieuwe plugin BaseStatus (vizier-icoon of /st basestatus): cooldown, protection, alert en support weapon van elke base, met Recall en focus op de kaart",
-          "SupportCalibrate: het paneel is opgegaan in BaseStatus; de wereldkaart-knop en /st support recall blijven"
         ]
       }
     }
