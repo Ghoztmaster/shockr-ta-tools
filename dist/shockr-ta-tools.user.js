@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.51.0
+// @version         5.52.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -134,6 +134,29 @@ var ShockrTools = (() => {
 
   // lib/clientlib-patch.js
   var ID = "[A-Za-z_$][\\w$]*";
+  function globalizePhe({ maxAttempts = 200, intervalMs = 100, root = globalThis } = {}) {
+    const attempt = () => {
+      if (typeof root.phe !== "undefined") return "existing";
+      const phe2 = root.webfrontend?.phe;
+      if (typeof phe2 === "undefined") return null;
+      root.phe = phe2;
+      return "set";
+    };
+    return new Promise((resolve) => {
+      let tries = 0;
+      const tick = () => {
+        let r = null;
+        try {
+          r = attempt();
+        } catch {
+        }
+        if (r) return resolve(r);
+        if (++tries >= maxAttempts) return resolve(false);
+        setTimeout(tick, intervalMs);
+      };
+      tick();
+    });
+  }
   function findInFunction(proto, funcName, patterns, matchGroup = 1) {
     const func = proto[funcName];
     if (typeof func !== "function") return null;
@@ -17432,9 +17455,10 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.51.0";
+  var ST_VERSION = "5.52.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
+    const pheGlobal = globalizePhe();
     const ready = await waitForGame({ maxAttempts: 200, intervalMs: 100 });
     if (!ready) {
       console.error("[ST] Game client did not load in time \u2014 aborting.");
@@ -17443,6 +17467,8 @@ var ShockrTools = (() => {
     const config = new Config("st-config");
     initI18n(config);
     const patchResults = applyPatches(PATCHES);
+    const pheState = await Promise.race([pheGlobal, new Promise((r) => setTimeout(() => r(false), 1e3))]);
+    if (pheState === false) patchResults.push({ name: "phe", ok: false, failed: [] });
     const failed = patchResults.filter((r) => !r.ok);
     if (failed.length > 0) {
       const names2 = failed.map((r) => r.failed?.length ? `${r.name} (${r.failed.join(", ")})` : r.name).join(", ");

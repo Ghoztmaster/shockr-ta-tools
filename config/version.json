@@ -1,7 +1,25 @@
 {
-  "version": "5.51.0",
+  "version": "5.52.0",
   "date": "2026-11-11",
   "changelog": [
+    {
+      "version": "5.52.0",
+      "date": "2026-11-11",
+      "changes": {
+        "en": [
+          "Global phe built in (window.phe = webfrontend.phe), as the infernal wrapper did - for MehrStrom, TAMap and other scripts that call phe.cnc.Util",
+          "Stops after 20 s if the client has no webfrontend.phe; chat then shows Patch failed: phe"
+        ],
+        "de": [
+          "Globales phe eingebaut (window.phe = webfrontend.phe), wie beim Infernal Wrapper - für MehrStrom, TAMap und andere Scripts, die phe.cnc.Util aufrufen",
+          "Hört nach 20 s auf, wenn der Client kein webfrontend.phe hat; der Chat zeigt dann Patch fehlgeschlagen: phe"
+        ],
+        "nl": [
+          "Globale phe ingebouwd (window.phe = webfrontend.phe), zoals de infernal wrapper deed - voor MehrStrom, TAMap en andere scripts die phe.cnc.Util aanroepen",
+          "Stopt na 20 s als de client geen webfrontend.phe heeft; de chat toont dan Patch mislukt: phe"
+        ]
+      }
+    },
     {
       "version": "5.51.0",
       "date": "2026-11-11",
@@ -62,21 +80,6 @@
         ],
         "nl": [
           "ChatManager: je spelernaam gemarkeerd in de chat (chatmanager.mentionColor) en gewone http(s)-links klikbaar (chatmanager.linkify)"
-        ]
-      }
-    },
-    {
-      "version": "5.47.0",
-      "date": "2026-11-09",
-      "changes": {
-        "en": [
-          "New plugin ChatManager (off by default): up to 512 chat messages per channel instead of 64, and optionally close the chat when the game loads; /st plugin enable chat-manager"
-        ],
-        "de": [
-          "Neues Plugin ChatManager (standardmäßig aus): bis zu 512 Chatnachrichten pro Kanal statt 64, und optional den Chat beim Laden schließen; /st plugin enable chat-manager"
-        ],
-        "nl": [
-          "Nieuwe plugin ChatManager (standaard uit): tot 512 chatberichten per kanaal in plaats van 64, en optioneel de chat dichtklappen als de game laadt; /st plugin enable chat-manager"
         ]
       }
     }

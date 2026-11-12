@@ -1,5 +1,22 @@
 # Changelog
 
+## [5.52.0] — 2026-11-11
+
+Userscript, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Globale `phe` (`lib/clientlib-patch.js`, `globalizePhe`)
+- Zoals de infernal wrapper: `window.phe = webfrontend.phe`. Sinds game 22.3 staat phe alleen nog onder `webfrontend`; scripts die een kale `phe.cnc.Util...` aanroepen (MehrStrom combat en CY optimizer, TAMap, en in het SoO-pack o.a. Attack Range, Auto Repair, BaseShare, CD Compass, PvP Quick Map, Chat Colorize, CityMoveInfoExtend) gooien zonder dat een ReferenceError
+- Start als eerste stap van de opstart, vóór het wachten op de game, zodat phe zo vroeg mogelijk globaal is: elke 100 ms kijken of `webfrontend.phe` er is
+- Max-retry: na 200 pogingen (20 s, dezelfde grens als het wachten op de game) stopt de poll. Is phe dan niet gezet, dan meldt de chat `[ST] ⚠ Patch failed: phe`. Is de game klaar maar phe er na 1 s nog niet, dan gaat de rest van de opstart gewoon door (de melding volgt)
+- Bestaat er al een globale `phe` (de game zelf, of de wrapper staat nog aan), dan blijft die staan
+
+### `System = $I` / `SharedLib = $I`: bewust niet
+- Nagekeken in het SoO-pack, MehrStrom (`tampermonkey/`, `reference/`), TAMap, TABS en Shockr zelf: `System.` en `SharedLib.` komen alleen voor in commentaar (C#-signaturen als `System.Int32`) en in logtekst van de wrappers. Geen enkel script gebruikt ze in code, dus geen extra globals
+
+### Tests
+- `tests/clientlib-patch.test.mjs`: phe wordt gezet, wacht tot `webfrontend.phe` verschijnt, bestaande `phe` blijft, stopt na `maxAttempts`
+- NIET LIVE GEVERIFIEERD in de game
+
 ## [5.51.0] — 2026-11-11
 
 Userscript, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

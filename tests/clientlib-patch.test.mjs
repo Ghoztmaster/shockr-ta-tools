@@ -120,6 +120,40 @@ test('Battleground: step method missing on the $I class = failure, not a wrong p
     assert.equal(Battleground.prototype.get_Simulation, undefined);
 });
 
+test('phe: webfrontend.phe becomes the global phe', async () => {
+    const { globalizePhe } = await load();
+    const phe = { cnc: { Util: {} } };
+    const root = { webfrontend: { phe } };
+    assert.equal(await globalizePhe({ root, intervalMs: 1 }), 'set');
+    assert.equal(root.phe, phe);
+});
+
+test('phe: waits for webfrontend.phe to appear', async () => {
+    const { globalizePhe } = await load();
+    const root = {};
+    const done = globalizePhe({ root, intervalMs: 5, maxAttempts: 100 });
+    setTimeout(() => { root.webfrontend = { phe: { late: true } }; }, 30);
+    assert.equal(await done, 'set');
+    assert.equal(root.phe.late, true);
+});
+
+test('phe: an existing global phe is kept', async () => {
+    const { globalizePhe } = await load();
+    const theirs = { mine: false };
+    const root = { phe: theirs, webfrontend: { phe: {} } };
+    assert.equal(await globalizePhe({ root, intervalMs: 1 }), 'existing');
+    assert.equal(root.phe, theirs);
+});
+
+test('phe: gives up after maxAttempts instead of polling forever', async () => {
+    const { globalizePhe } = await load();
+    const root = { webfrontend: {} };
+    const t0 = Date.now();
+    assert.equal(await globalizePhe({ root, intervalMs: 2, maxAttempts: 10 }), false);
+    assert.ok(Date.now() - t0 < 1000);
+    assert.equal('phe' in root, false);
+});
+
 test('Battleground: no fingerprint at all = both reported failed', async () => {
     const { applyPatches, PATCHES } = await load();
     setup({ startBattle: 'function(){return 1}' });
