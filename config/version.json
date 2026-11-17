@@ -1,7 +1,25 @@
 {
-  "version": "5.52.0",
-  "date": "2026-11-11",
+  "version": "5.52.1",
+  "date": "2026-11-17",
   "changelog": [
+    {
+      "version": "5.52.1",
+      "date": "2026-11-17",
+      "changes": {
+        "en": [
+          "Loot page: one row per target (city id) instead of per coordinate - a camp that respawned on the same spot is now a separate row with its own level, total and average",
+          "Attacks from before 5.33.0 (no city id) are still grouped per coordinate"
+        ],
+        "de": [
+          "Loot-Seite: eine Zeile pro Ziel (City-ID) statt pro Koordinate - ein Camp, das an derselben Stelle neu erscheint, ist jetzt eine eigene Zeile mit eigenem Level, Summe und Durchschnitt",
+          "Angriffe von vor 5.33.0 (ohne City-ID) werden weiterhin pro Koordinate gruppiert"
+        ],
+        "nl": [
+          "Loot-pagina: één rij per target (city id) i.p.v. per coördinaat - een camp dat op dezelfde plek respawnt is nu een aparte rij met eigen level, totaal en gemiddelde",
+          "Aanvallen van vóór 5.33.0 (zonder city id) worden nog per coördinaat gegroepeerd"
+        ]
+      }
+    },
     {
       "version": "5.52.0",
       "date": "2026-11-11",
@@ -65,21 +83,6 @@
         ],
         "nl": [
           "ChatManager: compacte modus (chatmanager.compact) en instelbare chatbreedte - sleep de rechterrand van de chat (chatmanager.width)"
-        ]
-      }
-    },
-    {
-      "version": "5.48.0",
-      "date": "2026-11-09",
-      "changes": {
-        "en": [
-          "ChatManager: your player name highlighted in chat (chatmanager.mentionColor) and plain http(s) links clickable (chatmanager.linkify)"
-        ],
-        "de": [
-          "ChatManager: dein Spielername im Chat hervorgehoben (chatmanager.mentionColor) und einfache http(s)-Links anklickbar (chatmanager.linkify)"
-        ],
-        "nl": [
-          "ChatManager: je spelernaam gemarkeerd in de chat (chatmanager.mentionColor) en gewone http(s)-links klikbaar (chatmanager.linkify)"
         ]
       }
     }

@@ -235,6 +235,38 @@ def test_per_target_groups_on_coordinate():
     assert [a["playerName"] for a in outpost["attackList"]] == ["delta3dany", "GhoztMasters"]
 
 
+def test_per_target_groups_on_city_id():
+    s = store_with()
+    # Same spot, two cities: the old camp (id 501, level 18) and its respawn (id 502, level 25)
+    s.add(AttackPayload(**attack(targetId=501, targetLevel=18, lootTib=100000, lootCrystal=0, lootCredits=0,
+                                 timestamp=NOW_MS - 7_200_000)), 164, "GhoztMasters", "SoO")
+    s.add(AttackPayload(**attack(targetId=501, targetLevel=18, lootTib=200000, lootCrystal=0, lootCredits=0,
+                                 timestamp=NOW_MS - 3_600_000)), 200, "delta3dany", "SoO")
+    s.add(AttackPayload(**attack(targetId=502, targetLevel=25, lootTib=900000, lootCrystal=0, lootCredits=0,
+                                 timestamp=NOW_MS - 60_000)), 164, "GhoztMasters", "SoO")
+    data = s.targets(477, 0)
+    by_id = {t["targetId"]: t for t in data["targets"]}
+    assert set(by_id) == {501, 502}
+    old, new = by_id[501], by_id[502]
+    assert (old["x"], old["y"]) == (new["x"], new["y"]) == (84, 293)
+    assert (old["attackCount"], old["totalTib"], old["avgTotal"], old["targetLevel"]) == (2, 300000, 150000, 18)
+    assert (new["attackCount"], new["totalTib"], new["avgTotal"], new["targetLevel"]) == (1, 900000, 900000, 25)
+    assert old["key"] == "id:501" and new["key"] == "id:502"
+
+
+def test_per_target_without_city_id_falls_back_to_coordinate():
+    s = store_with()
+    # Records before 5.33.0 carry no targetId: grouped per coordinate, apart from the id-carrying record
+    s.add(AttackPayload(**attack(timestamp=NOW_MS - 7_200_000)), 164, "GhoztMasters", "SoO")
+    s.add(AttackPayload(**attack(timestamp=NOW_MS - 3_600_000)), 200, "delta3dany", "SoO")
+    s.add(AttackPayload(**attack(targetId=777)), 164, "GhoztMasters", "SoO")
+    data = s.targets(477, 0)
+    rows = {t["key"]: t for t in data["targets"]}
+    assert set(rows) == {"pos:84:293", "id:777"}
+    assert rows["pos:84:293"]["attackCount"] == 2 and rows["pos:84:293"]["targetId"] is None
+    assert rows["id:777"]["attackCount"] == 1
+
+
 def test_per_target_efficiency_rp_rt_cp():
     s = store_with()
     # Old record (before 5.37.0): no RP / RT, no CP

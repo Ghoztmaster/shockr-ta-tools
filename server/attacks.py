@@ -35,7 +35,10 @@ position starts the next one. Distance is Euclidean (as the game's attack
 range). The label is the attack-weighted mean of the cluster's positions.
 
 Loot logs (per_target, GET /api/attacks/targets): the same records grouped
-per individual target coordinate instead of per tunnel - no extra storage.
+per individual target instead of per tunnel - no extra storage. A target is
+its city id (targetId): a camp/outpost respawns on the same spot with a new
+id and another level/loot, so the coordinate alone would merge two targets.
+Records without targetId (before 5.33.0) fall back to the coordinate.
 
 The store keeps each world's records in memory after the first read; that
 needs a single uvicorn worker, as in the Dockerfile.
@@ -215,7 +218,7 @@ class AttackStore:
     def targets(self, world_id: int, since_ms: int, player: str | None = None,
                 target_type: str | None = None) -> dict:
         """
-        Loot logs: the same attacks as query(), grouped per target coordinate
+        Loot logs: the same attacks as query(), grouped per target city id
         (see per_target), plus the players seen in the period (dropdown).
         """
         players, rows = self._filtered(world_id, since_ms, player, target_type)
@@ -348,9 +351,12 @@ def cluster_attacks(attacks: list[dict], radius: float = TUNNEL_RADIUS,
 
 def per_target(attacks: list[dict]) -> list[dict]:
     """
-    Loot logs: one summary per target coordinate (targetX, targetY). Type and
-    level come from the most recent attack on it (a camp can respawn as
-    something else on the same spot); players = unique names, most attacks
+    Loot logs: one summary per target = its city id (targetId); attacks
+    without one (records before 5.33.0) are grouped per coordinate instead.
+    Two targets on the same spot (a respawn: new id, other level/loot) are
+    two rows. `key` identifies the row ("id:<targetId>" or "pos:<x>:<y>").
+    Coordinates, type and level come from the most recent attack on it;
+    players = unique names, most attacks
     first. Averages are rounded per attack; avgTotal = tib + crystal + credits
     per attack. avgTotal = (tib + crystal + credits + RP) / attacks (5.37.0: with
     RP, consistent with totalAll). `attackList` (newest first) feeds the page's detail rows.
@@ -362,12 +368,14 @@ def per_target(attacks: list[dict]) -> list[dict]:
     perCp / perRt divide the total of only the attacks that carry CP / RT by
     their CP sum / RT sum in hours, so old attacks without the field do not skew them.
     """
-    by_pos: dict[tuple[int, int], list[dict]] = {}
+    by_target: dict[str, list[dict]] = {}
     for a in attacks:
-        by_pos.setdefault((a["targetX"], a["targetY"]), []).append(a)
+        tid = a.get("targetId")
+        key = f"id:{tid}" if tid else f"pos:{a['targetX']}:{a['targetY']}"
+        by_target.setdefault(key, []).append(a)
 
     result = []
-    for (x, y), rows in by_pos.items():
+    for key, rows in by_target.items():
         rows = sorted(rows, key=lambda a: a["timestamp"], reverse=True)
         n = len(rows)
         counts: dict[str, int] = {}
@@ -381,8 +389,10 @@ def per_target(attacks: list[dict]) -> list[dict]:
         rt = _sum_known(rows, "repairSeconds")
         cp = _sum_known(rows, "cpCost")
         result.append({
-            "x": x,
-            "y": y,
+            "key": key,
+            "targetId": last.get("targetId"),
+            "x": last["targetX"],
+            "y": last["targetY"],
             "targetType": last["targetType"],
             "targetLevel": last["targetLevel"],
             "attackCount": n,

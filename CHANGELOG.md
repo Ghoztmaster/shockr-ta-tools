@@ -1,5 +1,18 @@
 # Changelog
 
+## [5.52.1] — 2026-11-17
+
+Server (`server/attacks.py`, `server/static/loot.html`), `config/version.json` en `config/announcements.json`; userscript alleen versie. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Fix: loot page groepeert op city id i.p.v. coördinaten
+- `per_target` groepeerde op `(targetX, targetY)`. Camps/outposts respawnen op dezelfde plek met een nieuw city id en ander level/loot, waardoor twee verschillende targets werden samengeteld (totaal, gemiddelde en opbrengst/CP onbetrouwbaar)
+- Groepeersleutel is nu `targetId` (report `obi` = city id van het target, al sinds 5.33.0 in het record; `plugins/attack-tracker.js` hoefde niet aangepast). Records zonder `targetId` (vóór 5.33.0) vallen terug op de coördinaat
+- Coördinaten, type en level komen uit de laatste aanval op dat city id; coördinaten blijven zichtbaar in de tabel
+- Elke rij krijgt `key` (`id:<targetId>` of `pos:<x>:<y>`) en `targetId`; de loot page gebruikt `key` voor uitgeklapte rijen
+
+### Tests
+- `tests/test_attacks.py`: zelfde plek met twee city ids = twee rijen met eigen level/totaal/gemiddelde; records zonder city id groeperen op coördinaat
+
 ## [5.52.0] — 2026-11-11
 
 Userscript, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

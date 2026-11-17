@@ -212,7 +212,7 @@ const prefs = readPrefs();     // {world, player, period, type, min}
 const sort = { key: 'avg', asc: false };   // default: most lucrative on top
 let data = null;               // last /api/attacks/targets response
 let lastStatus = null;
-const open = new Set();        // expanded targets ("x:y")
+const open = new Set();        // expanded targets (server `key`: "id:<cityId>" or "pos:x:y")
 
 async function loadTargets() {
     const params = new URLSearchParams();
@@ -312,7 +312,7 @@ function render() {
 }
 
 function targetHtml(t) {
-    const key = `${t.x}:${t.y}`;
+    const key = t.key;
     const expanded = open.has(key);
     const avgTip = T('lootAvgTip', { tib: fmt(t.avgTib), crystal: fmt(t.avgCrystal), credits: fmt(t.avgCredits), rp: fmt(t.avgRp) });
     const row = `<tr class="target${expanded ? ' open' : ''}" data-key="${key}" title="${esc(T('lootToggleDetail'))}">
