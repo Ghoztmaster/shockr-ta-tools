@@ -1,5 +1,25 @@
 # Changelog
 
+## [5.53.0] — 2026-11-17
+
+Userscript, `config/plugins.json`, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### Nieuwe plugin: GhoztWatch (`plugins/ghozt-watch.js`) — fase 1, passive
+- Volgt gemarkeerde vijandelijke spelers zonder aanvalsbereik. Standaard uit: `/st plugin enable ghoztwatch`
+- `/st ghoztwatch add <naam>` (naam → id via `GetPublicPlayerInfoByName`, veld `i`), `remove <naam>`, `list`, `clear`; zonder argument het paneel. Max 20 spelers
+- Elke 5 min (alleen zolang de game open is) per speler `GetPublicPlayerInfo {id}`, 500 ms tussen spelers, 5 s timeout
+- Geen online-veld voor spelers buiten de eigen alliance (live bevestigd): "online" = **activiteit**. Upgrades zijn in TA direct, dus stijgende punten (`p`) = speelt nu. 🟢 < 15 min, 🟡 < 60 min, ⚫ langer
+- Events (vergelijking met de opgeslagen snapshot, dus elke toestand maar één melding, ook na herladen): `active`/`inactive` (overgangen), `base_count` (met namen van bijgekomen/verdwenen bases), `attack` (`bd`/`bde` gestegen: PvP/PvE), `alliance_change`, `name_change`. `defense_changed` en `unit_upgrade` staan klaar voor fase 2
+- Chat: `[GW] 🔍 <naam>: <event>`
+- Paneel (oog-icoon in de Shockr-knop): speler + alliance/factie/rank, punten, bases, activiteit, laatste 3 events, lege Defense-kolom (fase 2), ✕ per speler, ↻ = nu controleren. Klik op een rij = volledige history
+- Opslag: localStorage `st-ghoztwatch-<worldId>`, max 100 events per speler. Geen server-component
+- Live geverifieerd (2026-11-17, game 26.1): beide commando's antwoorden, inclusief `i`, `p`, `c[]`, `bd`/`bde`, `a`/`an`, `f`, `r`. De rest (pollen, meldingen, paneel) NIET LIVE GEVERIFIEERD
+- Afwijking van de werkorder: base/off/def-levels zitten niet in de publieke info (off/def alleen voor geladen bases) en zijn naar fase 2 verschoven; punten/bases/vernietigde bases vervangen ze
+
+### Tests
+- `tests/ghozt-watch.test.mjs`: gemockte `GetPublicPlayerInfo(ByName)`; baseline zonder events, active/inactive-overgang één keer, base count/attack/alliance/naam, history max 100, max 20 spelers, geen herhaalde melding na herstart, paneel-render
+- `tests/test_siteinfo.py`: GhoztWatch in de lijst van plugins die standaard uit staan
+
 ## [5.52.1] — 2026-11-17
 
 Server (`server/attacks.py`, `server/static/loot.html`), `config/version.json` en `config/announcements.json`; userscript alleen versie. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

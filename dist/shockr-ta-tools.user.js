@@ -2,11 +2,11 @@
 // @name            Shockr - Tiberium Alliances Tools
 // @author          Ghozt [SoO] (original: Shockr, fixed by NetquiK [SoO])
 // @license         GPL-3.0-or-later
-// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver, wavy, loot summary, chat helper, spam blocker & PvP alert for C&C Tiberium Alliances
+// @description     Camp tracker, kill info, player status, alliance recon, upgrade calculator, target watcher, attack tracker, watchlist, base info, attack range, map labels, tunnel info, formation saver, wavy, loot summary, chat helper, spam blocker, PvP alert & enemy player watch for C&C Tiberium Alliances
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.52.1
+// @version         5.53.0
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -102,7 +102,7 @@ var ShockrTools = (() => {
   });
 
   // <define:__ST_PLUGIN_SHORT__>
-  var define_ST_PLUGIN_SHORT_default = { AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, ArmyOverview: { en: "Base, defense, army and repair charges of every base in one panel", de: "Basis, Verteidigung, Armee und Reparaturladungen jeder Basis in einem Panel", nl: "Base, defense, leger en repair charges van elke base in \xE9\xE9n paneel" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, AutoCollect: { en: "Collects the resource packages of all your bases automatically", de: "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein", nl: "Verzamelt de resource-pakketten van al je bases automatisch" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, BaseStatus: { en: "One panel with cooldown, protection, alert and support weapon of every base", de: "Ein Panel mit Cooldown, Schutz, Alarm und Unterst\xFCtzungswaffe jeder Basis", nl: "E\xE9n paneel met cooldown, protection, alert en support weapon van elke base" }, CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, ChatManager: { en: "Chat: close at start, longer history, your name highlighted, links clickable", de: "Chat: beim Start schlie\xDFen, l\xE4ngerer Verlauf, dein Name hervorgehoben, Links anklickbar", nl: "Chat: dichtklappen bij opstarten, langere geschiedenis, je naam gemarkeerd, links klikbaar" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, McvTimer: { en: "Progress to the next MCV in a small movable panel", de: "Fortschritt zum n\xE4chsten MBF in einem kleinen verschiebbaren Panel", nl: "Voortgang naar de volgende MCV in een klein verplaatsbaar paneel" }, MissionHider: { en: "Hide the mission tracker on the left", de: "Das Missionsfenster links ausblenden", nl: "De mission tracker links verbergen" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, ProductionOverview: { en: "Production per base per hour in one panel", de: "Produktion pro Basis pro Stunde in einem Panel", nl: "Productie per base per uur in \xE9\xE9n paneel" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, ResourceOverview: { en: "Storage per base: how full, and when it is full", de: "Lager pro Basis: wie voll, und wann es voll ist", nl: "Opslag per base: hoe vol, en wanneer hij vol is" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" }, SupportCalibrate: { en: "Calibrate all support weapons on a base in one click from the world-map menu", de: "Alle Unterst\xFCtzungswaffen mit einem Klick im Weltkarten-Men\xFC auf eine Basis kalibrieren", nl: "Alle support weapons met \xE9\xE9n klik vanuit het wereldkaart-menu op een base kalibreren" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, UpgradePriority: { en: "Which production building to upgrade first, per resource, over all bases", de: "Welches Produktionsgeb\xE4ude zuerst ausbauen, pro Ressource, \xFCber alle Basen", nl: "Welk productiegebouw eerst upgraden, per resource, over alle bases" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" } };
+  var define_ST_PLUGIN_SHORT_default = { AllianceScanner: { en: "Scans the bases of your alliance members", de: "Scannt die Basen deiner Allianzmitglieder", nl: "Scant de bases van je alliance-leden" }, ArmyOverview: { en: "Base, defense, army and repair charges of every base in one panel", de: "Basis, Verteidigung, Armee und Reparaturladungen jeder Basis in einem Panel", nl: "Base, defense, leger en repair charges van elke base in \xE9\xE9n paneel" }, AttackRange: { en: "Attack range circle around your own bases", de: "Angriffsreichweite als Kreis um deine eigenen Basen", nl: "Aanvalsbereik als cirkel rond je eigen bases" }, AttackTracker: { en: "Logs your attacks on Forgotten targets", de: "Meldet deine Angriffe auf Forgotten-Ziele", nl: "Meldt je aanvallen op Forgotten-targets" }, AutoCollect: { en: "Collects the resource packages of all your bases automatically", de: "Sammelt die Ressourcenpakete aller deiner Basen automatisch ein", nl: "Verzamelt de resource-pakketten van al je bases automatisch" }, AutoRepair: { en: "Repairs damaged units right after every attack", de: "Repariert besch\xE4digte Einheiten direkt nach jedem Angriff", nl: "Repareert beschadigde units direct na elke aanval" }, BaseInfo: { en: "Offense/defense level and number at player bases", de: "Offensiv-/Defensivlevel und Nummer an Spielerbasen", nl: "Offense-/defense-level en nummer bij spelerbases" }, BaseStatus: { en: "One panel with cooldown, protection, alert and support weapon of every base", de: "Ein Panel mit Cooldown, Schutz, Alarm und Unterst\xFCtzungswaffe jeder Basis", nl: "E\xE9n paneel met cooldown, protection, alert en support weapon van elke base" }, CampTracker: { en: "FG base markers on the world map", de: "FG-Basen-Markierungen auf der Weltkarte", nl: "FG-base markers op de wereldkaart" }, ChatHelper: { en: "Clickable coordinates, BB-code shortcuts and contacts in chat", de: "Anklickbare Koordinaten, BB-Code-K\xFCrzel und Kontakte im Chat", nl: "Klikbare co\xF6rdinaten, BB-code-sneltoetsen en contacten in de chat" }, ChatManager: { en: "Chat: close at start, longer history, your name highlighted, links clickable", de: "Chat: beim Start schlie\xDFen, l\xE4ngerer Verlauf, dein Name hervorgehoben, Links anklickbar", nl: "Chat: dichtklappen bij opstarten, langere geschiedenis, je naam gemarkeerd, links klikbaar" }, FormationSaver: { en: "Save attack formations by name and load them back", de: "Angriffsformationen unter einem Namen speichern und laden", nl: "Aanvalsformaties op naam opslaan en terugladen" }, GhoztWatch: { en: "Follow enemy players over time, with chat alerts", de: "Feindliche Spieler \xFCber Zeit verfolgen, mit Chat-Meldungen", nl: "Vijandelijke spelers over tijd volgen, met chatmeldingen" }, KillInfo: { en: "Plunder panel for the selected Forgotten base", de: "Pl\xFCnder-Panel f\xFCr die gew\xE4hlte Forgotten-Basis", nl: "Plunderpaneel voor de geselecteerde Forgotten-base" }, LayoutScanner: { en: "Scans nearby Forgotten base layouts for the alliance", de: "Scannt Layouts naher Forgotten-Basen f\xFCr die Allianz", nl: "Scant layouts van Forgotten-bases in de buurt voor de alliance" }, LootSummary: { en: "Lootable resources of a Forgotten target in the info panel", de: "Pl\xFCnderbare Ressourcen eines Forgotten-Ziels im Infofenster", nl: "Plunderbare resources van een Forgotten-target in het infopaneel" }, MapLabels: { en: "Who views, claimed or attacked a Forgotten target", de: "Wer ein Forgotten-Ziel ansieht, reserviert oder angegriffen hat", nl: "Wie een Forgotten-target bekijkt, claimde of aanviel" }, MarkerNav: { en: "List of your map markers, click to jump to one", de: "Liste deiner Kartenmarkierungen, Klick springt hin", nl: "Lijst van je kaartmarkers, klik om erheen te springen" }, McvTimer: { en: "Progress to the next MCV in a small movable panel", de: "Fortschritt zum n\xE4chsten MBF in einem kleinen verschiebbaren Panel", nl: "Voortgang naar de volgende MCV in een klein verplaatsbaar paneel" }, MissionHider: { en: "Hide the mission tracker on the left", de: "Das Missionsfenster links ausblenden", nl: "De mission tracker links verbergen" }, MovableMenu: { en: "Drag game windows and menus to another spot", de: "Spielfenster und Men\xFCs an eine andere Stelle ziehen", nl: "Game-vensters en menu's naar een andere plek slepen" }, PlayerStatus: { en: "Alliance base colors by online status", de: "Allianz-Basisfarben nach Online-Status", nl: "Alliance-basekleuren op online-status" }, PoiAnalyser: { en: "Alliance POI bonuses on the map and in the info panel", de: "Allianz-POI-Boni auf der Karte und im Infofenster", nl: "Alliance-POI-bonussen op de kaart en in het infopaneel" }, ProductionOverview: { en: "Production per base per hour in one panel", de: "Produktion pro Basis pro Stunde in einem Panel", nl: "Productie per base per uur in \xE9\xE9n paneel" }, PvpAlert: { en: "Alarm when your base is attacked while the game is in the background", de: "Alarm, wenn deine Basis angegriffen wird, w\xE4hrend das Spiel im Hintergrund ist", nl: "Alarm als je base wordt aangevallen terwijl de game op de achtergrond staat" }, RepairGuard: { en: "Blocks the Repair All buttons", de: "Blockiert die Repair-All-Buttons", nl: "Blokkeert de Repair All-knoppen" }, ResourceOverview: { en: "Storage per base: how full, and when it is full", de: "Lager pro Basis: wie voll, und wann es voll ist", nl: "Opslag per base: hoe vol, en wanneer hij vol is" }, SectorHud: { en: "Sector HUD with view coordinates and POIs per sector", de: "Sektor-HUD mit Ansichtskoordinaten und POIs pro Sektor", nl: "Sector-HUD met kijkco\xF6rdinaten en POI's per sector" }, SpamBlock: { en: "Hide in-game mail from players you block", de: "Ingame-Mails blockierter Spieler ausblenden", nl: "In-game mail van geblokkeerde spelers verbergen" }, SupportCalibrate: { en: "Calibrate all support weapons on a base in one click from the world-map menu", de: "Alle Unterst\xFCtzungswaffen mit einem Klick im Weltkarten-Men\xFC auf eine Basis kalibrieren", nl: "Alle support weapons met \xE9\xE9n klik vanuit het wereldkaart-menu op een base kalibreren" }, TargetBoard: { en: "In-game overview of alliance targets \u2014 who is watching and who is attacking", de: "In-Game-\xDCbersicht der Allianz-Ziele \u2014 wer schaut und wer greift an", nl: "In-game overzicht van alliance-targets \u2014 wie kijkt en wie valt aan" }, TargetWatcher: { en: "Tells the alliance which target you are looking at", de: "Zeigt der Allianz, welches Ziel du ansiehst", nl: "Laat de alliance zien welk target je bekijkt" }, TransferAll: { en: "Pull all tiberium and crystal into one base in one click", de: "Alles Tiberium und Kristall mit einem Klick in eine Basis holen", nl: "Alle tiberium en crystal met \xE9\xE9n klik naar \xE9\xE9n base halen" }, TunnelInfo: { en: "Tunnel level, required offense and influence range", de: "Tunnel-Level, ben\xF6tigte Offensive und Einflussbereich", nl: "Tunnel-level, benodigde offense en invloedsbereik" }, TunnelPoiAnalyzer: { en: "Who activates each tunnel exit, spawn-risk bases, worthless POIs", de: "Wer Tunnelausg\xE4nge aktiviert, Basen mit Spawn-Risiko, wertlose POIs", nl: "Wie tunnel exits activeert, bases met spawn-risico, waardeloze POI's" }, UpgradeCalc: { en: "Upgrade cost and saving time per building", de: "Upgrade-Kosten und Sparzeit pro Geb\xE4ude", nl: "Upgrade-kosten en spaartijd per gebouw" }, UpgradePriority: { en: "Which production building to upgrade first, per resource, over all bases", de: "Welches Produktionsgeb\xE4ude zuerst ausbauen, pro Ressource, \xFCber alle Basen", nl: "Welk productiegebouw eerst upgraden, per resource, over alle bases" }, WatchList: { en: "Claim Forgotten targets you intend to attack", de: "Forgotten-Ziele reservieren, die du angreifen willst", nl: "Forgotten-targets claimen die je wilt aanvallen" }, Wavy: { en: "Forgotten attack waves per base", de: "Forgotten-Angriffswellen pro Basis", nl: "Forgotten-aanvalsgolven per base" } };
 
   // lib/game-ready.js
   async function waitForGame({ maxAttempts = 200, intervalMs = 100 } = {}) {
@@ -740,6 +740,47 @@ var ShockrTools = (() => {
       armyStatusOpen: "panel open",
       armyStatusClosed: "panel closed (/st army)",
       // McvTimer (5.42.0)
+      // GhoztWatch (5.53.0)
+      descGhoztWatch: "Follow enemy players: activity (points), bases, destroyed bases, alliance and name changes, with chat alerts",
+      helpCmdGhoztWatch: "GhoztWatch: watch an enemy player, stop watching, list, clear; without arguments the panel",
+      toolbarGhoztWatch: "GhoztWatch",
+      gwUsage: "Usage: /st ghoztwatch add <name> | remove <name> | list | clear",
+      gwAdded: "Watching {name} ({alliance}, {bases} bases, {points} points) \u2014 {n}/{max}",
+      gwAlready: "{name} is already on the watchlist",
+      gwFull: "Watchlist full (max {max} players) \u2014 remove someone first",
+      gwNotFound: "Player {name} not found",
+      gwRemoved: "{name} removed from the watchlist",
+      gwNotWatched: "{name} is not on the watchlist",
+      gwCleared: "Watchlist cleared ({n} players)",
+      gwListEmpty: "Watchlist is empty \u2014 /st ghoztwatch add <name>",
+      gwListHeader: "Watchlist ({n}/{max}): \u{1F7E2} active < 15 min, \u{1F7E1} < 60 min, \u26AB longer",
+      gwBasesN: "{n} bases",
+      gwStatus: "{n}/{max} players watched",
+      gwEvActive: "is active ({detail} points)",
+      gwEvInactive: "no activity for 60 min",
+      gwEvBaseCount: "bases {detail}",
+      gwEvAttack: "destroyed bases: {detail}",
+      gwEvAllianceChange: "changed alliance: {detail}",
+      gwEvNameChange: "renamed: {detail}",
+      gwEvDefenseChanged: "defense changed: {detail}",
+      gwEvUnitUpgrade: "unit upgrade: {detail}",
+      gwNever: "no activity seen yet",
+      gwAgoNow: "just now",
+      gwAgoMin: "{n} min ago",
+      gwAgoHour: "{n} h ago",
+      gwAgoDay: "{n} d ago",
+      gwEmpty: "Nobody watched yet \u2014 /st ghoztwatch add <name>",
+      gwColPlayer: "Player",
+      gwColPoints: "Points",
+      gwColBases: "Bases",
+      gwColStatus: "Activity",
+      gwColEvents: "Last events",
+      gwColDefense: "Defense",
+      gwExpandHint: "Click for the full history",
+      gwHistoryEmpty: "No events yet",
+      gwRemoveHint: "Stop watching",
+      gwRefresh: "Check all players now",
+      gwPolling: "checking\u2026",
       descMcvTimer: "Small movable panel with the progress to the next MCV: credits and research points, % and estimated time",
       helpCmdMcv: "Show/hide the MCV timer panel",
       helpSetMcvCompact: "McvTimer compact view (default false; the \u25BE/\u25B8 button does the same)",
@@ -1391,6 +1432,47 @@ var ShockrTools = (() => {
       armyStatusOpen: "Panel offen",
       armyStatusClosed: "Panel zu (/st army)",
       // McvTimer (5.42.0)
+      // GhoztWatch (5.53.0)
+      descGhoztWatch: "Feindliche Spieler verfolgen: Aktivit\xE4t (Punkte), Basen, zerst\xF6rte Basen, Allianz- und Namenswechsel, mit Chat-Meldungen",
+      helpCmdGhoztWatch: "GhoztWatch: feindlichen Spieler beobachten, entfernen, Liste, leeren; ohne Argumente das Panel",
+      toolbarGhoztWatch: "GhoztWatch",
+      gwUsage: "Verwendung: /st ghoztwatch add <Name> | remove <Name> | list | clear",
+      gwAdded: "{name} wird beobachtet ({alliance}, {bases} Basen, {points} Punkte) \u2014 {n}/{max}",
+      gwAlready: "{name} steht schon auf der Beobachtungsliste",
+      gwFull: "Beobachtungsliste voll (max. {max} Spieler) \u2014 erst jemanden entfernen",
+      gwNotFound: "Spieler {name} nicht gefunden",
+      gwRemoved: "{name} von der Beobachtungsliste entfernt",
+      gwNotWatched: "{name} steht nicht auf der Beobachtungsliste",
+      gwCleared: "Beobachtungsliste geleert ({n} Spieler)",
+      gwListEmpty: "Beobachtungsliste ist leer \u2014 /st ghoztwatch add <Name>",
+      gwListHeader: "Beobachtungsliste ({n}/{max}): \u{1F7E2} aktiv < 15 Min., \u{1F7E1} < 60 Min., \u26AB l\xE4nger",
+      gwBasesN: "{n} Basen",
+      gwStatus: "{n}/{max} Spieler beobachtet",
+      gwEvActive: "ist aktiv ({detail} Punkte)",
+      gwEvInactive: "seit 60 Min. keine Aktivit\xE4t",
+      gwEvBaseCount: "Basen {detail}",
+      gwEvAttack: "Basen zerst\xF6rt: {detail}",
+      gwEvAllianceChange: "Allianz gewechselt: {detail}",
+      gwEvNameChange: "umbenannt: {detail}",
+      gwEvDefenseChanged: "Verteidigung ge\xE4ndert: {detail}",
+      gwEvUnitUpgrade: "Einheiten-Upgrade: {detail}",
+      gwNever: "noch keine Aktivit\xE4t gesehen",
+      gwAgoNow: "gerade eben",
+      gwAgoMin: "vor {n} Min.",
+      gwAgoHour: "vor {n} Std.",
+      gwAgoDay: "vor {n} T.",
+      gwEmpty: "Noch niemand beobachtet \u2014 /st ghoztwatch add <Name>",
+      gwColPlayer: "Spieler",
+      gwColPoints: "Punkte",
+      gwColBases: "Basen",
+      gwColStatus: "Aktivit\xE4t",
+      gwColEvents: "Letzte Ereignisse",
+      gwColDefense: "Verteidigung",
+      gwExpandHint: "Klick f\xFCr den ganzen Verlauf",
+      gwHistoryEmpty: "Noch keine Ereignisse",
+      gwRemoveHint: "Nicht mehr beobachten",
+      gwRefresh: "Alle Spieler jetzt pr\xFCfen",
+      gwPolling: "pr\xFCfe\u2026",
       descMcvTimer: "Kleines verschiebbares Panel mit dem Fortschritt zum n\xE4chsten MBF: Credits und Forschungspunkte, % und gesch\xE4tzte Zeit",
       helpCmdMcv: "MBF-Timer-Panel zeigen/verbergen",
       helpSetMcvCompact: "McvTimer kompakte Ansicht (Standard false; der \u25BE/\u25B8-Knopf macht dasselbe)",
@@ -2032,6 +2114,47 @@ var ShockrTools = (() => {
       armyStatusOpen: "paneel open",
       armyStatusClosed: "paneel dicht (/st army)",
       // McvTimer (5.42.0)
+      // GhoztWatch (5.53.0)
+      descGhoztWatch: "Vijandelijke spelers volgen: activiteit (punten), bases, vernietigde bases, alliance- en naamwissels, met chatmeldingen",
+      helpCmdGhoztWatch: "GhoztWatch: vijandelijke speler volgen, verwijderen, lijst, wissen; zonder argumenten het paneel",
+      toolbarGhoztWatch: "GhoztWatch",
+      gwUsage: "Gebruik: /st ghoztwatch add <naam> | remove <naam> | list | clear",
+      gwAdded: "{name} wordt gevolgd ({alliance}, {bases} bases, {points} punten) \u2014 {n}/{max}",
+      gwAlready: "{name} staat al op de watchlist",
+      gwFull: "Watchlist vol (max {max} spelers) \u2014 verwijder eerst iemand",
+      gwNotFound: "Speler {name} niet gevonden",
+      gwRemoved: "{name} van de watchlist gehaald",
+      gwNotWatched: "{name} staat niet op de watchlist",
+      gwCleared: "Watchlist gewist ({n} spelers)",
+      gwListEmpty: "Watchlist is leeg \u2014 /st ghoztwatch add <naam>",
+      gwListHeader: "Watchlist ({n}/{max}): \u{1F7E2} actief < 15 min, \u{1F7E1} < 60 min, \u26AB langer",
+      gwBasesN: "{n} bases",
+      gwStatus: "{n}/{max} spelers gevolgd",
+      gwEvActive: "is actief ({detail} punten)",
+      gwEvInactive: "al 60 min geen activiteit",
+      gwEvBaseCount: "bases {detail}",
+      gwEvAttack: "bases vernietigd: {detail}",
+      gwEvAllianceChange: "van alliance gewisseld: {detail}",
+      gwEvNameChange: "hernoemd: {detail}",
+      gwEvDefenseChanged: "defense veranderd: {detail}",
+      gwEvUnitUpgrade: "unit-upgrade: {detail}",
+      gwNever: "nog geen activiteit gezien",
+      gwAgoNow: "zojuist",
+      gwAgoMin: "{n} min geleden",
+      gwAgoHour: "{n} u geleden",
+      gwAgoDay: "{n} d geleden",
+      gwEmpty: "Nog niemand gevolgd \u2014 /st ghoztwatch add <naam>",
+      gwColPlayer: "Speler",
+      gwColPoints: "Punten",
+      gwColBases: "Bases",
+      gwColStatus: "Activiteit",
+      gwColEvents: "Laatste events",
+      gwColDefense: "Defense",
+      gwExpandHint: "Klik voor de volledige history",
+      gwHistoryEmpty: "Nog geen events",
+      gwRemoveHint: "Niet meer volgen",
+      gwRefresh: "Alle spelers nu controleren",
+      gwPolling: "bezig\u2026",
       descMcvTimer: "Klein verplaatsbaar paneel met de voortgang naar de volgende MCV: credits en research points, % en geschatte tijd",
       helpCmdMcv: "MCV-timer-paneel tonen/verbergen",
       helpSetMcvCompact: "McvTimer compacte weergave (standaard false; de \u25BE/\u25B8-knop doet hetzelfde)",
@@ -3870,6 +3993,7 @@ var ShockrTools = (() => {
     { cmd: "tunnels", usage: "/st tunnels", key: "helpCmdTunnels" },
     { cmd: "blocklist", usage: "/st blocklist", key: "helpCmdBlocklist" },
     { cmd: "blocklist", usage: "/st blocklist remove <name>", key: "helpCmdBlocklistRemove" },
+    { cmd: "ghoztwatch", usage: "/st ghoztwatch [add|remove <name>|list|clear]", key: "helpCmdGhoztWatch" },
     { cmd: "menu", usage: "/st menu add|remove <plugin>", key: "helpCmdMenu" }
   ];
   var USEFUL_SETTINGS = [
@@ -4086,27 +4210,27 @@ var ShockrTools = (() => {
     parsed.searchParams.delete("code");
     return { url: parsed.toString(), code };
   }
-  async function setApiUrl(config, api, value, say3) {
+  async function setApiUrl(config, api, value, say4) {
     const { url, code } = splitEnrollCode(value);
     config.set("api.url", url);
-    say3(`[ST] api.url = ${escapeHtml(JSON.stringify(url))}`);
+    say4(`[ST] api.url = ${escapeHtml(JSON.stringify(url))}`);
     if (!code) return;
     if (api.registration === "player") {
-      say3(`[ST] ${escapeHtml(t("registerAutoAlready"))}`);
+      say4(`[ST] ${escapeHtml(t("registerAutoAlready"))}`);
       return;
     }
-    say3(`[ST] ${escapeHtml(t("registerBusy"))}`);
+    say4(`[ST] ${escapeHtml(t("registerBusy"))}`);
     const result = await api.enroll(code);
     if (result.ok) {
-      say3(`[ST] ${escapeHtml(t("registerSuccessChat"))}`);
-      say3(`[ST] ${escapeHtml(t("registerAutoKeyHint"))}`);
+      say4(`[ST] ${escapeHtml(t("registerSuccessChat"))}`);
+      say4(`[ST] ${escapeHtml(t("registerAutoKeyHint"))}`);
     } else if (result.confirm) {
-      say3(`[ST] ${escapeHtml(t("registerAutoElsewhere"))}`);
+      say4(`[ST] ${escapeHtml(t("registerAutoElsewhere"))}`);
     } else if (result.message === "registerFailed") {
-      say3(`[ST] ${escapeHtml(t("registerFailed", result.vars))}`);
+      say4(`[ST] ${escapeHtml(t("registerFailed", result.vars))}`);
     } else {
       const reason = t(result.message, result.vars).replace(/^❌\s*/, "");
-      say3(`[ST] ${escapeHtml(t("registerFailed", { error: reason }))}`);
+      say4(`[ST] ${escapeHtml(t("registerFailed", { error: reason }))}`);
     }
   }
 
@@ -4249,6 +4373,7 @@ var ShockrTools = (() => {
     tank: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><rect x="2.5" y="14" width="19" height="6" rx="3"/><path d="M6 14v-3.5h10V14"/><path d="M16 11.5h6"/><circle cx="7" cy="17" r="0.8" fill="currentColor"/><circle cx="12" cy="17" r="0.8" fill="currentColor"/><circle cx="17" cy="17" r="0.8" fill="currentColor"/></svg>',
     crosshair: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="7.5"/><path d="M12 1.5v6M12 16.5v6M1.5 12h6M16.5 12h6"/></svg>',
     upgrade: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l7 7h-4.2v6H9.2v-6H5z"/><path d="M6 20.5h12"/></svg>',
+    eye: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3.2"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>',
     tunnel: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2.5 21.5v-9a9.5 9.5 0 0 1 19 0v9z"/><path d="M7 21.5v-8a5 5 0 0 1 10 0v8"/><path d="M12 17.5v4" stroke-linecap="round"/></svg>'
   };
   var Toolbar = class {
@@ -4425,10 +4550,10 @@ var ShockrTools = (() => {
      * @param {Array<object>} plugins — in /st help and info-page order
      * @param {Function} say — chat line (main.js chatMessage)
      */
-    constructor(config, plugins, say3) {
+    constructor(config, plugins, say4) {
       this.config = config;
       this.plugins = plugins;
-      this._say = say3;
+      this._say = say4;
     }
     /** Plugins the player gets to see (parked ones are built but not offered). */
     offered() {
@@ -17454,8 +17579,444 @@ var ShockrTools = (() => {
     }, 0);
   }
 
+  // plugins/ghozt-watch.js
+  var PANEL_ID12 = "st-ghoztwatch-panel";
+  var TOOLBAR_ID12 = "ghoztwatch";
+  var CMD = "ghoztwatch";
+  var PANEL_WIDTH7 = 560;
+  var DEFAULT_POSITION6 = { x: 140, y: 56 };
+  var POLL_MS2 = 5 * 60 * 1e3;
+  var GAP_MS = 500;
+  var TIMEOUT_MS = 5e3;
+  var MAX_PLAYERS = 20;
+  var MAX_HISTORY2 = 100;
+  var ACTIVE_MS = 15 * 60 * 1e3;
+  var RECENT_MS = 60 * 60 * 1e3;
+  var EVENT_TYPES = ["active", "inactive", "base_count", "attack", "alliance_change", "name_change", "defense_changed", "unit_upgrade"];
+  var EVENT_KEY = {
+    active: "gwEvActive",
+    inactive: "gwEvInactive",
+    base_count: "gwEvBaseCount",
+    attack: "gwEvAttack",
+    alliance_change: "gwEvAllianceChange",
+    name_change: "gwEvNameChange",
+    defense_changed: "gwEvDefenseChanged",
+    unit_upgrade: "gwEvUnitUpgrade"
+  };
+  var FACTION = { 1: "GDI", 2: "NOD" };
+  var STATUS_ICON = { green: "\u{1F7E2}", yellow: "\u{1F7E1}", grey: "\u26AB" };
+  function newRecord(playerId, now) {
+    return {
+      playerId,
+      name: "",
+      alliance: "",
+      allianceId: 0,
+      faction: 0,
+      rank: 0,
+      points: null,
+      bd: 0,
+      bde: 0,
+      baseCount: 0,
+      bases: [],
+      state: null,
+      lastActive: null,
+      lastPoll: null,
+      addedAt: now,
+      defense: null,
+      // phase 2: last defense scan
+      history: []
+    };
+  }
+  function pushEvent(rec, event) {
+    if (!EVENT_TYPES.includes(event.event)) return;
+    rec.history.push(event);
+    if (rec.history.length > MAX_HISTORY2) rec.history.splice(0, rec.history.length - MAX_HISTORY2);
+  }
+  function applyInfo(rec, info, now) {
+    const events = [];
+    const ev = (event, detail) => events.push({ ts: now, event, detail });
+    const bases = Array.isArray(info.c) ? info.c.map((c) => ({ i: c.i, n: String(c.n || ""), p: Number(c.p) || 0, x: c.x, y: c.y })) : [];
+    const points = Number(info.p) || 0;
+    const bd = Number(info.bd) || 0;
+    const bde = Number(info.bde) || 0;
+    const name = String(info.n || rec.name || "");
+    const allianceId = Number(info.a) || 0;
+    const alliance = String(info.an || "");
+    if (rec.points !== null) {
+      if (rec.name && name !== rec.name) ev("name_change", `${rec.name} \u2192 ${name}`);
+      if (allianceId !== rec.allianceId) ev("alliance_change", `${rec.alliance || "-"} \u2192 ${alliance || "-"}`);
+      if (bases.length !== rec.baseCount) ev("base_count", `${rec.baseCount} \u2192 ${bases.length}${baseDiff(rec.bases, bases)}`);
+      const pvp = bd - bde - (rec.bd - rec.bde);
+      const pve = bde - rec.bde;
+      if (pvp > 0 || pve > 0) ev("attack", [pvp > 0 && `PvP +${pvp}`, pve > 0 && `PvE +${pve}`].filter(Boolean).join(" \xB7 "));
+      if (points > rec.points) {
+        rec.lastActive = now;
+        if (rec.state !== "active") {
+          rec.state = "active";
+          ev("active", `+${compact2(points - rec.points)}`);
+        }
+      } else if (rec.state === "active" && rec.lastActive !== null && now - rec.lastActive >= RECENT_MS) {
+        rec.state = "inactive";
+        ev("inactive", "");
+      }
+    }
+    Object.assign(rec, {
+      name,
+      allianceId,
+      alliance,
+      points,
+      bd,
+      bde,
+      bases,
+      baseCount: bases.length,
+      faction: Number(info.f) || 0,
+      rank: Number(info.r) || 0,
+      lastPoll: now
+    });
+    for (const e of events) pushEvent(rec, e);
+    return events;
+  }
+  function baseDiff(before, after) {
+    const had = new Set(before.map((b) => b.i));
+    const has = new Set(after.map((b) => b.i));
+    const parts = [
+      ...after.filter((b) => !had.has(b.i)).map((b) => `+${b.n}`),
+      ...before.filter((b) => !has.has(b.i)).map((b) => `-${b.n}`)
+    ];
+    return parts.length ? ` (${parts.join(", ")})` : "";
+  }
+  function statusOf(rec, now) {
+    if (rec.lastActive === null) return "grey";
+    const age = now - rec.lastActive;
+    if (age < ACTIVE_MS) return "green";
+    if (age < RECENT_MS) return "yellow";
+    return "grey";
+  }
+  function eventText(e) {
+    return t(EVENT_KEY[e.event] || "gwEvActive", { detail: e.detail || "" });
+  }
+  function relativeTime2(ms, now) {
+    if (ms === null || ms === void 0) return t("gwNever");
+    const min = Math.floor(Math.max(0, now - ms) / 6e4);
+    if (min < 1) return t("gwAgoNow");
+    if (min < 60) return t("gwAgoMin", { n: min });
+    if (min < 48 * 60) return t("gwAgoHour", { n: Math.floor(min / 60) });
+    return t("gwAgoDay", { n: Math.floor(min / 1440) });
+  }
+  function serverCommand(command, params) {
+    return new Promise((resolve) => {
+      const timer = setTimeout(() => resolve(null), TIMEOUT_MS);
+      try {
+        ClientLib.Net.CommunicationManager.GetInstance().SendSimpleCommand(
+          command,
+          params,
+          webfrontend.phe.cnc.Util.createEventDelegate(ClientLib.Net.CommandResult, null, (ctx, data) => {
+            clearTimeout(timer);
+            resolve(data && typeof data === "object" ? data : null);
+          }),
+          null
+        );
+      } catch (e) {
+        clearTimeout(timer);
+        console.warn(`[ST] GhoztWatch: ${command} failed`, e && e.message);
+        resolve(null);
+      }
+    });
+  }
+  var fetchById = (id) => serverCommand("GetPublicPlayerInfo", { id });
+  var fetchByName = (name) => serverCommand("GetPublicPlayerInfoByName", { name });
+  var say3 = (msg) => chatMessage(`[GW] \u{1F50D} ${msg}`);
+  var sleep5 = (ms) => new Promise((r) => setTimeout(r, ms));
+  var GhoztWatch = class {
+    /** Short description for `/st help`. */
+    get description() {
+      return t("descGhoztWatch");
+    }
+    constructor(config, toolbar, cli) {
+      this.name = "GhoztWatch";
+      this.defaultEnabled = false;
+      this.config = config;
+      this.toolbar = toolbar;
+      this.cli = cli;
+      this.running = false;
+      this.gapMs = GAP_MS;
+      this.players = [];
+      this._key = null;
+      this._timer = null;
+      this._polling = false;
+      this._panel = null;
+      this._title = null;
+      this._content = null;
+      this._expanded = /* @__PURE__ */ new Set();
+      this._onKeyDown = (e) => {
+        if (e.key === "Escape") this.close();
+      };
+    }
+    async start() {
+      this.running = true;
+      this._load();
+      this.toolbar.register({
+        id: TOOLBAR_ID12,
+        icon: ICONS.eye,
+        label: () => t("toolbarGhoztWatch"),
+        onClick: () => this.toggle()
+      });
+      this.cli.register(CMD, (args) => this.command(args));
+      this._timer = setInterval(() => this.poll(), POLL_MS2);
+      if (this.players.length) this.poll();
+    }
+    stop() {
+      this.running = false;
+      if (this._timer) clearInterval(this._timer);
+      this._timer = null;
+      this.close();
+      this.toolbar.unregister(TOOLBAR_ID12);
+      this.cli.unregister(CMD);
+      if (this._panel) this._panel.remove();
+      this._panel = null;
+    }
+    /** One-line status for `/st status`. */
+    statusText() {
+      return t("gwStatus", { n: this.players.length, max: MAX_PLAYERS });
+    }
+    // ── storage ──
+    _storageKey() {
+      if (this._key) return this._key;
+      try {
+        const world = ClientLib.Data.MainData.GetInstance().get_Server().get_WorldId();
+        if (world) this._key = `st-ghoztwatch-${world}`;
+      } catch {
+      }
+      return this._key;
+    }
+    _load() {
+      const key = this._storageKey();
+      this.players = [];
+      if (!key) return;
+      try {
+        const data = JSON.parse(localStorage.getItem(key) || "null");
+        if (data && Array.isArray(data.players)) this.players = data.players.slice(0, MAX_PLAYERS);
+      } catch (e) {
+        console.warn("[ST] GhoztWatch: stored list unreadable", e && e.message);
+      }
+    }
+    _save() {
+      const key = this._storageKey();
+      if (!key) return;
+      try {
+        localStorage.setItem(key, JSON.stringify({ v: 1, players: this.players }));
+      } catch (e) {
+        console.warn("[ST] GhoztWatch: save failed", e && e.message);
+      }
+    }
+    // ── commands ──
+    async command(args) {
+      const [action, ...rest] = args || [];
+      const name = rest.join(" ").trim();
+      switch ((action || "").toLowerCase()) {
+        case "":
+          return this.toggle();
+        case "add":
+          return name ? this.add(name) : say3(escapeHtml(t("gwUsage")));
+        case "remove":
+          return name ? this.remove(name) : say3(escapeHtml(t("gwUsage")));
+        case "list":
+          return this.list();
+        case "clear":
+          return this.clear();
+        default:
+          return say3(escapeHtml(t("gwUsage")));
+      }
+    }
+    _find(name) {
+      const n = String(name).toLowerCase();
+      return this.players.find((p) => p.name.toLowerCase() === n || String(p.playerId) === n) || null;
+    }
+    async add(name) {
+      if (this._find(name)) return say3(escapeHtml(t("gwAlready", { name })));
+      if (this.players.length >= MAX_PLAYERS) return say3(escapeHtml(t("gwFull", { max: MAX_PLAYERS })));
+      const info = await fetchByName(name);
+      if (!info || !info.i) return say3(escapeHtml(t("gwNotFound", { name })));
+      if (this.players.some((p) => p.playerId === info.i)) return say3(escapeHtml(t("gwAlready", { name: info.n || name })));
+      if (this.players.length >= MAX_PLAYERS) return say3(escapeHtml(t("gwFull", { max: MAX_PLAYERS })));
+      const rec = newRecord(info.i, Date.now());
+      applyInfo(rec, info, Date.now());
+      this.players.push(rec);
+      this._save();
+      say3(escapeHtml(t("gwAdded", {
+        name: rec.name,
+        alliance: rec.alliance || "-",
+        bases: rec.baseCount,
+        points: compact2(rec.points),
+        n: this.players.length,
+        max: MAX_PLAYERS
+      })));
+      this._renderIfOpen();
+    }
+    remove(name) {
+      const rec = this._find(name);
+      if (!rec) return say3(escapeHtml(t("gwNotWatched", { name })));
+      this.players = this.players.filter((p) => p !== rec);
+      this._expanded.delete(rec.playerId);
+      this._save();
+      say3(escapeHtml(t("gwRemoved", { name: rec.name })));
+      this._renderIfOpen();
+    }
+    list() {
+      if (!this.players.length) return say3(escapeHtml(t("gwListEmpty")));
+      const now = Date.now();
+      say3(escapeHtml(t("gwListHeader", { n: this.players.length, max: MAX_PLAYERS })));
+      for (const p of this.players) {
+        const last = p.history[p.history.length - 1];
+        chatMessage(`[GW] ${STATUS_ICON[statusOf(p, now)]} ${escapeHtml(p.name)} [${escapeHtml(p.alliance || "-")}] \xB7 ${escapeHtml(compact2(p.points))} \xB7 ${escapeHtml(t("gwBasesN", { n: p.baseCount }))} \xB7 ${escapeHtml(relativeTime2(p.lastActive, now))}` + (last ? ` \xB7 ${escapeHtml(eventText(last))}` : ""));
+      }
+    }
+    clear() {
+      const n = this.players.length;
+      this.players = [];
+      this._expanded.clear();
+      this._save();
+      say3(escapeHtml(t("gwCleared", { n })));
+      this._renderIfOpen();
+    }
+    // ── polling ──
+    /** Ask every watched player once, one after the other; alert on each new event. */
+    async poll() {
+      if (this._polling || !this.running) return;
+      this._polling = true;
+      try {
+        for (const rec of [...this.players]) {
+          if (!this.running) break;
+          const info = await fetchById(rec.playerId);
+          if (!this.players.includes(rec)) continue;
+          if (info && info.i === rec.playerId) {
+            for (const e of applyInfo(rec, info, Date.now())) say3(`${escapeHtml(rec.name)}: ${escapeHtml(eventText(e))}`);
+          }
+          if (this.gapMs) await sleep5(this.gapMs);
+        }
+        this._save();
+      } finally {
+        this._polling = false;
+      }
+      this._renderIfOpen();
+    }
+    // ── panel ──
+    isOpen() {
+      return !!this._panel && this._panel.style.display !== "none";
+    }
+    toggle() {
+      if (this.isOpen()) this.close();
+      else this.open();
+    }
+    open() {
+      this._ensurePanel();
+      this._panel.style.display = "block";
+      document.addEventListener("keydown", this._onKeyDown);
+      this._render();
+    }
+    close() {
+      if (!this._panel) return;
+      document.removeEventListener("keydown", this._onKeyDown);
+      this._panel.style.display = "none";
+    }
+    _renderIfOpen() {
+      if (this.isOpen()) this._render();
+    }
+    _render() {
+      this._title.innerHTML = `<b style="color:#fff;">\u{1F441} GhoztWatch</b> <span style="color:#aaa;">(${this.players.length}/${MAX_PLAYERS})</span>` + (this._polling ? ` <span style="color:#777;font-size:11px;">\xB7 ${escapeHtml(t("gwPolling"))}</span>` : "");
+      this._content.innerHTML = renderTable4(this.players, Date.now(), this._expanded);
+      this._content.querySelectorAll("tr[data-pid]").forEach((tr2) => {
+        tr2.addEventListener("click", () => {
+          const pid = Number(tr2.dataset.pid);
+          if (this._expanded.has(pid)) this._expanded.delete(pid);
+          else this._expanded.add(pid);
+          this._render();
+        });
+      });
+      this._content.querySelectorAll("[data-remove]").forEach((el) => {
+        el.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const rec = this.players.find((p) => p.playerId === Number(el.dataset.remove));
+          if (rec) this.remove(rec.name);
+        });
+      });
+    }
+    _ensurePanel() {
+      if (this._panel && document.body.contains(this._panel)) return;
+      const pos = clampPosition(
+        loadPosition(this.config, "GhoztWatch", DEFAULT_POSITION6),
+        { w: PANEL_WIDTH7, h: 40 },
+        { w: window.innerWidth, h: window.innerHeight }
+      );
+      const panel = document.createElement("div");
+      panel.id = PANEL_ID12;
+      panel.style.cssText = `
+            display: none; position: fixed; left: ${pos.x}px; top: ${pos.y}px; z-index: 10000;
+            width: ${PANEL_WIDTH7}px; max-width: calc(100vw - 16px); box-sizing: border-box;
+            background: rgba(20, 20, 20, 0.92); color: #ddd; border: 1px solid #444; border-radius: 4px;
+            font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 12px; pointer-events: auto;`;
+      const header = document.createElement("div");
+      header.style.cssText = "display:flex;align-items:baseline;gap:8px;padding:8px 10px 6px;cursor:move;user-select:none;border-bottom:1px solid #333;";
+      const title = document.createElement("div");
+      title.style.cssText = "flex:1;min-width:0;";
+      const button = (text, tip, fn) => {
+        const b = document.createElement("div");
+        b.textContent = text;
+        b.title = tip;
+        b.style.cssText = "cursor:pointer;color:#999;font-size:14px;line-height:1;";
+        b.addEventListener("mousedown", (e) => e.stopPropagation());
+        b.addEventListener("click", fn);
+        b.addEventListener("mouseenter", () => {
+          b.style.color = "#fff";
+        });
+        b.addEventListener("mouseleave", () => {
+          b.style.color = "#999";
+        });
+        return b;
+      };
+      header.append(
+        title,
+        button("\u21BB", t("gwRefresh"), () => {
+          this.poll();
+          this._render();
+        }),
+        button("\u2715", t("close"), () => this.close())
+      );
+      const content = document.createElement("div");
+      content.style.cssText = "max-height:60vh;overflow-y:auto;padding:4px 10px 8px;";
+      panel.append(header, content);
+      document.body.appendChild(panel);
+      makeDraggable(panel, header, { config: this.config, prefix: "GhoztWatch" });
+      this._panel = panel;
+      this._title = title;
+      this._content = content;
+    }
+  };
+  function renderTable4(players, now, expanded = /* @__PURE__ */ new Set()) {
+    if (!players.length) {
+      return `<div style="color:#999;padding:12px 0;text-align:center;">${escapeHtml(t("gwEmpty"))}</div>`;
+    }
+    const th = "padding:3px 4px;text-align:left;font-weight:normal;color:#999;border-bottom:1px solid #444;white-space:nowrap;";
+    const td = "padding:3px 4px;vertical-align:top;";
+    const cols = ["gwColPlayer", "gwColPoints", "gwColBases", "gwColStatus", "gwColEvents", "gwColDefense"];
+    let html = '<table style="width:100%;border-collapse:collapse;"><tr>' + cols.map((k) => `<th style="${th}">${escapeHtml(t(k))}</th>`).join("") + `<th style="${th}"></th></tr>`;
+    for (const p of players) {
+      const status = statusOf(p, now);
+      const recent = p.history.slice(-3).reverse().map((e) => `<div style="color:#bbb;">${escapeHtml(eventText(e))} <span style="color:#666;">${escapeHtml(relativeTime2(e.ts, now))}</span></div>`).join("");
+      html += `<tr data-pid="${p.playerId}" title="${escapeHtml(t("gwExpandHint"))}" style="cursor:pointer;border-bottom:1px solid #2a2a2a;"><td style="${td}"><div style="color:#e0e0e0;">${escapeHtml(p.name)}</div><div style="color:#888;font-size:11px;">${escapeHtml(p.alliance || "-")}${FACTION[p.faction] ? ` \xB7 ${FACTION[p.faction]}` : ""}${p.rank ? ` \xB7 #${p.rank}` : ""}</div></td><td style="${td}white-space:nowrap;">${escapeHtml(compact2(p.points))}</td><td style="${td}">${p.baseCount}</td><td style="${td}white-space:nowrap;">${STATUS_ICON[status]} <span style="color:#888;">${escapeHtml(relativeTime2(p.lastActive, now))}</span></td><td style="${td}font-size:11px;">${recent || '<span style="color:#666;">-</span>'}</td><td style="${td}color:#666;">${p.defense ? "" : "-"}</td><td style="${td}"><span data-remove="${p.playerId}" title="${escapeHtml(t("gwRemoveHint"))}" style="color:#777;cursor:pointer;">\u2715</span></td></tr>`;
+      if (expanded.has(p.playerId)) {
+        const rows = p.history.slice().reverse().map((e) => {
+          const when = new Date(e.ts).toLocaleString([], { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
+          return `<div><span style="color:#777;">${escapeHtml(when)}</span> ${escapeHtml(eventText(e))}</div>`;
+        }).join("");
+        html += `<tr><td colspan="7" style="${td}padding-left:14px;background:#1b1b1b;font-size:11px;max-height:200px;">` + (rows || `<span style="color:#777;">${escapeHtml(t("gwHistoryEmpty"))}</span>`) + "</td></tr>";
+      }
+    }
+    return html + "</table>";
+  }
+
   // lib/main.js
-  var ST_VERSION = "5.52.1";
+  var ST_VERSION = "5.53.0";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const pheGlobal = globalizePhe();
@@ -17530,7 +18091,8 @@ var ShockrTools = (() => {
       new UpgradePriority(config, toolbar, cli),
       new ChatManager(config, cli),
       new MissionHider(config),
-      new Stabs(config, toolbar)
+      new Stabs(config, toolbar),
+      new GhoztWatch(config, toolbar, cli)
     ];
     config.pinChangedDefaults(plugins, { TargetWatcher: false });
     const manager = new PluginManager(config, plugins, chatMessage);

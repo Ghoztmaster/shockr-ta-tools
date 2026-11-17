@@ -192,6 +192,22 @@
     }
   },
   {
+    "name": "GhoztWatch",
+    "slug": "ghozt-watch",
+    "defaultEnabled": false,
+    "replaces": null,
+    "short": {
+      "en": "Follow enemy players over time, with chat alerts",
+      "de": "Feindliche Spieler über Zeit verfolgen, mit Chat-Meldungen",
+      "nl": "Vijandelijke spelers over tijd volgen, met chatmeldingen"
+    },
+    "long": {
+      "en": "/st ghoztwatch add <name> puts an enemy player on your watchlist (max 20; remove, list and clear too). Every 5 minutes, while the game is open, Shockr reads their public player info and alerts in the chat when something changes: active again (points rising, TA upgrades are instant) or 60 min without activity, a base more or less, bases destroyed (PvP/PvE), alliance or name change. The eye icon in the Shockr button (or /st ghoztwatch) opens the panel: points, bases, activity (green < 15 min, yellow < 60 min, grey longer) and the last events; click a player for the full history. The game shows no online status for players outside your alliance, so activity is measured by points. Stored in your browser only. Off by default.",
+      "de": "/st ghoztwatch add <Name> setzt einen feindlichen Spieler auf deine Beobachtungsliste (max. 20; auch remove, list und clear). Alle 5 Minuten, solange das Spiel offen ist, liest Shockr seine öffentlichen Spielerinfos und meldet im Chat, wenn sich etwas ändert: wieder aktiv (Punkte steigen, Upgrades sind in TA sofort) oder 60 Min. ohne Aktivität, eine Basis mehr oder weniger, zerstörte Basen (PvP/PvE), Allianz- oder Namenswechsel. Das Augen-Symbol im Shockr-Knopf (oder /st ghoztwatch) öffnet das Panel: Punkte, Basen, Aktivität (grün < 15 Min., gelb < 60 Min., grau länger) und die letzten Ereignisse; Klick auf einen Spieler zeigt den ganzen Verlauf. Das Spiel zeigt für Spieler außerhalb deiner Allianz keinen Online-Status, daher wird Aktivität an den Punkten gemessen. Nur in deinem Browser gespeichert. Standardmäßig aus.",
+      "nl": "/st ghoztwatch add <naam> zet een vijandelijke speler op je watchlist (max 20; ook remove, list en clear). Elke 5 minuten, zolang het spel open is, leest Shockr diens publieke spelersinfo en meldt in de chat als er iets verandert: weer actief (punten stijgen, upgrades zijn in TA direct) of 60 min zonder activiteit, een base meer of minder, bases vernietigd (PvP/PvE), alliance- of naamwissel. Het oog-icoon in de Shockr-knop (of /st ghoztwatch) opent het paneel: punten, bases, activiteit (groen < 15 min, geel < 60 min, grijs langer) en de laatste events; klik op een speler voor de volledige history. Het spel toont geen online-status voor spelers buiten je alliance, daarom wordt activiteit aan de punten gemeten. Alleen in je browser opgeslagen. Standaard uit."
+    }
+  },
+  {
     "name": "KillInfo",
     "slug": "kill-info",
     "defaultEnabled": true,

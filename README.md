@@ -13,6 +13,7 @@ A Tampermonkey userscript for [C&C Tiberium Alliances](https://www.tiberiumallia
 - **Shockr button** — one shield icon top left (drag it anywhere, the position is remembered). Click it for a grid with every Shockr panel: Upgrade Calculator, Help, Target Watch, and a **Config** button for export/import of your settings. Escape or a click outside closes it
 
 - **CampTracker** — numbered markers on the world map for nearby camps, outposts and bases, with chat alerts and clickable coordinates
+- **GhoztWatch** — follow up to 20 enemy players: `/st ghoztwatch add|remove <name>`, `list`, `clear`. Every 5 min (while the game is open) their public player info is checked; chat alerts on activity (points rising = active, 60 min without = inactive; the game shows no online status outside your alliance), base count, bases destroyed, alliance and name changes. Eye icon / `/st ghoztwatch` opens the panel with history. Stored in localStorage per world. Off by default — `/st plugin enable ghoztwatch`
 - **KillInfo** — plunder panel for the selected Forgotten base (tiberium + crystal per unit and total), toggled with `/st plunder`
 - **PlayerStatus** — alliance base colors by online status, own bases cyan; scheme via `/st config set colors shockr|maelstrom` (default shockr)
 - **LayoutScanner** — scan nearby FG base layouts and upload to a shared alliance server

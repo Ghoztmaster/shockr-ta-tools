@@ -1,7 +1,28 @@
 {
-  "version": "5.52.1",
+  "version": "5.53.0",
   "date": "2026-11-17",
   "changelog": [
+    {
+      "version": "5.53.0",
+      "date": "2026-11-17",
+      "changes": {
+        "en": [
+          "New plugin GhoztWatch (off by default, /st plugin enable ghoztwatch): follow up to 20 enemy players",
+          "/st ghoztwatch add|remove <name>, list, clear; the eye icon opens the panel with points, bases, activity and history",
+          "Chat alerts every 5 min on change: active again / 60 min inactive, base count, bases destroyed, alliance or name change"
+        ],
+        "de": [
+          "Neues Plugin GhoztWatch (standardmäßig aus, /st plugin enable ghoztwatch): bis zu 20 feindliche Spieler verfolgen",
+          "/st ghoztwatch add|remove <Name>, list, clear; das Augen-Symbol öffnet das Panel mit Punkten, Basen, Aktivität und Verlauf",
+          "Chat-Meldungen alle 5 Min. bei Änderung: wieder aktiv / 60 Min. inaktiv, Basenanzahl, zerstörte Basen, Allianz- oder Namenswechsel"
+        ],
+        "nl": [
+          "Nieuwe plugin GhoztWatch (standaard uit, /st plugin enable ghoztwatch): volg tot 20 vijandelijke spelers",
+          "/st ghoztwatch add|remove <naam>, list, clear; het oog-icoon opent het paneel met punten, bases, activiteit en history",
+          "Chatmeldingen elke 5 min bij verandering: weer actief / 60 min inactief, aantal bases, bases vernietigd, alliance- of naamwissel"
+        ]
+      }
+    },
     {
       "version": "5.52.1",
       "date": "2026-11-17",
@@ -68,21 +89,6 @@
         ],
         "nl": [
           "ChatManager: ongelezen-teller op chattabs en de chatknop (chatmanager.unreadBadge) en een ⬇-auto-scrollknop met balk \"nieuwe berichten\" (chatmanager.autoScroll)"
-        ]
-      }
-    },
-    {
-      "version": "5.49.0",
-      "date": "2026-11-09",
-      "changes": {
-        "en": [
-          "ChatManager: compact mode (chatmanager.compact) and an adjustable chat width - drag the chat's right edge (chatmanager.width)"
-        ],
-        "de": [
-          "ChatManager: Kompaktmodus (chatmanager.compact) und einstellbare Chatbreite - den rechten Rand des Chats ziehen (chatmanager.width)"
-        ],
-        "nl": [
-          "ChatManager: compacte modus (chatmanager.compact) en instelbare chatbreedte - sleep de rechterrand van de chat (chatmanager.width)"
         ]
       }
     }
