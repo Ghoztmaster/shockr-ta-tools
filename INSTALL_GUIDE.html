@@ -528,7 +528,7 @@ h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25r
     </div>
   </div>
 
-  <!-- ==================== WHAT'S NEW (5.30.0 - 5.50.0) ==================== -->
+  <!-- ==================== WHAT'S NEW (5.30.0 - 5.53.0) ==================== -->
   <div class="section">
     <div class="section-label"><span class="num">6</span> Nieuw / What’s new / Was ist neu</div>
 
@@ -536,6 +536,33 @@ h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25r
     <div data-lang="nl">
       <h2>Nieuw</h2>
       <p>Tampermonkey werkt het script zelf bij. Werk nooit bij via <em>Importeren</em>.</p>
+      <h3>v5.53.0 <span class="version-tag">— 17-11-2026</span></h3>
+      <ul class="features">
+        <li><strong>GhoztWatch</strong> (nieuw, standaard uit): PvP-surveillance. Volg tot 20 vijandelijke spelers: activiteit, punten, bases en alliance- of naamwissels, met een history per speler.</li>
+        <li>Activiteit leest GhoztWatch af aan stijgende punten: 🟢 actief (&lt; 15 min), 🟡 recent (&lt; 60 min), ⚫ inactief. Elke 5 minuten een chatmelding bij verandering: weer actief / inactief, aantal bases, bases vernietigd, alliance- of naamwissel.</li>
+        <li>Het oog-icoon in de toolbar opent het paneel met punten, bases, activiteit en history.</li>
+      </ul>
+      <p>Aanzetten:</p>
+      <code class="cmd">/st plugin enable ghoztwatch</code>
+      <p>Spelers volgen:</p>
+      <code class="cmd">/st ghoztwatch add Spelernaam</code>
+      <code class="cmd">/st ghoztwatch remove Spelernaam</code>
+      <code class="cmd">/st ghoztwatch list</code>
+      <code class="cmd">/st ghoztwatch clear</code>
+      <p><code>/st ghoztwatch</code> zonder argument opent het paneel. De gegevens blijven in je browser (per wereld) en worden alleen bijgewerkt zolang het spel open staat.</p>
+      <h3>v5.52.1 <span class="version-tag">— 17-11-2026</span></h3>
+      <ul class="features">
+        <li><strong>Loot-pagina</strong>: één rij per target in plaats van per coördinaat. Een camp dat op dezelfde plek respawnt, staat nu apart met eigen level, totaal en gemiddelde.</li>
+      </ul>
+      <h3>v5.52.0 <span class="version-tag">— 11-11-2026</span></h3>
+      <ul class="features">
+        <li>Globale <code>phe</code> ingebouwd, zoals de infernal wrapper dat deed. MehrStrom, TAMap en andere scripts die <code>phe.cnc.Util</code> gebruiken, werken zonder de losse wrapper.</li>
+      </ul>
+      <h3>v5.51.0 <span class="version-tag">— 11-11-2026</span></h3>
+      <ul class="features">
+        <li><strong>Infernal wrapper ingebouwd</strong> in Shockr: TABS heeft het losse infernal wrapper-script niet meer nodig.</li>
+        <li>Patch-meldingen in de chat noemen nu de functie, bijv. <em>Battleground (get_Simulation, DoStep)</em>.</li>
+      </ul>
       <h3>v5.47.0–5.50.0 <span class="version-tag">— 09-11-2026</span></h3>
       <ul class="features">
         <li><strong>ChatManager</strong> (nieuw, standaard uit): chat dicht bij het starten, langere chatgeschiedenis (tot 512 berichten), je naam gemarkeerd in de chat, klikbare links, compacte modus en een chat die je breder of smaller sleept (rechterrand).</li>
@@ -618,6 +645,33 @@ h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25r
     <div data-lang="de">
       <h2>Was ist neu</h2>
       <p>Tampermonkey aktualisiert das Script selbst. Nie über <em>Importieren</em> aktualisieren.</p>
+      <h3>v5.53.0 <span class="version-tag">— 17.11.2026</span></h3>
+      <ul class="features">
+        <li><strong>GhoztWatch</strong> (neu, standardmäßig aus): PvP-Überwachung. Verfolge bis zu 20 feindliche Spieler: Aktivität, Punkte, Basen und Allianz- oder Namenswechsel, mit einem Verlauf pro Spieler.</li>
+        <li>Aktivität erkennt GhoztWatch an steigenden Punkten: 🟢 aktiv (&lt; 15 Min.), 🟡 kürzlich (&lt; 60 Min.), ⚫ inaktiv. Alle 5 Minuten eine Chat-Meldung bei Änderung: wieder aktiv / inaktiv, Basenanzahl, zerstörte Basen, Allianz- oder Namenswechsel.</li>
+        <li>Das Augen-Symbol in der Toolbar öffnet das Panel mit Punkten, Basen, Aktivität und Verlauf.</li>
+      </ul>
+      <p>Einschalten:</p>
+      <code class="cmd">/st plugin enable ghoztwatch</code>
+      <p>Spieler verfolgen:</p>
+      <code class="cmd">/st ghoztwatch add Spielername</code>
+      <code class="cmd">/st ghoztwatch remove Spielername</code>
+      <code class="cmd">/st ghoztwatch list</code>
+      <code class="cmd">/st ghoztwatch clear</code>
+      <p><code>/st ghoztwatch</code> ohne Argument öffnet das Panel. Die Daten bleiben in deinem Browser (pro Welt) und werden nur aktualisiert, solange das Spiel offen ist.</p>
+      <h3>v5.52.1 <span class="version-tag">— 17.11.2026</span></h3>
+      <ul class="features">
+        <li><strong>Loot-Seite</strong>: eine Zeile pro Ziel statt pro Koordinate. Ein Camp, das an derselben Stelle neu erscheint, steht jetzt separat mit eigenem Level, Summe und Durchschnitt.</li>
+      </ul>
+      <h3>v5.52.0 <span class="version-tag">— 11.11.2026</span></h3>
+      <ul class="features">
+        <li>Globales <code>phe</code> eingebaut, wie beim Infernal Wrapper. MehrStrom, TAMap und andere Scripts, die <code>phe.cnc.Util</code> nutzen, laufen ohne den separaten Wrapper.</li>
+      </ul>
+      <h3>v5.51.0 <span class="version-tag">— 11.11.2026</span></h3>
+      <ul class="features">
+        <li><strong>Infernal Wrapper eingebaut</strong> in Shockr: TABS braucht das separate Infernal-Wrapper-Script nicht mehr.</li>
+        <li>Patch-Fehler im Chat nennen jetzt die Funktion, z. B. <em>Battleground (get_Simulation, DoStep)</em>.</li>
+      </ul>
       <h3>v5.47.0–5.50.0 <span class="version-tag">— 09.11.2026</span></h3>
       <ul class="features">
         <li><strong>ChatManager</strong> (neu, standardmäßig aus): Chat beim Start schließen, längerer Chatverlauf (bis 512 Nachrichten), dein Name im Chat hervorgehoben, klickbare Links, Kompaktmodus und ein Chat, den du breiter oder schmaler ziehst (rechter Rand).</li>
@@ -700,6 +754,33 @@ h3 { font-size: 1rem; font-weight: 700; color: var(--text-bright); margin: 1.25r
     <div data-lang="en">
       <h2>What’s new</h2>
       <p>Tampermonkey updates the script by itself. Never update via <em>Import</em>.</p>
+      <h3>v5.53.0 <span class="version-tag">— 2026-11-17</span></h3>
+      <ul class="features">
+        <li><strong>GhoztWatch</strong> (new, off by default): PvP surveillance. Follow up to 20 enemy players: activity, points, bases and alliance or name changes, with a history per player.</li>
+        <li>GhoztWatch reads activity from rising points: 🟢 active (&lt; 15 min), 🟡 recent (&lt; 60 min), ⚫ inactive. Every 5 minutes a chat alert on change: active again / inactive, base count, bases destroyed, alliance or name change.</li>
+        <li>The eye icon in the toolbar opens the panel with points, bases, activity and history.</li>
+      </ul>
+      <p>Turn it on:</p>
+      <code class="cmd">/st plugin enable ghoztwatch</code>
+      <p>Follow players:</p>
+      <code class="cmd">/st ghoztwatch add PlayerName</code>
+      <code class="cmd">/st ghoztwatch remove PlayerName</code>
+      <code class="cmd">/st ghoztwatch list</code>
+      <code class="cmd">/st ghoztwatch clear</code>
+      <p><code>/st ghoztwatch</code> without arguments opens the panel. The data stays in your browser (per world) and only updates while the game is open.</p>
+      <h3>v5.52.1 <span class="version-tag">— 2026-11-17</span></h3>
+      <ul class="features">
+        <li><strong>Loot page</strong>: one row per target instead of per coordinate. A camp that respawns on the same spot now gets its own row with its own level, total and average.</li>
+      </ul>
+      <h3>v5.52.0 <span class="version-tag">— 2026-11-11</span></h3>
+      <ul class="features">
+        <li>Global <code>phe</code> built in, as the infernal wrapper did. MehrStrom, TAMap and other scripts that use <code>phe.cnc.Util</code> work without the separate wrapper.</li>
+      </ul>
+      <h3>v5.51.0 <span class="version-tag">— 2026-11-11</span></h3>
+      <ul class="features">
+        <li><strong>Infernal wrapper built in</strong> to Shockr: TABS no longer needs the separate infernal wrapper script.</li>
+        <li>Patch failures in chat now name the function, e.g. <em>Battleground (get_Simulation, DoStep)</em>.</li>
+      </ul>
       <h3>v5.47.0–5.50.0 <span class="version-tag">— 2026-11-09</span></h3>
       <ul class="features">
         <li><strong>ChatManager</strong> (new, off by default): close the chat on start, longer chat history (up to 512 messages), your name highlighted in chat, clickable links, compact mode and a chat you drag wider or narrower (right edge).</li>
