@@ -45,6 +45,12 @@
  * green / red vs. the targets inspected this session (top / bottom third;
  * neutral until 3 are known).
  *
+ * Tib vs Crystal ratio bar: a horizontal gradient bar (green = Tib, blue =
+ * Crystal) below the loot rows, with percentage labels "T 62%" / "C 38%".
+ * Shows at a glance whether a target is Tib-heavy or Crystal-heavy.
+ * Note: uses loot.rp (Tib icon) and loot.tib (Crystal icon) due to the
+ * legacy MHTools COLUMNS icon mapping.
+ *
  * KillInfo (/st plunder) is untouched: that is the per-unit breakdown in its
  * own panel; this is the summary in the game's info panel.
  */
@@ -55,7 +61,7 @@ const STATUS_INFOS = ['RegionNPCBaseStatusInfo', 'RegionNPCCampStatusInfo'];
 const HISTORY_MAX = 30;
 const RETRY_MS = 500;
 const RETRY_MAX = 20;
-export const COLORS = { high: '#8bc34a', low: '#ef5350', mid: '#ffffff', muted: '#bdbdbd' };
+export const COLORS = { high: '#8bc34a', low: '#ef5350', mid: '#ffffff', muted: '#bdbdbd', tib: '#8bc34a', cry: '#4fc3f7' };
 /** MHTools' EResourceType translation (getLoots): 1 Tiberium, 2 Crystal, 3 Gold (credits), 6 ResearchPoints. */
 const LOOT_TYPES = { 1: 'tib', 2: 'cry', 3: 'cred', 6: 'rp' };
 /**
@@ -484,6 +490,31 @@ export class LootSummary {
                 if (c.key === 'total' && div === cp) color = COLORS[rankColor(ratio, this._history.ratio)];
                 this._label(grid, row, col++, compact(loot[c.key] / div), { width: 50, align: 'right', bold, color });
             }
+        }
+        // ── Tib vs Crystal ratio bar ──────────────────────────────────
+        // NB: icon mapping is legacy (MHTools). Tib icon = loot.rp, Crystal icon = loot.tib
+        const tibVal = loot.rp || 0;   // value under the Tib icon
+        const cryVal = loot.tib || 0;  // value under the Crystal icon
+        const tcTotal = tibVal + cryVal;
+        if (tcTotal > 0) {
+            row++;
+            const tibPct = Math.round(100 * tibVal / tcTotal);
+            const cryPct = 100 - tibPct;
+            const barWidget = new qx.ui.core.Widget().set({ height: 8, marginTop: 2, marginBottom: 2 });
+            barWidget.addListenerOnce('appear', () => {
+                const el = barWidget.getContentElement().getDomElement();
+                if (!el) return;
+                Object.assign(el.style, {
+                    background: `linear-gradient(to right, ${COLORS.tib} 0%, ${COLORS.tib} ${tibPct}%, ${COLORS.cry} ${tibPct}%, ${COLORS.cry} 100%)`,
+                    borderRadius: '3px',
+                    opacity: '0.85',
+                });
+            });
+            grid.add(barWidget, { row, column: 2, colSpan: 9 });
+            // percentage labels below the bar
+            if (tibPct > 0) this._label(grid, row + 1, 2, `T ${tibPct}%`, { color: COLORS.tib, colSpan: 4 });
+            if (cryPct > 0) this._label(grid, row + 1, 7, `C ${cryPct}%`, { color: COLORS.cry, align: 'right', colSpan: 4 });
+            row++;
         }
         if (cp !== null) {
             let base = '';

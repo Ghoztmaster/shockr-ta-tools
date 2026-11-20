@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.53.1] — 2026-11-20
+
+Userscript, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.
+
+### LootSummary: Tib vs Crystal ratio-balk (`plugins/loot-summary.js`)
+- Horizontale balk (8 px) onder de loot-rijen in het info-paneel: groen (`#8bc34a`) = Tib-aandeel, blauw (`#4fc3f7`) = Crystal-aandeel, harde overgang; labels `T x%` links en `C y%` rechts eronder
+- Volgt de iconen op het scherm (legacy MHTools-kolommapping): Tib = `loot.rp` (waarde bij het Tib-icoon), Crystal = `loot.tib` (waarde bij het Crystal-icoon)
+- Alleen zichtbaar als een van beide > 0; de groen/rood-ranking op het totaal is ongewijzigd
+
 ## [5.53.0] — 2026-11-17
 
 Userscript, `config/plugins.json`, `config/version.json` en `config/announcements.json`. Deploy op de VPS volgens de staande regel: `git pull && docker compose build --no-cache && docker compose up -d`.

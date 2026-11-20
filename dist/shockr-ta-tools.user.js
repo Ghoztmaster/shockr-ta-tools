@@ -6,7 +6,7 @@
 // @match           https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant           GM_getValue
 // @grant           GM_setValue
-// @version         5.53.0
+// @version         5.53.1
 // @homepage        https://github.com/Ghoztmaster/shockr-ta-tools
 // @updateURL       https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
 // @downloadURL     https://raw.githubusercontent.com/Ghoztmaster/shockr-ta-tools/main/dist/shockr-ta-tools.user.js
@@ -10775,7 +10775,7 @@ var ShockrTools = (() => {
   var HISTORY_MAX = 30;
   var RETRY_MS = 500;
   var RETRY_MAX = 20;
-  var COLORS2 = { high: "#8bc34a", low: "#ef5350", mid: "#ffffff", muted: "#bdbdbd" };
+  var COLORS2 = { high: "#8bc34a", low: "#ef5350", mid: "#ffffff", muted: "#bdbdbd", tib: "#8bc34a", cry: "#4fc3f7" };
   var LOOT_TYPES = { 1: "tib", 2: "cry", 3: "cred", 6: "rp" };
   var COLUMNS2 = [
     { key: "rp", icon: "ui/common/icn_res_tiberium.png" },
@@ -11175,6 +11175,28 @@ var ShockrTools = (() => {
           if (c.key === "total" && div === cp) color = COLORS2[rankColor(ratio, this._history.ratio)];
           this._label(grid, row, col++, compact(loot[c.key] / div), { width: 50, align: "right", bold, color });
         }
+      }
+      const tibVal = loot.rp || 0;
+      const cryVal = loot.tib || 0;
+      const tcTotal = tibVal + cryVal;
+      if (tcTotal > 0) {
+        row++;
+        const tibPct = Math.round(100 * tibVal / tcTotal);
+        const cryPct = 100 - tibPct;
+        const barWidget = new qx.ui.core.Widget().set({ height: 8, marginTop: 2, marginBottom: 2 });
+        barWidget.addListenerOnce("appear", () => {
+          const el = barWidget.getContentElement().getDomElement();
+          if (!el) return;
+          Object.assign(el.style, {
+            background: `linear-gradient(to right, ${COLORS2.tib} 0%, ${COLORS2.tib} ${tibPct}%, ${COLORS2.cry} ${tibPct}%, ${COLORS2.cry} 100%)`,
+            borderRadius: "3px",
+            opacity: "0.85"
+          });
+        });
+        grid.add(barWidget, { row, column: 2, colSpan: 9 });
+        if (tibPct > 0) this._label(grid, row + 1, 2, `T ${tibPct}%`, { color: COLORS2.tib, colSpan: 4 });
+        if (cryPct > 0) this._label(grid, row + 1, 7, `C ${cryPct}%`, { color: COLORS2.cry, align: "right", colSpan: 4 });
+        row++;
       }
       if (cp !== null) {
         let base = "";
@@ -18016,7 +18038,7 @@ var ShockrTools = (() => {
   }
 
   // lib/main.js
-  var ST_VERSION = "5.53.0";
+  var ST_VERSION = "5.53.1";
   async function startup() {
     console.log(`[ST] Shockr TA Tools v${ST_VERSION} loading...`);
     const pheGlobal = globalizePhe();

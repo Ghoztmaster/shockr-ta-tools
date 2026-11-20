@@ -62,6 +62,12 @@ function fakeQx() {
     }
     globalThis.qx = {
         ui: {
+            core: { Widget: class extends Widget {
+                constructor() { super(); this.dom = { style: {} }; this.once = []; }
+                addListenerOnce(name, fn) { this.once.push({ name, fn }); }
+                getContentElement() { return { getDomElement: () => this.dom }; }
+                fire(name) { const ls = this.once.filter(l => l.name === name); this.once = this.once.filter(l => l.name !== name); for (const l of ls) l.fn(); }
+            } },
             container: { Composite: class extends Widget {} },
             basic: { Label: class extends Widget {}, Image: class extends Widget {} },
             layout: { Grid: class {} },
@@ -239,7 +245,13 @@ test('table: identical to MHTools on screen - 110.8k under the tib icon, then cr
     assert.deepEqual(values(r[3]), ['5,036', '4,454', '4,138', '1,334', '14,962']);
     assert.equal(r[4][0].text, '3rd run:');
     assert.deepEqual(values(r[4]), ['3,358', '2,969', '2,759', '889', '9,975']);
-    assert.equal(r[5][0].text, '11 CP from Home');
+    // Tib vs Crystal bar follows the on-screen icons: 110,800 (Tib icon) vs 97,981 (Crystal icon)
+    const bar = grid.kids.find(k => k.dom);
+    assert.deepEqual(bar.pos, { row: 7, column: 2, colSpan: 9 }, 'bar under the loot rows');
+    bar.fire('appear');
+    assert.match(bar.dom.style.background, /#8bc34a 0%, #8bc34a 53%, #4fc3f7 53%, #4fc3f7 100%/);
+    assert.deepEqual(r[6].map(c => [c.text, c.color]), [['T 53%', '#8bc34a'], ['C 47%', '#4fc3f7']]);
+    assert.equal(r[7][0].text, '11 CP from Home');
     p.stop();
     assert.equal(w.RegionNPCCampStatusInfo.kids.length, 0, 'stop removes the section');
     assert.equal(w.RegionNPCCampStatusInfo.listeners.size, 0, 'stop removes the listeners');

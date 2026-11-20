@@ -1,7 +1,22 @@
 {
-  "version": "5.53.0",
-  "date": "2026-11-17",
+  "version": "5.53.1",
+  "date": "2026-11-20",
   "changelog": [
+    {
+      "version": "5.53.1",
+      "date": "2026-11-20",
+      "changes": {
+        "en": [
+          "Tib vs Crystal ratio bar in loot panel — green/blue gradient shows resource balance at a glance"
+        ],
+        "de": [
+          "Tib-vs-Crystal-Balken im Loot-Panel — grün/blauer Gradient zeigt Ressourcenverteilung auf einen Blick"
+        ],
+        "nl": [
+          "Tib vs Crystal ratio-balk in loot-paneel — groen/blauw gradient toont resourceverhouding in één oogopslag"
+        ]
+      }
+    },
     {
       "version": "5.53.0",
       "date": "2026-11-17",
@@ -74,21 +89,6 @@
         "nl": [
           "Infernal wrapper ingebouwd: get_Simulation, DoStep, get_OffenseUnits en get_DefenseUnits - TABS heeft het losse infernal wrapper-script niet meer nodig",
           "Patch-meldingen in de chat noemen nu de functie, bijv. Battleground (get_Simulation, DoStep)"
-        ]
-      }
-    },
-    {
-      "version": "5.50.0",
-      "date": "2026-11-09",
-      "changes": {
-        "en": [
-          "ChatManager: unread count on chat tabs and the chat button (chatmanager.unreadBadge) and a ⬇ auto-scroll toggle with a \"new messages\" bar (chatmanager.autoScroll)"
-        ],
-        "de": [
-          "ChatManager: Ungelesen-Zähler auf Chat-Tabs und dem Chat-Knopf (chatmanager.unreadBadge) und ein ⬇-Auto-Scroll-Schalter mit Leiste \"neue Nachrichten\" (chatmanager.autoScroll)"
-        ],
-        "nl": [
-          "ChatManager: ongelezen-teller op chattabs en de chatknop (chatmanager.unreadBadge) en een ⬇-auto-scrollknop met balk \"nieuwe berichten\" (chatmanager.autoScroll)"
         ]
       }
     }
